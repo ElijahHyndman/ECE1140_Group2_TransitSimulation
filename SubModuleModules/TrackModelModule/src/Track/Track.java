@@ -31,12 +31,17 @@ import java.util.Scanner;
         ArrayList<Double> trainsLength;
         ArrayList<Double> blocksLength;
 
+        //Need to load in more here
+        String redLineCheck = "Red";
+
         //Constructor Methhod
-        Track() {
+        public Track() {
             blockArrayList = new ArrayList<>();
             stationsArrayList = new ArrayList<>();
             switchesArrayList = new ArrayList<>();
             failureArrayList = new ArrayList<>();
+            redTrack = new ArrayList<>();
+            greenTrack = new ArrayList<>();
             environmentalTemperature = 60;
             TRACK_HEATER= false;
         }
@@ -54,7 +59,7 @@ import java.util.Scanner;
         }
 
 
-        boolean importTrack(String filepath){
+        public boolean importTrack(String filepath){
             boolean success = false;
             try {
                 Scanner sc = new Scanner(new File(filepath));
@@ -102,7 +107,8 @@ import java.util.Scanner;
                         Station Test = new Station(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
 
                         blockArrayList.add(Test);
-
+                        redTrack.add(Test);
+                        greenTrack.add(Test);
                     }
 
 
@@ -114,15 +120,32 @@ import java.util.Scanner;
                         stationsArrayList.add(Test);
                         blockArrayList.add(Test);
 
+                        if(line.equals(redLineCheck))
+                            redTrack.add(Test);
+                        else
+                            greenTrack.add(Test);
+
                     }
                     else if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
                         Switch Test = new Switch(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         switchesArrayList.add(Test);
                         blockArrayList.add(Test);
+
+                        if(line.equals(redLineCheck))
+                            redTrack.add(Test);
+                        else
+                            greenTrack.add(Test);
                     }
                     else {
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
+
+                        if(line.equals(redLineCheck))
+                            redTrack.add(Test);
+                        else
+                            greenTrack.add(Test);
+
+
                     }
                     count++;
                 }
@@ -137,26 +160,28 @@ import java.util.Scanner;
         }
 
         //Return Track
-        ArrayList<TrackElement> getBlocks(){
+        public ArrayList<TrackElement> getBlocks(){
             return blockArrayList;
         }
 
-        ArrayList<Station> getStations(){
+        public ArrayList<Station> getStations(){
             return stationsArrayList;
         }
 
-        ArrayList<Switch> getSwitches(){
+        public ArrayList<Switch> getSwitches(){
             return switchesArrayList;
         }
 
-        ArrayList<TrackElement> getFailures(){
+        public ArrayList<TrackElement> getFailures(){
             return failureArrayList;
         }
+
+        public ArrayList<TrackElement> getGreenLine(){return greenTrack;}
 
 
 
         /*Get block - ALL BLOCKS from ALL LINES */
-        TrackElement getBlock(int a){
+        public TrackElement getBlock(int a){
             if(a > 0 && a < blockArrayList.size()+1){
                 return blockArrayList.get(a-1);
             }
@@ -164,7 +189,7 @@ import java.util.Scanner;
         }
 
         /*Get block from a PARTICULAR LINE  */
-        TrackElement getBlockLine(int blockNum, String line){
+        public TrackElement getBlockLine(int blockNum, String line){
 
             TrackElement temp = null;
             if(line.equals(lineA)) {
@@ -180,14 +205,14 @@ import java.util.Scanner;
         }
 
 
-        boolean getTrackHeaterStatus(){
+        public boolean getTrackHeaterStatus(){
             return TRACK_HEATER;
         }
 
 
 
         /*Set Environmental Temperature*/
-        void setEnvironmentalTemperature(double a){
+        public void setEnvironmentalTemperature(double a){
             if( a > -20 && a < 130){
                 this.environmentalTemperature = a;
 
@@ -200,7 +225,7 @@ import java.util.Scanner;
         }
 
         /*Get Environmental Temperature */
-        double getEnvironmentalTemperature(){
+        public double getEnvironmentalTemperature(){
             return this.environmentalTemperature;
         }
 
@@ -209,7 +234,7 @@ import java.util.Scanner;
         }
 
         /*Need to set and fix failures for particular block on particular line*/
-        void setFailure(int blockNum, String line, int Failure){
+        public void setFailure(int blockNum, String line, int Failure){
             boolean contains = false;
             int location = -1;
 

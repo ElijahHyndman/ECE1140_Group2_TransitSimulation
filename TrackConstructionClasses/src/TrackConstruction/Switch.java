@@ -33,6 +33,7 @@ public class Switch extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDireciton = setDirection[0];
 
         //need to add swithces here
 

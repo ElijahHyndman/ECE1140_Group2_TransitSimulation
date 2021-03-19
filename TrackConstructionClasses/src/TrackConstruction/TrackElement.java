@@ -22,6 +22,7 @@ public class TrackElement {
     int speedLimit;              //km/hr
     double elevation;            //meters
     double cumulativeElevation;  //meters
+    int currentDireciton;
 
     //for printing purposes
     String infrastructure;
@@ -50,6 +51,7 @@ public class TrackElement {
         this.commandedSpeed = 0;
         this.directionArray = null;
         this.biDirecitional = 'u';
+        this.currentDireciton = -1;
     }
 
 
@@ -123,6 +125,9 @@ public class TrackElement {
 
     /*get cumulative elvation*/
     public double getCumulativeElevation(){ return this.cumulativeElevation;}
+
+    /*direction*/
+    public int getCurrentDirection() {return this.currentDireciton;}
 
 
     /*get Authority */

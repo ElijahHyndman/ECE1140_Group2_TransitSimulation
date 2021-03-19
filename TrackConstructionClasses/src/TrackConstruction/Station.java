@@ -27,10 +27,11 @@ public class Station extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDireciton =setDirection[0];
     }
 
     /*Set Ticket Sales */
-    void setTicketSales(){
+    public void setTicketSales(){
         Random rand = new Random();
         this.ticketSales = Math.abs(rand.nextInt()) % 80;
     }
