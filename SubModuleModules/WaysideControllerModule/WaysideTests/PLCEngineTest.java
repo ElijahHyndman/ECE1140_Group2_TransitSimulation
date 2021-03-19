@@ -30,6 +30,19 @@ class PLCEngineTest {
     }
 
     @Test
+    @DisplayName("Testing Read Helper Function New Version")
+    public void testReaderNew() throws IOException, URISyntaxException {
+        PLCEngine engine = new PLCEngine();
+
+        List<String> testList = engine.readFileNew("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
+        for(int i = 0; i < testList.size(); i++){
+            System.out.println(testList.get(i));
+        }
+
+        System.out.println("Finished code.");
+    }
+
+    @Test
     @DisplayName("Testing String Checker Helper")
     public void testString() {
         PLCEngine engine = new PLCEngine();

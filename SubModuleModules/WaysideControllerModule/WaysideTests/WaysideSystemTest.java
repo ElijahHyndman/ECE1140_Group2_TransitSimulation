@@ -1,8 +1,8 @@
-import SRC.SubModuleClasses.WaysideController.WaysideGUI.WaysideUIClass;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import WaysideController.*;
+import WaysideGUI.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

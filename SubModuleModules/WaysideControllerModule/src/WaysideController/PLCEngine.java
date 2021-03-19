@@ -343,7 +343,7 @@ public class PLCEngine {
     Output - None
      */
     public void createTokens(String file) throws IOException, URISyntaxException {
-        List<String> data = readFile(file);
+        List<String> data = readFileNew(file);
         String[] loadStr;
         String var;
 
@@ -419,6 +419,27 @@ public class PLCEngine {
         URL url = getClass().getResource(file);
         System.out.println(url.toURI().toString());
         Path path = Paths.get(url.toURI());
+        bytes = Files.readAllBytes(path);
+        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+        for(int i=0;i < allData.size();i++){
+            if(allData.get(i).trim().isEmpty()){
+                allData.remove(i);
+            }
+        }
+
+        this.PLCString = allData;
+        return allData;
+    }
+
+    public List<String> readFileNew(String url) throws IOException, URISyntaxException {
+        byte[] bytes;
+        String str;
+        List<String> allData;
+        Path path;
+
+        System.out.println(url);
+        path = Paths.get(url);
         bytes = Files.readAllBytes(path);
         allData = Files.readAllLines(path, StandardCharsets.UTF_8);
 
