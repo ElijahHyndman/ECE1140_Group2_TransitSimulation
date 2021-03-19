@@ -9,6 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * @author Harsh Selokar
+ */
+
 public class PLCEngine {
     public enum Token {
         AND, OR, NOT, SET, LD, LDN, ANB, ORB
