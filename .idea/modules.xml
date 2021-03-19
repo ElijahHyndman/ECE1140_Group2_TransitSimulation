@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/WaysideControllerModule/SubModules.WaysideControllerModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/WaysideControllerModule/SubModules.WaysideControllerModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TestingUsage/TestingUsage.iml" filepath="$PROJECT_DIR$/TestingUsage/TestingUsage.iml" />
       <module fileurl="file://$PROJECT_DIR$/TrackConstructionClasses/TrackConstructionClasses.iml" filepath="$PROJECT_DIR$/TrackConstructionClasses/TrackConstructionClasses.iml" />
     </modules>
   </component>
