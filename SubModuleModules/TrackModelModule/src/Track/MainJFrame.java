@@ -16,10 +16,11 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author grhen
  */
+
 public class MainJFrame extends javax.swing.JFrame {
 
     //Adding Track Components
-    Track trackList = null;
+    Track trackList;
     DefaultTableModel model;
     DefaultTableModel switches;
     DefaultTableModel beacons;
@@ -67,6 +68,7 @@ public class MainJFrame extends javax.swing.JFrame {
         jTextField12 = new javax.swing.JTextField();
         jButton12 = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
+        greenTrack = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -116,6 +118,7 @@ public class MainJFrame extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         passengerTest = new javax.swing.JTextField();
         jTestBlue = new javax.swing.JButton();
+        lengthTraveled = new javax.swing.JTextField();
 
         jScrollPane9.setViewportView(jEditorPane1);
 
@@ -249,13 +252,13 @@ public class MainJFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel2)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(496, Short.MAX_VALUE)
+                                .addContainerGap(524, Short.MAX_VALUE)
                                 .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(Submit, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(259, Short.MAX_VALUE))
+                                .addContainerGap(287, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,7 +282,7 @@ public class MainJFrame extends javax.swing.JFrame {
 
                 },
                 new String [] {
-                        "Block Number", "Line", "Section", "Direction (to)", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit", "Elevation", "Cummulative Elevation"
+                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit", "Elevation", "Cummulative Elevation"
                 }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -297,6 +300,13 @@ public class MainJFrame extends javax.swing.JFrame {
 
         jLabel24.setText("Update Temp:");
 
+        greenTrack.setText("greenLine");
+        greenTrack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                greenTrackMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -304,9 +314,11 @@ public class MainJFrame extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(37, 37, 37)
                                 .addComponent(jLabel1)
-                                .addGap(333, 333, 333)
+                                .addGap(102, 102, 102)
+                                .addComponent(greenTrack)
+                                .addGap(152, 152, 152)
                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 305, Short.MAX_VALUE)
                                 .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -325,9 +337,11 @@ public class MainJFrame extends javax.swing.JFrame {
                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                 .addGap(12, 12, 12)
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(jLabel1)
+                                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(jLabel1)
+                                                                .addComponent(greenTrack))
                                                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(22, 22, 22))
+                                                .addGap(17, 17, 17))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                                 .addContainerGap()
                                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -335,7 +349,7 @@ public class MainJFrame extends javax.swing.JFrame {
                                                         .addComponent(jButton12)
                                                         .addComponent(jLabel24))
                                                 .addGap(18, 18, 18)))
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
                                 .addContainerGap())
         );
 
@@ -358,7 +372,7 @@ public class MainJFrame extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(80, 80, 80)
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1083, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(62, Short.MAX_VALUE))
+                                .addContainerGap(118, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
                 jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -418,7 +432,7 @@ public class MainJFrame extends javax.swing.JFrame {
                                                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addGap(35, 35, 35)
                                                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(142, Short.MAX_VALUE))
+                                .addContainerGap(198, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -487,7 +501,7 @@ public class MainJFrame extends javax.swing.JFrame {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 1176, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 1232, Short.MAX_VALUE)
                                         .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addGap(39, 39, 39))
@@ -523,7 +537,7 @@ public class MainJFrame extends javax.swing.JFrame {
                         .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addGap(193, 193, 193)
                                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 881, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(151, Short.MAX_VALUE))
+                                .addContainerGap(207, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
                 jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -573,7 +587,7 @@ public class MainJFrame extends javax.swing.JFrame {
 
         jLabel15.setText("Block Number:");
 
-        jLabel16.setText("Line: (Red or Green)");
+        jLabel16.setText("Line: (Red / Green / Blue)");
 
         jLabel17.setText("Occupied 1 - yes, 0 - no:");
 
@@ -615,6 +629,8 @@ public class MainJFrame extends javax.swing.JFrame {
             }
         });
 
+        lengthTraveled.setText("Length Traveled");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -634,14 +650,13 @@ public class MainJFrame extends javax.swing.JFrame {
                                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel17)
                                                         .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(30, 30, 30)
+                                                        .addComponent(jLabel16))
+                                                .addGap(29, 29, 29)
                                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addComponent(failStatusTest, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                                                         .addComponent(BlockNumTest)
                                                         .addComponent(lineTest)
                                                         .addComponent(occupiedTest))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addGroup(jPanel7Layout.createSequentialGroup()
                                                 .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -651,6 +666,10 @@ public class MainJFrame extends javax.swing.JFrame {
                                                 .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addGroup(jPanel7Layout.createSequentialGroup()
+                                                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(62, 62, 62)
+                                                                .addComponent(jTestBlue, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel7Layout.createSequentialGroup()
                                                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                                         .addGroup(jPanel7Layout.createSequentialGroup()
@@ -666,9 +685,8 @@ public class MainJFrame extends javax.swing.JFrame {
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(switchTest, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel7Layout.createSequentialGroup()
-                                                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(62, 62, 62)
-                                                                .addComponent(jTestBlue, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                                .addGap(111, 111, 111)
+                                                                .addComponent(lengthTraveled, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel7Layout.createSequentialGroup()
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -737,13 +755,15 @@ public class MainJFrame extends javax.swing.JFrame {
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel17)
                                         .addComponent(occupiedTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(35, 35, 35)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lengthTraveled, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(failStatusTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel18))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                                 .addComponent(updateTest)
                                 .addGap(257, 257, 257))
         );
@@ -797,13 +817,15 @@ public class MainJFrame extends javax.swing.JFrame {
         //Here make the Track Heater status shown
         if(trackList != null) {
             //Load in Temperature
+            //trackList.updateOccupied();
             TemperaturePane.setText("Environmental Temperature:" + trackList.getEnvironmentalTemperature() + "\n Track Heater Status: " + trackList.getTrackHeaterStatus());
             //Load in the Track
             ArrayList<TrackElement> tempBlocks = trackList.getBlocks();
             model = (DefaultTableModel)jTable1.getModel();
             model.setRowCount(0);
             for(int i=0; i<tempBlocks.size(); i++)
-                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+
 
 
         }
@@ -913,6 +935,7 @@ public class MainJFrame extends javax.swing.JFrame {
 
 
         //Here update tables
+
         if(trackList != null) {
             switches = (DefaultTableModel)jTable3.getModel();
             beacons = (DefaultTableModel)jTable5.getModel();
@@ -1038,6 +1061,7 @@ public class MainJFrame extends javax.swing.JFrame {
         String switchT = switchTest.getText().trim();
         String passengerT = passengerTest.getText().trim();
         String failStatusT = failStatusTest.getText().trim();
+        String lengthT = lengthTraveled.getText().trim();
 
         //Parsing info into different areas to test functionality
         int bN=0;
@@ -1045,7 +1069,7 @@ public class MainJFrame extends javax.swing.JFrame {
         double speed;
         int passenger;
         int switches;
-
+        double LenT;
         TrackElement temp=null;
 
         if(trackList!=null) {
@@ -1092,6 +1116,13 @@ public class MainJFrame extends javax.swing.JFrame {
                     switches = Integer.parseInt(switchT);
                     temp.setSwitchState(switches);
                 }
+
+                if(!lengthT.equals("Length Traveled")){
+                    LenT = Double.parseDouble(lengthT);
+                  //  trackList.setTrainsLength(LenT);
+                 //   JOptionPane.showMessageDialog(null, "NOW : " + trackList.getTrainsLength() + " AND " + trackList.getBlocksLength());
+                }
+
             }
         }
 
@@ -1118,6 +1149,22 @@ public class MainJFrame extends javax.swing.JFrame {
             }
             else
                 JOptionPane.showMessageDialog(null, "ERROR: Track not loaded");
+        }
+    }
+
+    //ADDING ONLY GREEN LINE SHOWING
+    private void greenTrackMouseClicked(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        if(trackList != null) {
+            //Load in Green Track
+            ArrayList<TrackElement> tempBlocks = trackList.getGreenLine();
+            model = (DefaultTableModel)jTable1.getModel();
+            model.setRowCount(0);
+            for(int i=0; i<tempBlocks.size(); i++)
+                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+
+
+
         }
     }
 
@@ -1165,6 +1212,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane TemperaturePane;
     private javax.swing.JTextField authorityTest;
     private javax.swing.JTextField failStatusTest;
+    private javax.swing.JButton greenTrack;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton12;
@@ -1226,6 +1274,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField12;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField lengthTraveled;
     private javax.swing.JTextField lineTest;
     private javax.swing.JTextField occupiedTest;
     private javax.swing.JPanel panel_center;
@@ -1235,3 +1284,4 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JButton updateTest;
     // End of variables declaration
 }
+
