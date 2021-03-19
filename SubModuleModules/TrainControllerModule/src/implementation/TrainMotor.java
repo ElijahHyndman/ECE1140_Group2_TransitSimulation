@@ -1,5 +1,6 @@
 package implementation;
 
+//Train motor for project
 
 public class TrainMotor {
 
