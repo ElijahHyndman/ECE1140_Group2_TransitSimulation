@@ -33,10 +33,11 @@ public class main {
             // original: image.make(distance, 0);
             image.make(distance);
         } catch(IOException e) {
-            
-        } 
-        
-        
+            System.out.println("error");
+        }
+
+
+        System.out.println("begining");
         while(true){
             
             
@@ -65,8 +66,9 @@ public class main {
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
+
+            System.out.println("Loop Cycle");
         }
-            
-        
+
     }
 }
