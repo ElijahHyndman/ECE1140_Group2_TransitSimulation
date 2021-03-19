@@ -31,6 +31,8 @@ import java.util.Scanner;
         ArrayList<Double> trainsLength;
         ArrayList<Double> blocksLength;
 
+        //Need to load in more here
+
         //Constructor Methhod
         Track() {
             blockArrayList = new ArrayList<>();
