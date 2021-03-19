@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrackModelModule/SubModules.TrackModelModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrackModelModule/SubModules.TrackModelModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SubModuleModules/WaysideControllerModule/SubModules.WaysideControllerModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/WaysideControllerModule/SubModules.WaysideControllerModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrackConstructionClasses/TrackConstructionClasses.iml" filepath="$PROJECT_DIR$/TrackConstructionClasses/TrackConstructionClasses.iml" />
+    </modules>
+  </component>
+</project>
