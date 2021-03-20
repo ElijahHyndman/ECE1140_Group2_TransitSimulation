@@ -1,5 +1,7 @@
 package WorldClock;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 public class WorldClock extends Thread {
     /**
@@ -36,10 +38,15 @@ public class WorldClock extends Thread {
      * @member ticking      tracks whether the clock is ticking, used to halt clock from thread
      *
      * Derived Members
-     * updatesPerWorldSecond: number of updates per World Second to obtain appropriate physics resolution within simulation time
-     * updatesPerRealSecond: number of updates that must occur per an actual second, derived
+     * updatesPerRealSecond: number of physics-updates that must occur per an actual second, derived
+     * realSecondsPerUpdate: fraction of a real second which a single physics-update's period (1/frequency) will occupy
+     * worldSecodnsPerUpdate: fraction of a simulation second which a single physics-update's period will occupy
+     * milliseconds: number of real milliseconds that a physics-update will occupy; determines how long we wait until the next update
+     * microseconds: number of real microseconds that a physics-update will occupy
+     *                  Decided to be slightly less than = to microseconds*1000, which means waiting a shorter
+     *                  time, which allows us to account for system calls and other delays when waiting
      */
-
+    // Clock-Pace Variables
     private final double MAX_ALLOWABLE_RESOLUTION = 100.000;
     private final double MIN_ALLOWABLE_RESOLUTION = 0.001;
     private final double MAX_ALLOWABLE_RATIO = 20.000;
@@ -53,14 +60,36 @@ public class WorldClock extends Thread {
 
     private double updatesPerRealSecond;
     private double realSecondsPerUpdate;
+    private double worldSecondsPerUpdate;
     private int milliseconds;
     private int microseconds;
 
     private boolean ticking = false;
 
+    /**
+     * Class Clock Members
+     * @member hourFormat                   date format that turns date into formatted string of hour, minutes, seconds
+     * @member currentTimeInMilliseconds    current time in Simulation World in milliseconds, used for setting date using "Date.setTime(int milliseconds)"
+     * @member currentDate                  date object used for tracking the time, used by hourFormat to generate Time String
+     */
+    // Clock-Time variables
+    // Assert: Date is set at January 1, 1970 00:00:00 GMT,
+    // will not affect calculations since we only show date as hours.
+    // Assert: Date defined by 0 millisec typically starts at 19:00:00 for some reason,
+    // therefore getting time 00:00:00 is five-hours of milliseconds after 19:00:00
+    private final int SECOND_MILLISECONDS = 1000;
+    private final int MINUTE_MILLISECONDS = 60000;
+    private final int HOUR_MILLISECONDS = 3600000;
+    private final int TIME_ZERO = 5 * HOUR_MILLISECONDS;
+
+    SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+    private int currentTimeInMilliseconds = TIME_ZERO;
+    Date currentDate = new Date(currentTimeInMilliseconds);
+
+
 
     public WorldClock() {
-        // User has opted for default ratio and resolution
+        // User has opted for keeping default ratio and resolution
         configure();
     }
 
@@ -77,10 +106,11 @@ public class WorldClock extends Thread {
         /**
          * recalculates configuration-parameters for how often to update, used when a parameter value has changed.
          */
+        worldSecondsPerUpdate       = 1.0 / resolution;                         // 1/(U/WS) = WS/U
         updatesPerRealSecond        = resolution * ratio;                       // U/WS * WS/RS = U/RS
         realSecondsPerUpdate        = 1.0 / updatesPerRealSecond;               // 1/(U/RS) = RS/U
         milliseconds                = (int) (1000 * realSecondsPerUpdate);      // RS/U * (1000 Milliseconds / 1 sec) = mRS/U
-        microseconds                = milliseconds * 1000 - 500;                // allows us to wait half a millisecond less than intended
+        microseconds                = milliseconds * 1000 - (int) (0.5 * 1000); // allows us to wait half a millisecond less than intended
     }
 
 
@@ -144,6 +174,7 @@ public class WorldClock extends Thread {
          * Shall run on a new thread, so while(true) loop does not affect program execution
          *
          * @before time is not advancing, clock is still
+         * @before if time is already advancing, nothing new happens
          * @after time is advancing, clock is moving, physics update-calls are broadcast
          */
         System.out.println("Clock has started ticking");
@@ -157,17 +188,22 @@ public class WorldClock extends Thread {
 
     public void once() {
         /**
-         * Traverses one period of clock-tick, useful for testing.
+         * Traverses one period of clock-tick, useful for testing. Updates current time.
          * We intend for a period to last n milliseconds, but we implement it in microseconds to allow
          *  us to wait n-0.5 milliseconds, to allow for system calls and other time consuming things
          *
+         * Waits "milliseconds" real seconds, which traverses "worldSecondsPerUpdate" world seconds
          * @before nothing
          * @after exactly one period ("milliseconds" milliseconds of real time) has been waited
+         * @after an update has occurred
          */
         try {
+            // Traverse one period
             TimeUnit.MICROSECONDS.sleep(microseconds);
-            //TimeUnit.MILLISECONDS.sleep(milliseconds);
-            //System.out.println("tick");
+
+            // Update current time
+            currentTimeInMilliseconds += 1000 * worldSecondsPerUpdate;
+            currentDate.setTime(currentTimeInMilliseconds);
         } catch (Exception e) {
             System.out.println("Clock failed while advancing a single period");
             e.printStackTrace();
@@ -182,7 +218,7 @@ public class WorldClock extends Thread {
          * The user updates the "ticking" member from their thread, which affects the loop execution on the clock's thread.
          *
          * @before clock may or may not be running.
-         * @after clock is definitely not ticking
+         * @after clock is definitely not running
          */
         ticking = false;
         System.out.println("Clock has halted ticking");
@@ -192,6 +228,8 @@ public class WorldClock extends Thread {
     public String getConfiguration() {
         /**
          * Generates debugging string about the current configurations of the World Clock attributes
+         *
+         * @return String formatted string filled with most relevant configuration values, plain english
          */
         String reportString =   "resolution %.1f updates/WS\n".formatted(resolution) +
                                 "ratio %.1f WS/RS \n".formatted(ratio) +
@@ -200,6 +238,9 @@ public class WorldClock extends Thread {
         return reportString;
     }
 
+    public String getTime() {
+        return hourFormat.format(currentDate);
+    }
     public double getResolution() {return resolution;}
     public double getRatio() {return ratio;}
     public int getMilliseconds() {return milliseconds;}

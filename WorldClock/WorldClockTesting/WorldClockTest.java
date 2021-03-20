@@ -2,6 +2,8 @@ import WorldClock.WorldClock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.TimeUnit;
+
 class WorldClockTest {
     WorldClock clk;
 
@@ -141,6 +143,22 @@ class WorldClockTest {
         }
         //System.out.println("Total time waited: %d milliseconds".formatted(endTime-startTime));
     }
+
+
+    @Test
+    @DisplayName("")
+    void clockGivesCurrentTime() {
+        clk = new WorldClock(1.0,1.0);
+        clk.start();
+        while(true)
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(clk.getTime());
+            } catch (Exception e) {
+
+            }
+    }
+
 
 
     /*
