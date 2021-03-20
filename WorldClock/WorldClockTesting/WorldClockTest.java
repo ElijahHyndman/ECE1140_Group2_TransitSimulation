@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 class WorldClockTest {
     WorldClock clk;
 
+    // acceptable number of milliseconds which a clk period is allowed to vary by
+    int HardAccept = 3;
+
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
     }
@@ -20,25 +23,25 @@ class WorldClockTest {
         // that it gives the expected results
         String predictedConfiguration;
         String actualResult;
-        int resolution;
+        double resolution;
         double ratio;
 
         ratio = 1.0;
 
-        resolution = 1;
-        predictedConfiguration = generatePredictionString(1,1.0,1.0,1000);
+        resolution = 1.0;
+        predictedConfiguration = generatePredictionString(1.0,1.0,1.0,1000);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
-        resolution = 2;
-        predictedConfiguration = generatePredictionString(2,1.0,2.0,500);
+        resolution = 2.0;
+        predictedConfiguration = generatePredictionString(2.0,1.0,2.0,500);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
-        resolution = 3;
-        predictedConfiguration = generatePredictionString(3,1.0,3.0,333);
+        resolution = 3.0;
+        predictedConfiguration = generatePredictionString(3.0,1.0,3.0,333);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
@@ -46,20 +49,20 @@ class WorldClockTest {
         // New Ratio
         ratio = 2.0;
 
-        resolution = 1;
-        predictedConfiguration = generatePredictionString(1,2.0,2.0,500);
+        resolution = 1.0;
+        predictedConfiguration = generatePredictionString(1.0,2.0,2.0,500);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
-        resolution = 2;
-        predictedConfiguration = generatePredictionString(2,2.0,4.0,250);
+        resolution = 2.0;
+        predictedConfiguration = generatePredictionString(2.0,2.0,4.0,250);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
-        resolution = 3;
-        predictedConfiguration =    generatePredictionString(3,2.0,6.0,166);
+        resolution = 3.0;
+        predictedConfiguration =    generatePredictionString(3.0,2.0,6.0,166);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
@@ -73,46 +76,46 @@ class WorldClockTest {
 
         // Check default constructor
         clk = new WorldClock();
-        predictedConfiguration = generatePredictionString(10, 1.0, 10.0, 100);
+        predictedConfiguration = generatePredictionString(10.0, 1.0, 10.0, 100);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         // Note: MIN_ALLOWABLE_RATIO
         clk.setRatio(0.001);
-        predictedConfiguration = generatePredictionString(10,0.0,0.0,100000);
+        predictedConfiguration = generatePredictionString(10.0,0.0,0.0,100000);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         clk.setRatio(2.0);
-        predictedConfiguration = generatePredictionString(10,2.0,20.0,50);
+        predictedConfiguration = generatePredictionString(10.0,2.0,20.0,50);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         // Note: MAX_ALLOWABLE_RATIO
         clk.setRatio(20.0);
-        predictedConfiguration = generatePredictionString(10,20.0,200.0,5);
+        predictedConfiguration = generatePredictionString(10.0,20.0,200.0,5);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         clk.setRatio(3.0);
-        predictedConfiguration = generatePredictionString(10,3.0,30.0,33);
+        predictedConfiguration = generatePredictionString(10.0,3.0,30.0,33);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         // Remember: Ratio was last configured to 3.0
-        clk.setResolution(2);
-        predictedConfiguration = generatePredictionString(2,3.0,6.0,166);
+        clk.setResolution(2.0);
+        predictedConfiguration = generatePredictionString(2.0,3.0,6.0,166);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
-        clk.setResolution(4);
-        predictedConfiguration = generatePredictionString(4,3.0,12.0,83);
+        clk.setResolution(4.0);
+        predictedConfiguration = generatePredictionString(4.0,3.0,12.0,83);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
 
         // NOTE: Max allowable resolution
-        clk.setResolution(100);
-        predictedConfiguration = generatePredictionString(100,3.0,300.0,3);
+        clk.setResolution(100.0);
+        predictedConfiguration = generatePredictionString(100.0,3.0,300.0,3);
         actualResult = clk.getConfiguration();
         assert (clk.getConfiguration().equals(predictedConfiguration));
     }
@@ -124,14 +127,14 @@ class WorldClockTest {
         double acceptablePercentage = 0.1;
 
         // periods of milliseconds to test
-        // We will hold resolution constant, adjust ratio as needed to achieve period
+        // We will hold resolution constant (20 per Wsecond,) adjust ratio as needed to achieve period
         int[] periods = {3,5,20,30,100,160,200,1000};
-        int resolution = 20;
+        double resolution = 20.0;
         double ratio;
 
         for (int period : periods) {
             // Calculate appropriate period to yield desired period in milliseconds
-            ratio = 1000 / ( (double) period * (double) resolution);
+            ratio = 1000 / ( (double) period * resolution);
             clk = new WorldClock(resolution, ratio);
             measuredTime = measureOnePeriod();
             isAbout(measuredTime, clk.getMilliseconds(), acceptablePercentage);
@@ -139,11 +142,11 @@ class WorldClockTest {
         //System.out.println("Total time waited: %d milliseconds".formatted(endTime-startTime));
     }
 
-    public String generatePredictionString(int resolution, double ratio, double updates, int milliSec) {
+    public String generatePredictionString(double resolution, double ratio, double updates, int milliSec) {
         /**
          * Helper function for generating Hard-Coded results into the WorldClock Configuration string
          */
-        String predictedConfiguration =    "resolution %d updates/WS\n".formatted(resolution) +
+        String predictedConfiguration =    "resolution %.1f updates/WS\n".formatted(resolution) +
                                             "ratio %.1f WS/RS \n".formatted(ratio) +
                                             "%.1f updates per RS \n".formatted(updates)  +
                                             "%d milliseconds per update".formatted(milliSec);
@@ -163,8 +166,15 @@ class WorldClockTest {
         int errorBound = (int) (criterion * expected);
         int upperBound = expected + errorBound;
         int lowerBound = expected - errorBound;
+
+        // Within percentage-acceptable range
+        // Within HardAccept-acceptable range
+        // not within acceptable range
         if (reality >= lowerBound && reality <= upperBound) {
-            System.out.println("%d is acceptably close to %d, within %.0f%% (+-%d)".formatted(reality, expected, criterion*100, errorBound));
+            System.out.println("%d is acceptably close to %d, within %.0f%% (+-%d)".formatted(reality, expected, criterion * 100, errorBound));
+            return true;
+        } else if (reality >= expected - HardAccept && reality <= expected + HardAccept) {
+            System.out.println("%d is acceptably close to %d, within HardAccept boundary (+-%d)".formatted(reality, expected, HardAccept));
             return true;
         } else {
             System.out.println("%d is NOT acceptably close to %d, within %.0f%% (+-%d)".formatted(reality, expected, criterion*100, errorBound));

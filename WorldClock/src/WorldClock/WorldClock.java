@@ -21,14 +21,14 @@ public class WorldClock extends Thread {
      * updatesPerWorldSecond: number of updates per World Second to obtain appropriate physics resolution within simulation time
      * updatesPerRealSecond: number of updates that must occur per an actual second, derived
      */
-    private final int MAX_ALLOWABLE_RESOLUTION = 100;
+    private final double MAX_ALLOWABLE_RESOLUTION = 100.000;
     private final double MAX_ALLOWABLE_RATIO = 20.000;
     private final double MIN_ALLOWABLE_RATIO = 00.001;
-    private final int DEFAULT_RESOLUTION = 10;
+    private final double DEFAULT_RESOLUTION = 10.000;
     private final double DEFAULT_RATIO = 01.000;
     private final int QUICK_ADVANCE_PERIODS = 1000;
 
-    private int resolution = DEFAULT_RESOLUTION;
+    private double resolution = DEFAULT_RESOLUTION;
     private double ratio = DEFAULT_RATIO;
 
     private double updatesPerRealSecond;
@@ -45,7 +45,7 @@ public class WorldClock extends Thread {
     }
 
 
-    public WorldClock(int resolution, double ratio) {
+    public WorldClock(double resolution, double ratio) {
         // assert: default ratio will be used when setting resolution, then correct ratio will be used when setting ratio
         //  (both resolution and ratio call configure() upon completion)
         setResolution(resolution);
@@ -57,14 +57,14 @@ public class WorldClock extends Thread {
         /**
          * recalculates configuration-parameters for how often to update, used when a parameter value has changed.
          */
-        updatesPerRealSecond        = (double) resolution * ratio;              // U/WS * WS/RS = U/RS
+        updatesPerRealSecond        = resolution * ratio;                       // U/WS * WS/RS = U/RS
         realSecondsPerUpdate        = 1.0 / updatesPerRealSecond;               // 1/(U/RS) = RS/U
         milliseconds                = (int) (1000 * realSecondsPerUpdate);      // RS/U * (1000 Milliseconds / 1 sec) = mRS/U
         microseconds                = milliseconds * 1000 - 500;                // allows us to wait half a millisecond less than intended
     }
 
 
-    public boolean setResolution(int resolution) {
+    public boolean setResolution(double resolution) {
         /**
          * Sets the resolution for the clock as physics-updates per Simulation-World Second.
          * Shall filter for maximum resolution (MAX_ALLOWABLE_RESOLUTION) and minimum resolution (1)
@@ -145,7 +145,7 @@ public class WorldClock extends Thread {
         try {
             TimeUnit.MICROSECONDS.sleep(microseconds);
             //TimeUnit.MILLISECONDS.sleep(milliseconds);
-            System.out.println("tick");
+            //System.out.println("tick");
         } catch (Exception e) {
             System.out.println("Clock failed while advancing a single period");
             e.printStackTrace();
@@ -171,14 +171,14 @@ public class WorldClock extends Thread {
         /**
          * Generates debugging string about the current configurations of the World Clock attributes
          */
-        String reportString =   "resolution %d updates/WS\n".formatted(resolution) +
+        String reportString =   "resolution %.1f updates/WS\n".formatted(resolution) +
                                 "ratio %.1f WS/RS \n".formatted(ratio) +
                                 "%.1f updates per RS \n".formatted(updatesPerRealSecond)  +
                                 "%d milliseconds per update".formatted(milliseconds) ;
         return reportString;
     }
 
-    public int getResolution() {return resolution;}
+    public double getResolution() {return resolution;}
     public double getRatio() {return ratio;}
     public int getMilliseconds() {return milliseconds;}
     public double getSeconds() {return realSecondsPerUpdate;}
