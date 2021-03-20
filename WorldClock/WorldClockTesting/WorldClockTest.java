@@ -69,7 +69,7 @@ class WorldClockTest {
     }
 
     @Test
-    @DisplayName("Clock calculates the correct wait periods from a given ratio or resolution from setters and default constructor")
+    @DisplayName("Clock calculates the correct configurations from a given ratio or resolution from setters and default constructor")
     void testSetterAndDefaultConstructor() {
         String predictedConfiguration;
         String actualResult;
@@ -128,7 +128,7 @@ class WorldClockTest {
 
         // periods of milliseconds to test
         // We will hold resolution constant (20 per Wsecond,) adjust ratio as needed to achieve period
-        int[] periods = {3,5,20,30,100,160,200,1000};
+        int[] periods = {3,5,10,20,30,80,100,160,200,1000};
         double resolution = 20.0;
         double ratio;
 
@@ -142,9 +142,17 @@ class WorldClockTest {
         //System.out.println("Total time waited: %d milliseconds".formatted(endTime-startTime));
     }
 
+
+    /*
+
+    Utility Functions
+
+     */
+
+
     public String generatePredictionString(double resolution, double ratio, double updates, int milliSec) {
         /**
-         * Helper function for generating Hard-Coded results into the WorldClock Configuration string
+         * generates configurationString with Hard-Coded values (same format as expected from WorldClock Configuration string)
          */
         String predictedConfiguration =    "resolution %.1f updates/WS\n".formatted(resolution) +
                                             "ratio %.1f WS/RS \n".formatted(ratio) +
@@ -171,13 +179,13 @@ class WorldClockTest {
         // Within HardAccept-acceptable range
         // not within acceptable range
         if (reality >= lowerBound && reality <= upperBound) {
-            System.out.println("%d is acceptably close to %d, within %.0f%% (+-%d)".formatted(reality, expected, criterion * 100, errorBound));
+            System.out.println("%dms is acceptably close to %dms, within %.0f%% (+-%d)".formatted(reality, expected, criterion * 100, errorBound));
             return true;
         } else if (reality >= expected - HardAccept && reality <= expected + HardAccept) {
-            System.out.println("%d is acceptably close to %d, within HardAccept boundary (+-%d)".formatted(reality, expected, HardAccept));
+            System.out.println("%dms is acceptably close to %dms, within HardAccept boundary (+-%d)".formatted(reality, expected, HardAccept));
             return true;
         } else {
-            System.out.println("%d is NOT acceptably close to %d, within %.0f%% (+-%d)".formatted(reality, expected, criterion*100, errorBound));
+            System.out.println("%dms is NOT acceptably close to %dms, within %.0f%% (+-%d)".formatted(reality, expected, criterion*100, errorBound));
             return false;
         }
     }

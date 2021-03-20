@@ -10,6 +10,24 @@ public class WorldClock extends Thread {
      * - World Second: a single second of the Simulation World's Time
      * - Real Second: a single second from the real world
      */
+    /**
+     * Example settings:
+     * resolution:
+     *      In the simulation world....
+     *      1.0: physics get updated once per simulation second
+     *      2.0: physics get updated twice per simulated second
+     *      50.0: physics get updated fifty-times per simulated second (excessive)
+     *      0.5: physics get updated one per two simulation seconds
+     *      0.3: physics get updated about once per three simulation seconds
+     *      0.0166: (i.e. 1/60) physics get updated about once per every simulation minute
+     *
+     * ratio:
+     *      For every one-second in the real world...
+     *      1.0: one simulation-second also passes
+     *      2.0: two simulation-seconds pass
+     *      10.0: ten simulation-seconds pass
+     *      0.1: a tenth of a simulation-second passes
+     */
 
     /**
      * Class Members
@@ -21,7 +39,9 @@ public class WorldClock extends Thread {
      * updatesPerWorldSecond: number of updates per World Second to obtain appropriate physics resolution within simulation time
      * updatesPerRealSecond: number of updates that must occur per an actual second, derived
      */
+
     private final double MAX_ALLOWABLE_RESOLUTION = 100.000;
+    private final double MIN_ALLOWABLE_RESOLUTION = 0.001;
     private final double MAX_ALLOWABLE_RATIO = 20.000;
     private final double MIN_ALLOWABLE_RATIO = 00.001;
     private final double DEFAULT_RESOLUTION = 10.000;
@@ -138,6 +158,8 @@ public class WorldClock extends Thread {
     public void once() {
         /**
          * Traverses one period of clock-tick, useful for testing.
+         * We intend for a period to last n milliseconds, but we implement it in microseconds to allow
+         *  us to wait n-0.5 milliseconds, to allow for system calls and other time consuming things
          *
          * @before nothing
          * @after exactly one period ("milliseconds" milliseconds of real time) has been waited
