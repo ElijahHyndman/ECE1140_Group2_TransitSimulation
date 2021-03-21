@@ -122,8 +122,7 @@ public class WorldClock extends Thread {
 
 
     public void configure() {
-        /**
-         * recalculates configuration-parameters for how often to update, used when a parameter value has changed.
+        /**recalculates configuration-parameters for how often to update, used when a parameter value has changed.
          */
         worldSecondsPerUpdate       = 1.0 / resolution;                         // 1/(U/WS) = WS/U
         updatesPerRealSecond        = resolution * ratio;                       // U/WS * WS/RS = U/RS
@@ -134,8 +133,7 @@ public class WorldClock extends Thread {
 
 
     public boolean setResolution(double resolution) {
-        /**
-         * Sets the resolution for the clock as physics-updates per Simulation-World Second.
+        /**sets the resolution for the clock as physics-updates per Simulation-World Second.
          * Shall filter for maximum resolution (MAX_ALLOWABLE_RESOLUTION) and minimum resolution (1)
          *
          * @param resolution number of physics-updates per each Simulation-World Second
@@ -160,8 +158,7 @@ public class WorldClock extends Thread {
 
 
     public boolean setRatio(double ratio) {
-        /**
-         * Sets the ratio of Simulation-World Seconds which will occur per each Real-World Second, a faster simulation speed
+        /**sets the ratio of Simulation-World Seconds which will occur per each Real-World Second, a faster simulation speed
          * means more Simulation-World Seconds per each Real-World Second.
          * Shall filter for maximum speed (MAX_ALLOWABLE_RATIO) and minimum speed (MIN_ALLOWABLE_RATIO)
          *
@@ -188,8 +185,7 @@ public class WorldClock extends Thread {
 
     @Override
     public void run() {
-        /**
-         * Runs the World Clock, calls appropriate update function on physics objects.
+        /**runs the World Clock, calls appropriate update function on physics objects.
          * Shall run on a new thread, so while(true) loop does not affect program execution
          *
          * @before time is not advancing, clock is still
@@ -206,9 +202,21 @@ public class WorldClock extends Thread {
     }
 
 
+    public void halt() {
+        /**halts the ticking of the clock.
+         * halt shall affect the while loop in run(), this function is called by the user who exists on another thread.
+         * The user updates the "ticking" member from their thread, which affects the loop execution on the clock's thread.
+         *
+         * @before clock may or may not be running.
+         * @after clock is definitely not running
+         */
+        ticking = false;
+        System.out.println("Clock has halted ticking");
+    }
+
+
     public void once() {
-        /**
-         * Traverses one period of clock-tick, useful for testing. Updates current time.
+        /**traverses one period of clock-tick, useful for testing. Updates current time.
          * We intend for a period to last n milliseconds, but we implement it in microseconds to allow
          *  us to wait n-0.5 milliseconds, to allow for system calls and other time consuming things
          * Raises the update-indication flag
@@ -240,23 +248,8 @@ public class WorldClock extends Thread {
     }
 
 
-    public void halt() {
-        /**
-         * Halts the ticking of the clock.
-         * halt shall affect the while loop in run(), this function is called by the user who exists on another thread.
-         * The user updates the "ticking" member from their thread, which affects the loop execution on the clock's thread.
-         *
-         * @before clock may or may not be running.
-         * @after clock is definitely not running
-         */
-        ticking = false;
-        System.out.println("Clock has halted ticking");
-    }
-
-
     public String getConfiguration() {
-        /**
-         * Generates debugging string about the current configurations of the World Clock attributes
+        /**generates debugging string about the current configurations of the World Clock attributes
          *
          * @return String formatted string filled with most relevant configuration values, plain english
          */

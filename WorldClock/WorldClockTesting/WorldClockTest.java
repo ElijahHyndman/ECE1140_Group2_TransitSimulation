@@ -190,13 +190,13 @@ class WorldClockTest {
         String actualTime;
         boolean stringsMatch;
         System.out.println("This one keeps the ratio the same (one simulation-world second passes per each one real-world second)");
-        System.out.println("But the physics updates happen more or less frequently per one Simulation-World-Second.");
+        System.out.println("But the physics updates happen more or less frequently per one Simulation-World-Second.\n");
 
 
         /*
         Updates happen once every World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("One physics-updates per Simulation-World Second (is same as Real-World Second)");
+        System.out.println("\nOne physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(1.0,1.0);
         String[] expectedTimes = {  "00:00:00",
                                     "00:00:01",
@@ -229,7 +229,7 @@ class WorldClockTest {
         /*
         Updates happen every half World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("Two physics-updates per Simulation-World Second (is same as Real-World Second)");
+        System.out.println("\nTwo physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(2.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
         String[] expectedTimes1 = { "00:00:00","00:00:00",
@@ -263,7 +263,7 @@ class WorldClockTest {
         /*
         Updates happen every one-third World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("Four physics-updates per Simulation-World Second (is same as Real-World Second)");
+        System.out.println("\nFour physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(4.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
         String[] expectedTimes2 = { "00:00:00","00:00:00","00:00:00","00:00:00",
@@ -273,7 +273,7 @@ class WorldClockTest {
                                     "00:00:04","00:00:04","00:00:04","00:00:04"};
         index = 0;
         clk.start();
-        while(index<expectedTimes1.length) {
+        while(index<expectedTimes2.length) {
             try {
                 // Checking the getFlag() method too fast gives bad results
                 //TimeUnit.MICROSECONDS.sleep(1);
@@ -304,8 +304,7 @@ class WorldClockTest {
 
 
     public String generatePredictionString(double resolution, double ratio, double updates, int milliSec) {
-        /**
-         * generates configurationString with Hard-Coded values (same format as expected from WorldClock Configuration string)
+        /**generates configurationString with Hard-Coded values (same format as expected from WorldClock Configuration string)
          */
         String predictedConfiguration =    "resolution %.1f updates/WS\n".formatted(resolution) +
                                             "ratio %.1f WS/RS \n".formatted(ratio) +
@@ -315,8 +314,7 @@ class WorldClockTest {
     }
 
     public boolean isAbout(int reality, int expected,  double criterion) {
-        /**
-         * assesses whether reality value is acceptably close to expected.
+        /** assesses whether reality value is acceptably close to expected.
          *
          * @param expected the value you calculated should occur in the measurement
          * @param reality the actual value you measure from the measurement
@@ -344,8 +342,7 @@ class WorldClockTest {
     }
 
     public int measureOnePeriod() {
-        /**
-         * measures the elapsed time in one period of the clk WorldClock object.
+        /** measures the elapsed time in one period of the clk WorldClock object.
          * @return int number of milliseconds that clk.once() has mesured to take
          * @before clk must exist and be a valid WorldClock object, should be configured with desired ratio and resolution before
          * @after clk has progressed one period
