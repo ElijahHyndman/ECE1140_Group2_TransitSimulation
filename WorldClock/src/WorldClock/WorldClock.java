@@ -103,7 +103,7 @@ public class WorldClock extends Thread {
 
 
     // Useful variables
-    public boolean flag;
+    volatile public boolean flag;
     private boolean tick = false;
 
 
@@ -274,7 +274,7 @@ public class WorldClock extends Thread {
         flag = false;
     }
     public boolean getFlag() {
-        //System.out.println("User measured flag, its value is %b".formatted(flag));
+        //System.out.printf(flag ? "t" : "");
         return flag;
     }
     public void setTickingDebug(boolean willTick) {

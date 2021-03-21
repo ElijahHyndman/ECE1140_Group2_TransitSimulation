@@ -23,6 +23,8 @@ class WorldClockTest {
     void tearDown() {
     }
 
+
+
     @Test
     @DisplayName("Clock calculates the correct wait periods from a given ratio and resolution in the constructor")
     void testParameterizedConstructor() {
@@ -74,6 +76,8 @@ class WorldClockTest {
         actualResult = clk.getConfiguration();
         assertEquals(true,actualResult.equals(predictedConfiguration));
     }
+
+
 
     @Test
     @DisplayName("Clock calculates the correct configurations from a given ratio or resolution from setters and default constructor")
@@ -146,6 +150,8 @@ class WorldClockTest {
         assertEquals(true,actualResult.equals(predictedConfiguration));
     }
 
+
+
     @Test
     @DisplayName("One measured Clock-Period correctly matches predicted single-period")
     void correctTimePeriod() {
@@ -169,6 +175,7 @@ class WorldClockTest {
     }
 
 
+
     @Test
     @DisplayName("Clock gives the expected HH:mm:ss string")
     void clockGivesCurrentTime() {
@@ -177,18 +184,19 @@ class WorldClockTest {
             Simulation-World Time has only changed by a few milliseconds, which won't show up on the
             HH:mm:ss time format because it's too small
         * */
+        // ratio=1.0: Set clock so World Seconds match Real Seconds (resolution is whatever, ratio is 1)
+        // expectedTimes: List of "hand calculated" timeoutput strings, in correct sequence
         String expectedTime;
         String actualTime;
         boolean stringsMatch;
         System.out.println("This one keeps the ratio the same (one simulation-world second passes per each one real-world second)");
         System.out.println("But the physics updates happen more or less frequently per one Simulation-World-Second.");
 
+
         /*
         Updates happen once every World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-
-        // Set clock so World Seconds match Real Seconds (resolution is whatever, ratio is 1)
-        // expectedTimes: List of "hand calculated" timeoutput strings, in correct sequence
+        System.out.println("One physics-updates per Simulation-World Second (is same as Real-World Second)");
         clk = new WorldClock(1.0,1.0);
         String[] expectedTimes = {  "00:00:00",
                                     "00:00:01",
@@ -201,9 +209,8 @@ class WorldClockTest {
         while(index<expectedTimes.length) {
             try {
                 // Checking the getFlag() method too fast gives bad results
-                TimeUnit.MILLISECONDS.sleep(1);
                 // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
-                updateHappened = clk.flag;//getFlag();
+                updateHappened = clk.getFlag();
 
                 // If update happened
                 if (updateHappened) {
@@ -211,8 +218,7 @@ class WorldClockTest {
                     expectedTime = expectedTimes[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
-                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
-                    index++;
+                    System.out.println("Physics-Update %d : Expected Time (%s) matches reported time (%s)".formatted(index+1,expectedTime,actualTime));index++;
                     clk.lowerFlag();
                 }
             } catch (Exception e) {/*Do Nothing*/}
@@ -223,7 +229,7 @@ class WorldClockTest {
         /*
         Updates happen every half World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-
+        System.out.println("Two physics-updates per Simulation-World Second (is same as Real-World Second)");
         clk = new WorldClock(2.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
         String[] expectedTimes1 = { "00:00:00","00:00:00",
@@ -236,9 +242,8 @@ class WorldClockTest {
         while(index<expectedTimes1.length) {
             try {
                 // Checking the getFlag() method too fast gives bad results
-                TimeUnit.MILLISECONDS.sleep(1);
                 // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
-                updateHappened = clk.flag;//getFlag();
+                updateHappened = clk.getFlag();
 
                 // If update happened
                 if (updateHappened) {
@@ -246,7 +251,7 @@ class WorldClockTest {
                     expectedTime = expectedTimes1[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
-                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
+                    System.out.println("Physics-Update %d : Expected Time (%s) matches reported time (%s)".formatted(index+1,expectedTime,actualTime));
                     index++;
                     clk.lowerFlag();
                 }
@@ -258,22 +263,22 @@ class WorldClockTest {
         /*
         Updates happen every one-third World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-
-        clk = new WorldClock(3.0,1.0);
+        System.out.println("Four physics-updates per Simulation-World Second (is same as Real-World Second)");
+        clk = new WorldClock(4.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
-        String[] expectedTimes2 = { "00:00:00","00:00:00","00:00:00",
-                                    "00:00:01","00:00:01","00:00:01",
-                                    "00:00:02","00:00:02","00:00:02",
-                                    "00:00:03","00:00:03","00:00:03",
-                                    "00:00:04","00:00:04","00:00:04"};
+        String[] expectedTimes2 = { "00:00:00","00:00:00","00:00:00","00:00:00",
+                                    "00:00:01","00:00:01","00:00:01","00:00:01",
+                                    "00:00:02","00:00:02","00:00:02","00:00:02",
+                                    "00:00:03","00:00:03","00:00:03","00:00:03",
+                                    "00:00:04","00:00:04","00:00:04","00:00:04"};
         index = 0;
         clk.start();
         while(index<expectedTimes1.length) {
             try {
                 // Checking the getFlag() method too fast gives bad results
-                TimeUnit.MICROSECONDS.sleep(1);
+                //TimeUnit.MICROSECONDS.sleep(1);
                 // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
-                updateHappened = clk.flag;//getFlag();
+                updateHappened = clk.getFlag();
 
                 // If update happened
                 if (updateHappened) {
@@ -281,8 +286,7 @@ class WorldClockTest {
                     expectedTime = expectedTimes2[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
-                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
-                    index++;
+                    System.out.println("Physics-Update %d : Expected Time (%s) matches reported time (%s)".formatted(index+1,expectedTime,actualTime));index++;
                     clk.lowerFlag();
                 }
             } catch (Exception e) {/*Do Nothing*/}
