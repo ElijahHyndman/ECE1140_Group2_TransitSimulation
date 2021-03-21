@@ -19,20 +19,11 @@ import java.util.Scanner;
         boolean TRACK_HEATER;
         int SIZE_LINE_A =0;
         int SIZE_LINE_B=0;
-        String lineA;
-        String lineB;
         double environmentalTemperature;
 
         //Creating Graphs for RED LINE and GREEN LINE
         ArrayList<TrackElement> redTrack;
         ArrayList<TrackElement> greenTrack;
-
-        //arrayList
-        ArrayList<Double> trainsLength;
-        ArrayList<Double> blocksLength;
-
-        //Need to load in more here
-        String redLineCheck = "Red";
 
         //Constructor Methhod
         public Track() {
@@ -77,8 +68,6 @@ import java.util.Scanner;
                     //Parsing File into components
 
                     String line = sc.next();
-                    if(count == 14)
-                        lineA = line; //Grabbing the name of the first line
                     char section = sc.next().charAt(0);
                     int blockNum = Integer.parseInt(sc.next());
                     double length = Double.parseDouble(sc.next());
@@ -95,16 +84,16 @@ import java.util.Scanner;
 
 
                     //Collecting Size information
-                    if(line.equals(lineA))
+                    if(line.equals("Red"))
                         SIZE_LINE_A ++;
                     else {
-                        lineB = line;
                         SIZE_LINE_B ++;
                     }
 
                     //For Yard
                     if(infrastructure.length()>3 && infrastructure.substring(0,3).equals("YARD")){
-                        Station Test = new Station(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
+                        TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
+
 
                         blockArrayList.add(Test);
                         redTrack.add(Test);
@@ -120,7 +109,7 @@ import java.util.Scanner;
                         stationsArrayList.add(Test);
                         blockArrayList.add(Test);
 
-                        if(line.equals(redLineCheck))
+                        if(line.equals("Red"))
                             redTrack.add(Test);
                         else
                             greenTrack.add(Test);
@@ -131,7 +120,7 @@ import java.util.Scanner;
                         switchesArrayList.add(Test);
                         blockArrayList.add(Test);
 
-                        if(line.equals(redLineCheck))
+                        if(line.equals("Red"))
                             redTrack.add(Test);
                         else
                             greenTrack.add(Test);
@@ -140,8 +129,11 @@ import java.util.Scanner;
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
 
-                        if(line.equals(redLineCheck))
+                        if(line.equals("Red")) {
+                            if (redTrack.size() == 0)
+                                redTrack.add(greenTrack.get(0)); // for whatever reason doesn't get assigned earlier
                             redTrack.add(Test);
+                        }
                         else
                             greenTrack.add(Test);
 
@@ -178,13 +170,16 @@ import java.util.Scanner;
 
         public ArrayList<TrackElement> getGreenLine(){return greenTrack;}
 
+        public ArrayList<TrackElement> getRedLine() {return redTrack;}
+
 
 
         /*Get block - ALL BLOCKS from ALL LINES */
         public TrackElement getBlock(int a){
-            if(a > 0 && a < blockArrayList.size()+1){
-                return blockArrayList.get(a-1);
+            if(a >= 0 && a < blockArrayList.size()+1){
+                return blockArrayList.get(a);
             }
+
             return null;
         }
 
@@ -192,13 +187,13 @@ import java.util.Scanner;
         public TrackElement getBlockLine(int blockNum, String line){
 
             TrackElement temp = null;
-            if(line.equals(lineA)) {
-                if(blockNum >0 && blockNum <= SIZE_LINE_A)
-                    temp = blockArrayList.get(blockNum-1);
+            if(line.equals("Red")) {
+                if(blockNum >=0 && blockNum <= SIZE_LINE_A)
+                    temp = redTrack.get(blockNum);
             }
-            else if(line.equals(lineB)) {
-                if(blockNum >0 && blockNum <= SIZE_LINE_B)
-                    temp = blockArrayList.get(blockNum+SIZE_LINE_A-1);
+            else if(line.equals("Green")) {
+                if(blockNum >=0 && blockNum <= SIZE_LINE_B)
+                   temp =  greenTrack.get(blockNum);
             }
             return temp;
 
@@ -240,11 +235,11 @@ import java.util.Scanner;
 
             if(Failure >= 0 && Failure <= 3) {
                 //to check if block is line A
-                if(line.equals(lineA) && blockNum <= SIZE_LINE_A) {
+                if(line.equals("Red") && blockNum <= SIZE_LINE_A) {
                     blockArrayList.get(blockNum-1).setFailureStatus(Failure);
                     //Check if already in failure if not add to failure array list
                     for (int i = 0; i < failureArrayList.size(); i++)  {
-                        if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals(lineA)) {
+                        if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals("Red")) {
                             contains = true;
                             location = i;
                         }
@@ -261,11 +256,11 @@ import java.util.Scanner;
                             failureArrayList.remove(location);
                     }
                 }
-                else if (line.equals(lineB) && blockNum <= SIZE_LINE_B){
+                else if (line.equals("Green") && blockNum <= SIZE_LINE_B){
                     blockArrayList.get(SIZE_LINE_A+blockNum-1).setFailureStatus(Failure);
 
                     for (int i = 0; i < failureArrayList.size(); i++)  {
-                        if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals(lineB)) {
+                        if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals("Green")) {
                             contains = true;
                             location = i;
                         }
@@ -295,13 +290,6 @@ import java.util.Scanner;
             return blockArrayList.toString();
         }
 
-        String printStations(){
-            return stationsArrayList.toString();
-        }
-
-        String printSwitches(){
-            return switchesArrayList.toString();
-        }
 
 
 
