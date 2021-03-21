@@ -38,7 +38,7 @@ public class MakeImage {
 
 
 
-            File file = new File("./src/images/image.png");
+            File file = new File("image.png");
             ImageIO.write(bufferedImage, "png", file);
         }
 }
