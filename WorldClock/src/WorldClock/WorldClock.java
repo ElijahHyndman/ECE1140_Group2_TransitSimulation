@@ -11,6 +11,20 @@ public class WorldClock extends Thread {
      * Definitions:
      * - World Second: a single second of the Simulation World's Time
      * - Real Second: a single second from the real world
+     *
+     * Main Ideas:
+     * -World Time is Typically faster than Real Time
+     * @ergo World Seconds are typically shorter than real seconds
+     *  @ergo many World Seconds occur per-each Real Second
+     *      @ergo member "ratio" is typically greater than 1.0
+     * -"resolution" does not affect how much faster the Simulation World is than the real world
+     * @ergo when you want to speed up the simulation, you don't need to change resolution
+     * -"resolution" affects the amount of World Time that passes before another physics update happens
+     * -both "resolution" and "ratio", while changing independent things about the simulation-world timing, are both
+     *      used to calculate real-world timing (real world frequency)
+     * @further "resolution" and "ratio" together determine the Real Seconds we wait until the next update
+     * -The clock can only update so fast
+     * @ergo don't set the "ratio" and "resolution" too high
      */
     /**
      * Example settings:
@@ -32,12 +46,12 @@ public class WorldClock extends Thread {
      */
 
     /**
-     * Class Members
+     * Class Members:
      * @member resolution   number of updates per Simulation Second
      * @member ratio        number of World Seconds per Real Second (A sped up simulation means more World Seconds per each Real Second)
      * @member ticking      tracks whether the clock is ticking, used to halt clock from thread
      *
-     * Derived Members
+     * Derived Members:
      * updatesPerRealSecond: number of physics-updates that must occur per an actual second, derived
      * realSecondsPerUpdate: fraction of a real second which a single physics-update's period (1/frequency) will occupy
      * worldSecodnsPerUpdate: fraction of a simulation second which a single physics-update's period will occupy
@@ -47,7 +61,7 @@ public class WorldClock extends Thread {
      *                  time, which allows us to account for system calls and other delays when waiting
      */
     // Clock-Pace Variables
-    private final double MAX_ALLOWABLE_RESOLUTION = 100.000;
+    private final double MAX_ALLOWABLE_RESOLUTION = 50.000;
     private final double MIN_ALLOWABLE_RESOLUTION = 0.001;
     private final double MAX_ALLOWABLE_RATIO = 20.000;
     private final double MIN_ALLOWABLE_RATIO = 00.001;
@@ -67,16 +81,17 @@ public class WorldClock extends Thread {
     private boolean ticking = false;
 
     /**
-     * Class Clock Members
+     * Class Clock Members:
      * @member hourFormat                   date format that turns date into formatted string of hour, minutes, seconds
      * @member currentTimeInMilliseconds    current time in Simulation World in milliseconds, used for setting date using "Date.setTime(int milliseconds)"
      * @member currentDate                  date object used for tracking the time, used by hourFormat to generate Time String
+     *
+     *
+     * @assert: Date is set at January 1, 1970 00:00:00 GMT, will not affect calculations since we only show date as hours.
+     * @assert: Date defined at 0 millisec corresponds to 19:00:00 for some reason, therefore getting time 00:00:00 is five-hours of milliseconds after 19:00:00
      */
     // Clock-Time variables
-    // Assert: Date is set at January 1, 1970 00:00:00 GMT,
-    // will not affect calculations since we only show date as hours.
-    // Assert: Date defined by 0 millisec typically starts at 19:00:00 for some reason,
-    // therefore getting time 00:00:00 is five-hours of milliseconds after 19:00:00
+    // Assert:
     private final int SECOND_MILLISECONDS = 1000;
     private final int MINUTE_MILLISECONDS = 60000;
     private final int HOUR_MILLISECONDS = 3600000;
@@ -86,6 +101,10 @@ public class WorldClock extends Thread {
     private int currentTimeInMilliseconds = TIME_ZERO;
     Date currentDate = new Date(currentTimeInMilliseconds);
 
+
+    // Useful variables
+    public boolean flag;
+    private boolean tick = false;
 
 
     public WorldClock() {
@@ -180,6 +199,7 @@ public class WorldClock extends Thread {
         System.out.println("Clock has started ticking");
         ticking = true;
         while (ticking) {
+                flag = true;
                 // Traverse for period once per loop
                 once();
         }
@@ -191,11 +211,14 @@ public class WorldClock extends Thread {
          * Traverses one period of clock-tick, useful for testing. Updates current time.
          * We intend for a period to last n milliseconds, but we implement it in microseconds to allow
          *  us to wait n-0.5 milliseconds, to allow for system calls and other time consuming things
+         * Raises the update-indication flag
          *
          * Waits "milliseconds" real seconds, which traverses "worldSecondsPerUpdate" world seconds
          * @before nothing
          * @after exactly one period ("milliseconds" milliseconds of real time) has been waited
          * @after an update has occurred
+         * @after the update-indication flag has been set
+         *          - if flag was lowered before this update, then user can determine that time-update has occurred
          */
         try {
             // Traverse one period
@@ -204,6 +227,12 @@ public class WorldClock extends Thread {
             // Update current time
             currentTimeInMilliseconds += 1000 * worldSecondsPerUpdate;
             currentDate.setTime(currentTimeInMilliseconds);
+
+            // Lift indication flag
+            //setFlag();
+            //flag = true;
+
+            if(tick) System.out.println("tick, flag is %b".formatted(flag));
         } catch (Exception e) {
             System.out.println("Clock failed while advancing a single period");
             e.printStackTrace();
@@ -238,11 +267,32 @@ public class WorldClock extends Thread {
         return reportString;
     }
 
+    public void setFlag() {
+        flag = true;
+    }
+    public void lowerFlag() {
+        flag = false;
+    }
+    public boolean getFlag() {
+        //System.out.println("User measured flag, its value is %b".formatted(flag));
+        return flag;
+    }
+    public void setTickingDebug(boolean willTick) {
+        tick = willTick;
+    }
     public String getTime() {
         return hourFormat.format(currentDate);
     }
-    public double getResolution() {return resolution;}
-    public double getRatio() {return ratio;}
-    public int getMilliseconds() {return milliseconds;}
-    public double getSeconds() {return realSecondsPerUpdate;}
+    public double getResolution() {
+        return resolution;
+    }
+    public double getRatio() {
+        return ratio;
+    }
+    public int getMilliseconds() {
+        return milliseconds;
+    }
+    public double getSeconds() {
+        return realSecondsPerUpdate;
+    }
 }

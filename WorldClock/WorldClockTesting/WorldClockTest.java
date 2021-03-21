@@ -2,7 +2,12 @@ import WorldClock.WorldClock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+//import static org.junit.jupiter.api.Assertions.*;
 
 class WorldClockTest {
     WorldClock clk;
@@ -34,19 +39,19 @@ class WorldClockTest {
         predictedConfiguration = generatePredictionString(1.0,1.0,1.0,1000);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         resolution = 2.0;
         predictedConfiguration = generatePredictionString(2.0,1.0,2.0,500);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         resolution = 3.0;
         predictedConfiguration = generatePredictionString(3.0,1.0,3.0,333);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         // New Ratio
         ratio = 2.0;
@@ -55,19 +60,19 @@ class WorldClockTest {
         predictedConfiguration = generatePredictionString(1.0,2.0,2.0,500);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         resolution = 2.0;
         predictedConfiguration = generatePredictionString(2.0,2.0,4.0,250);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         resolution = 3.0;
         predictedConfiguration =    generatePredictionString(3.0,2.0,6.0,166);
         clk = new WorldClock(resolution, ratio);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
     }
 
     @Test
@@ -80,46 +85,65 @@ class WorldClockTest {
         clk = new WorldClock();
         predictedConfiguration = generatePredictionString(10.0, 1.0, 10.0, 100);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         // Note: MIN_ALLOWABLE_RATIO
         clk.setRatio(0.001);
         predictedConfiguration = generatePredictionString(10.0,0.0,0.0,100000);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         clk.setRatio(2.0);
         predictedConfiguration = generatePredictionString(10.0,2.0,20.0,50);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         // Note: MAX_ALLOWABLE_RATIO
         clk.setRatio(20.0);
         predictedConfiguration = generatePredictionString(10.0,20.0,200.0,5);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         clk.setRatio(3.0);
         predictedConfiguration = generatePredictionString(10.0,3.0,30.0,33);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
+
 
         // Remember: Ratio was last configured to 3.0
         clk.setResolution(2.0);
         predictedConfiguration = generatePredictionString(2.0,3.0,6.0,166);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         clk.setResolution(4.0);
         predictedConfiguration = generatePredictionString(4.0,3.0,12.0,83);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
+
+        // NOTE: Min allowable resolution
+        clk.setResolution(0.001);
+        predictedConfiguration = generatePredictionString(0.001,3.0,0.003,333333);
+        actualResult = clk.getConfiguration();
+        assertEquals(true,actualResult.equals(predictedConfiguration));
+
+        // NOTE: Below min allowable resolution
+        clk.setResolution(0.001);
+        predictedConfiguration = generatePredictionString(0.001,3.0,0.003,333333);
+        actualResult = clk.getConfiguration();
+        assertEquals(true,actualResult.equals(predictedConfiguration));
 
         // NOTE: Max allowable resolution
-        clk.setResolution(100.0);
-        predictedConfiguration = generatePredictionString(100.0,3.0,300.0,3);
+        clk.setResolution(50.0);
+        predictedConfiguration = generatePredictionString(50.0,3.0,150.0,6);
         actualResult = clk.getConfiguration();
-        assert (clk.getConfiguration().equals(predictedConfiguration));
+        assertEquals(true,actualResult.equals(predictedConfiguration));
+
+        // NOTE: ABOVE max allowable resolution
+        clk.setResolution(100.0);
+        predictedConfiguration = generatePredictionString(50.0,3.0,150.0,6);
+        actualResult = clk.getConfiguration();
+        assertEquals(true,actualResult.equals(predictedConfiguration));
     }
 
     @Test
@@ -146,17 +170,124 @@ class WorldClockTest {
 
 
     @Test
-    @DisplayName("")
+    @DisplayName("Clock gives the expected HH:mm:ss string")
     void clockGivesCurrentTime() {
-        clk = new WorldClock(1.0,1.0);
-        clk.start();
-        while(true)
-            try {
-                TimeUnit.SECONDS.sleep(1);
-                System.out.println(clk.getTime());
-            } catch (Exception e) {
+        /* Note: For most of these updates, a physics update shall occur and the apparent
+            HH:mm:ss time format will look like it hasn't changed/updated. This is because the
+            Simulation-World Time has only changed by a few milliseconds, which won't show up on the
+            HH:mm:ss time format because it's too small
+        * */
+        String expectedTime;
+        String actualTime;
+        boolean stringsMatch;
+        System.out.println("This one keeps the ratio the same (one simulation-world second passes per each one real-world second)");
+        System.out.println("But the physics updates happen more or less frequently per one Simulation-World-Second.");
 
-            }
+        /*
+        Updates happen once every World-Second (which has been set equal to real world seconds by ratio=1.0)
+        */
+
+        // Set clock so World Seconds match Real Seconds (resolution is whatever, ratio is 1)
+        // expectedTimes: List of "hand calculated" timeoutput strings, in correct sequence
+        clk = new WorldClock(1.0,1.0);
+        String[] expectedTimes = {  "00:00:00",
+                                    "00:00:01",
+                                    "00:00:02",
+                                    "00:00:03",
+                                    "00:00:04"};
+        int index = 0;
+        boolean updateHappened = true;
+        clk.start();
+        while(index<expectedTimes.length) {
+            try {
+                // Checking the getFlag() method too fast gives bad results
+                TimeUnit.MILLISECONDS.sleep(1);
+                // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
+                updateHappened = clk.flag;//getFlag();
+
+                // If update happened
+                if (updateHappened) {
+                    actualTime = clk.getTime();
+                    expectedTime = expectedTimes[index];
+                    stringsMatch = actualTime.equals(expectedTime);
+                    assertEquals(true,stringsMatch);
+                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
+                    index++;
+                    clk.lowerFlag();
+                }
+            } catch (Exception e) {/*Do Nothing*/}
+        }
+        clk.halt();
+
+
+        /*
+        Updates happen every half World-Second (which has been set equal to real world seconds by ratio=1.0)
+        */
+
+        clk = new WorldClock(2.0,1.0);
+        // List of "hand calculated" timeoutput strings, in correct sequence
+        String[] expectedTimes1 = { "00:00:00","00:00:00",
+                                    "00:00:01","00:00:01",
+                                    "00:00:02","00:00:02",
+                                    "00:00:03","00:00:03",
+                                    "00:00:04","00:00:04"};
+        index = 0;
+        clk.start();
+        while(index<expectedTimes1.length) {
+            try {
+                // Checking the getFlag() method too fast gives bad results
+                TimeUnit.MILLISECONDS.sleep(1);
+                // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
+                updateHappened = clk.flag;//getFlag();
+
+                // If update happened
+                if (updateHappened) {
+                    actualTime = clk.getTime();
+                    expectedTime = expectedTimes1[index];
+                    stringsMatch = actualTime.equals(expectedTime);
+                    assertEquals(true,stringsMatch);
+                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
+                    index++;
+                    clk.lowerFlag();
+                }
+            } catch (Exception e) {/*Do Nothing*/}
+        }
+        clk.halt();
+
+
+        /*
+        Updates happen every one-third World-Second (which has been set equal to real world seconds by ratio=1.0)
+        */
+
+        clk = new WorldClock(3.0,1.0);
+        // List of "hand calculated" timeoutput strings, in correct sequence
+        String[] expectedTimes2 = { "00:00:00","00:00:00","00:00:00",
+                                    "00:00:01","00:00:01","00:00:01",
+                                    "00:00:02","00:00:02","00:00:02",
+                                    "00:00:03","00:00:03","00:00:03",
+                                    "00:00:04","00:00:04","00:00:04"};
+        index = 0;
+        clk.start();
+        while(index<expectedTimes1.length) {
+            try {
+                // Checking the getFlag() method too fast gives bad results
+                TimeUnit.MICROSECONDS.sleep(1);
+                // Lower Flag, ensures if-statement only occurs when next update happens (i.e. clk raises flag)
+                updateHappened = clk.flag;//getFlag();
+
+                // If update happened
+                if (updateHappened) {
+                    actualTime = clk.getTime();
+                    expectedTime = expectedTimes2[index];
+                    stringsMatch = actualTime.equals(expectedTime);
+                    assertEquals(true,stringsMatch);
+                    System.out.println("Index %d : Expected Time (%s) matches reported time (%s)".formatted(index,expectedTime,actualTime));
+                    index++;
+                    clk.lowerFlag();
+                }
+            } catch (Exception e) {/*Do Nothing*/}
+        }
+        clk.halt();
     }
 
 
