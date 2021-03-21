@@ -2,7 +2,7 @@ package TrackConstruction;
 
 public class TrackBlock extends TrackElement {
     /*normal*/
-    TrackBlock(){
+    public TrackBlock(){
         this.occupied = false;
     }
 
