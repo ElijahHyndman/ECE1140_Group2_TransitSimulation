@@ -2,6 +2,9 @@ package WorldClock;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
+import java.util.Vector;
+
+import SimulationEnvironment.*;
 
 public class WorldClock extends Thread {
     /**
@@ -101,6 +104,11 @@ public class WorldClock extends Thread {
     private int currentTimeInMilliseconds = TIME_ZERO;
     Date currentDate = new Date(currentTimeInMilliseconds);
 
+    /** Physics Members
+     * @member listeners Vector<PhysicsUpdateListener>, vector of all physics items in the world which shall have updatePhysics()
+     *          called on in regular intervals
+     */
+    Vector<PhysicsUpdateListener> listeners = new Vector<PhysicsUpdateListener>();
 
     // Useful variables
     volatile public boolean flag;
@@ -196,6 +204,8 @@ public class WorldClock extends Thread {
         ticking = true;
         while (ticking) {
                 flag = true;
+                // update Physics
+                updateAllPhysics();
                 // Traverse for period once per loop
                 once();
         }
@@ -245,6 +255,22 @@ public class WorldClock extends Thread {
             System.out.println("Clock failed while advancing a single period");
             e.printStackTrace();
         }
+    }
+
+
+    public void updateAllPhysics() {
+        for (PhysicsUpdateListener listener : listeners) {
+            listener.updatePhysics(getTime(), microseconds*1000);
+        }
+    }
+
+    public boolean addListener(PhysicsUpdateListener physicsItem) {
+        try {
+            listeners.add(physicsItem);
+            return true;
+        } catch (Exception e) {
+        }
+        return false;
     }
 
 

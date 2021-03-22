@@ -2,6 +2,7 @@ import SimulationEnvironment.*;
 import TrackConstruction.*;
 
 import TrainModel.Train;
+import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class TrainUnitTest {
     }
 
     @Test
-    @DisplayName("Controller measures authority as 5* amount somehow")
+    @DisplayName("Controller measures authority as 50* amount somehow")
     void controllerGetsWrongAuthorityFromHull() {
         trn = new TrainUnit();
         TrainControl ctrl = trn.getController();
@@ -84,10 +85,12 @@ class TrainUnitTest {
 
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
+        // Must be manually updated when not running
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
+        System.out.println("If this test passes, then the 50 x Authority is still a problem");
         assertEquals(testAuthority * 50, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
@@ -95,10 +98,12 @@ class TrainUnitTest {
         testSpeed = 10.0;
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
+        // Must be manually updated when not running
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
+        System.out.println("If this test passes, then the 50 x Authority is still a problem");
         assertEquals(testAuthority * 50, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
@@ -106,14 +111,21 @@ class TrainUnitTest {
         testSpeed = 20.0;
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
+        // Must be manually updated when not running
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
+        System.out.println("If this test passes, then the 50 x Authority is still a problem");
         assertEquals(testAuthority * 50, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
     }
 
+
+
+    /*
+            Train placement on Tracks
+     */
 
 
     @Test
@@ -262,6 +274,10 @@ class TrainUnitTest {
     }
 
 
+    /*
+            Train Runs
+     */
+
 
     @Test
     @DisplayName("Train will run on a thread and correctly read Speed and Authority from TrackElement on this thread")
@@ -336,9 +352,47 @@ class TrainUnitTest {
 
 
 
+    @Test
+    @DisplayName("Controller will continually pull values from Hull while TrainUnit is running")
+    void theControllerWillUpdateFromTheHullWhileRunning() {
+        trn = new TrainUnit(true);
+        TrackBlock BlockGreenA = new TrackBlock();
+        BlockGreenA.setAuthority(2.0);
+        BlockGreenA.setCommandedSpeed(25.0);
+
+        trn.placeOn(BlockGreenA);
+        assertEquals(true,BlockGreenA.getOccupied());
+        waitForTrainObjectToCatchUp();
+        assertEquals(2.0, trn.getHull().getAuthority());
+        assertEquals(25.0,trn.getHull().getCommandedSpeed());
+        System.out.println("If this test passes, then the 50 x Authority is still a problem");
+        assertEquals(50* 2.0, trn.getController().getAuthority());
+        assertEquals(25.0,trn.getController().getCommandedSpeed());
+
+        trn.halt();
+    }
+
+
+    /*
+            physics updates
+     */
+    @Test
+    @DisplayName("TrainUnit will updatePhysics when called upon by WorldClock")
+    void trainWillUpdatePhysicsWhenCalledByWorldClock() {
+        WorldClock physicsCLK = new WorldClock(4.0,1.0);
+        trn = new TrainUnit();
+        physicsCLK.addListener(trn);
+
+        physicsCLK.start();
+        try{ TimeUnit.SECONDS.sleep(5); } catch(Exception e) {}
+        physicsCLK.halt();
+    }
+
+
     /*
         Helper Functions
      */
+
 
     public static void waitForTrainObjectToCatchUp() {
         /** waits a short amount of time doing nothing to wait for the TrainUnit object to catch up.
@@ -346,5 +400,4 @@ class TrainUnitTest {
         // A time delay of one microsecond
         try { TimeUnit.MICROSECONDS.sleep(1); } catch (Exception e ){}
     }
-
 }

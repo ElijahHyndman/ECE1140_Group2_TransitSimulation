@@ -6,7 +6,7 @@ import implementation.TrainControl;
 
 import java.util.concurrent.TimeUnit;
 
-public class TrainUnit extends Thread {
+public class TrainUnit extends Thread implements PhysicsUpdateListener {
     /** class that instantiates a TrainModel and a TrainController together for the simulation.
      * a train model should never appear without a train controller, so this class will handle the spawning
      *  of the two together.
@@ -153,6 +153,12 @@ public class TrainUnit extends Thread {
     }
 
     @Override
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+        // println's are a big no-bo in physics updates
+        System.out.println("updating physics");
+    }
+
+    @Override
     public void run() {
         /** runs all processes that a TrainUnit must do while the application is running.
          * Overrides the Thread function run(), called using start(). Creates a new thread and runs
@@ -168,6 +174,7 @@ public class TrainUnit extends Thread {
         while(running) {
             // Speed and Authority are checked, regardless of being on a track
             retrieveSpeedAuthority();
+            control.getTrainData();
 
             if(isOnTrack()) {
                 // Perform block-traversal functions
