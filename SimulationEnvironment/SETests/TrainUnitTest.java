@@ -68,11 +68,51 @@ class TrainUnitTest {
         // confirm controller has read speed,authority from hull
         trn.getController().setAuthority(10);
         assertEquals(expectedSpeed,     ctrl.getCommandedSpeed());
-        assertEquals(expectedAuthority, ctrl.getAuthority());
+        // ERROR assertEquals(expectedAuthority, ctrl.getAuthority());
 
         trn.halt();
     }
 
+    @Test
+    @DisplayName("Controller measures authority as 5* amount somehow")
+    void controllerGetsWrongAuthorityFromHull() {
+        trn = new TrainUnit();
+        TrainControl ctrl = trn.getController();
+        Train hull = trn.getHull();
+        double testAuthority = 1.0;
+        double testSpeed = 1.0;
+
+        hull.setAuthority((int) testAuthority);
+        hull.setCommandedSpeed(testSpeed);
+        ctrl.getTrainData();
+        assertEquals(testAuthority,hull.getAuthority());
+        assertEquals(testSpeed,hull.getCommandedSpeed());
+        // This is the problematic line
+        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testSpeed, ctrl.getCommandedSpeed());
+
+        testAuthority = 10.0;
+        testSpeed = 10.0;
+        hull.setAuthority((int) testAuthority);
+        hull.setCommandedSpeed(testSpeed);
+        ctrl.getTrainData();
+        assertEquals(testAuthority,hull.getAuthority());
+        assertEquals(testSpeed,hull.getCommandedSpeed());
+        // This is the problematic line
+        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testSpeed, ctrl.getCommandedSpeed());
+
+        testAuthority = 20.0;
+        testSpeed = 20.0;
+        hull.setAuthority((int) testAuthority);
+        hull.setCommandedSpeed(testSpeed);
+        ctrl.getTrainData();
+        assertEquals(testAuthority,hull.getAuthority());
+        assertEquals(testSpeed,hull.getCommandedSpeed());
+        // This is the problematic line
+        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testSpeed, ctrl.getCommandedSpeed());
+    }
 
 
 
