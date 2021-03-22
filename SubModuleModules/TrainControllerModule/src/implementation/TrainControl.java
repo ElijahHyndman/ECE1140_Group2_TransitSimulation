@@ -1,10 +1,13 @@
 package implementation;
 
+import TrainModel.Train;
 import systemData.trackData;
+
 
 public class TrainControl {
 
     private final TrainMotor motor;
+    private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
     private trackData track;
 
@@ -27,7 +30,12 @@ public class TrainControl {
     private String alert;
 
     public TrainControl(){
+      this(null);
+    }
 
+    public TrainControl(Train model){
+
+        trainModel = model;
         controlMode = "Automatic";
         eBrake = false;
         sBrake = false;
@@ -45,7 +53,6 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-
         motor = new TrainMotor();
         track = new trackData("Blue");
         nonVitalComponents = new NonVitalComponents(track);
@@ -270,6 +277,19 @@ public class TrainControl {
 
         //monitorDistance();
         power = motor.getPower(velocityCmd, trainVelocity);
+    }
+
+
+    /**
+     * NEW METHODS FOR TRAIN MODEL
+     **/
+
+    public void getTrainData(){
+        setActualSpeed(trainModel.getActualSpeed());
+    }
+
+    public void setTrainData(){
+        trainModel.setPower(power);
     }
 
 }
