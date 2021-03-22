@@ -44,7 +44,7 @@ public class main {
             
             //recalc every sleep(1000) and update display
             for(int i=0; i<gui.trains.size(); i++){
-                gui.trains.get(i).recalc();
+                gui.trains.get(i).updatePhysicalState("",1);
             }
             gui.updateDisplay();
 
