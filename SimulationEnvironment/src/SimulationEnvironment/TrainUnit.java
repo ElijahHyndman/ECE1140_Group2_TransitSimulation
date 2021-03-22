@@ -35,7 +35,7 @@ public class TrainUnit extends Thread {
      *          @further a Train Unit might be set on a track block, train yard, station, or track switch
      * @member lastOccupied TrackElement, the TrackElement which the train last occupied, in case this is useful to know
      */
-    private String name = "No Name Given";
+    private String name = "No Name";
 
     private TrainControl control;
     private Train hull;
@@ -62,6 +62,18 @@ public class TrainUnit extends Thread {
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
     }
 
+    public TrainUnit(boolean runOnStart) {
+        control = new TrainControl();
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        if (runOnStart) start();
+    }
+
+    public TrainUnit(String name, boolean runOnStart) {
+        this.name = name;
+        control = new TrainControl();
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        if (runOnStart) start();
+    }
 
     private void whileTraversingBlock(TrackElement thisBlock) {
         /** put any code you want to execute while traversing a TrackElement in this function.
