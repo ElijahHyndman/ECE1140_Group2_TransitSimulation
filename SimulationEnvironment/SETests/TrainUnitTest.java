@@ -1,9 +1,10 @@
 import SimulationEnvironment.*;
 import TrackConstruction.*;
-import implementation.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -146,5 +147,60 @@ class TrainUnitTest {
         assertEquals(false,BlockGreenC.getOccupied());
         assertEquals(false,SwitchGreenA.getOccupied());
         assertEquals(true,DormontStation.getOccupied());
+    }
+
+
+
+    @Test
+    @DisplayName("If this test passes, then I have not solved the Chaser Problem")
+    void chaserProblem() {
+        // If a Front Train and Chaser Train are on blocks next to each other going the same direction,
+        // then what happens when the Chaser enters the new block before the front one does?
+        // IE front train is on A, A is occupied
+        // chaser enters A, sets A occupied again
+        // front train leaves A for B, sets A unoccupied
+        // chaser won't set A to occupied again => chaser is on a track without occupying it
+        trn = new TrainUnit("Front Train");
+        TrainUnit chaser = new TrainUnit("Chaser Train");
+        TrackElement GreenBlockA = new TrackBlock();
+        TrackElement GreenBlockB = new TrackBlock();
+
+        trn.placeOn(GreenBlockA);
+        // Chaser enters A
+        chaser.transition(GreenBlockA);
+        // Front leaves A
+        trn.transition(GreenBlockB);
+
+        // Chaser is on A but A does not show occupied
+        assertSame(GreenBlockA, chaser.getLocation());
+        assertEquals(false, GreenBlockA.getOccupied());
+    }
+
+
+
+    @Test
+    @DisplayName("Train will run on a thread and correctly read Speed and Authority from TrackElement on this thread")
+    void trainRunsOnThread() {
+        // Seconds to run for
+        int runFor = 3;
+        double fakeAuthority = 20.0;
+        double fakeSpeed = 25.0;
+
+        trn = new TrainUnit();
+        TrackElement testBlock = new TrackBlock();
+        trn.placeOn(testBlock);
+
+        testBlock.setAuthority(fakeAuthority);
+        testBlock.setCommandedSpeed(fakeSpeed);
+
+        assertEquals(false,trn.isRunning());
+        trn.start();
+        try { TimeUnit.SECONDS.sleep(runFor); } catch (Exception e ){}
+        // While Running
+        assertEquals(true,trn.isRunning());
+        assertEquals(fakeAuthority,trn.readAuthority());
+        assertEquals(fakeSpeed,trn.readSpeed());
+        trn.halt();
+        assertEquals(false,trn.isRunning());
     }
 }
