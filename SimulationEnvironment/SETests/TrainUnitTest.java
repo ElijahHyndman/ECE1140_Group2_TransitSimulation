@@ -1,10 +1,12 @@
 import SimulationEnvironment.*;
 import TrackConstruction.*;
 
+import TrainModel.Train;
+import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -24,12 +26,55 @@ class TrainUnitTest {
     @DisplayName("Spawns with a TrainModel and TrainController without issues")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
-        boolean controllerExists = trn.getControl() != null;
+        boolean controllerExists = trn.getController() != null;
         boolean hullExists = trn.getHull() != null;
 
         assertEquals(true, controllerExists);
         assertEquals(true, hullExists);
     }
+
+
+
+    @Test
+    @DisplayName("Controller can interact with Train Hull")
+    void trainControllerInteractsWithTrainModel() {
+        trn = new TrainUnit(true);
+        TrainControl ctrl = trn.getController();
+        Train hull = trn.getHull();
+
+        // Confirm that control is allowed to pull speed from train hull
+        ctrl.getTrainData();
+        assertEquals(trn.getHull().getActualSpeed() , trn.getController().getActualSpeed() );
+
+        // Set running, immobile train onto a fake track
+        double expectedSpeed = 25.0;
+        double expectedAuthority = 10.0;
+        TrackBlock BlockGreenA = new TrackBlock();
+        BlockGreenA.setCommandedSpeed(expectedSpeed);
+        BlockGreenA.setAuthority(expectedAuthority);
+        trn.placeOn(BlockGreenA);
+        waitForTrainObjectToCatchUp();
+        assertEquals(true,trn.isRunning());
+        assertSame(BlockGreenA,trn.getLocation());
+
+        // Have to manually call for Controller to retrieve speed from TrainModel
+        trn.getController().getTrainData();
+
+        // Confirm that hull has read speed,authority from track
+        waitForTrainObjectToCatchUp();
+        assertEquals(expectedSpeed,     hull.getCommandedSpeed());
+        assertEquals(expectedAuthority, hull.getAuthority());
+
+        // confirm controller has read speed,authority from hull
+        trn.getController().setAuthority(10);
+        assertEquals(expectedSpeed,     ctrl.getCommandedSpeed());
+        assertEquals(expectedAuthority, ctrl.getAuthority());
+
+        trn.halt();
+    }
+
+
+
 
     @Test
     @DisplayName("Can be placed on multiple TrackElements, accurately announces which block it is on")
@@ -183,24 +228,83 @@ class TrainUnitTest {
     void trainRunsOnThread() {
         // Seconds to run for
         int runFor = 3;
-        double fakeAuthority = 20.0;
-        double fakeSpeed = 25.0;
 
         trn = new TrainUnit();
         TrackElement testBlock = new TrackBlock();
-        trn.placeOn(testBlock);
 
+        // A train on no block will show authority,speed of -1.0
+        trn.start();
+
+        // While Running
+        waitForTrainObjectToCatchUp();
+        assertEquals(true,trn.isRunning());
+
+        // A train on no track reads an invalid Speed/Authority
+        assertEquals(-1.0,trn.getSpeed());
+        assertEquals(-1.0,trn.getAuthority());
+
+        // A train will accurately get speed and authority
+        double fakeAuthority = 10.0;
+        double fakeSpeed = 10.0;
+        trn.placeOn(testBlock);
         testBlock.setAuthority(fakeAuthority);
         testBlock.setCommandedSpeed(fakeSpeed);
+        // it takes a few milliseconds for the train to come back around in its sampling loop
+        waitForTrainObjectToCatchUp();
+        double measuredSpeed = trn.getSpeed();
+        double measuredAuthority = trn.getAuthority();
+        assertSame(testBlock,trn.getLocation());
+        assertEquals(fakeAuthority,measuredAuthority);
+        assertEquals(fakeSpeed,measuredSpeed);
 
-        assertEquals(false,trn.isRunning());
-        trn.start();
-        try { TimeUnit.SECONDS.sleep(runFor); } catch (Exception e ){}
-        // While Running
-        assertEquals(true,trn.isRunning());
-        assertEquals(fakeAuthority,trn.readAuthority());
-        assertEquals(fakeSpeed,trn.readSpeed());
+        // Updating speed and authority on the block will reflect onto the TrainUnit
+        fakeSpeed = 40.0;
+        fakeAuthority = 3.0;
+        testBlock.setAuthority(fakeAuthority);
+        testBlock.setCommandedSpeed(fakeSpeed);
+        // it takes a few milliseconds for the train to come back around in its sampling loop
+        waitForTrainObjectToCatchUp();
+        measuredSpeed = trn.getSpeed();
+        measuredAuthority = trn.getAuthority();
+        assertEquals(fakeAuthority,measuredAuthority);
+        assertEquals(fakeSpeed,measuredSpeed);
+
+        // Removing TrainUnit from TrainBlock means that tracks do not register a speed or authority
+        trn.placeOn(null);
+        // it takes a few milliseconds for the train to come back around in its sampling loop
+        waitForTrainObjectToCatchUp();
+        measuredSpeed = trn.getSpeed();
+        measuredAuthority = trn.getAuthority();
+        assertEquals(-1.0,measuredAuthority);
+        assertEquals(-1.0,measuredSpeed);
+
         trn.halt();
         assertEquals(false,trn.isRunning());
     }
+
+
+
+    @Test
+    @DisplayName("Train can immediately begin running after construction with special constructor")
+    void startOnConstructionWorks() {
+        trn = new TrainUnit(true);
+        waitForTrainObjectToCatchUp();
+        assertEquals(true, trn.isRunning());
+        trn.halt();
+        assertEquals(false, trn.isRunning());
+    }
+
+
+
+    /*
+        Helper Functions
+     */
+
+    public static void waitForTrainObjectToCatchUp() {
+        /** waits a short amount of time doing nothing to wait for the TrainUnit object to catch up.
+         */
+        // A time delay of one microsecond
+        try { TimeUnit.MICROSECONDS.sleep(1); } catch (Exception e ){}
+    }
+
 }

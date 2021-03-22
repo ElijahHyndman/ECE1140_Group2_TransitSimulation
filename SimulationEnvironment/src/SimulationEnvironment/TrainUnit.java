@@ -11,6 +11,10 @@ public class TrainUnit extends Thread {
      * a train model should never appear without a train controller, so this class will handle the spawning
      *  of the two together.
      *
+     *  IMPORTANT: there is a several microsecond delay for communications to and from a train running on a thread.
+     *      You must wait a few milliseconds for any changes to be reflected onto a TrainUnit object and then be
+     *      readable from the object
+     *
      *  Big Ideas
      *  - TrainUnit handles the train's location in the Simulation World. The TrainUnit will know what TrackElement it occupies
      *  and it will handle the movement around the track/transition between TrackElements during the physics-update. The TrainModel
@@ -43,8 +47,8 @@ public class TrainUnit extends Thread {
     private TrackElement lastOccupied;
 
     // TrainUnit does NOT process speed or authority
-    private double COMMANDED_SPEED;
-    private double COMMANDED_AUTHORITY;
+    private double COMMANDED_SPEED=-1.0;
+    private double COMMANDED_AUTHORITY=-1.0;
 
     // Volatile keeps data member in common CPU memory
     // so we can access it outside of thread
@@ -52,26 +56,30 @@ public class TrainUnit extends Thread {
 
 
     public TrainUnit() {
-        control = new TrainControl();
+        //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        control = new TrainControl(hull);
     }
 
     public TrainUnit(String name) {
         this.name = name;
-        control = new TrainControl();
+        //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        control = new TrainControl(hull);
     }
 
     public TrainUnit(boolean runOnStart) {
-        control = new TrainControl();
+        //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        control = new TrainControl(hull);
         if (runOnStart) start();
     }
 
     public TrainUnit(String name, boolean runOnStart) {
         this.name = name;
-        control = new TrainControl();
+        //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        control = new TrainControl(hull);
         if (runOnStart) start();
     }
 
@@ -81,11 +89,8 @@ public class TrainUnit extends Thread {
          * @param
          */
         // Slowly print Chuga-Chuga
-        try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {}
-        System.out.println("Chuga-Chuga");
-
-        // Train only reads Speed and Authority while running
-        readSpeedAuthority();
+        //try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {}
+        //System.out.println("Chuga-Chuga");
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
@@ -161,11 +166,14 @@ public class TrainUnit extends Thread {
         running=true;
         // Uses AtomicBoolean running to allow us to end thread
         while(running) {
+            // Speed and Authority are checked, regardless of being on a track
+            retrieveSpeedAuthority();
+
             if(isOnTrack()) {
                 // Perform block-traversal functions
                 whileTraversingBlock(occupies);
             } else {
-                // Do not run if not on some sort of track
+                // Do not do track tasks if not on some sort of track
                 continue;
             }
         }
@@ -182,34 +190,42 @@ public class TrainUnit extends Thread {
         running=false;
     }
 
-    public void readSpeedAuthority() {
+    public void retrieveSpeedAuthority() {
+        /** Quick Method for gathering Speed,Authority from TrackElement, displays in one log
+         */
         retrieveAuthority();
         retrieveSpeed();
-        System.out.println("Authority read as %f, Speed %f".formatted(COMMANDED_AUTHORITY,COMMANDED_SPEED));
+        //System.out.println("Authority read as %f, Speed %f".formatted(COMMANDED_AUTHORITY,COMMANDED_SPEED));
     }
 
     public void retrieveAuthority() {
         /** gets the authority from the track the TrainUnit is on and passes it to TrainModel
          * TrainModel will pass authority on to the TrainController
+         * @before TrainUnit is on TrackElement, may or may not know authority
+         * @after TrainUnit is on TrackElement, has inherited authority from TrackElement
          */
         if (occupies == null) {
+            COMMANDED_AUTHORITY = -1.0;
             return;
         }
         COMMANDED_SPEED = occupies.getCommandedSpeed();
-        hull.setSpeed(COMMANDED_SPEED);
+        hull.setCommandedSpeed(COMMANDED_SPEED);
     }
     public void retrieveSpeed() {
         /** gets the speed from the track the TrainUnit is on and passes it to the TrainModel
          * TrainModel will pass speed on to the TrainController
+         * @before TrainUnit is on TrackElement, may or may not know speed
+         * @after TrainUnit is on TrackElement, has inherited speed from TrackElement
          */
         if (occupies == null) {
+            COMMANDED_SPEED = -1.0;
             return;
         }
         COMMANDED_AUTHORITY = occupies.getAuthority();
         hull.setAuthority((int) COMMANDED_AUTHORITY);
     }
 
-    public TrainControl getControl() {
+    public TrainControl getController() {
         return control;
     }
     public Train getHull() {
@@ -227,10 +243,10 @@ public class TrainUnit extends Thread {
     public boolean isOnTrack() {
         return occupies != null;
     }
-    public double readAuthority() {
+    public double getAuthority() {
         return COMMANDED_AUTHORITY;
     }
-    public double readSpeed() {
+    public double getSpeed() {
         return COMMANDED_SPEED;
     }
 }
