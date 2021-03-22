@@ -53,7 +53,7 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        motor = new TrainMotor();
+        motor = new MainMotor();
         track = new trackData("Blue");
         nonVitalComponents = new NonVitalComponents(track);
         controlNonVital();

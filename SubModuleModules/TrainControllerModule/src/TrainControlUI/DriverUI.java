@@ -20,7 +20,6 @@ import implementation.*;
 public class DriverUI implements ActionListener{
 
     private final TrainControl control;
-    private final SystemTime theTime;
     private final TestingUI testing;
 
     public JFrame main;
@@ -67,7 +66,6 @@ public class DriverUI implements ActionListener{
         //Create an engineer UI for the train
         new EngineerUI(control.getTrainMotor());
 
-        theTime = new SystemTime();
 
         format = new DecimalFormat("#.##");
 
@@ -128,9 +126,9 @@ public class DriverUI implements ActionListener{
         timer.start();
 
 
-      while (main.isVisible()) {
+        while (main.isVisible()) {
 
-            time.setText(theTime.getTime().truncatedTo(ChronoUnit.SECONDS).toString());
+            time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
             speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*.621371)));
             comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*.621371)));
             limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*.621371)));
@@ -162,7 +160,7 @@ public class DriverUI implements ActionListener{
         message.setForeground(Color.RED);
         main.add(message);
 
-        time = new JLabel(theTime.getTime().truncatedTo(ChronoUnit.SECONDS).toString());
+        time = new JLabel(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
         time.setBounds(1265, 20, 200, 25);
         time.setFont(new Font("Sans Serif", Font.BOLD, 20));
         main.add(time);
@@ -173,7 +171,7 @@ public class DriverUI implements ActionListener{
         main.add(accel);
 
         JLabel accelUnits = new JLabel("kW");
-        accelUnits.setBounds(150, 200, 50, 50);
+        accelUnits.setBounds(175, 200, 50, 50);
         accelUnits.setFont(new Font("Sans Serif", Font.PLAIN, 18));
         main.add(accelUnits);
 
@@ -243,19 +241,19 @@ public class DriverUI implements ActionListener{
         main.add(distance);
 
         JLabel distUnits = new JLabel("ft");
-        distUnits.setBounds(935, 535, 50, 25);
+        distUnits.setBounds(955, 535, 50, 25);
         distUnits.setFont(new Font("Sans Serif", Font.PLAIN, 14));
         main.add(distUnits);
 
-        JLabel safeBrake = new JLabel("Should Brake : ");
+        JLabel safeBrake = new JLabel("Safe Brake : ");
         safeBrake.setBounds(760, 635, 150, 25);
         safeBrake.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        main.add(safeBrake);
+        //main.add(safeBrake);
 
         JLabel brakeUnits = new JLabel("ft");
-        brakeUnits.setBounds(935, 635, 50, 25);
+        brakeUnits.setBounds(955, 635, 50, 25);
         brakeUnits.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        main.add(brakeUnits);
+        //main.add(brakeUnits);
 
 
 
@@ -352,7 +350,7 @@ public class DriverUI implements ActionListener{
 
         //POWER
         powerVal = new JLabel();
-        powerVal.setBounds(90, 200, 50, 50);
+        powerVal.setBounds(90, 200, 100, 50);
         powerVal.setText(String.valueOf(control.getPower()));
         powerVal.setFont(new Font("Sans Serif", Font.PLAIN, 18));
         main.add(powerVal);
@@ -396,7 +394,7 @@ public class DriverUI implements ActionListener{
         brake.setText(String.valueOf(format.format((control.getSafeBreakingDistance()*3.281))));
         brake.setBounds(890, 635, 100, 25);
         brake.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        main.add(brake);
+        //main.add(brake);
 
         //Input SPEED
         inputSpeed = new JTextField();
@@ -497,8 +495,9 @@ public class DriverUI implements ActionListener{
 
 
     public static void main(String args[]){
-         new DriverUI();
+        new DriverUI();
 
     }
 
 }
+
