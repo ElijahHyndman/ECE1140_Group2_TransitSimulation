@@ -23,7 +23,16 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      * be thrown out whenever the application gets deployed.
      * @ergo no vital or operations should be handled by the TrainUnit. If something must happen within the train, then it must be handled by the
      *          TrainController which IS Real-World Deployable
-     *
+     * - TrainUnit will update the values the TrainController sees from the TrainModel's state (by state, I mean PURELY the physics state of the train model)
+     * everytime the physics-update call is sent by the WorldClock. We want these to always be called in tandem, because the TrainController is a PID
+     * who adjusts the values of its commands according to how much the train model's physics has changed according to its last command. If the train controller
+     * is updating its physics-calculations faster than the train model is updating its physics-calculations, then the train controller will see that no changes have occured
+     * in the train model for a few measurement-polls in a row, creating insanely out-of-proportion commands to try and force the train model to change.
+     * - TrainUnit will update the train model with updates from the track using the run() loop (such as reading beacons, reading authority and speed, etc), while the train is set to running. The run() loop may or may not be faster than
+     * the loop from the WorldClock's periodic updatePhysics() calls. A difference in their frequency shouldn't have any effect other than some lag between the communication
+     * coming from the track about Authority,Speed,Stopping distance, etc being reflected onto the physics of the train objects. This lag shal be inconsequential
+     *      - Note there should be ample time for the TrainUnit to read the beacon from the tracks for stopping distance and station information. If the chance to read the beacon
+     *      is too short, the run() loop might take too long to ever pick up the information from the beacon.
      * @author elijah
      */
     /** Default values
@@ -81,6 +90,11 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
         control = new TrainControl(hull);
         if (runOnStart) start();
+    }
+
+    protected void finalize () {
+        // If this is even called when train is destroyed, we should halt the thread
+        halt();
     }
 
     private void whileTraversingBlock(TrackElement thisBlock) {
@@ -156,6 +170,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
         // println's are a big no-bo in physics updates
         System.out.println("updating physics");
+        // TODO Train model crunches numbers to update its physics, calculate new actual speed
+        // TODO Train model calcualtes its actual speed, and any other values Reagan requires for the Reagan's TODO below this
+        // Train Controller gets updates from the TrainModel about Commanded Speed,(Commanded Authority,Actual Speed) to do
+        // something like: public void updatePhysicalState(String currentTimeString, double deltaTime_inSeconds) {}
+        control.getTrainData();
+        // TODO Train Controller crunches numbers to updates its control commands, calculate power and control stuff
+        // TODO Reagan: This one should only handle Brake, accel/decel,Power
+        // something like: public void updateCommandOutputs(String currentTimeString,double deltaTime_inSeconds) {}
     }
 
     @Override
@@ -174,7 +196,6 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         while(running) {
             // Speed and Authority are checked, regardless of being on a track
             retrieveSpeedAuthority();
-            control.getTrainData();
 
             if(isOnTrack()) {
                 // Perform block-traversal functions

@@ -67,9 +67,9 @@ class TrainUnitTest {
         assertEquals(expectedAuthority, hull.getAuthority());
 
         // confirm controller has read speed,authority from hull
-        trn.getController().setAuthority(10);
+        //trn.getController().setAuthority(10);
         assertEquals(expectedSpeed,     ctrl.getCommandedSpeed());
-        // ERROR assertEquals(expectedAuthority, ctrl.getAuthority());
+        assertEquals(expectedAuthority, ctrl.getAuthority());
 
         trn.halt();
     }
@@ -90,8 +90,7 @@ class TrainUnitTest {
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
-        System.out.println("If this test passes, then the 50 x Authority is still a problem");
-        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
         testAuthority = 10.0;
@@ -103,8 +102,7 @@ class TrainUnitTest {
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
-        System.out.println("If this test passes, then the 50 x Authority is still a problem");
-        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
         testAuthority = 20.0;
@@ -116,8 +114,7 @@ class TrainUnitTest {
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
         // This is the problematic line
-        System.out.println("If this test passes, then the 50 x Authority is still a problem");
-        assertEquals(testAuthority * 50, ctrl.getAuthority());
+        assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
     }
 
@@ -365,8 +362,10 @@ class TrainUnitTest {
         waitForTrainObjectToCatchUp();
         assertEquals(2.0, trn.getHull().getAuthority());
         assertEquals(25.0,trn.getHull().getCommandedSpeed());
-        System.out.println("If this test passes, then the 50 x Authority is still a problem");
-        assertEquals(50* 2.0, trn.getController().getAuthority());
+        waitForTrainObjectToCatchUp();
+        waitForTrainObjectToCatchUp();
+        waitForTrainObjectToCatchUp();
+        assertEquals(2.0, trn.getController().getAuthority());
         assertEquals(25.0,trn.getController().getCommandedSpeed());
 
         trn.halt();
@@ -383,8 +382,18 @@ class TrainUnitTest {
         trn = new TrainUnit();
         physicsCLK.addListener(trn);
 
+        // update 4 times a second
         physicsCLK.start();
-        try{ TimeUnit.SECONDS.sleep(5); } catch(Exception e) {}
+        System.out.println("updating physics 4 times a second for 3 seconds");
+        try{ TimeUnit.SECONDS.sleep(3); } catch(Exception e) {}
+        // update 8 times a second
+        physicsCLK.setResolution(8.0);
+        System.out.println("updating physics 8 times a second for 3 seconds");
+        try{ TimeUnit.SECONDS.sleep(3); } catch(Exception e) {}
+        // update 10 times a second
+        System.out.println("updating physics 10 times a second for 3 seconds");
+        physicsCLK.setResolution(10.0);
+        try{ TimeUnit.SECONDS.sleep(3); } catch(Exception e) {}
         physicsCLK.halt();
     }
 
