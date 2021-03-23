@@ -7,13 +7,14 @@ import systemData.trackData;
 public class TrainControl {
 
     private final TrainMotor motor;
+    private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
     private trackData track;
 
     private double velocityCmd; //the train's ideal velocity, units km/h
     private double trainVelocity; //the actual velocity of the train, units km/h
-    private double inputVelocity; //the driver's inputted velocity, in mph
+    private double manualVelocity; //the driver's inputted velocity, in mph
     private double power; // train power, in kW
     private double acceleration; //the trains ideal acceleration, in m/s
     private double authority; // the trains authority, in meters
@@ -36,6 +37,9 @@ public class TrainControl {
     public TrainControl(Train model){
 
         trainModel = model;
+        motor = new MainMotor();
+        backupMotor = new BackupMotor();
+
         controlMode = "Automatic";
         eBrake = false;
         sBrake = false;
@@ -44,7 +48,7 @@ public class TrainControl {
         velocityCmd = 0;
         trainVelocity = 0;
         prevVelocity = 0;
-        inputVelocity  = 0;
+        manualVelocity = 0;
         power = 0;
         acceleration = 0;
         authority = 0;
@@ -53,7 +57,6 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        motor = new MainMotor();
         track = new trackData("Blue");
         nonVitalComponents = new NonVitalComponents(track);
         controlNonVital();
@@ -74,7 +77,7 @@ public class TrainControl {
 
     public void switchMode(){
         if (controlMode.equals("Automatic")){
-            inputVelocity = velocityCmd;
+            manualVelocity = velocityCmd;
             controlMode = "Manual";
         }else if (controlMode.equals("Manual")){
             controlMode = "Automatic";
@@ -189,7 +192,7 @@ public class TrainControl {
             return "Input speed exceeds speed limit";
         }
         if (getControlMode().equals("Manual")){
-            inputVelocity = newMetricSpeed;
+            manualVelocity = newMetricSpeed;
             return "Success";
         }else{
             return "In Automatic Mode. Please switch to manual";
@@ -204,14 +207,14 @@ public class TrainControl {
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
-            inputVelocity = velocityCmd;
+            manualVelocity = velocityCmd;
         //Check if service brake in use
         }else if (sBrake){
             velocityCmd = 3.6*(velocityCmd/3.6 + serviceBrake*(1));
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
-            inputVelocity = velocityCmd;
+            manualVelocity = velocityCmd;
         }else {
                 velocityCmd = comSpeed;
 
@@ -224,7 +227,7 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
-        actualAcceleration = ((speed/3.6) - (prevVelocity/3.6))/(1);
+        actualAcceleration = ((speed / 3.6) - (prevVelocity / 3.6));
         distanceTraveled = ((prevVelocity/3.6) + .5*(actualAcceleration*(Math.pow(1,2))));
         if (distanceTraveled > authority){
             authority = 0;
@@ -240,13 +243,27 @@ public class TrainControl {
         getIdealAcceleration();
     }
 
+    public void setPower(){
+        //TO DO: use and compare both train motor powers
+        double primaryPower;
+        double secondaryPower;
+
+        //for now, just uses main motor power
+        power = motor.getPower(velocityCmd, trainVelocity);
+    }
+
     //Speed Limit input from Train Model, in km/h
     public void setSpeedLimit(double theLimit){ speedLimit = theLimit; }
 
     //Authority input from Train Model, in blocks
     public void setAuthority(double dist){
-        authority = trackData.getDistance(dist);
-        //IN METERS
+
+        //For integration, set authority to whatever train model passes in
+        // NOTE: this will have to be converted to an actual distance.
+        // NOTE: this change creates side effects for speed control if
+        // distance is only sent as number of blocks.
+
+        authority = dist;
     }
 
     //Setting the train's nonVital Components
@@ -269,7 +286,7 @@ public class TrainControl {
         if (getControlMode().equals("Automatic")){
             setCommandedSpeed(currentInput.getCommandedVelocity());
         }else{
-                setCommandedSpeed(inputVelocity);
+                setCommandedSpeed(manualVelocity);
             }
 
         setSpeedLimit(currentInput.getSpeedLimit());
@@ -285,7 +302,15 @@ public class TrainControl {
      **/
 
     public void getTrainData(){
+        setAuthority(trainModel.getAuthority());
         setActualSpeed(trainModel.getActualSpeed());
+        if (controlMode.equals("Automatic")){
+            setCommandedSpeed(trainModel.getCommandedSpeed());
+        }else{
+            setCommandedSpeed(manualVelocity);
+        }
+
+        this.setPower();
     }
 
     public void setTrainData(){
