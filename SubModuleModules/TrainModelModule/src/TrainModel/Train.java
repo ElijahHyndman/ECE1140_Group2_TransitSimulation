@@ -100,6 +100,12 @@ public class Train {
         }
         calculateSpeed();
     }
+
+    //ADDED FOR TESTING
+    public double getPower(){
+        return power;
+    }
+
     public void calculateSpeed(){
         int sampleTime = 1; //need to determine if this is constant
         double F;

@@ -266,6 +266,11 @@ public class TrainControl {
         authority = dist;
     }
 
+    public void setKpKi(double newKp, double newKi){
+        motor.setKpKi(newKp, newKi);
+        backupMotor.setKpKi(newKp, newKi);
+    }
+
     //Setting the train's nonVital Components
     public void controlNonVital(){
         nonVitalComponents.setTemperature();

@@ -34,19 +34,6 @@ public class MainMotor implements TrainMotor {
         return power;
     }
 
-    public double getAcceleration(double idealVelocity, double trainVelocity){
-        return acceleration;
-    }
-
-
-    public void calculateAcceleration(int idealVelocity, int trainVelocity){
-
-        acceleration = 0;
-    }
-
-    public void setAcceleration(int commandedAcceleration){
-
-    }
 
     public void setKpKi(double newKp, double newKi){
         Kp = newKp;
@@ -56,5 +43,12 @@ public class MainMotor implements TrainMotor {
         PID.setOutputLimits(120);
     }
 
+    public double getKp(){
+        return Kp;
+    }
+
+    public double getKi(){
+        return Ki;
+    }
 
 }
