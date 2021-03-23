@@ -109,10 +109,9 @@ public class Train {
         }else{
             this.power = 0;
         }
-        calculateSpeed();
     }
-    public void calculateSpeed(){
-        int sampleTime = 1; //need to determine if this is constant
+    public void calculateSpeed(double deltaTime){
+
         double F;
         double newV;
         double newA;
@@ -123,7 +122,7 @@ public class Train {
         }
             
         if((this.emergencyBrake == true)||this.passengerBrake == true){
-            newV = this.actualSpeed - (this.emergencyDecelLimit*sampleTime); 
+            newV = this.actualSpeed - (this.emergencyDecelLimit*deltaTime);
             newA = -1 * this.emergencyDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -133,7 +132,7 @@ public class Train {
             setSpeed(newV);
         }
         else if(this.serviceBrake == true){
-            newV = this.actualSpeed - (this.standardDecelLimit*sampleTime);
+            newV = this.actualSpeed - (this.standardDecelLimit*deltaTime);
             newA = -1 * this.standardDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -145,7 +144,7 @@ public class Train {
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             newA = F/calculateMass(); //A is in m/s^2
-            newV = this.actualSpeed + (newA+this.accel)/(2*sampleTime); // m/s + average of 2 accels / time
+            newV = this.actualSpeed + (newA+this.accel)/(2*deltaTime); // m/s + average of 2 accels / time
             setSpeed(newV);
             setAccel(newA);
         }
@@ -244,16 +243,16 @@ public class Train {
     }
     public void setPassengerCount(int count){
         this.passengerCount = count;
-        recalc();
+        calculateMass();
     }
     public void setMass(double m){
         this.mass = m;
     }
 
-    public void recalc(){
-        calculateMass();
-        calculateSpeed();
+    public void updatePhysicalState(String currentTime, double deltaTime){
+        calculateSpeed(deltaTime);
     }
+
     
     public void convert(){
         this.displayActualSpeed = this.actualSpeed * 3.28084;
