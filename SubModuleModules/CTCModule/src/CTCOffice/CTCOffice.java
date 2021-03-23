@@ -34,6 +34,7 @@ public class CTCOffice
     {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
+        //speedAuthority[2] is dispatch time
         //calculate speed and authority from destination for a specific train
         
         if (tNum.equals("Train 1"))
@@ -262,7 +263,6 @@ public class CTCOffice
     public void LoadData(String line, int blockNum)
     {
         //display a certain block's data from file
-        
     }
     
     public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
