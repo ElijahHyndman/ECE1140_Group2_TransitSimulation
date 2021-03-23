@@ -535,7 +535,7 @@ public class trainGUI extends javax.swing.JFrame {
         testFailure.setRowHeight(20);
         jScrollPane8.setViewportView(testFailure);
 
-        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("image.jpg"))); // NOI18N
+        //imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("image.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
