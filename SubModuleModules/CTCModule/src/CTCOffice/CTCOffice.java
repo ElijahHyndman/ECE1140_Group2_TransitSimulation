@@ -141,7 +141,6 @@ public class CTCOffice
        int m1 = timeDis.getMinute();
        int m2 = LocalTime.now().getMinute();
        
-       
        double temp = m1-m2;
        temp = temp/60;
        int hsub = h1-h2;
