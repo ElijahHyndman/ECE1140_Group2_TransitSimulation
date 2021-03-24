@@ -94,7 +94,6 @@ import java.util.Scanner;
                     if(infrastructure.length()>3 && infrastructure.substring(0,3).equals("YARD")){
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
 
-
                         blockArrayList.add(Test);
                         redTrack.add(Test);
                         greenTrack.add(Test);

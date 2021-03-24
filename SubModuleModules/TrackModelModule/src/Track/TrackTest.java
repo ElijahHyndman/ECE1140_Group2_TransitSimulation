@@ -62,19 +62,28 @@ class TrackTest {
 
     @org.junit.jupiter.api.Test
     void getTrackHeaterStatus() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setEnvironmentalTemperature(20);
+        assertEquals(instance.getTrackHeaterStatus(), true);
+        instance.setEnvironmentalTemperature(40);
+        assertEquals(instance.getTrackHeaterStatus(), false);
+
     }
 
     @org.junit.jupiter.api.Test
     void setEnvironmentalTemperature() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setEnvironmentalTemperature(20);
+        assertEquals(instance.getEnvironmentalTemperature(), 20);
     }
 
-    @org.junit.jupiter.api.Test
-    void getEnvironmentalTemperature() {
-    }
 
-    @org.junit.jupiter.api.Test
-    void getSize() {
-    }
 
     @org.junit.jupiter.api.Test
     void setFailure() {
