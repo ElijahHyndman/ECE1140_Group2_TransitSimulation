@@ -31,7 +31,7 @@ class TrainUnitTest {
      */
 
     @Test
-    @DisplayName("TrainUnit spawns with a TrainController and TrainModel without issues")
+    @DisplayName("Construction: TrainUnit spawns with a TrainController and TrainModel without issues")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
         boolean controllerExists    = trn.getController() != null;
@@ -42,22 +42,42 @@ class TrainUnitTest {
     }
 
 
+
+    @Test
+    @DisplayName("Construction: TrainUnit can spawn running without issues")
+    void trainUnitCanSpawnRunning() {
+            // Use constructor of runningOnStart = true
+            trn = new TrainUnit(true);
+
+            // Is running?
+            waitForTrainObjectToCatchUp();
+            assertEquals(true, trn.isRunning());
+
+            // Stop train
+            trn.halt();
+            assertEquals(false, trn.isRunning());
+    }
+
+
     /*
         Speed, Authority Tests
      */
 
 
     @Test
-    @DisplayName("When not running, Speed/Authority can be manually fed to Hull then manually updated for Controller")
+    @DisplayName("Manual Data-Flow [When not running, Speed/Authority can be manually fed into Hull then manually updated for Controller]")
     void controllerGetsWrongAuthorityFromHull() {
-        // When train is not running, fetching Authority/Speed is not automatic
+        // This test is just to verify that the dataflow functions work correctly without the added complication of running/timed events/communication between threads
+
+        // Create train, get TrainController and TrainHull components for observation
         trn = new TrainUnit();
         TrainControl ctrl = trn.getController();
         Train hull = trn.getHull();
+
+
+        // Manually feed speed/Authority to hull
         double testAuthority = 1.0;
         double testSpeed = 1.0;
-
-        // Manually set Hull's Speed Authority
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
 
@@ -98,24 +118,28 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track")
+    @DisplayName("Automatic Polling Track for Speed/Authority [While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track]")
     void trainControllerInteractsWithTrainModel() {
+        // Create train, make it run on construction, retrieve TrainModel and TrainController
         trn = new TrainUnit(true);
         TrainControl ctrl = trn.getController();
         Train hull = trn.getHull();
-
-        // Test that controller has been pulling actual speed from hull correctly
         waitForTrainObjectToCatchUp();
         assertEquals(true,trn.isRunning());
+
+        // Basic Communication Test
         assertEquals(trn.getHull().getActualSpeed() , trn.getController().getActualSpeed() );
 
-        // Without Track, speed and authority should be -1.0
-       // assertEquals(-1.0, hull.getAuthority());
-        //assertEquals(-1.0, hull.getCommandedSpeed());
-        //assertEquals(-1.0, ctrl.getAuthority());
-        //assertEquals(-1.0, ctrl.getCommandedSpeed());
+        // Without TrackElement, Train Hull and Train Controller read invalid Speed/Authority
+        // Note: For some reason, control only gets value of -1.0 whenever there is ample time before measuring
+        double invalidValue = -1.0;
+        waitForTrainObjectToCatchUp();
+        assertEquals(invalidValue,hull.getCommandedSpeed());
+        assertEquals(invalidValue,hull.getAuthority());
+        assertEquals(invalidValue,ctrl.getCommandedSpeed());
+        assertEquals(invalidValue,ctrl.getAuthority());
 
-        // Make TrackElement and put Train on it
+        // Make TrackElement, put Train on it
         double expectedSpeed = 25.0;
         double expectedAuthority = 10.0;
         TrackBlock BlockGreenA = new TrackBlock();
@@ -270,7 +294,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("If this test passes, then I have not solved the Chaser Problem")
+    @DisplayName("PROBLEM [If this test passes, then I have not solved the Chaser Problem]")
     void chaserProblem() {
         // If a Front Train and Chaser Train are on blocks next to each other going the same direction,
         // then what happens when the Chaser enters the new block before the front one does?
@@ -304,7 +328,7 @@ class TrainUnitTest {
     @DisplayName("Train will run on new thread, correctly pulls Speed/Authority from TrackElement on this thread to its thread")
     void trainRunsOnThread() {
         // Seconds to run for
-        int runFor = 3;
+        int runFor = 2;
 
         trn = new TrainUnit();
         TrackElement testBlock = new TrackBlock();
@@ -357,18 +381,6 @@ class TrainUnitTest {
 
         trn.halt();
         assertEquals(false,trn.isRunning());
-    }
-
-
-
-    @Test
-    @DisplayName("Train can immediately begin running after construction with special constructor")
-    void startOnConstructionWorks() {
-        trn = new TrainUnit(true);
-        waitForTrainObjectToCatchUp();
-        assertEquals(true, trn.isRunning());
-        trn.halt();
-        assertEquals(false, trn.isRunning());
     }
 
 
@@ -429,6 +441,30 @@ class TrainUnitTest {
         physicsCLK.halt();
     }
 
+
+    /*
+
+     */
+
+
+    @Test
+    @DisplayName("Movement [Train Hull will maintain a velocity and update]")
+    void trainHullWillMoveAtConstantVelocity() {
+        trn = new TrainUnit("Moving Hull");
+        Train hull = trn.getHull();
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+
+        // Manually set a velocity
+        hull.setSpeed(10.0);
+
+
+        physicsClk.start();
+
+        try {TimeUnit.SECONDS.sleep(4);} catch(Exception e) {}
+
+        physicsClk.halt();
+    }
 
     /*
         Helper Functions

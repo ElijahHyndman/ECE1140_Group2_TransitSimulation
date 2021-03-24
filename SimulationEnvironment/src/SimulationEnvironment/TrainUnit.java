@@ -4,6 +4,8 @@ import TrackConstruction.TrackElement;
 import TrainModel.Train;
 import implementation.TrainControl;
 
+import java.util.logging.*;
+
 public class TrainUnit extends Thread implements PhysicsUpdateListener {
     /** class that instantiates a TrainModel and a TrainController together for the simulation.
      * a train model should never appear without a train controller, so this class will handle the spawning
@@ -46,26 +48,63 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      *          @further a Train Unit might be set on a track block, train yard, station, or track switch
      * @member lastOccupied TrackElement, the TrackElement which the train last occupied, in case this is useful to know
      */
-    private String name = "No Name";
+    private String name = "NoName";
 
     private TrainControl control;
     private Train hull;
     private TrackElement occupies;
     private TrackElement lastOccupied;
 
-    // TrainUnit does NOT process speed or authority
     private double COMMANDED_SPEED=-1.0;
     private double COMMANDED_AUTHORITY=-1.0;
 
+    /** Threading Members
+     */
     // Volatile keeps data member in common CPU memory
     // so we can access it outside of thread
     volatile private boolean running;
+
+    /** Logging Members
+     *  Instead of System.out.println for all of the debugging for this file, I will be using a logger.
+     *  I will have it output to the console, and have the option to output to a logging file.
+     *  you can adjust the level of logs being displayed using the verboseness variables
+     *
+     * @member trainEventLogger     Logger, used to store holds logs while the program runs
+     * @member TRAIN_LOGGING_FILE_NAME  String, name of the file where logs will be stored if CREATE_LOGGING_FILE is set to true
+     *          @assert If two trains share the same name, or have not had their names set, then they will write to the same log file
+     * @member consoleHandler   Handler, log handler that writes logs from trainEventLogger to console
+     * @member fileHandler   Handler, log handler that writes logs from trainEventLogger to output file
+     *
+     * @member logVerboseness   Level, minimum level for log to be stored into logger while running
+     * @member consoleVerboseness   Level, minimum level for stored logs to be written to console
+     * @member fileVerboseness  Level, minimum level for stored logs to be written to output file
+     * Level Hierarchy:
+     * • SEVERE (highest level)
+     * • WARNING
+     * • INFO
+     * • CONFIG
+     * • FINE
+     * • FINER
+     * • FINEST (lowest level)
+     */
+    private Logger trainEventLogger = Logger.getLogger("TrainUnit_"+name+"_Logger");
+    private String TRAIN_LOGGING_FILE_NAME = "TrainUnit_"+name+"_Logs.txt";
+    // Creating logging file may slow down the thread-starting. be aware that this may incur a few microseconds of lag
+    private boolean CREATE_LOGGING_FILE = false;
+    private Handler consoleHandler;
+    private Handler fileHandler;
+
+    Level logVerboseness = Level.ALL;
+    Level consoleVerboseness = Level.FINE;
+    Level fileVerboseness = Level.FINER;
 
 
     public TrainUnit() {
         //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
         control = new TrainControl(hull);
+        instantiateLogger();
+        trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
     public TrainUnit(String name) {
@@ -73,13 +112,17 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
         control = new TrainControl(hull);
+        instantiateLogger();
+        trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
     public TrainUnit(boolean runOnStart) {
         //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
         control = new TrainControl(hull);
+        instantiateLogger();
         if (runOnStart) start();
+        trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
     public TrainUnit(String name, boolean runOnStart) {
@@ -87,7 +130,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         //control = new TrainControl();
         hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
         control = new TrainControl(hull);
+        instantiateLogger();
         if (runOnStart) start();
+        trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
     protected void finalize () {
@@ -154,6 +199,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             placeOn(location);
             // Call transition function, user may want something to happen
             onBlockTransition(occupies,lastOccupied);
+            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has moved from block %s to block %s",name, this.hashCode(),lastOccupied.hashCode(),occupies.hashCode()));
             return true;
         }catch (Exception e) {
 
@@ -164,11 +210,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     @Override
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
         // println's are a big no-bo in physics updates
-        System.out.println("updating physics");
-        // TODO Train model crunches numbers to update its physics, calculate new actual speed
-        // TODO Train model calcualtes its actual speed, and any other values Reagan requires for the Reagan's TODO below this
-        // Train Controller gets updates from the TrainModel about Commanded Speed,(Commanded Authority,Actual Speed) to do
-        // something like: public void updatePhysicalState(String currentTimeString, double deltaTime_inSeconds) {}
+        //System.out.println("updating physics");
+        trainEventLogger.finest("Physics Update");
+        // Update Hull's physics
+        hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
+        trainEventLogger.info(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4f \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.1f,%.1f,%.1f] ",
+                                                name,this.hashCode(),
+                                                deltaTime_inSeconds,
+                                                hull.getActualSpeed(),hull.getBlockDistance(),hull.getTotalDistance()));
         control.getTrainData();
         // TODO Train Controller crunches numbers to updates its control commands, calculate power and control stuff
         // TODO Reagan: This one should only handle Brake, accel/decel,Power
@@ -185,7 +234,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          * @after Train is executing on a new thread; all code within run() is being executed while simulation is
          *  also running on an adjacent thread
          */
-        System.out.println("Train has started running");
+        //System.out.println("Train has started running");
+        trainEventLogger.info(String.format("TrainUnit (%s : %s) has started running",name,this.hashCode()));
         running=true;
         // Uses AtomicBoolean running to allow us to end thread
         while(running) {
@@ -200,7 +250,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 continue;
             }
         }
-        System.out.println("Train has stopped running");
+        //System.out.println("Train has stopped running");
+        trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running",name,this.hashCode()));
     }
 
     public void halt() {
@@ -211,6 +262,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          *  @after TrainUnit is definitely not running
          */
         running=false;
+        trainEventLogger.info(String.format("TrainUnit (%s : %s) has been commanded to stop",name,this.hashCode()));
     }
 
     public void retrieveSpeedAuthority() {
@@ -219,9 +271,11 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Feed Speed and Authority from track to Train Hull
         retrieveAuthorityFromTrack();
         retrieveSpeedFromTrack();
+        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%f) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
         control.getTrainData();
-        System.out.printf("Hull (%d,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
+        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%f,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
+        //System.out.printf("Hull (%f,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
       }
 
     private void retrieveAuthorityFromTrack() {
@@ -233,7 +287,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
         if (occupies == null) {
             COMMANDED_AUTHORITY = -1.0;
-            hull.setAuthority((int) COMMANDED_AUTHORITY);
+            hull.setAuthority(COMMANDED_AUTHORITY);
+            trainEventLogger.finest(String.format("TrainUnit (%s,%s) TrainModel is not on a rail, pulling invalid CommandedSpeed=-1.0",name,this.hashCode()));
             return;
         }
         // Pull Commanded Authority from Track
@@ -252,6 +307,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         if (occupies == null) {
             COMMANDED_SPEED = -1.0;
             hull.setCommandedSpeed(COMMANDED_SPEED);
+            trainEventLogger.finest(String.format("TrainUnit (%s,%s) TrainModel is not on a rail, pulling invalid CommandedSpeed=-1.0",name,this.hashCode()));
             return;
         }
         // Pull Commanded Speed from Track
@@ -259,6 +315,36 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Give Speed to Hull
         hull.setCommandedSpeed(COMMANDED_SPEED);
         // Control will pull these values during run() function
+    }
+
+    public void instantiateLogger() {
+        // Clear any default settings that logger may have come with
+        LogManager.getLogManager().reset();
+        trainEventLogger.setUseParentHandlers(false);
+
+        // Set logger verboseness
+        trainEventLogger.setLevel(logVerboseness);
+
+        // Create console and file handlers, connect them to logger
+        consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(consoleVerboseness);
+        trainEventLogger.addHandler(consoleHandler);
+        if(CREATE_LOGGING_FILE) {
+            try {
+                // If chosen, create file handler
+                //fileHandler = new FileHandler(TRAIN_LOGGING_FILE_NAME,true);
+                fileHandler = new FileHandler(TRAIN_LOGGING_FILE_NAME,true);
+                fileHandler.setLevel(fileVerboseness);
+
+                // Use the simple format for log style in file
+                SimpleFormatter easyToRead = new SimpleFormatter();
+                fileHandler.setFormatter(easyToRead);
+                trainEventLogger.addHandler(fileHandler);
+            } catch (Exception e) {
+                trainEventLogger.severe("Failed to instantiate file logger");
+                e.printStackTrace();
+            }
+        }
     }
 
     public TrainControl getController() {

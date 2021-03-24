@@ -260,7 +260,7 @@ public class WorldClock extends Thread {
 
     public void updateAllPhysics() {
         for (PhysicsUpdateListener listener : listeners) {
-            listener.updatePhysics(getTime(), microseconds*1000);
+            listener.updatePhysics(getTime(), microseconds/1000000.0);
         }
     }
 
