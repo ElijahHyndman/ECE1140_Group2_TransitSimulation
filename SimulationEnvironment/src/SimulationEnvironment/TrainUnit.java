@@ -33,6 +33,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      * coming from the track about Authority,Speed,Stopping distance, etc being reflected onto the physics of the train objects. This lag shal be inconsequential
      *      - Note there should be ample time for the TrainUnit to read the beacon from the tracks for stopping distance and station information. If the chance to read the beacon
      *      is too short, the run() loop might take too long to ever pick up the information from the beacon.
+     *      - We define:
+     *          -run() handles all interactions with the track and outside world
+     *          -updatePhysics() handles all internal physics and number crunching
      * @author elijah
      */
     /** Default values
@@ -96,7 +99,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private Handler fileHandler;
 
     public Level logVerboseness = Level.ALL;
-    public Level consoleVerboseness = Level.FINEST;
+    public Level consoleVerboseness = Level.FINE;
     public Level fileVerboseness = Level.FINER;
 
 
@@ -239,7 +242,6 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         //System.out.println("Train has started running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has started running",name,this.hashCode()));
         running=true;
-        // Uses AtomicBoolean running to allow us to end thread
         while(running) {
             // Speed and Authority are checked, regardless of being on a track
             retrieveSpeedAuthority();
@@ -251,6 +253,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 // Do not do track tasks if not on some sort of track
                 continue;
             }
+
+            // Check if we should progress to the next block
+
         }
         //System.out.println("Train has stopped running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running",name,this.hashCode()));

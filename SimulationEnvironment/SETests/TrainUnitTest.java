@@ -465,27 +465,68 @@ class TrainUnitTest {
         Train hull = trn.getHull();
         hull.setSpeed(10.0);
         double[][] expectedValues =
-        {   {10.0,10.0,10.0}, {10.0,20.0,20.0}, {10.0, 30.0, 30.0}, {10.0, 40.0, 40.0} };
+        {       // First four are with speed 10.0, updated once per second
+                {10.0,10.0,10.0}, {10.0,20.0,20.0}, {10.0, 30.0, 30.0}, {10.0, 40.0, 40.0},
+                // Second four are with speed 20.0, updated once per second
+                {20.0, 60.0, 60.0}, {20.0, 80.0, 80.0}, {20.0, 100.0, 100.0}, {20.0, 120.0, 120.0},
+        };
 
         physicsClk.start();
 
         trn.updateFlag = false;
         for (int index=0; index<expectedValues.length; index++) {
+
             // Wait for next update to occur
             while(trn.updateFlag==false) {}
             trn.updateFlag=false;
-            // Every second, hull values match expected values
-            //assertEquals(true, aboutEqual(expectedValues[index][0],hull.getActualSpeed(),0.5));
-            //assertEquals(true, aboutEqual(expectedValues[index][1],hull.getTotalDistance(),1.0));
-            //assertEquals(true, aboutEqual(expectedValues[index][2],hull.getBlockDistance(),1.0));
+
+            // Every update, hull values match expected values
             System.out.println(String.format("%f %f %f",hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance()));
             assertEquals(expectedValues[index][0],hull.getActualSpeed());
             assertEquals(expectedValues[index][1],hull.getTotalDistance());
             assertEquals(expectedValues[index][2],hull.getBlockDistance());
+
+            // Speed up after fourth iteration
+            if(index == 3) {hull.setSpeed(20.0);}
         }
 
         physicsClk.halt();
     }
+
+
+
+    @Test
+    @DisplayName("Movement [Train Hull under power command will display correct velocities]")
+    void TrainHullWillAccelerate() {
+        // Create train and world clock for commanding train
+        trn = new TrainUnit("Moving Hull");
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+        // Display more information about trainLogs, since physics updates are "Finer" level
+        trn.consoleVerboseness = Level.ALL;
+        // Get Hull
+        Train hull = trn.getHull();
+
+        // Put hull under constant power command of 100KW
+        // I pulled these values directly from output of this test, for further use later
+        hull.setPower(100);
+        double[] velocities = {2.32, 4.20, 5.09, 5.66, 6.15, 6.60, 7.01, 7.40, 7.77, 8.11, 8.45, 8.76, 9.07};
+
+        // Begin physics clock for regular physics update commands
+        physicsClk.start();
+
+        trn.updateFlag = false;
+        for (int index =0; index < velocities.length; index++) {
+            // Wait for next update to occur
+            while (!trn.updateFlag) {}
+            trn.updateFlag = false;
+            // Velocity from power calculations matches expected velocity?
+            assertEquals(true, aboutEqual(velocities[index],hull.getActualSpeed(),1.0));
+        }
+
+        physicsClk.halt();
+    }
+
 
     /*
         Helper Functions
