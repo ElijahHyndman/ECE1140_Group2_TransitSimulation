@@ -1,6 +1,7 @@
 package Track;
 
 import TrackConstruction.*;
+import javax.swing.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -9,6 +10,8 @@ import TrackConstruction.*;
  */
 
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +28,8 @@ public class TrackGUI extends javax.swing.JFrame {
     DefaultTableModel switches;
     DefaultTableModel beacons;
     DefaultTableModel mainInputs;
+
+    public Timer timer;
 
 
     /**
@@ -236,11 +241,7 @@ public class TrackGUI extends javax.swing.JFrame {
                 SubmitMouseReleased(evt);
             }
         });
-        Submit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SubmitActionPerformed(evt);
-            }
-        });
+
 
         jLabel5.setText("Input File");
 
@@ -390,11 +391,6 @@ public class TrackGUI extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTextArea1);
 
         jTextField2.setText("Input Block Number");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
 
         jButton5.setText("Okay");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -567,11 +563,7 @@ public class TrackGUI extends javax.swing.JFrame {
                 updateTestMouseClicked(evt);
             }
         });
-        updateTest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateTestActionPerformed(evt);
-            }
-        });
+
 
         jLabel11.setText("Authority / Commanded Speed Wayside");
 
@@ -612,11 +604,6 @@ public class TrackGUI extends javax.swing.JFrame {
         jLabel23.setText("Passengers Leave Train:");
 
         passengerTest.setText("-1");
-        passengerTest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passengerTestActionPerformed(evt);
-            }
-        });
 
         jTestBlue.setText("LOAD TEST TRACK (BLUE)");
         jTestBlue.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -797,7 +784,7 @@ public class TrackGUI extends javax.swing.JFrame {
         jPanel7.setVisible(false);
     }
 
-    //Loading Track
+    //This is to view the Track
     private void viewTrack(java.awt.event.MouseEvent evt) {
         //Make VIEW TRACK VISIBLE
         jPanel1.setVisible(false);
@@ -811,30 +798,41 @@ public class TrackGUI extends javax.swing.JFrame {
         //Here make the Track Heater status shown
         if(trackList != null) {
             //Load in Temperature
-            //trackList.updateOccupied();
             TemperaturePane.setText("Environmental Temperature:" + trackList.getEnvironmentalTemperature() + "\n Track Heater Status: " + trackList.getTrackHeaterStatus());
             //Load in the Track
-            ArrayList<TrackElement> tempBlocks = trackList.getBlocks();
-            model = (DefaultTableModel)jTable1.getModel();
-            model.setRowCount(0);
-            for(int i=0; i<tempBlocks.size(); i++)
-                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
-
+                refreshRedGreenTrack();
 
 
         }
     }
 
-    private void SubmitActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void updateRedGreenTrack(){
+        ArrayList<TrackElement> tempBlocks = trackList.getBlocks();
+        model = (DefaultTableModel)jTable1.getModel();
+        model.setRowCount(0);
+        //Display Track Information
+        for(int i=0; i<tempBlocks.size(); i++)
+            model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+    }
+    /*refreshing screen */
+    public void refreshRedGreenTrack() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateRedGreenTrack();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
     }
 
     /*This is button for inputing Track Data */
-
     private void SubmitMouseReleased(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
         String filepath = jTextField1.getText().trim();
-
 
         Track test = new Track();
         if(test.validFile(filepath)){ // C:\Users\grhen\OneDrive\Documents\Test.csv"
@@ -853,9 +851,6 @@ public class TrackGUI extends javax.swing.JFrame {
         }
     }
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
 
     private void viewBlock(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
@@ -996,12 +991,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
     }
 
-    private void updateTestActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
     /*UPDATING Track Temperature*/
-
     private void jButton12MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
         String temp = jTextField12.getText().trim();
@@ -1015,7 +1005,6 @@ public class TrackGUI extends javax.swing.JFrame {
     }
 
     /*Load Test Track File */
-
     private void jButton10MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
         Track test = new Track();
@@ -1116,9 +1105,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
     }
 
-    private void passengerTestActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
+
 
     private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
@@ -1139,6 +1126,10 @@ public class TrackGUI extends javax.swing.JFrame {
     //ADDING ONLY GREEN LINE SHOWING
     private void greenTrackMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+       // refreshGreenTrack();
+    }
+
+    private void viewGreenTrack(){
         if(trackList != null) {
             //Load in Green Track
             ArrayList<TrackElement> tempBlocks = trackList.getGreenLine();
@@ -1146,12 +1137,21 @@ public class TrackGUI extends javax.swing.JFrame {
             model.setRowCount(0);
             for(int i=0; i<tempBlocks.size(); i++)
                 model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
-
-
-
         }
     }
+    public void refreshGreenTrack() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewGreenTrack();
+            }
+        });
 
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
     /**
      * @param args the command line arguments
      */
