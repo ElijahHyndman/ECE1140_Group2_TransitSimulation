@@ -896,8 +896,10 @@ public class TrackGUI extends javax.swing.JFrame {
         jPanel5.setVisible(false);
         jPanel6.setVisible(false);
         jPanel7.setVisible(false);
+        refreshTickets();
+    }
 
-
+    private void loadTickets(){
         if(trackList != null){
             //Here need to populate TABLE
             DefaultTableModel table2 = (DefaultTableModel)jTable2.getModel();
@@ -906,6 +908,19 @@ public class TrackGUI extends javax.swing.JFrame {
             for(int i =0;i < station.size(); i++)
                 table2.addRow(new Object[] {station.get(i).getLine(),station.get(i).getBlockNum(), station.get(i).getInfrastructure(), station.get(i).getTicketSales(), station.get(i).getThroughput()});
         }
+    }
+    public void refreshTickets() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTickets();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
     }
 
     /*Button for signals / signals / Beacons */
@@ -919,9 +934,10 @@ public class TrackGUI extends javax.swing.JFrame {
         jPanel5.setVisible(true);
         jPanel6.setVisible(false);
         jPanel7.setVisible(false);
-
-
         //Here update tables
+        refreshSignals();
+    }
+    private void loadSignals(){
 
         if(trackList != null) {
             switches = (DefaultTableModel)jTable3.getModel();
@@ -951,8 +967,19 @@ public class TrackGUI extends javax.swing.JFrame {
 
 
         }
+    }
+    public void refreshSignals() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadSignals();
+            }
+        });
 
-
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
     }
 
     private void failures(java.awt.event.MouseEvent evt) {
@@ -965,8 +992,10 @@ public class TrackGUI extends javax.swing.JFrame {
         jPanel6.setVisible(true);
         jPanel7.setVisible(false);
         //add failure modes
+        refreshFailures();
+    }
 
-
+    private void loadFailures(){
         if(trackList != null) {
             ArrayList<TrackElement> failureList = trackList.getFailures();
             DefaultTableModel failuresTable = (DefaultTableModel)jTable6.getModel();
@@ -978,6 +1007,20 @@ public class TrackGUI extends javax.swing.JFrame {
             }
         }
     }
+    public void refreshFailures() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadFailures();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
 
     private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
