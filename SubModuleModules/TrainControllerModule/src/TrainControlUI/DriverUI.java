@@ -51,9 +51,9 @@ public class DriverUI implements ActionListener{
     public Timer timer;
     public Graphics graphics;
 
-    public DriverUI() {
+    public DriverUI(TrainControl trainController) {
         //The train control associated for this train/driver
-        control = new TrainControl();
+        control = trainController;
 
         main = new JFrame("Train X");
         main.setSize(1600, 900);
@@ -495,7 +495,7 @@ public class DriverUI implements ActionListener{
 
 
     public static void main(String args[]){
-        new DriverUI();
+        new DriverUI(new TrainControl());
 
     }
 
