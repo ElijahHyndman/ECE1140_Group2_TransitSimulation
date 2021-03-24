@@ -28,8 +28,8 @@ public class TrackGUI extends javax.swing.JFrame {
     DefaultTableModel switches;
     DefaultTableModel beacons;
     DefaultTableModel mainInputs;
-
     public Timer timer;
+    int GREENDISP = 0;
 
 
     /**
@@ -40,14 +40,14 @@ public class TrackGUI extends javax.swing.JFrame {
     }
 
     /**
-     * Creating returning track
+     * Creating returning track -- method to be called by simulation environment
      */
     public Track returnTrack() {
         return trackList;
     }
 
     /**
-     * update Tracklist
+     * update Tracklist -- method to be called by simulation environment
      */
     public void updateTrack(Track updatedTrack) {
         trackList = updatedTrack;
@@ -808,6 +808,8 @@ public class TrackGUI extends javax.swing.JFrame {
 
     private void updateRedGreenTrack(){
         ArrayList<TrackElement> tempBlocks = trackList.getBlocks();
+        if (GREENDISP == 1)
+            tempBlocks = trackList.getGreenLine();
         model = (DefaultTableModel)jTable1.getModel();
         model.setRowCount(0);
         //Display Track Information
@@ -1169,7 +1171,7 @@ public class TrackGUI extends javax.swing.JFrame {
     //ADDING ONLY GREEN LINE SHOWING
     private void greenTrackMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-       // refreshGreenTrack();
+       GREENDISP = 1;
     }
 
     private void viewGreenTrack(){
