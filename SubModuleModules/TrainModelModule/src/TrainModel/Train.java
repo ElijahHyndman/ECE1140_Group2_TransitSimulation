@@ -38,7 +38,7 @@ public class Train {
     Boolean emergencyBrake;
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
-    int authority;
+    double authority;
     int beacon;
     double power;// watts
     double accel;//  m/s^2
@@ -76,7 +76,7 @@ public class Train {
     public double getCommandedSpeed() {
         return commandedSpeed;
     }
-    public int getAuthority() {
+    public double getAuthority() {
         return authority;
     }
     public int getBeacon() {
@@ -96,8 +96,7 @@ public class Train {
             this.actualSpeed = 0;
             this.displayActualSpeed = 0;
         }
-        totalDistance += this.actualSpeed;
-        blockDistance += this.actualSpeed;
+
     }
     public void setDisplaySpeed(double speed) {
         this.displayActualSpeed = speed; 
@@ -148,6 +147,8 @@ public class Train {
             setSpeed(newV);
             setAccel(newA);
         }
+        totalDistance += this.actualSpeed*deltaTime;
+        blockDistance += this.actualSpeed*deltaTime;
     }
     public double getTotalDistance(){
         return totalDistance;
