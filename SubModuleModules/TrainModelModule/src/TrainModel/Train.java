@@ -180,7 +180,7 @@ public class Train {
         this.displayCommandedSpeed = commandedSpeed;
         this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
     }
-    public void setAuthority(int a) {
+    public void setAuthority(double a) {
         this.authority = a;
     }
     public void setBeacon(int beaconVal) {
