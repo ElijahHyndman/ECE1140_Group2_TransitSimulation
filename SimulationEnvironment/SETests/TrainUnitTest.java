@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -31,7 +32,7 @@ class TrainUnitTest {
      */
 
     @Test
-    @DisplayName("Construction: TrainUnit spawns with a TrainController and TrainModel without issues")
+    @DisplayName("Construction [TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
         boolean controllerExists    = trn.getController() != null;
@@ -118,7 +119,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Automatic Polling Track for Speed/Authority [While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track]")
+    @DisplayName("Automatic Polling Track  [While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track]")
     void trainControllerInteractsWithTrainModel() {
         // Create train, make it run on construction, retrieve TrainModel and TrainController
         trn = new TrainUnit(true);
@@ -170,7 +171,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Can be placed on TrackElements, accurately sets them as occupied according to contract")
+    @DisplayName("Block Placement [Can be placed on TrackElements, accurately sets them as occupied according to contract]")
     void trainUnitCanBePlacedOnATrackElement() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -224,7 +225,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied")
+    @DisplayName("Block Transitions [Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied]")
     void trainUnitCanTransitionBetweenTrackElements() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -325,7 +326,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Train will run on new thread, correctly pulls Speed/Authority from TrackElement on this thread to its thread")
+    @DisplayName("Thread Communication [Train on Thread A will correctly and continually read Speed/Authority from TrackElement on Thread B]")
     void trainRunsOnThread() {
         // Seconds to run for
         int runFor = 2;
@@ -386,7 +387,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Controller will continually poll Hull who polls TrackElement for speed and authority while TrainUnit is running on TrackElement")
+    @DisplayName("Automatic Polling [while TrainUnit is running on TrackElement, Controller will continually poll Hull who polls TrackElement for speed and authority]")
     void theControllerWillUpdateFromTheHullWhileRunning() {
         trn = new TrainUnit(true);
         TrackBlock BlockGreenA = new TrackBlock();
@@ -420,7 +421,7 @@ class TrainUnitTest {
             physics updates
      */
     @Test
-    @DisplayName("TrainUnit will updatePhysics when called upon by WorldClock")
+    @DisplayName("Physics [TrainUnit will update physics when listening to WorldClock]")
     void trainWillUpdatePhysicsWhenCalledByWorldClock() {
         WorldClock physicsCLK = new WorldClock(4.0,1.0);
         trn = new TrainUnit();
@@ -448,20 +449,40 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Movement [Train Hull will maintain a velocity and update]")
+    @DisplayName("Movement [Train Hull, manual velocity will display correct Distance Traveled]")
     void trainHullWillMoveAtConstantVelocity() {
+        // Create train and world clock for commanding train
         trn = new TrainUnit("Moving Hull");
-        Train hull = trn.getHull();
         WorldClock physicsClk = new WorldClock(1.0,1.0);
         physicsClk.addListener(trn);
 
-        // Manually set a velocity
-        hull.setSpeed(10.0);
+        // Display more information about trainLogs, since physics updates are "Finer" level
+        trn.consoleVerboseness = Level.ALL;
 
+        // Get Hull
+        // Manually set a velocity
+        // Hand calculated values for {Actual Speed, Total Distance, Block Distance}
+        Train hull = trn.getHull();
+        hull.setSpeed(10.0);
+        double[][] expectedValues =
+        {   {10.0,10.0,10.0}, {10.0,20.0,20.0}, {10.0, 30.0, 30.0}, {10.0, 40.0, 40.0} };
 
         physicsClk.start();
 
-        try {TimeUnit.SECONDS.sleep(4);} catch(Exception e) {}
+        trn.updateFlag = false;
+        for (int index=0; index<expectedValues.length; index++) {
+            // Wait for next update to occur
+            while(trn.updateFlag==false) {}
+            trn.updateFlag=false;
+            // Every second, hull values match expected values
+            //assertEquals(true, aboutEqual(expectedValues[index][0],hull.getActualSpeed(),0.5));
+            //assertEquals(true, aboutEqual(expectedValues[index][1],hull.getTotalDistance(),1.0));
+            //assertEquals(true, aboutEqual(expectedValues[index][2],hull.getBlockDistance(),1.0));
+            System.out.println(String.format("%f %f %f",hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance()));
+            assertEquals(expectedValues[index][0],hull.getActualSpeed());
+            assertEquals(expectedValues[index][1],hull.getTotalDistance());
+            assertEquals(expectedValues[index][2],hull.getBlockDistance());
+        }
 
         physicsClk.halt();
     }
@@ -476,5 +497,9 @@ class TrainUnitTest {
          */
         // A time delay of one microsecond
         try { TimeUnit.MICROSECONDS.sleep(1); } catch (Exception e ){}
+    }
+
+    public boolean aboutEqual(double a, double b, double eps) {
+        return Math.abs(a-b)<eps;
     }
 }

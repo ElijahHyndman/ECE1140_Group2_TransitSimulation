@@ -63,6 +63,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     // Volatile keeps data member in common CPU memory
     // so we can access it outside of thread
     volatile private boolean running;
+    volatile public boolean updateFlag;
 
     /** Logging Members
      *  Instead of System.out.println for all of the debugging for this file, I will be using a logger.
@@ -94,9 +95,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private Handler consoleHandler;
     private Handler fileHandler;
 
-    Level logVerboseness = Level.ALL;
-    Level consoleVerboseness = Level.FINE;
-    Level fileVerboseness = Level.FINER;
+    public Level logVerboseness = Level.ALL;
+    public Level consoleVerboseness = Level.FINEST;
+    public Level fileVerboseness = Level.FINER;
 
 
     public TrainUnit() {
@@ -214,7 +215,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         trainEventLogger.finest("Physics Update");
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
-        trainEventLogger.info(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4f \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.1f,%.1f,%.1f] ",
+        trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] ",
                                                 name,this.hashCode(),
                                                 deltaTime_inSeconds,
                                                 hull.getActualSpeed(),hull.getBlockDistance(),hull.getTotalDistance()));
@@ -222,6 +223,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // TODO Train Controller crunches numbers to updates its control commands, calculate power and control stuff
         // TODO Reagan: This one should only handle Brake, accel/decel,Power
         // something like: public void updateCommandOutputs(String currentTimeString,double deltaTime_inSeconds) {}
+        updateFlag = true;
     }
 
     @Override
