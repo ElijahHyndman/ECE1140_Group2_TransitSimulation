@@ -1,12 +1,15 @@
 import SimulationEnvironment.*;
 import TrackConstruction.*;
 
+import TrainControlUI.DriverUI;
 import TrainModel.Train;
+import TrainModel.trainGUI;
 import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,8 +26,12 @@ class TrainUnitTest {
     void tearDown() {
     }
 
+    /*
+        Spawning Tests
+     */
+
     @Test
-    @DisplayName("Spawns with a TrainModel and TrainController without issues")
+    @DisplayName("TrainUnit spawns with a TrainController and TrainModel without issues")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
         boolean controllerExists = trn.getController() != null;
@@ -35,47 +42,13 @@ class TrainUnitTest {
     }
 
 
+    /*
+        Speed, Authority Tests
+     */
+
 
     @Test
-    @DisplayName("Controller can interact with Train Hull")
-    void trainControllerInteractsWithTrainModel() {
-        trn = new TrainUnit(true);
-        TrainControl ctrl = trn.getController();
-        Train hull = trn.getHull();
-
-        // Confirm that control is allowed to pull speed from train hull
-        ctrl.getTrainData();
-        assertEquals(trn.getHull().getActualSpeed() , trn.getController().getActualSpeed() );
-
-        // Set running, immobile train onto a fake track
-        double expectedSpeed = 25.0;
-        double expectedAuthority = 10.0;
-        TrackBlock BlockGreenA = new TrackBlock();
-        BlockGreenA.setCommandedSpeed(expectedSpeed);
-        BlockGreenA.setAuthority(expectedAuthority);
-        trn.placeOn(BlockGreenA);
-        waitForTrainObjectToCatchUp();
-        assertEquals(true,trn.isRunning());
-        assertSame(BlockGreenA,trn.getLocation());
-
-        // Have to manually call for Controller to retrieve speed from TrainModel
-        trn.getController().getTrainData();
-
-        // Confirm that hull has read speed,authority from track
-        waitForTrainObjectToCatchUp();
-        assertEquals(expectedSpeed,     hull.getCommandedSpeed());
-        assertEquals(expectedAuthority, hull.getAuthority());
-
-        // confirm controller has read speed,authority from hull
-        //trn.getController().setAuthority(10);
-        assertEquals(expectedSpeed,     ctrl.getCommandedSpeed());
-        assertEquals(expectedAuthority, ctrl.getAuthority());
-
-        trn.halt();
-    }
-
-    @Test
-    @DisplayName("Controller measures authority as 50* amount somehow")
+    @DisplayName("When not running, Speed/Authority can be manually fed to Hull and manually updated for Controller")
     void controllerGetsWrongAuthorityFromHull() {
         trn = new TrainUnit();
         TrainControl ctrl = trn.getController();
@@ -83,16 +56,19 @@ class TrainUnitTest {
         double testAuthority = 1.0;
         double testSpeed = 1.0;
 
+        // Manually set Hull's Speed Authority
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
-        // Must be manually updated when not running
+
+
+        // When not Running, must manually read from hull
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
-        // This is the problematic line
         assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
+        // Try new Speed/Authority
         testAuthority = 10.0;
         testSpeed = 10.0;
         hull.setAuthority((int) testAuthority);
@@ -101,7 +77,6 @@ class TrainUnitTest {
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
-        // This is the problematic line
         assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
@@ -113,11 +88,46 @@ class TrainUnitTest {
         ctrl.getTrainData();
         assertEquals(testAuthority,hull.getAuthority());
         assertEquals(testSpeed,hull.getCommandedSpeed());
-        // This is the problematic line
         assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
     }
 
+
+
+    @Test
+    @DisplayName("While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, Hull polls Speed/Authority from Track")
+    void trainControllerInteractsWithTrainModel() {
+        trn = new TrainUnit(true);
+        TrainControl ctrl = trn.getController();
+        Train hull = trn.getHull();
+
+        // Even when not on TrackElement, Controller is still getting values from Hull
+        assertEquals(trn.getHull().getActualSpeed() , trn.getController().getActualSpeed() );
+
+        // Set running, immobile train onto new TrackElement
+        double expectedSpeed = 25.0;
+        double expectedAuthority = 10.0;
+        TrackBlock BlockGreenA = new TrackBlock();
+        BlockGreenA.setCommandedSpeed(expectedSpeed);
+        BlockGreenA.setAuthority(expectedAuthority);
+        trn.placeOn(BlockGreenA);
+
+        // Confirm Placement, Confirm isRunning
+        waitForTrainObjectToCatchUp();
+        assertEquals(true,trn.isRunning());
+        assertSame(BlockGreenA,trn.getLocation());
+
+        // Hull reads speed/authoirty from track
+        waitForTrainObjectToCatchUp();
+        assertEquals(expectedSpeed,     hull.getCommandedSpeed());
+        assertEquals(expectedAuthority, hull.getAuthority());
+
+        // Controller reads speed/authority from Hull
+        assertEquals(expectedSpeed,     ctrl.getCommandedSpeed());
+        assertEquals(expectedAuthority, ctrl.getAuthority());
+
+        trn.halt();
+    }
 
 
     /*
@@ -126,7 +136,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Can be placed on multiple TrackElements, accurately announces which block it is on")
+    @DisplayName("Can be placed on TrackElements, accurately sets them as occupied according to contract")
     void trainUnitCanBePlacedOnATrackElement() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -136,18 +146,20 @@ class TrainUnitTest {
         Switch SwitchGreenA = new Switch();
         Station DormontStation = new Station();
 
-
+        // Place on block A
         trn.placeOn(BlockGreenA);
         TrackElement foundAt = trn.getLocation();
         assertSame(BlockGreenA,foundAt);
         assertEquals(true,BlockGreenA.getOccupied());
 
+        // Place on block B
         trn.placeOn(BlockGreenB);
         foundAt = trn.getLocation();
         assertSame(BlockGreenB,foundAt);
         assertEquals(true,BlockGreenA.getOccupied());
         assertEquals(true,BlockGreenB.getOccupied());
 
+        // Place on Block C
         trn.placeOn(BlockGreenC);
         foundAt = trn.getLocation();
         assertSame(BlockGreenC,foundAt);
@@ -155,6 +167,7 @@ class TrainUnitTest {
         assertEquals(true,BlockGreenB.getOccupied());
         assertEquals(true,BlockGreenC.getOccupied());
 
+        // Place on Switch
         trn.placeOn(SwitchGreenA);
         foundAt = trn.getLocation();
         assertSame(SwitchGreenA,foundAt);
@@ -163,6 +176,7 @@ class TrainUnitTest {
         assertEquals(true,BlockGreenC.getOccupied());
         assertEquals(true,SwitchGreenA.getOccupied());
 
+        // Place on Station
         trn.placeOn(DormontStation);
         foundAt = trn.getLocation();
         assertSame(DormontStation,foundAt);
@@ -176,7 +190,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Can transition from TrackElement to TrackElement, occupation is correctly tracked")
+    @DisplayName("Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied")
     void trainUnitCanTransitionBetweenTrackElements() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -277,7 +291,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Train will run on a thread and correctly read Speed and Authority from TrackElement on this thread")
+    @DisplayName("Train will run on new thread, correctly pulls Speed/Authority from TrackElement on this thread to its thread")
     void trainRunsOnThread() {
         // Seconds to run for
         int runFor = 3;
@@ -285,18 +299,16 @@ class TrainUnitTest {
         trn = new TrainUnit();
         TrackElement testBlock = new TrackBlock();
 
-        // A train on no block will show authority,speed of -1.0
+        // Start Train, not on block
         trn.start();
-
         // While Running
         waitForTrainObjectToCatchUp();
         assertEquals(true,trn.isRunning());
-
         // A train on no track reads an invalid Speed/Authority
         assertEquals(-1.0,trn.getSpeed());
         assertEquals(-1.0,trn.getAuthority());
 
-        // A train will accurately get speed and authority
+        // Place Train onto Block
         double fakeAuthority = 10.0;
         double fakeSpeed = 10.0;
         trn.placeOn(testBlock);
@@ -304,6 +316,8 @@ class TrainUnitTest {
         testBlock.setCommandedSpeed(fakeSpeed);
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
+
+        // Train automatically pulls Speed/Authority
         double measuredSpeed = trn.getSpeed();
         double measuredAuthority = trn.getAuthority();
         assertSame(testBlock,trn.getLocation());
@@ -350,10 +364,18 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Controller will continually pull values from Hull while TrainUnit is running")
+    @DisplayName("Controller will continually poll Hull who polls TrackElement for speed and authority while TrainUnit is running on TrackElement")
     void theControllerWillUpdateFromTheHullWhileRunning() {
         trn = new TrainUnit(true);
         TrackBlock BlockGreenA = new TrackBlock();
+
+        // Spawn GUI for each train
+        //trainGUI traingui = new trainGUI(0);
+        //traingui.setVisible(true);
+        //traingui.giveTrain(trn.getHull());
+
+        //DriverUI controlgui = new DriverUI();
+
         BlockGreenA.setAuthority(2.0);
         BlockGreenA.setCommandedSpeed(25.0);
 
@@ -367,8 +389,9 @@ class TrainUnitTest {
         waitForTrainObjectToCatchUp();
         assertEquals(2.0, trn.getController().getAuthority());
         assertEquals(25.0,trn.getController().getCommandedSpeed());
+        while(true) {}
 
-        trn.halt();
+        //trn.halt();
     }
 
 

@@ -4,8 +4,6 @@ import TrackConstruction.TrackElement;
 import TrainModel.Train;
 import implementation.TrainControl;
 
-import java.util.concurrent.TimeUnit;
-
 public class TrainUnit extends Thread implements PhysicsUpdateListener {
     /** class that instantiates a TrainModel and a TrainController together for the simulation.
      * a train model should never appear without a train controller, so this class will handle the spawning
@@ -221,36 +219,46 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public void retrieveSpeedAuthority() {
         /** Quick Method for gathering Speed,Authority from TrackElement, displays in one log
          */
-        retrieveAuthority();
-        retrieveSpeed();
-        //System.out.println("Authority read as %f, Speed %f".formatted(COMMANDED_AUTHORITY,COMMANDED_SPEED));
+        // Feed Speed and Authority from track to Train Hull
+        retrieveAuthorityFromTrack();
+        retrieveSpeedFromTrack();
+        // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
+        control.getTrainData();
     }
 
-    public void retrieveAuthority() {
-        /** gets the authority from the track the TrainUnit is on and passes it to TrainModel
-         * TrainModel will pass authority on to the TrainController
-         * @before TrainUnit is on TrackElement, may or may not know authority
-         * @after TrainUnit is on TrackElement, has inherited authority from TrackElement
+    private void retrieveAuthorityFromTrack() {
+        /** gets the authority from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
+         * The Controller will be responsible for getting the Authority from the TrainModel later
+         * @before TrainUnit is or is not on a TrackElement
+         * @before if Train is on a TrackElement, TrackElement has an authority for the train
+         * @after TrainUnit's TrainModel "Hull" now has the Authority
          */
         if (occupies == null) {
             COMMANDED_AUTHORITY = -1.0;
             return;
         }
+        // Pull Commanded Speed from Track
         COMMANDED_SPEED = occupies.getCommandedSpeed();
+        // Give Speed to Hull
         hull.setCommandedSpeed(COMMANDED_SPEED);
+        // Control will pull these values during run() function
     }
-    public void retrieveSpeed() {
-        /** gets the speed from the track the TrainUnit is on and passes it to the TrainModel
-         * TrainModel will pass speed on to the TrainController
-         * @before TrainUnit is on TrackElement, may or may not know speed
-         * @after TrainUnit is on TrackElement, has inherited speed from TrackElement
+    private void retrieveSpeedFromTrack() {
+        /** gets the speed from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
+         * The Controller will be responsible for getting the Authority from the TrainModel later
+         * @before TrainUnit is or is not on a TrackElement
+         * @before if Train is on a TrackElement, TrackElement has a commanded speed for the train
+         * @after TrainUnit's TrainModel "Hull" now has the commanded speed
          */
         if (occupies == null) {
             COMMANDED_SPEED = -1.0;
             return;
         }
+        // Pull Commanded Authority from Track
         COMMANDED_AUTHORITY = occupies.getAuthority();
+        // Give Authority to Hull
         hull.setAuthority((int) COMMANDED_AUTHORITY);
+        // Control will pull these values during run() function
     }
 
     public TrainControl getController() {

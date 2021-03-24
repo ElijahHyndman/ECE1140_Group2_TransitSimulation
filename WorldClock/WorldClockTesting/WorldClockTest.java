@@ -189,6 +189,7 @@ class WorldClockTest {
         String expectedTime;
         String actualTime;
         boolean stringsMatch;
+        System.out.println("Testing HH:mm:ss");
         System.out.println("This one keeps the ratio the same (one simulation-world second passes per each one real-world second)");
         System.out.println("But the physics updates happen more or less frequently per one Simulation-World-Second.\n");
 
@@ -196,7 +197,7 @@ class WorldClockTest {
         /*
         Updates happen once every World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("\nOne physics-updates per Simulation-World Second ( set equal to Real-World Second)");
+        System.out.println("\n(resolution=1.0,ratio=1.0)\nOne physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(1.0,1.0);
         String[] expectedTimes = {  "00:00:00",
                                     "00:00:01",
@@ -229,7 +230,7 @@ class WorldClockTest {
         /*
         Updates happen every half World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("\nTwo physics-updates per Simulation-World Second ( set equal to Real-World Second)");
+        System.out.println("\n(resolution=1.0,ratio=2.0)\nTwo physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(2.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
         String[] expectedTimes1 = { "00:00:00","00:00:00",
@@ -263,7 +264,7 @@ class WorldClockTest {
         /*
         Updates happen every one-third World-Second (which has been set equal to real world seconds by ratio=1.0)
         */
-        System.out.println("\nFour physics-updates per Simulation-World Second ( set equal to Real-World Second)");
+        System.out.println("\n(resolution=1.0,ratio=4.0)\nFour physics-updates per Simulation-World Second ( set equal to Real-World Second)");
         clk = new WorldClock(4.0,1.0);
         // List of "hand calculated" timeoutput strings, in correct sequence
         String[] expectedTimes2 = { "00:00:00","00:00:00","00:00:00","00:00:00",

@@ -24,7 +24,6 @@ public class SimulationEnvironment {
     /** World Object Variables
      */
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
-
     public SimulationEnvironment() {
         clk= new WorldClock();
     }
