@@ -34,8 +34,8 @@ class TrainUnitTest {
     @DisplayName("TrainUnit spawns with a TrainController and TrainModel without issues")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
-        boolean controllerExists = trn.getController() != null;
-        boolean hullExists = trn.getHull() != null;
+        boolean controllerExists    = trn.getController() != null;
+        boolean hullExists          = trn.getHull() != null;
 
         assertEquals(true, controllerExists);
         assertEquals(true, hullExists);
@@ -48,8 +48,9 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("When not running, Speed/Authority can be manually fed to Hull and manually updated for Controller")
+    @DisplayName("When not running, Speed/Authority can be manually fed to Hull then manually updated for Controller")
     void controllerGetsWrongAuthorityFromHull() {
+        // When train is not running, fetching Authority/Speed is not automatic
         trn = new TrainUnit();
         TrainControl ctrl = trn.getController();
         Train hull = trn.getHull();
@@ -68,9 +69,10 @@ class TrainUnitTest {
         assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
-        // Try new Speed/Authority
+        // Try different Speed/Authority
         testAuthority = 10.0;
         testSpeed = 10.0;
+        // Set hull's authority manually again
         hull.setAuthority((int) testAuthority);
         hull.setCommandedSpeed(testSpeed);
         // Must be manually updated when not running
@@ -80,6 +82,7 @@ class TrainUnitTest {
         assertEquals(testAuthority, ctrl.getAuthority());
         assertEquals(testSpeed, ctrl.getCommandedSpeed());
 
+        // One last Speed/Authority
         testAuthority = 20.0;
         testSpeed = 20.0;
         hull.setAuthority((int) testAuthority);
@@ -95,29 +98,36 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, Hull polls Speed/Authority from Track")
+    @DisplayName("While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track")
     void trainControllerInteractsWithTrainModel() {
         trn = new TrainUnit(true);
         TrainControl ctrl = trn.getController();
         Train hull = trn.getHull();
 
-        // Even when not on TrackElement, Controller is still getting values from Hull
+        // Test that controller has been pulling actual speed from hull correctly
+        waitForTrainObjectToCatchUp();
+        assertEquals(true,trn.isRunning());
         assertEquals(trn.getHull().getActualSpeed() , trn.getController().getActualSpeed() );
 
-        // Set running, immobile train onto new TrackElement
+        // Without Track, speed and authority should be -1.0
+       // assertEquals(-1.0, hull.getAuthority());
+        //assertEquals(-1.0, hull.getCommandedSpeed());
+        //assertEquals(-1.0, ctrl.getAuthority());
+        //assertEquals(-1.0, ctrl.getCommandedSpeed());
+
+        // Make TrackElement and put Train on it
         double expectedSpeed = 25.0;
         double expectedAuthority = 10.0;
         TrackBlock BlockGreenA = new TrackBlock();
         BlockGreenA.setCommandedSpeed(expectedSpeed);
         BlockGreenA.setAuthority(expectedAuthority);
         trn.placeOn(BlockGreenA);
-
         // Confirm Placement, Confirm isRunning
         waitForTrainObjectToCatchUp();
         assertEquals(true,trn.isRunning());
         assertSame(BlockGreenA,trn.getLocation());
 
-        // Hull reads speed/authoirty from track
+        // Hull reads speed/authority from track
         waitForTrainObjectToCatchUp();
         assertEquals(expectedSpeed,     hull.getCommandedSpeed());
         assertEquals(expectedAuthority, hull.getAuthority());
@@ -389,9 +399,8 @@ class TrainUnitTest {
         waitForTrainObjectToCatchUp();
         assertEquals(2.0, trn.getController().getAuthority());
         assertEquals(25.0,trn.getController().getCommandedSpeed());
-        while(true) {}
 
-        //trn.halt();
+        trn.halt();
     }
 
 

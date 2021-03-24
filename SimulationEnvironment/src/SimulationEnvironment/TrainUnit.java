@@ -100,9 +100,6 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          *  is called during the run() function, which executes on a new thread.
          * @param
          */
-        // Slowly print Chuga-Chuga
-        //try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {}
-        //System.out.println("Chuga-Chuga");
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
@@ -224,7 +221,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         retrieveSpeedFromTrack();
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
         control.getTrainData();
-    }
+        System.out.printf("Hull (%d,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
+      }
 
     private void retrieveAuthorityFromTrack() {
         /** gets the authority from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
@@ -235,12 +233,13 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
         if (occupies == null) {
             COMMANDED_AUTHORITY = -1.0;
+            hull.setAuthority((int) COMMANDED_AUTHORITY);
             return;
         }
-        // Pull Commanded Speed from Track
-        COMMANDED_SPEED = occupies.getCommandedSpeed();
-        // Give Speed to Hull
-        hull.setCommandedSpeed(COMMANDED_SPEED);
+        // Pull Commanded Authority from Track
+        COMMANDED_AUTHORITY = occupies.getAuthority();
+        // Give Authority to Hull
+        hull.setAuthority((int) COMMANDED_AUTHORITY);
         // Control will pull these values during run() function
     }
     private void retrieveSpeedFromTrack() {
@@ -252,12 +251,13 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
         if (occupies == null) {
             COMMANDED_SPEED = -1.0;
+            hull.setCommandedSpeed(COMMANDED_SPEED);
             return;
         }
-        // Pull Commanded Authority from Track
-        COMMANDED_AUTHORITY = occupies.getAuthority();
-        // Give Authority to Hull
-        hull.setAuthority((int) COMMANDED_AUTHORITY);
+        // Pull Commanded Speed from Track
+        COMMANDED_SPEED = occupies.getCommandedSpeed();
+        // Give Speed to Hull
+        hull.setCommandedSpeed(COMMANDED_SPEED);
         // Control will pull these values during run() function
     }
 
