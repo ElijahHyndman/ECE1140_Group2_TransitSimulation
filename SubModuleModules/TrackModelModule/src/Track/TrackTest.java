@@ -87,7 +87,36 @@ class TrackTest {
 
     @org.junit.jupiter.api.Test
     void setFailure() {
-    }
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setFailure(1,"Red",1);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Red",2);
+        instance.setFailure(3,"Red",3);
+        instance.setFailure(4,"Red",2);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Red",0);
+        System.out.println(instance.getFailures());
+        instance.setFailure(3,"Red",0);
+        instance.setFailure(4,"Red",0);
+        instance.setFailure(1,"Red",0);
+        System.out.println("This is it: " + instance.getFailures());
+        instance.setFailure(1,"Green",1);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Green",2);
+        instance.setFailure(3,"Green",3);
+        instance.setFailure(4,"Green",2);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Green",0);
+        System.out.println(instance.getFailures());
+        instance.setFailure(3,"Green",0);
+        instance.setFailure(4,"Green",0);
+        instance.setFailure(1,"Green",0);
+        System.out.println("This is it: " + instance.getFailures());
+
+;    }
 
     @org.junit.jupiter.api.Test
     void validFile() {
@@ -101,4 +130,6 @@ class TrackTest {
         result = instance.validFile(filePath);
         assertEquals(expResult,result);
     }
+
+
 }

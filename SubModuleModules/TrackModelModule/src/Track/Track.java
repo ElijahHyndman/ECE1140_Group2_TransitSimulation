@@ -235,7 +235,7 @@ import java.util.Scanner;
             if(Failure >= 0 && Failure <= 3) {
                 //to check if block is line A
                 if(line.equals("Red") && blockNum <= SIZE_LINE_A) {
-                    blockArrayList.get(blockNum-1).setFailureStatus(Failure);
+                    redTrack.get(blockNum).setFailureStatus(Failure);
                     //Check if already in failure if not add to failure array list
                     for (int i = 0; i < failureArrayList.size(); i++)  {
                         if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals("Red")) {
@@ -248,7 +248,7 @@ import java.util.Scanner;
 
                     if(Failure != 0 ) {
                         if(!contains)
-                            failureArrayList.add(blockArrayList.get(blockNum-1));
+                            failureArrayList.add(redTrack.get(blockNum));
                     }
                     else { //0 means no failure so remove from arraylist
                         if(contains)
@@ -256,7 +256,7 @@ import java.util.Scanner;
                     }
                 }
                 else if (line.equals("Green") && blockNum <= SIZE_LINE_B){
-                    blockArrayList.get(SIZE_LINE_A+blockNum-1).setFailureStatus(Failure);
+                    greenTrack.get(blockNum).setFailureStatus(Failure);
 
                     for (int i = 0; i < failureArrayList.size(); i++)  {
                         if (failureArrayList.get(i).getBlockNum() == blockNum && failureArrayList.get(i).getLine().equals("Green")) {
@@ -267,7 +267,7 @@ import java.util.Scanner;
 
                     if(Failure != 0 ) {
                         if(!contains)
-                            failureArrayList.add(blockArrayList.get(blockNum-1+SIZE_LINE_A));
+                            failureArrayList.add(greenTrack.get(blockNum));
                     }
                     else {
                         if(contains)
