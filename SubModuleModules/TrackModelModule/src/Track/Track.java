@@ -171,7 +171,82 @@ import java.util.Scanner;
 
         public ArrayList<TrackElement> getRedLine() {return redTrack;}
 
+        /*needed to add for direcitonality*/
+        public void setSwitch(Switch switchT, int index){
+            switchT.setSwitchState(index);
+            int blocka = switchT.getDirectionStates(0);
+            int toA =switchT.getDirectionStates(1);
+            int blockb = switchT.getDirectionStates(2);
+            int toB = switchT.getDirectionStates(3);
+            //here need to CHANGE getCurrent Direction
+            if(index == 0) {
+               if(blocka != 0){
+                   greenTrack.get(blocka).setCurrentDirection(toA); // toA
+                   if(!(blocka == blockb) && blockb != 0)
+                       greenTrack.get(blockb).setCurrentDirection(-2); // -2 -- means need this switch to work
+               }
 
+            }
+            else if(index == 1){
+                //Second Number Block Points to last number
+                if(blockb != 0){
+                    greenTrack.get(blockb).setCurrentDirection(toB); // toB
+
+                    if(blocka != blockb)
+                    greenTrack.get(blocka).setCurrentDirection(-2); //-2 means need this switch to work
+                }
+            }
+
+        }
+
+        /*adding getNext */
+        public TrackElement getNext(TrackElement current, TrackElement previous) {
+            int cur = current.getBlockNum();
+            int prev = previous.getBlockNum();
+            char sectionPrev = previous.getSection();
+            char sectionCur = current.getSection();
+            TrackElement ret = null;
+
+            if(current.getCurrentDirection() > 0)
+                ret = greenTrack.get(current.getCurrentDirection());
+            else if(!current.getBiDirectional()) // easy decision you will just
+                   ret = greenTrack.get(current.getDirection(0));
+            else if(previous.getDirection(0) == cur) {
+                    if(current.getLine().equals("Green"))
+                        ret = greenTrack.get(current.getDirection(0));
+                    else
+                        ret = redTrack.get(current.getDirection(0));
+                }
+            else if(previous.getDirection(1) == cur){ // This is the ref
+                    if(current.getLine().equals("Green"))
+                         ret = greenTrack.get(current.getDirection(1));
+                    else
+                         ret = redTrack.get(current.getDirection(1));
+            }
+            else if(previous.getDirection(0) == 0)
+                ret = greenTrack.get(current.getDirection(0));
+
+
+            //Green Track Edge Cases -- Where Directions Change
+            if(prev == 100 && cur == 85){
+                ret = greenTrack.get(current.getDirection(1));
+                return ret;
+            }
+            if(prev == 150 && cur == 28){
+                ret = greenTrack.get(current.getDirection(1));
+            }
+            if(prev == 1 && cur == 13){
+                ret = greenTrack.get(current.getDirection(0));
+            }
+
+            //Checking if switch statuses are correct
+            if(current.getCurrentDirection() == -2 && current.getDirection(0) == 0) {
+                return null;
+            }
+
+
+        return ret;
+        }
 
         /*Get block - ALL BLOCKS from ALL LINES */
         public TrackElement getBlock(int a){
