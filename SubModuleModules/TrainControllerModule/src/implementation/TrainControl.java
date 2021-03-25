@@ -29,6 +29,7 @@ public class TrainControl {
     private boolean eBrake;
     private boolean sBrake;
     private String alert;
+    private double sampleTime;
 
     public TrainControl(){
       this(null);
@@ -59,6 +60,7 @@ public class TrainControl {
         shouldBrake = 0;
         track = new trackData("Blue");
         nonVitalComponents = new NonVitalComponents(track);
+        sampleTime = 1;
         controlNonVital();
     }
 
@@ -119,7 +121,7 @@ public class TrainControl {
         }else if(sBrake){
             acceleration = serviceBrake;
         }else{
-            idealAcceleration = ((velocityCmd/3.6) - (trainVelocity/3.6))/(1);
+            idealAcceleration = ((velocityCmd/3.6) - (trainVelocity/3.6))/(sampleTime);
             if (idealAcceleration > .5){
                 acceleration = .5;
             }else if (idealAcceleration < -1.2){
@@ -203,14 +205,14 @@ public class TrainControl {
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
         if (eBrake){
-            velocityCmd = 3.6*(velocityCmd/3.6 + emergencyBrake*(1));
+            velocityCmd = 3.6*(velocityCmd/3.6 + emergencyBrake*(sampleTime));
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
             manualVelocity = velocityCmd;
         //Check if service brake in use
         }else if (sBrake){
-            velocityCmd = 3.6*(velocityCmd/3.6 + serviceBrake*(1));
+            velocityCmd = 3.6*(velocityCmd/3.6 + serviceBrake*(sampleTime));
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
@@ -228,7 +230,7 @@ public class TrainControl {
         double actualAcceleration;
         //1 s sample time
         actualAcceleration = ((speed / 3.6) - (prevVelocity / 3.6));
-        distanceTraveled = ((prevVelocity/3.6) + .5*(actualAcceleration*(Math.pow(1,2))));
+        distanceTraveled = ((prevVelocity/3.6) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
         if (distanceTraveled > authority){
             authority = 0;
         }else {
@@ -305,6 +307,12 @@ public class TrainControl {
     /**
      * NEW METHODS FOR TRAIN MODEL
      **/
+
+    public void updateCommandOutputs(String currentTime, double deltaTime){
+        sampleTime = deltaTime;
+        getTrainData();
+        setTrainData();
+    }
 
     public void getTrainData(){
         setAuthority(trainModel.getAuthority());

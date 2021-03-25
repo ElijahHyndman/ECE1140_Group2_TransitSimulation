@@ -122,4 +122,37 @@ public class TrainIntegrationTest {
         assertThat(speedRegulated, is(true));
 
     }
+
+    @Test
+    public void useSetCommandOutputsToRegulateSpeed(){
+
+        //first set controller values
+        theTrain.setAuthority(15000);
+        theTrain.setSpeed(0);
+        theTrain.setCommandedSpeed(30);
+
+        control.updateCommandOutputs("first test", 1.0);
+
+        double initialTrainVelocity = control.getActualSpeed();
+
+        while(!(control.getActualSpeed() == control.getCommandedSpeed())){
+
+            control.updateCommandOutputs("test time", 1.0);
+            double power = control.getPower();
+            assertThat(theTrain.getPower(), is(power));
+            if (control.getActualSpeed() < control.getCommandedSpeed()){
+                boolean changedActualSpeed = control.getActualSpeed() > initialTrainVelocity;
+                System.out.println(control.getActualSpeed());
+                assertThat(changedActualSpeed, is(true));
+            }
+
+            initialTrainVelocity = control.getActualSpeed();
+        }
+
+
+        assertThat(control.getActualSpeed(), is(theTrain.getActualSpeed()));
+        boolean speedRegulated = ((theTrain.getActualSpeed() == control.getCommandedSpeed()));
+        assertThat(speedRegulated, is(true));
+
+    }
 }
