@@ -1,0 +1,135 @@
+package Track;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class TrackTest {
+
+    @org.junit.jupiter.api.Test
+    void importTrack() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        boolean expResult = true;
+        boolean result = instance.importTrack(filepath);
+        assertEquals(expResult, result);
+    }
+
+    @org.junit.jupiter.api.Test
+    void getGreenLine() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        boolean expResult = true;
+        instance.importTrack(filepath);
+        System.out.println(instance.getGreenLine());
+    }
+
+    @org.junit.jupiter.api.Test
+    void getBlock() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        System.out.println(instance.getBlock(0));
+        for(int i = 1; i < 77; i++) {
+            assertEquals(instance.getBlock(i).getBlockNum(), i);
+           assertEquals(instance.getBlock(i).getLine(), "Red");
+       }
+        for(int i = 77; i < 227 ; i++) {
+            assertEquals(instance.getBlock(i).getBlockNum(), i-76);
+            assertEquals(instance.getBlock(i).getLine(), "Green");
+        }
+
+    }
+
+    @org.junit.jupiter.api.Test
+    void getBlockLine() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+       System.out.println(instance.getBlockLine(0, "Red"));
+       for(int i = 1; i < 76; i++) {
+            assertEquals(instance.getBlockLine(i,"Red").getBlockNum(), i);
+            assertEquals(instance.getBlock(i).getLine(), "Red");
+        }
+      System.out.println(instance.getBlockLine(0, "Green"));
+        for(int i = 1; i < 150 ; i++) {
+            assertEquals(instance.getBlockLine(i,"Green").getBlockNum(), i);
+            assertEquals(instance.getBlockLine(i, "Green").getLine(), "Green");
+        }
+    }
+
+    @org.junit.jupiter.api.Test
+    void getTrackHeaterStatus() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setEnvironmentalTemperature(20);
+        assertEquals(instance.getTrackHeaterStatus(), true);
+        instance.setEnvironmentalTemperature(40);
+        assertEquals(instance.getTrackHeaterStatus(), false);
+
+    }
+
+    @org.junit.jupiter.api.Test
+    void setEnvironmentalTemperature() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setEnvironmentalTemperature(20);
+        assertEquals(instance.getEnvironmentalTemperature(), 20);
+    }
+
+
+
+    @org.junit.jupiter.api.Test
+    void setFailure() {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.setFailure(1,"Red",1);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Red",2);
+        instance.setFailure(3,"Red",3);
+        instance.setFailure(4,"Red",2);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Red",0);
+        System.out.println(instance.getFailures());
+        instance.setFailure(3,"Red",0);
+        instance.setFailure(4,"Red",0);
+        instance.setFailure(1,"Red",0);
+        System.out.println("This is it: " + instance.getFailures());
+        instance.setFailure(1,"Green",1);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Green",2);
+        instance.setFailure(3,"Green",3);
+        instance.setFailure(4,"Green",2);
+        System.out.println(instance.getFailures());
+        instance.setFailure(2,"Green",0);
+        System.out.println(instance.getFailures());
+        instance.setFailure(3,"Green",0);
+        instance.setFailure(4,"Green",0);
+        instance.setFailure(1,"Green",0);
+        System.out.println("This is it: " + instance.getFailures());
+
+;    }
+
+    @org.junit.jupiter.api.Test
+    void validFile() {
+        String filePath = "THISISINVALID";
+        Track instance = new Track();
+        boolean expResult = false;
+        boolean result = instance.validFile(filePath);
+        assertEquals(expResult, result);
+        filePath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        expResult = true;
+        result = instance.validFile(filePath);
+        assertEquals(expResult,result);
+    }
+
+
+}
