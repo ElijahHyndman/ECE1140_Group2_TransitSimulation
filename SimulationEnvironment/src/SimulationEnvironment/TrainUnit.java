@@ -1,5 +1,6 @@
 package SimulationEnvironment;
 
+import Track.Track;
 import TrackConstruction.TrackElement;
 import TrainModel.Train;
 import implementation.TrainControl;
@@ -93,6 +94,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private Train hull;
     private TrackElement occupies;
     private TrackElement lastOccupied;
+    private Track trackLayout;
+
     private double blockLength;
 
     volatile private double COMMANDED_SPEED=-1.0;
@@ -282,7 +285,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         );
 
         // Update Controller's data
-        control.getTrainData();
+        //control.getTrainData();
 
         // Update Controller's physics
         if (!controllerDisconnected)
