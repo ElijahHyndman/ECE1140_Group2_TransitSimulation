@@ -1,15 +1,12 @@
 import SimulationEnvironment.*;
 import TrackConstruction.*;
 
-import TrainControlUI.DriverUI;
 import TrainModel.Train;
-import TrainModel.trainGUI;
 import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -32,20 +29,20 @@ class TrainUnitTest {
      */
 
     @Test
-    @DisplayName("Construction [TrainUnit spawns with a TrainController and TrainModel without issues]")
+    @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
         boolean controllerExists    = trn.getController() != null;
         boolean hullExists          = trn.getHull() != null;
 
-        assertEquals(true, controllerExists);
-        assertEquals(true, hullExists);
+        assertEquals(true, controllerExists, "Train Controller spawned with TrainUnit");
+        assertEquals(true, hullExists, "Train Model spawned with TrainUnit");
     }
 
 
 
     @Test
-    @DisplayName("Construction: TrainUnit can spawn running without issues")
+    @DisplayName("Construction\t\t[TrainUnit can spawn running without issues]")
     void trainUnitCanSpawnRunning() {
             // Use constructor of runningOnStart = true
             trn = new TrainUnit(true);
@@ -66,7 +63,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Manual Data-Flow [When not running, Speed/Authority can be manually fed into Hull then manually updated for Controller]")
+    @DisplayName("Manual Data-Flow\t\t[When not running, Speed/Authority can be manually fed into Hull then manually updated for Controller]")
     void controllerGetsWrongAuthorityFromHull() {
         // This test is just to verify that the dataflow functions work correctly without the added complication of running/timed events/communication between threads
 
@@ -119,7 +116,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Automatic Polling Track  [While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track]")
+    @DisplayName("Automatic Polling Track\t\t[While running (whether on track or not), Controller constantly polls Speed/Authority from Hull, and Hull polls Speed/Authority from Track]")
     void trainControllerInteractsWithTrainModel() {
         // Create train, make it run on construction, retrieve TrainModel and TrainController
         trn = new TrainUnit(true);
@@ -171,7 +168,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Block Placement [Can be placed on TrackElements, accurately sets them as occupied according to contract]")
+    @DisplayName("Block Placement\t\t[Can be placed on TrackElements, accurately sets them as occupied according to contract]")
     void trainUnitCanBePlacedOnATrackElement() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -225,7 +222,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Block Transitions [Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied]")
+    @DisplayName("Block Transitions\t\t[Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied]")
     void trainUnitCanTransitionBetweenTrackElements() {
         trn = new TrainUnit();
         // TODO: I made grace's default constructors public, make sure to let her know
@@ -295,7 +292,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("PROBLEM [If this test passes, then I have not solved the Chaser Problem]")
+    @DisplayName("PROBLEM\t\t[If this test passes, then I have not solved the Chaser Problem]")
     void chaserProblem() {
         // If a Front Train and Chaser Train are on blocks next to each other going the same direction,
         // then what happens when the Chaser enters the new block before the front one does?
@@ -326,7 +323,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Thread Communication [Train on Thread A will correctly and continually read Speed/Authority from TrackElement on Thread B]")
+    @DisplayName("Thread Communication\t\t[Train on Thread A will correctly and continually read Speed/Authority from TrackElement on Thread B]")
     void trainRunsOnThread() {
         // Seconds to run for
         int runFor = 2;
@@ -340,8 +337,8 @@ class TrainUnitTest {
         waitForTrainObjectToCatchUp();
         assertEquals(true,trn.isRunning());
         // A train on no track reads an invalid Speed/Authority
-        assertEquals(-1.0,trn.getSpeed());
-        assertEquals(-1.0,trn.getAuthority());
+        assertEquals(-1.0,trn.getCommandedSpeed());
+        assertEquals(-1.0,trn.getCommanedAuthority());
 
         // Place Train onto Block
         double fakeAuthority = 10.0;
@@ -349,12 +346,12 @@ class TrainUnitTest {
         trn.placeOn(testBlock);
         testBlock.setAuthority(fakeAuthority);
         testBlock.setCommandedSpeed(fakeSpeed);
+
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
-
         // Train automatically pulls Speed/Authority
-        double measuredSpeed = trn.getSpeed();
-        double measuredAuthority = trn.getAuthority();
+        double measuredSpeed = trn.getCommandedSpeed();
+        double measuredAuthority = trn.getCommanedAuthority();
         assertSame(testBlock,trn.getLocation());
         assertEquals(fakeAuthority,measuredAuthority);
         assertEquals(fakeSpeed,measuredSpeed);
@@ -366,8 +363,8 @@ class TrainUnitTest {
         testBlock.setCommandedSpeed(fakeSpeed);
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
-        measuredSpeed = trn.getSpeed();
-        measuredAuthority = trn.getAuthority();
+        measuredSpeed = trn.getCommandedSpeed();
+        measuredAuthority = trn.getCommanedAuthority();
         assertEquals(fakeAuthority,measuredAuthority);
         assertEquals(fakeSpeed,measuredSpeed);
 
@@ -375,8 +372,8 @@ class TrainUnitTest {
         trn.placeOn(null);
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
-        measuredSpeed = trn.getSpeed();
-        measuredAuthority = trn.getAuthority();
+        measuredSpeed = trn.getCommandedSpeed();
+        measuredAuthority = trn.getCommanedAuthority();
         assertEquals(-1.0,measuredAuthority);
         assertEquals(-1.0,measuredSpeed);
 
@@ -387,7 +384,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Automatic Polling [while TrainUnit is running on TrackElement, Controller will continually poll Hull who polls TrackElement for speed and authority]")
+    @DisplayName("Automatic Polling\t\t[while TrainUnit is running on TrackElement, Controller will continually poll Hull who polls TrackElement for speed and authority]")
     void theControllerWillUpdateFromTheHullWhileRunning() {
         trn = new TrainUnit(true);
         TrackBlock BlockGreenA = new TrackBlock();
@@ -421,11 +418,12 @@ class TrainUnitTest {
             physics updates
      */
     @Test
-    @DisplayName("Physics [TrainUnit will update physics when listening to WorldClock]")
+    @DisplayName("Physics Updates\t\t[TrainUnit will update physics when listening to WorldClock]")
     void trainWillUpdatePhysicsWhenCalledByWorldClock() {
         WorldClock physicsCLK = new WorldClock(4.0,1.0);
         trn = new TrainUnit();
         physicsCLK.addListener(trn);
+        trn.setConsoleVerboseness(Level.INFO);
 
         // update 4 times a second
         physicsCLK.start();
@@ -449,15 +447,19 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Movement [Train Hull, manual velocity will display correct Distance Traveled]")
+    @DisplayName("Movement\t\t[Disconnected Train Hull, manual velocity will display correct Distance Traveled]")
     void trainHullWillMoveAtConstantVelocity() {
         // Create train and world clock for commanding train
         trn = new TrainUnit("Moving Hull");
+        // Disconnect the controller so the hull is freeform
+        trn.setControllerDisconnect(true);
+
+        // World clock for physics calls
         WorldClock physicsClk = new WorldClock(1.0,1.0);
         physicsClk.addListener(trn);
 
         // Display more information about trainLogs, since physics updates are "Finer" level
-        trn.consoleVerboseness = Level.ALL;
+        trn.defaultConsoleVerboseness = Level.ALL;
 
         // Get Hull
         // Manually set a velocity
@@ -471,8 +473,10 @@ class TrainUnitTest {
                 {20.0, 60.0, 60.0}, {20.0, 80.0, 80.0}, {20.0, 100.0, 100.0}, {20.0, 120.0, 120.0},
         };
 
+        // Begin physics update calls
         physicsClk.start();
 
+        // For each physics update...
         trn.updateFlag = false;
         for (int index=0; index<expectedValues.length; index++) {
 
@@ -490,31 +494,35 @@ class TrainUnitTest {
             if(index == 3) {hull.setSpeed(20.0);}
         }
 
+        // end physics update calls
         physicsClk.halt();
     }
 
 
 
     @Test
-    @DisplayName("Movement [Train Hull under power command will display correct velocities]")
+    @DisplayName("Movement\t\t[Disconnected Train Hull under constant power will display correct velocities]")
     void TrainHullWillAccelerate() {
         // Create train and world clock for commanding train
         trn = new TrainUnit("Moving Hull");
+        trn.setControllerDisconnect(true);
+        // Physics Clock for physics update calls
         WorldClock physicsClk = new WorldClock(1.0,1.0);
         physicsClk.addListener(trn);
         // Display more information about trainLogs, since physics updates are "Finer" level
-        trn.consoleVerboseness = Level.ALL;
+        //trn.consoleVerboseness = Level.ALL;
         // Get Hull
         Train hull = trn.getHull();
 
         // Put hull under constant power command of 100KW
-        // I pulled these values directly from output of this test, for further use later
+        // I pulled these values directly from output of a test run
         hull.setPower(100);
         double[] velocities = {2.32, 4.20, 5.09, 5.66, 6.15, 6.60, 7.01, 7.40, 7.77, 8.11, 8.45, 8.76, 9.07};
 
-        // Begin physics clock for regular physics update commands
+        // Begin physics update calls
         physicsClk.start();
 
+        // For each physics update...
         trn.updateFlag = false;
         for (int index =0; index < velocities.length; index++) {
             // Wait for next update to occur
@@ -524,9 +532,87 @@ class TrainUnitTest {
             assertEquals(true, aboutEqual(velocities[index],hull.getActualSpeed(),1.0));
         }
 
+        // end physics update calls
         physicsClk.halt();
     }
 
+
+    @Test
+    @DisplayName("Movement\t\t[TrainUnit will not move if authority is always 0.0]")
+    void trainWithZeroAuthority() {
+        // Test Train
+        trn = new TrainUnit("Train without Authority");
+
+        // Test block with 0 authority
+        TrackBlock testBlock = new TrackBlock();
+        testBlock.setCommandedSpeed(10.0);
+        testBlock.setAuthority(0.0);
+
+        // Physics clock for update commands
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+
+        trn.placeOn(testBlock);
+
+        // starting train will start pulling Speed and Authority
+        trn.start();
+        // start physics clock will start calling physics updates
+        physicsClk.start();
+
+        // Wait 5 seconds to see if train moves
+        try{} catch(Exception e) {}
+
+        // Train should not have any velocity
+        assertEquals(0.0, trn.getHull().getActualSpeed());
+
+        trn.halt();
+        physicsClk.halt();
+    }
+
+
+
+    @Test
+    @DisplayName("Movement\t\t[TrainUnit will speed up to Commanded velocity if given non-zero authority]")
+    void trainWithNonZeroAuthority() {
+        double desiredSpeed = 5.0;
+        boolean hitDesiredSpeed = false;
+
+        // Test train
+        trn = new TrainUnit("Train with Authority");
+        trn.defaultConsoleVerboseness = Level.ALL;
+
+        // Test Block
+        TrackBlock testBlock = new TrackBlock();
+        testBlock.setCommandedSpeed(desiredSpeed);
+        testBlock.setAuthority(10000.0);
+
+        // Physics clock for update commands
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+
+        trn.placeOn(testBlock);
+
+        // starting train will start pulling Speed and Authority
+        trn.start();
+        // start physics clock will start calling physics updates
+        physicsClk.start();
+
+        // Wait until train reaches desired speed
+        while(true) {
+
+            //System.out.println(trn.getActualSpeed());
+            // if desired speed is reached
+            if(trn.getActualSpeed() > (desiredSpeed-0.5)) {
+                testBlock.setCommandedSpeed(0.0);
+                testBlock.setAuthority(0.0);
+                break;
+            }
+        }
+        //assertEquals(true, (trn.getHull().getActualSpeed() >= desiredSpeed));
+
+        trn.halt();
+        physicsClk.halt();
+    }
 
     /*
         Helper Functions

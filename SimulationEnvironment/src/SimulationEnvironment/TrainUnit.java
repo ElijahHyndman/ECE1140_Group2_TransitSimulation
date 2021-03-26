@@ -15,6 +15,42 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      *      You must wait a few milliseconds for any changes to be reflected onto a TrainUnit object and then be
      *      readable from the object
      *
+     *  Usage:
+     *      Instantiating a TrainUnit with:
+     *      TrainUnit myTrain = new TrainUnit();
+     *      will instantiate a TrainModel and TrainController working together.
+     *
+     *      TrainUnits are meant to exist on TrackElements. A TrainUnit can be placed on an existing TrackElement with
+     *      myTrain.placeOn(myTrackElement);
+     *
+     *      There are two operations required to (1) interacting with the outside world; such as interacting with a TrackElement placed under it
+     *      (2) have a train unit update physics, such as moving and calculating power
+     *      (1) Having the train interact with the outside world
+     *              This requires using the start() function on the train. This is useable because TrainUnit extends the Java Thread class.
+     *              using:
+     *              myTrain.start();
+     *              will launch the train on a new Java thread and have it execute everything in the run() loop until you use:
+     *              myTrain.halt();
+     *
+     *              The run() loop handles everything with interacting with the track block, such as pulling a new authority and speed into the TrainModel.
+     *              once the .halt() method is executed, the train will stop interacting with the Track below it and the trainUnit will sustain the most recent
+     *              speed and authority values read from the track
+     *      (2) Having the train update physics, such as moving and calculating power
+     *              Although the train may be interacting with the environment using run() (i.e. start()), time is still stagnant so the train will not move.
+     *              movement and physics requires a world clock, which will advanced World-Time and call the TrainUnit to update its physics, such as calculating a new Actual Speed and Power.
+     *              This can be accomplished by creating a new WorldClock object and linking the TrainUnit to it:
+     *
+     *              TrainUnit myTrain = new TrainUnit();
+     *              double simulationSecondsPerRealSecond = 1.0;
+     *              double physicsUpdatesPerSimulationSecond = 1.0;
+     *              WorldClock physicsClock = new WorldClock(physicsUpdatesPerSimulationSecond,simulationSecondsPerRealSecond);
+     *              physicsClock.addListener(myTrain);
+     *              physicsClock.start();
+     *
+     *              Once this is executed, the physics clock will call the TrainUnit to updates its physics at constant intervals.
+     *              For now, however, this train will never gain speed as it requires a speed and authority passed through a trackelement (as per requirements.)
+     *              to get this train to a velocity of 5.0, you will need to place it on a TrackElement with commanded speed of 5.0 and a non-zero authority, then use myTrain.start() to begin pulling these values from the track
+     *
      *  Big Ideas
      *  - TrainUnit handles the train's location in the Simulation World. The TrainUnit will know what TrackElement it occupies
      *  and it will handle the movement around the track/transition between TrackElements during the physics-update. The TrainModel
@@ -57,6 +93,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private Train hull;
     private TrackElement occupies;
     private TrackElement lastOccupied;
+    private double blockLength;
 
     private double COMMANDED_SPEED=-1.0;
     private double COMMANDED_AUTHORITY=-1.0;
@@ -67,6 +104,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     // so we can access it outside of thread
     volatile private boolean running;
     volatile public boolean updateFlag;
+
+    volatile private double actualSpeed;
 
     /** Logging Members
      *  Instead of System.out.println for all of the debugging for this file, I will be using a logger.
@@ -99,8 +138,12 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private Handler fileHandler;
 
     public Level logVerboseness = Level.ALL;
-    public Level consoleVerboseness = Level.FINE;
-    public Level fileVerboseness = Level.FINER;
+    public Level defaultConsoleVerboseness = Level.FINE;
+    public Level defaultFileVerboseness = Level.FINER;
+
+    /** Debugging Variables
+     */
+    private boolean controllerDisconnected = false;
 
 
     public TrainUnit() {
@@ -139,10 +182,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
-    protected void finalize () {
-        // If this is even called when train is destroyed, we should halt the thread
-        halt();
-    }
+    /*
+            User defined Methods
+     */
 
     private void whileTraversingBlock(TrackElement thisBlock) {
         /** put any code you want to execute while traversing a TrackElement in this function.
@@ -161,10 +203,15 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
     }
 
+    /*
+            Methods for operation
+     */
 
     public boolean placeOn(TrackElement location) {
-        /** places a Train Unit onto a specific TrackElement.
+        /** places this Train Unit onto a specific TrackElement.
          *  handles the block occupation signal for the block which it is entering.
+         *  does NOT handle the block occuption signal for the block which we were previously on.
+         *
          * @param location TrackElement, the track element which the train shall inhabit.
          *          @more location shall be a TrackBlock, Train Yard, Station, or Switch
          *
@@ -172,10 +219,15 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          * @after Train is guaranteed placed on a TrackElement (given param)
          * @after the new TrackElement's "occupy" signal has been set.
          * @after "occupy" signal for the block that the train is no longer occupying has NOT been unset
+         * @after Block distance of the new TrackElement has been stored in "blocklength" class member
          */
         try {
+            // Note what track we are occupying
+            // Set that track as occupied
+            // Note how long this new track is
             occupies = location;
             location.setOccupied(true);
+            blockLength = occupies.getLength();
             return true;
         } catch (Exception e) {
 
@@ -213,31 +265,38 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
     @Override
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+        /** updates physics of the TrainModel and TrainController, called on a regular basis externally by the World's
+         * physics WorldClock.
+         */
         // println's are a big no-bo in physics updates
         //System.out.println("updating physics");
         trainEventLogger.finest("Physics Update");
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
-        trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] ",
+        trainEventLogger.fine(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] ",
                                                 name,this.hashCode(),
                                                 deltaTime_inSeconds,
                                                 hull.getActualSpeed(),hull.getBlockDistance(),hull.getTotalDistance()));
         control.getTrainData();
-        // TODO Train Controller crunches numbers to updates its control commands, calculate power and control stuff
-        // TODO Reagan: This one should only handle Brake, accel/decel,Power
-        // something like: public void updateCommandOutputs(String currentTimeString,double deltaTime_inSeconds) {}
+        //
+        if (!controllerDisconnected)
+            control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
         updateFlag = true;
     }
 
     @Override
     public void run() {
-        /** runs all processes that a TrainUnit must do while the application is running.
+        /** runs the TrainUnit on a new Java Thread and handles interactions between the TrainUnit and the
+         *  outside world (IE the Simulation Environment and the tracks)
+         *
          * Overrides the Thread function run(), called using start(). Creates a new thread and runs
          * this on that thread
-         * @before Train exists on Simulation Thread; has been created, is not reactive to events unless
-         *  specifically acted upon/has a function invoked
-         * @after Train is executing on a new thread; all code within run() is being executed while simulation is
-         *  also running on an adjacent thread
+         *
+         * @before TrainUnit still exists on the thread where it was created on
+         * @before is not reactive to changes on the track, and does not manage distances or locations
+         * @after TrainUnit is executing on a new thread
+         * @after TrainUnit is polling TrackElement beneath it for new information
+         * @after TrainUnit is managing distances on the TrackElement
          */
         //System.out.println("Train has started running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has started running",name,this.hashCode()));
@@ -253,9 +312,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 // Do not do track tasks if not on some sort of track
                 continue;
             }
-
             // Check if we should progress to the next block
-
+            handleBlockTransitions();
         }
         //System.out.println("Train has stopped running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running",name,this.hashCode()));
@@ -283,7 +341,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         control.getTrainData();
         trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%f,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
         //System.out.printf("Hull (%f,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
-      }
+    }
 
     private void retrieveAuthorityFromTrack() {
         /** gets the authority from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
@@ -304,6 +362,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         hull.setAuthority((int) COMMANDED_AUTHORITY);
         // Control will pull these values during run() function
     }
+
     private void retrieveSpeedFromTrack() {
         /** gets the speed from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
          * The Controller will be responsible for getting the Authority from the TrainModel later
@@ -324,7 +383,34 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Control will pull these values during run() function
     }
 
-    public void instantiateLogger() {
+    public void handleBlockTransitions() {
+        /** monitors the distance traveled along a block.
+         *  When TrainUnit's distance exceeds the Block's length, handles the transition to the next block.
+         *  Called during run() processes.
+         *
+         * @before TrainUnit may have exceeded the length of the block since last PhysicsUpdate
+         * @after If TrainUnit has not exceeded the length of the block, do nothing
+         * @after If TrainUnit has exceeded the length of the block, get the next block connected to TrackElement and
+         *  place train on it, starting at the appropriate distance. If next block does not exist, derail train and fail
+         */
+
+        double currentDistanceOnBlock = hull.getBlockDistance();
+
+        // If we have exceeded length of current block
+        if (currentDistanceOnBlock > blockLength) {
+            // Find how far we are onto the next block (since physicsUpdates are spontaneous)
+            double overshoot = currentDistanceOnBlock - blockLength;
+
+            //TrackElement = occupies.get
+            trainEventLogger.finer(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+        }
+    }
+
+    /*
+            Utility methods
+     */
+
+    private void instantiateLogger() {
         // Clear any default settings that logger may have come with
         LogManager.getLogManager().reset();
         trainEventLogger.setUseParentHandlers(false);
@@ -334,14 +420,15 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
         // Create console and file handlers, connect them to logger
         consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(consoleVerboseness);
+        setConsoleVerboseness(defaultConsoleVerboseness);
         trainEventLogger.addHandler(consoleHandler);
         if(CREATE_LOGGING_FILE) {
             try {
                 // If chosen, create file handler
                 //fileHandler = new FileHandler(TRAIN_LOGGING_FILE_NAME,true);
                 fileHandler = new FileHandler(TRAIN_LOGGING_FILE_NAME,true);
-                fileHandler.setLevel(fileVerboseness);
+                //fileHandler.setLevel(fileVerboseness);
+                setFileVerboseness(defaultFileVerboseness);
 
                 // Use the simple format for log style in file
                 SimpleFormatter easyToRead = new SimpleFormatter();
@@ -354,6 +441,15 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         }
     }
 
+    public void setConsoleVerboseness(Level newLevel) {
+        consoleHandler.setLevel(newLevel);
+    }
+    public void setFileVerboseness(Level newLevel) {
+        fileHandler.setLevel(newLevel);
+    }
+    public void setControllerDisconnect(boolean isDisconnected) {
+        controllerDisconnected = isDisconnected;
+    }
     public TrainControl getController() {
         return control;
     }
@@ -372,10 +468,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public boolean isOnTrack() {
         return occupies != null;
     }
-    public double getAuthority() {
+    public double getCommanedAuthority() {
         return COMMANDED_AUTHORITY;
     }
-    public double getSpeed() {
+    public double getCommandedSpeed() {
         return COMMANDED_SPEED;
+    }
+    public double getActualSpeed() {
+        actualSpeed = hull.getActualSpeed();
+        return actualSpeed;
     }
 }
