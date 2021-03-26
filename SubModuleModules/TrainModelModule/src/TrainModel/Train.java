@@ -156,12 +156,11 @@ public class Train {
     public double getTotalDistance(){
         return totalDistance;
     }
-    public double getBlockDistance()
-    {
+    public double getBlockDistance(){
         return blockDistance;
     }
-    public void resetBlockDistance(){
-        blockDistance = 0;
+    public void setBlockDistance(double distance){
+        blockDistance = distance;
     }
     public double calculateMass(){
         this.mass = 75*(passengerCount+crewCount) + (37194/5 * numberOfCars);
