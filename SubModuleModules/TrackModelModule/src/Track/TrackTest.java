@@ -92,6 +92,15 @@ class TrackTest {
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
         assertEquals(instance.getEnvironmentalTemperature(), 20);
+
+
+        //Not Really Meant to be here -- NEED TO TAKE OUT !!
+        for(int i = 0; i<=150; i++) {
+            System.out.println(instance.getGreenLine().get(i).getBeacon());
+        }
+        System.out.println("71: " + instance.getGreenLine().get(71).getBeacon());
+
+
     }
 
     @org.junit.jupiter.api.Test

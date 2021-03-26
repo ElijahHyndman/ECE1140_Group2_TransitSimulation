@@ -59,7 +59,7 @@ import java.util.Scanner;
                 int count = 0;
                 while(sc.hasNext()){
 
-                    if(count < 14 ) {
+                    if(count < 15 ) {
                         sc.next();
                         count++;
                         continue;
@@ -81,6 +81,7 @@ import java.util.Scanner;
                     //Adding the ToPointers and Bidirecitonality
                     int[] setDirection = new int[] {Integer.parseInt(sc.next()),Integer.parseInt(sc.next()),Integer.parseInt(sc.next())};
                     String setBiDirectional = sc.next();
+                    String beacon = sc.next();
 
 
                     //Collecting Size information
@@ -93,7 +94,6 @@ import java.util.Scanner;
                     //For Yard
                     if(infrastructure.length()>3 && infrastructure.substring(0,3).equals("YARD")){
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
-
                         blockArrayList.add(Test);
                         redTrack.add(Test);
                         greenTrack.add(Test);
@@ -104,7 +104,6 @@ import java.util.Scanner;
                     if(infrastructure.length()>7 && infrastructure.substring(0,7).equals("STATION")){
                         Station Test = new Station(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
 
-                        Test.setBeacon(Test.getInfrastructure().substring(9));
                         stationsArrayList.add(Test);
                         blockArrayList.add(Test);
 
@@ -127,7 +126,8 @@ import java.util.Scanner;
                     else {
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
-
+                        if(beacon.length()>2)
+                          Test.setBeacon(beacon);
                         if(line.equals("Red")) {
                             if (redTrack.size() == 0)
                                 redTrack.add(greenTrack.get(0)); // for whatever reason doesn't get assigned earlier

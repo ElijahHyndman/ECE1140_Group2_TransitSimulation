@@ -26,6 +26,7 @@ public class TrackElement {
 
     //for printing purposes
     String infrastructure;
+    String beacon;
 
     //keeping track of failures
     String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE"};
@@ -61,6 +62,11 @@ public class TrackElement {
 
     /*Setting Line */
     void setLine(String line){this.line = line;}
+
+    /*set Beacon*/
+    public void setBeacon(String beacon){
+        this.beacon = beacon;
+    }
 
     /*Setting section */
     void setSection(char section){this.section = section;}
@@ -119,6 +125,9 @@ public class TrackElement {
 
     /*get Grade*/
     public double getGrade(){ return this.grade;}
+
+    /*get Beacon*/
+    public String getBeacon() { return this.beacon;}
 
     /*get length */
     public double getLength(){ return this.length;}
