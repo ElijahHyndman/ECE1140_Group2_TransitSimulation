@@ -134,6 +134,7 @@ public class WorldClock extends Thread {
          */
         worldSecondsPerUpdate       = 1.0 / resolution;                         // 1/(U/WS) = WS/U
         updatesPerRealSecond        = resolution * ratio;                       // U/WS * WS/RS = U/RS
+        //updatesPerRealSecond = ratio;
         realSecondsPerUpdate        = 1.0 / updatesPerRealSecond;               // 1/(U/RS) = RS/U
         milliseconds                = (int) (1000 * realSecondsPerUpdate);      // RS/U * (1000 Milliseconds / 1 sec) = mRS/U
         microseconds                = milliseconds * 1000 - (int) (0.5 * 1000); // allows us to wait half a millisecond less than intended
@@ -246,10 +247,6 @@ public class WorldClock extends Thread {
             currentTimeInMilliseconds += 1000 * worldSecondsPerUpdate;
             currentDate.setTime(currentTimeInMilliseconds);
 
-            // Lift indication flag
-            //setFlag();
-            //flag = true;
-
             if(tick) System.out.println("tick, flag is %b".formatted(flag));
         } catch (Exception e) {
             System.out.println("Clock failed while advancing a single period");
@@ -260,7 +257,7 @@ public class WorldClock extends Thread {
 
     public void updateAllPhysics() {
         for (PhysicsUpdateListener listener : listeners) {
-            listener.updatePhysics(getTime(), milliseconds/1000.0);//microseconds/1000000.0);
+            listener.updatePhysics(getTime(), worldSecondsPerUpdate);//microseconds/1000000.0);
         }
     }
 

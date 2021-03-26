@@ -273,12 +273,18 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         trainEventLogger.finest("Physics Update");
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
-        trainEventLogger.fine(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] ",
+
+        trainEventLogger.fine(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
                                                 name,this.hashCode(),
                                                 deltaTime_inSeconds,
-                                                hull.getActualSpeed(),hull.getBlockDistance(),hull.getTotalDistance()));
+                                                hull.getActualSpeed(),hull.getBlockDistance(),hull.getTotalDistance(),
+                                                currentTimeString)
+        );
+
+        // Update Controller's data
         control.getTrainData();
-        //
+
+        // Update Controller's physics
         if (!controllerDisconnected)
             control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
         updateFlag = true;
