@@ -335,6 +335,8 @@ class TrainUnitTest {
         trn.start();
         // While Running
         waitForTrainObjectToCatchUp();
+        waitForTrainObjectToCatchUp();
+
         assertEquals(true,trn.isRunning());
         // A train on no track reads an invalid Speed/Authority
         assertEquals(-1.0,trn.getCommandedSpeed());
@@ -560,7 +562,7 @@ class TrainUnitTest {
         physicsClk.start();
 
         // Wait 5 seconds to see if train moves
-        try{} catch(Exception e) {}
+        try{TimeUnit.SECONDS.sleep(5);} catch(Exception e) {}
 
         // Train should not have any velocity
         assertEquals(0.0, trn.getHull().getActualSpeed());
