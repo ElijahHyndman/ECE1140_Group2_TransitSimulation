@@ -57,7 +57,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      *  and TrainController will be unaware of anything about where the train physically occupies within the world
      * - TrainUnit is not Real-World deployable, because it is based on TrainModel which is purely a software construct and shall
      * be thrown out whenever the application gets deployed.
-     * @ergo no vital or operations should be handled by the TrainUnit. If something must happen within the train, then it must be handled by the
+     * @ergo no vital or control operations should be handled by the TrainUnit. If something must happen within the train, then it must be handled by the
      *          TrainController which IS Real-World Deployable
      * - TrainUnit will update the values the TrainController sees from the TrainModel's state (by state, I mean PURELY the physics state of the train model)
      * everytime the physics-update call is sent by the WorldClock. We want these to always be called in tandem, because the TrainController is a PID
@@ -95,8 +95,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private TrackElement lastOccupied;
     private double blockLength;
 
-    private double COMMANDED_SPEED=-1.0;
-    private double COMMANDED_AUTHORITY=-1.0;
+    volatile private double COMMANDED_SPEED=-1.0;
+    volatile private double COMMANDED_AUTHORITY=-1.0;
 
     /** Threading Members
      */

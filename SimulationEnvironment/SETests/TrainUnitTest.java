@@ -602,14 +602,13 @@ class TrainUnitTest {
 
             //System.out.println(trn.getActualSpeed());
             // if desired speed is reached
-            if(trn.getActualSpeed() > (desiredSpeed-0.5)) {
+            if(trn.getActualSpeed() >= desiredSpeed) {
+                System.out.printf("TrainUnit has reached desired speed of %f and is moving %f m/s\n",desiredSpeed, trn.getActualSpeed());
                 testBlock.setCommandedSpeed(0.0);
                 testBlock.setAuthority(0.0);
                 break;
             }
         }
-        //assertEquals(true, (trn.getHull().getActualSpeed() >= desiredSpeed));
-
         trn.halt();
         physicsClk.halt();
     }
