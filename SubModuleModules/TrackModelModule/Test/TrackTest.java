@@ -1,5 +1,4 @@
-package Track;
-
+import Track.Track;
 import TrackConstruction.TrackElement;
 
 import static org.junit.jupiter.api.Assertions.*;

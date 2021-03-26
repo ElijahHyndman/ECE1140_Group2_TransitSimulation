@@ -38,7 +38,7 @@ import java.util.Scanner;
         }
 
         //Import Track from a File
-        boolean validFile( String filePath){
+        public boolean validFile( String filePath){
             //Testing if true or not
             boolean success = false;
             try {
