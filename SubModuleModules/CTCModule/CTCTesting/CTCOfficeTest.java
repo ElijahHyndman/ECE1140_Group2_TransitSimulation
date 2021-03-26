@@ -1,4 +1,4 @@
-package CTCOffice;
+import CTCOffice.DisplayLine;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
@@ -15,7 +15,7 @@ class CTCOfficeTest {
         String timeD = "23:30";
 
         String expDispatchTime = "23:29";
-        double expSpeed = 30;
+        double expSpeed = 18.64113;
         int expAuthority = 10;
         Object[] speedAuth = new Object[3];
         speedAuth = instance.Dispatch(dest, tNum, timeD);

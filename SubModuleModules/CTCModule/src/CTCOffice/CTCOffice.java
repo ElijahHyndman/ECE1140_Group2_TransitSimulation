@@ -266,8 +266,6 @@ public class CTCOffice
     
     public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
     {
-        if (!t1.equals(null))
-        {
             LocalTime nowT = LocalTime.now();
             LocalTime t12 = LocalTime.parse(t1);
             LocalTime t22 = LocalTime.parse(t2);
@@ -295,9 +293,6 @@ public class CTCOffice
                 occ = true;
             else
                 occ = false;
-        }
-        else
-            occ = false;
         
         return occ;
     }
