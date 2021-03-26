@@ -41,6 +41,9 @@ public class trainGUI extends javax.swing.JFrame {
         Train t1 = new Train(5, 2);
         trains.add(t1);
     }
+    public void giveTrain(Train t1) {
+        trains.add(t1);
+    }
     public void updateDisplay(){
         
         table1.setValueAt(trains.get(mainTrainIndex).displayAcceleration, 0, 1);
