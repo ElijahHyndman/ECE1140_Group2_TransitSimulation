@@ -540,7 +540,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Movement\t\t[TrainUnit will not move if authority is always 0.0]")
+    @DisplayName("Commanded Movement\t\t[TrainUnit will not move if authority is 0.0]")
     void trainWithZeroAuthority() {
         // Test Train
         trn = new TrainUnit("Train without Authority");
@@ -574,7 +574,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Movement\t\t[TrainUnit will speed up to Commanded velocity if given non-zero authority]")
+    @DisplayName("Commanded Movement\t\t[TrainUnit will speed up to Commanded velocity if given non-zero authority]")
     void trainWithNonZeroAuthority() {
         double desiredSpeed = 5.0;
         boolean hitDesiredSpeed = false;
@@ -602,18 +602,73 @@ class TrainUnitTest {
         // Wait until train reaches desired speed
         while(true) {
 
-            //System.out.println(trn.getActualSpeed());
             // if desired speed is reached
             if(trn.getActualSpeed() >= desiredSpeed) {
                 System.out.printf("TrainUnit has reached desired speed of %f and is moving %f m/s\n",desiredSpeed, trn.getActualSpeed());
-                testBlock.setCommandedSpeed(0.0);
-                testBlock.setAuthority(0.0);
                 break;
             }
         }
         trn.halt();
         physicsClk.halt();
     }
+
+    @Test
+    @DisplayName("Commanded Movement\t\t[TrainUnit moving at 10.0m/s will slow down to 5.0m/s when commanded]")
+    void trainWillSlowDownToCommandedSpeed() {
+        double desiredSpeed = 5.0;
+        boolean hitDesiredSpeed = false;
+
+        // Test train
+        trn = new TrainUnit("Train that slows down");
+        trn.defaultConsoleVerboseness = Level.ALL;
+
+        // Test Block
+        TrackBlock testBlock = new TrackBlock();
+        testBlock.setCommandedSpeed(desiredSpeed);
+        testBlock.setAuthority(10000.0);
+        trn.placeOn(testBlock);
+
+        // Physics clock for update commands
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+
+        // Force train up to 10.0 m/s
+        trn.getHull().setSpeed(10.0);
+
+        // starting train will start pulling Speed and Authority
+        trn.start();
+        // start physics clock will start calling physics updates
+        physicsClk.start();
+
+        // Wait until train reaches desired speed
+        while(true) {
+
+            //System.out.println(trn.getActualSpeed());
+            // if desired speed is reached
+            if(trn.getActualSpeed() <= desiredSpeed) {
+                System.out.printf("TrainUnit has reached desired speed of %f and is moving %f m/s\n",desiredSpeed, trn.getActualSpeed());
+
+                System.out.println("Allowing train to maintain speed for 5sec");
+                // Wait five seconds to ensure that train maintains commanded speed
+                try{TimeUnit.SECONDS.sleep(5);} catch(Exception e) {}
+
+                // Assert train is within 0.5 of commanded speed
+                assertEquals(true, aboutEqual(trn.getActualSpeed(), desiredSpeed, 0.5));
+                break;
+            }
+        }
+        trn.halt();
+        physicsClk.halt();
+    }
+
+
+
+    @Test
+    @DisplayName("Block Movement\t\t[TrainUnit will accurately gauge how far it has overtraveled on a block]")
+    void overextendBlockLength() {
+
+    }
+
 
     /*
         Helper Functions
