@@ -52,7 +52,7 @@ public class TrackElement {
         this.commandedSpeed = 0;
         this.directionArray = null;
         this.biDirecitional = 'u';
-        this.currentDirection = -1;
+        this.currentDirection = -3;
     }
 
 

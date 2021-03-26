@@ -27,7 +27,7 @@ public class Station extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
-        this.currentDirection = -1;
+        this.currentDirection = -3;
     }
 
     /*Set Ticket Sales */
