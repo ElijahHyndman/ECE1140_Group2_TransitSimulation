@@ -38,7 +38,7 @@ import java.util.Scanner;
         }
 
         //Import Track from a File
-        boolean validFile( String filePath){
+        public boolean validFile( String filePath){
             //Testing if true or not
             boolean success = false;
             try {
@@ -59,7 +59,7 @@ import java.util.Scanner;
                 int count = 0;
                 while(sc.hasNext()){
 
-                    if(count < 14 ) {
+                    if(count < 15 ) {
                         sc.next();
                         count++;
                         continue;
@@ -81,6 +81,7 @@ import java.util.Scanner;
                     //Adding the ToPointers and Bidirecitonality
                     int[] setDirection = new int[] {Integer.parseInt(sc.next()),Integer.parseInt(sc.next()),Integer.parseInt(sc.next())};
                     String setBiDirectional = sc.next();
+                    String beacon = sc.next();
 
 
                     //Collecting Size information
@@ -93,7 +94,6 @@ import java.util.Scanner;
                     //For Yard
                     if(infrastructure.length()>3 && infrastructure.substring(0,3).equals("YARD")){
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
-
                         blockArrayList.add(Test);
                         redTrack.add(Test);
                         greenTrack.add(Test);
@@ -104,7 +104,6 @@ import java.util.Scanner;
                     if(infrastructure.length()>7 && infrastructure.substring(0,7).equals("STATION")){
                         Station Test = new Station(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
 
-                        Test.setBeacon(Test.getInfrastructure().substring(9));
                         stationsArrayList.add(Test);
                         blockArrayList.add(Test);
 
@@ -127,7 +126,8 @@ import java.util.Scanner;
                     else {
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
-
+                        if(beacon.length()>2)
+                          Test.setBeacon(beacon);
                         if(line.equals("Red")) {
                             if (redTrack.size() == 0)
                                 redTrack.add(greenTrack.get(0)); // for whatever reason doesn't get assigned earlier
@@ -180,20 +180,28 @@ import java.util.Scanner;
             int toB = switchT.getDirectionStates(3);
             //here need to CHANGE getCurrent Direction
             if(index == 0) {
-               if(blocka != 0){
+               if(blocka != 0 && blocka != -1){
                    greenTrack.get(blocka).setCurrentDirection(toA); // toA
                    if(!(blocka == blockb) && blockb != 0)
                        greenTrack.get(blockb).setCurrentDirection(-2); // -2 -- means need this switch to work
                }
-
+               else if(blocka == -1) { // this is switching TO THE YARD
+                   switchT.setCurrentDirection(-1);
+               }else if(blockb == -1 && blocka == 0) { // this is switching TO THE YARD
+                   switchT.setCurrentDirection(-2);
+               }
             }
             else if(index == 1){
                 //Second Number Block Points to last number
-                if(blockb != 0){
+                if(blockb != 0 && blockb != -1){
                     greenTrack.get(blockb).setCurrentDirection(toB); // toB
 
                     if(blocka != blockb)
                     greenTrack.get(blocka).setCurrentDirection(-2); //-2 means need this switch to work
+                }else if(blockb == 0 && blocka == -1) { // this is switching TO THE YARD
+                    switchT.setCurrentDirection(-2);
+                }else if(blockb == -1 && blocka == 0) { // this is switching TO THE YARD
+                    switchT.setCurrentDirection(-1);
                 }
             }
 
@@ -207,17 +215,24 @@ import java.util.Scanner;
             char sectionCur = current.getSection();
             TrackElement ret = null;
 
-            if(current.getCurrentDirection() > 0)
+            //dealing with the yard
+             if(current.getCurrentDirection() == -1 && current.getDirectionStates(0) == -1){
+                return greenTrack.get(0); // This returns the YARD BLOCK when switch is on !!
+            }else if (current.getCurrentDirection() == -1)
+                return null;
+
+             //dealing with directionality
+            if(current.getCurrentDirection() > 0) // switch is on
                 ret = greenTrack.get(current.getCurrentDirection());
-            else if(!current.getBiDirectional()) // easy decision you will just
+            else if(!current.getBiDirectional()) // one way track
                    ret = greenTrack.get(current.getDirection(0));
-            else if(previous.getDirection(0) == cur) {
+            else if(previous.getDirection(0) == cur) { // continue go in positive diretion
                     if(current.getLine().equals("Green"))
                         ret = greenTrack.get(current.getDirection(0));
                     else
                         ret = redTrack.get(current.getDirection(0));
                 }
-            else if(previous.getDirection(1) == cur){ // This is the ref
+            else if(previous.getDirection(1) == cur){ // continue to go in negative direction
                     if(current.getLine().equals("Green"))
                          ret = greenTrack.get(current.getDirection(1));
                     else
@@ -238,6 +253,7 @@ import java.util.Scanner;
             if(prev == 1 && cur == 13){
                 ret = greenTrack.get(current.getDirection(0));
             }
+
 
             //Checking if switch statuses are correct
             if(current.getCurrentDirection() == -2 && current.getDirection(0) == 0) {

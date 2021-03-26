@@ -1,5 +1,4 @@
-package Track;
-
+import Track.Track;
 import TrackConstruction.TrackElement;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,6 +91,15 @@ class TrackTest {
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
         assertEquals(instance.getEnvironmentalTemperature(), 20);
+
+
+        //Not Really Meant to be here -- NEED TO TAKE OUT !!
+        for(int i = 0; i<=150; i++) {
+            System.out.println(instance.getGreenLine().get(i).getBeacon());
+        }
+        System.out.println("71: " + instance.getGreenLine().get(71).getBeacon());
+
+
     }
 
     @org.junit.jupiter.api.Test
@@ -169,6 +177,8 @@ class TrackTest {
         instance.setSwitch(instance.getSwitches().get(8),0); //switch is 29 -30
         instance.setSwitch(instance.getSwitches().get(11),0); // switch from 77 to 76
         instance.setSwitch(instance.getSwitches().get(12),0); // switch from 85 to 86
+        instance.setSwitch(instance.getSwitches().get(9),1); // switch NOT to the yard
+        instance.setSwitch(instance.getSwitches().get(10),0); // switch NOT to the yard
 
         for(int i = 0 ; i < 200 ; i++ ) {
             if(i == 90) {
@@ -184,12 +194,33 @@ class TrackTest {
             TrackElement test = instance.getNext(cur,prev);
             if(test != null) {
                 System.out.println(i + "Prev: " + prev.getBlockNum() + "Cur: " + cur.getBlockNum() + "Next:  " + test.getBlockNum() + test.getSection());
+
+
                 prev = cur;
                 cur = test;
 
-            /*    if(i >= 97) {
-                    System.out.println(prev + " " + cur);
-                }*/
+            }
+            else
+                System.out.println("Done");
+
+        }
+
+        //Testing Iteration 3 -- WILL ONLY GET NEXT BLOCK ONCE SWITCH IS ON (automatically 0 and 62) won't go until switch set.
+        System.out.println("--------------------------------------------------------------");
+         prev = instance.getGreenLine().get(0);
+         cur = instance.getGreenLine().get(62);
+
+        //setting Switches
+        instance.setSwitch(instance.getSwitches().get(10),0); // switch NOT to the yard
+
+        for(int i = 0 ; i < 20 ; i++ ) {
+            TrackElement test = instance.getNext(cur,prev);
+            if(test != null) {
+                System.out.println(i + "Prev: " + prev.getBlockNum() + "Cur: " + cur.getBlockNum() + "Next:  " + test.getBlockNum() + test.getSection());
+
+
+                prev = cur;
+                cur = test;
 
             }
             else
@@ -233,7 +264,6 @@ class TrackTest {
         instance.setSwitch(instance.getSwitches().get(7),1);
         assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), 13);
         assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), -2);
-        System.out.println(instance.getGreenLine().get(12).getCurrentDirection());
 
         //Testing Switch 29
         instance.setSwitch(instance.getSwitches().get(8),0);
@@ -245,6 +275,21 @@ class TrackTest {
 
 
         //Testing Switch 58 & 62 are YARD will do after
+        for(int i =0 ; i < 4; i ++)
+            System.out.println(instance.getGreenLine().get(58).getDirectionStates(i));
+        System.out.println("--");
+        for(int i =0 ; i < 4; i ++)
+            System.out.println(instance.getGreenLine().get(62).getDirectionStates(i));
+        System.out.println("--");
+        instance.setSwitch(instance.getSwitches().get(9),0);
+        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
+        instance.setSwitch(instance.getSwitches().get(9),1);
+        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
+        System.out.println("--");
+        instance.setSwitch(instance.getSwitches().get(10),0);
+        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
+        instance.setSwitch(instance.getSwitches().get(10),1);
+        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
 
     }
 }

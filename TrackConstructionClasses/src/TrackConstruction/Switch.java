@@ -34,7 +34,7 @@ public class Switch extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
-        this.currentDirection = -1;
+        this.currentDirection = -3;
 
         //need to add swithces here
 
@@ -50,8 +50,14 @@ public class Switch extends TrackElement{
                 dirStates = switches[0].split("-");
                 directionStates[0] = Integer.parseInt(dirStates[0]);
                 directionStates[1] = Integer.parseInt(dirStates[1]);
+                switches[0] += " DEFAULT ";
+            }else{
+                if(switches[0].substring(0,3).replaceAll("\\s","").equals("TO"))
+                    directionStates[0] = -1;
+                if(switches[0].substring(0,5).replaceAll("\\s","").equals("FROM"))
+                    directionStates[2] = -1;
             }
-            switches[0] += " DEFAULT ";
+
 
             if(switches.length>1){
                 switches[1] = switches[1].replace(")","");
@@ -61,6 +67,7 @@ public class Switch extends TrackElement{
                     directionStates[2] = Integer.parseInt(dirStates[0].replaceAll("\\s",""));
                     directionStates[3] = Integer.parseInt(dirStates[1]);
                 }
+
                 switches[1] += " SECONDARY";
             }
         }
