@@ -196,7 +196,29 @@ class TrackTest {
                 System.out.println("Done");
 
         }
-        //Testing Track for the yard
+
+        //Testing Iteration 3 -- WILL ONLY GET NEXT BLOCK ONCE SWITCH IS ON (automatically 0 and 62) won't go until switch set.
+        System.out.println("--------------------------------------------------------------");
+         prev = instance.getGreenLine().get(0);
+         cur = instance.getGreenLine().get(62);
+
+        //setting Switches
+        instance.setSwitch(instance.getSwitches().get(10),0); // switch NOT to the yard
+
+        for(int i = 0 ; i < 20 ; i++ ) {
+            TrackElement test = instance.getNext(cur,prev);
+            if(test != null) {
+                System.out.println(i + "Prev: " + prev.getBlockNum() + "Cur: " + cur.getBlockNum() + "Next:  " + test.getBlockNum() + test.getSection());
+
+
+                prev = cur;
+                cur = test;
+
+            }
+            else
+                System.out.println("Done");
+
+        }
 
     }
 
