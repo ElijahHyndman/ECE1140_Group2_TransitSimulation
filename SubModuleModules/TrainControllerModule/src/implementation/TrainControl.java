@@ -232,7 +232,9 @@ public class TrainControl {
         actualAcceleration = ((speed / 3.6) - (prevVelocity / 3.6));
         distanceTraveled = ((prevVelocity/3.6) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
         if (distanceTraveled > authority){
-            authority = 0;
+            // TODO this line has been incorrectly resetting authority when train is running but not on track
+            // TODO i.e. when authority = -1.0
+            //authority = 0;
         }else {
             if (distanceTraveled >= 0){
                 totalDistanceTraveled += distanceTraveled;
@@ -264,7 +266,6 @@ public class TrainControl {
         // NOTE: this will have to be converted to an actual distance.
         // NOTE: this change creates side effects for speed control if
         // distance is only sent as number of blocks.
-
         authority = dist;
     }
 
