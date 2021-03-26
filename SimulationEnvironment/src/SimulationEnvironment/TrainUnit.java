@@ -409,10 +409,18 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         if (currentDistanceOnBlock > blockLength) {
             // Find how far we are onto the next block (since physicsUpdates are spontaneous)
             double overshoot = currentDistanceOnBlock - blockLength;
-
-            //TrackElement = occupies.get
             trainEventLogger.finer(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
-        }
+
+            // Next track block has to be retrieved from Track object
+            if(trackLayout != null) {
+                // Uses current block and last occupied block to determine appropriate next block
+                TrackElement nextBlock = trackLayout.getNext(occupies,lastOccupied);
+                // Place Train onto next block
+                transition(nextBlock);
+                // Account for possible overshoot
+            }
+
+             }
     }
 
     /*
