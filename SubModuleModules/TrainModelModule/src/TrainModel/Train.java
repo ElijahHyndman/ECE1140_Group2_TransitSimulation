@@ -28,7 +28,7 @@ public class Train {
 
     //Mass info
     double mass; //total kg with passengers
-    double trainMass = 37194; //kg of empty train
+    double trainMass = 37194/5; //kg of empty train
     int crewCount;
     int passengerCount; //aka ticket sales
 
@@ -64,9 +64,9 @@ public class Train {
     double actualSpeed;// m/s
     
     //display variable with customary units
-    double displayActualSpeed;  //  ft/s
-    double displayCommandedSpeed; //  ft/s
-    double displayAcceleration; //  ft/s^2
+    double displayActualSpeed;  //  m/h
+    double displayCommandedSpeed; //  m/h
+    double displayAcceleration; //  mph/s
 
 
     //getters
@@ -85,13 +85,15 @@ public class Train {
     public double getActualSpeed() {
         return actualSpeed;
     }
+    public double getMass(){return mass;}
+    public double getAccel(){return accel;}
 
     //setters
 
     public void setSpeed(double speed) {
         if(speed >= 0){
             this.actualSpeed = speed;  
-            this.displayActualSpeed = this.actualSpeed * 3.28084;
+            this.displayActualSpeed = this.actualSpeed * 2.236936;
         } else {
             this.actualSpeed = 0;
             this.displayActualSpeed = 0;
@@ -100,7 +102,7 @@ public class Train {
     }
     public void setDisplaySpeed(double speed) {
         this.displayActualSpeed = speed; 
-        this.actualSpeed = this.displayActualSpeed / 3.28084;
+        this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setPower(double pow) {
         if(this.engineFail != true){
@@ -115,7 +117,8 @@ public class Train {
         double newV;
         double newA;
         
-        //check for zero velocity
+        //check for zero velocity & power command
+
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
@@ -153,32 +156,31 @@ public class Train {
     public double getTotalDistance(){
         return totalDistance;
     }
-    public double getBlockDistance()
-    {
+    public double getBlockDistance(){
         return blockDistance;
     }
-    public void resetBlockDistance(){
-        blockDistance = 0;
+    public void setBlockDistance(double distance){
+        blockDistance = distance;
     }
     public double calculateMass(){
-        this.mass = this.trainMass + 75*(passengerCount+crewCount);
+        this.mass = 75*(passengerCount+crewCount) + (37194/5 * numberOfCars);
         return this.mass;
     }
     public void setAccel(double acceleration) {
         this.accel = acceleration;
-        this.displayAcceleration = this.accel * 3.28084;
+        this.displayAcceleration = this.accel * 2.236936;
     }
     public void setDisplayAccel(double acceleration) {
         this.displayAcceleration = acceleration;
-        this.accel = this.displayAcceleration / 3.28084;
+        this.accel = this.displayAcceleration / 2.236936;
     }
     public void setCommandedSpeed(double commandedSpeed) {
         this.commandedSpeed = commandedSpeed;
-        this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
+        this.displayCommandedSpeed = this.commandedSpeed * 2.236936;
     }
     public void setDisplayCommandedSpeed(double commandedSpeed) {
         this.displayCommandedSpeed = commandedSpeed;
-        this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
+        this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
     public void setAuthority(double a) {
         this.authority = a;
@@ -190,7 +192,9 @@ public class Train {
         if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
-        }            
+        }else{
+            this.passengerBrake = false;
+        }
     }
     public void setEmergencyBrake(Boolean brake) {
         if(this.brakeFail != true){
@@ -260,5 +264,13 @@ public class Train {
         this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
         this.displayAcceleration = this.accel * 3.2808399;
         
+    }
+
+    public boolean getEmergencyBrake() {
+        return emergencyBrake;
+    }
+
+    public boolean getPassengerBrake() {
+        return passengerBrake;
     }
 }
