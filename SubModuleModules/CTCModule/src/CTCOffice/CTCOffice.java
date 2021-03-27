@@ -1,11 +1,10 @@
 package CTCOffice;//Haleigh DeFoor
 //CTC Office
-//Skeleton Code
-//import java.io.*;
 
 import java.util.*;
 import java.io.*;
 import java.time.*;
+import WaysideController.WaysideSystem;
 
 public class CTCOffice
 {
@@ -29,6 +28,7 @@ public class CTCOffice
     private String t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
     private boolean occ;
     private double speed;
+    private WaysideSystem waysides;
     
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
