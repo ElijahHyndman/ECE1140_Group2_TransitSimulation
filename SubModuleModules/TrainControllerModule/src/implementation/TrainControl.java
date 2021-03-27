@@ -169,17 +169,21 @@ public class TrainControl {
     public void useServiceBrake(boolean inUse){
           if (inUse){
               sBrake = true;
+              trainModel.setServiceBrake(true);
           }else{
               sBrake = false;
+              trainModel.setServiceBrake(false);
           }
     }
 
     public void useEmergencyBrake(boolean inUse){
         if(inUse){
             eBrake = true;
+            trainModel.setEmergencyBrake(true);
         }
         else{
             eBrake = false;
+            trainModel.setEmergencyBrake(false);
         }
     }
 
