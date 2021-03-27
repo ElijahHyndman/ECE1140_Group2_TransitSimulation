@@ -1,7 +1,6 @@
 package Track;
 
 
-
 import TrackConstruction.*;
 
 import java.io.File;
@@ -23,6 +22,14 @@ import java.util.Scanner;
         String lineA;
         String lineB;
         double environmentalTemperature;
+
+        //Creating Graphs for RED LINE and GREEN LINE
+        ArrayList<TrackElement> redTrack;
+        ArrayList<TrackElement> greenTrack;
+
+        //arrayList
+        ArrayList<Double> trainsLength;
+        ArrayList<Double> blocksLength;
 
         //Constructor Methhod
         Track() {
