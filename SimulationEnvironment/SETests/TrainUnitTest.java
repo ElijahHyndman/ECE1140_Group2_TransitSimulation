@@ -1,9 +1,8 @@
 import SimulationEnvironment.*;
 import TrackConstruction.*;
+import Track.*;
 
-import TrainControlUI.DriverUI;
 import TrainModel.Train;
-import TrainModel.trainGUI;
 import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
@@ -342,7 +341,7 @@ class TrainUnitTest {
         assertEquals(true,trn.isRunning());
         // A train on no track reads an invalid Speed/Authority
         assertEquals(-1.0,trn.getCommandedSpeed());
-        assertEquals(-1.0,trn.getCommanedAuthority());
+        assertEquals(-1.0,trn.getCommandedAuthority());
 
         // Place Train onto Block
         double fakeAuthority = 10.0;
@@ -355,7 +354,7 @@ class TrainUnitTest {
         waitForTrainObjectToCatchUp();
         // Train automatically pulls Speed/Authority
         double measuredSpeed = trn.getCommandedSpeed();
-        double measuredAuthority = trn.getCommanedAuthority();
+        double measuredAuthority = trn.getCommandedAuthority();
         assertSame(testBlock,trn.getLocation());
         assertEquals(fakeAuthority,measuredAuthority);
         assertEquals(fakeSpeed,measuredSpeed);
@@ -368,7 +367,7 @@ class TrainUnitTest {
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
         measuredSpeed = trn.getCommandedSpeed();
-        measuredAuthority = trn.getCommanedAuthority();
+        measuredAuthority = trn.getCommandedAuthority();
         assertEquals(fakeAuthority,measuredAuthority);
         assertEquals(fakeSpeed,measuredSpeed);
 
@@ -377,7 +376,7 @@ class TrainUnitTest {
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
         measuredSpeed = trn.getCommandedSpeed();
-        measuredAuthority = trn.getCommanedAuthority();
+        measuredAuthority = trn.getCommandedAuthority();
         assertEquals(-1.0,measuredAuthority);
         assertEquals(-1.0,measuredSpeed);
 
@@ -578,7 +577,7 @@ class TrainUnitTest {
     @Test
     @DisplayName("Commanded Movement\t\t[TrainUnit will speed up to Commanded velocity if given non-zero authority]")
     void trainWithNonZeroAuthority() {
-        double desiredSpeed = 50.0;
+        double desiredSpeed = 10.0;
         boolean hitDesiredSpeed = false;
 
         // Test train
@@ -638,7 +637,7 @@ class TrainUnitTest {
     @Test
     @DisplayName("Commanded Movement\t\t[TrainUnit moving at 10.0m/s will slow down to 5.0m/s when commanded]")
     void trainWillSlowDownToCommandedSpeed() {
-        double desiredSpeed = 20.0;
+        double desiredSpeed = 5.0;
         boolean hitDesiredSpeed = false;
 
         // Test train
@@ -681,6 +680,131 @@ class TrainUnitTest {
         physicsClk.halt();
     }
 
+
+    /*
+        Movement across Track Blocks
+     */
+
+
+    @Test
+    @DisplayName("Block Movement\t\t[TrainUnit will track how far it has overexceeded a TrackBlock]")
+    void trainWillContinueBeyondTrackBlock() {
+        // Handle block transitions will only occur whenever train is running and physics is updating
+        trn = new TrainUnit("Overtravel TrainUnit");
+        trn.blockExceededFlag = false;
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+        TrackBlock shortBlock = new TrackBlock();
+        shortBlock.setLength(100.0);
+        shortBlock.setAuthority(1000);
+        shortBlock.setCommandedSpeed(20.0);
+
+        trn.placeOn(shortBlock);
+        trn.start();
+        physicsClk.start();
+
+        // Wait for train to exceed current block
+        while(!trn.blockExceededFlag) {}
+        try {TimeUnit.SECONDS.sleep(10);} catch(Exception e) {}
+
+        trn.halt();
+        physicsClk.halt();
+    }
+
+    @Test
+    @DisplayName("Block Movement\t\t[TrainUnit will correctly move around a circlular, two block track]")
+    void trainMovesAroundTwoBlockTrack() {
+        // Import track for use
+        String filepath = "SEResources/TwoBlockCircle.csv";
+        Track circleTrack = new Track();
+        circleTrack.importTrack(filepath);
+
+        // Create Train
+        trn = new TrainUnit("Two Circle Train");
+        trn.setReferenceTrack(circleTrack);
+        trn.blockExceededFlag = false;
+
+        // Create physics clock
+        WorldClock physicsClk = new WorldClock();
+        physicsClk.addListener(trn);
+
+        // print info to console
+        System.out.println(trn.informationString());
+        System.out.println(circleTrack);
+
+        // get Blocks of the track circuit
+        TrackElement BlockA = circleTrack.getBlock(0);
+        TrackElement BlockB = circleTrack.getBlock(1);
+        BlockA.setLength(50);
+        BlockA.setAuthority(1000);
+        BlockA.setCommandedSpeed(10.0);
+        BlockB.setLength(50);
+        BlockB.setAuthority(1000);
+        BlockB.setCommandedSpeed(10.0);
+
+        trn.placeOn(BlockA);
+
+        trn.start();
+        physicsClk.start();
+
+        //while(!trn.blockExceededFlag) {}
+        while(true) {}
+        //trn.halt();
+        //physicsClk.halt();
+
+    }
+
+
+
+    @Test
+    @DisplayName("Block Movement\t\t[TrainUnit will correctly move around a circlular, three block track]")
+    void trainMovesAroundThreeBlockTrack() {
+        // Import track for use
+        String filepath = "SEResources/ThreeBlockCircle.csv";
+        Track circleTrack = new Track();
+        circleTrack.importTrack(filepath);
+
+        // Create Train
+        trn = new TrainUnit("Three Circle Train");
+        trn.setReferenceTrack(circleTrack);
+        trn.blockExceededFlag = false;
+
+        // Create physics clock
+        WorldClock physicsClk = new WorldClock();
+        physicsClk.addListener(trn);
+
+        // print info to console
+        System.out.println(trn.informationString());
+        System.out.println(circleTrack);
+
+        // get Blocks of the track circuit
+        TrackElement BlockA = circleTrack.getBlock(0);
+        TrackElement BlockB = circleTrack.getBlock(1);
+        TrackElement BlockC = circleTrack.getBlock(2);
+        BlockA.setLength(50);
+        BlockA.setAuthority(1000);
+        BlockA.setCommandedSpeed(10.0);
+        BlockB.setLength(50);
+        BlockB.setAuthority(1000);
+        BlockB.setCommandedSpeed(10.0);
+        BlockC.setLength(50);
+        BlockC.setAuthority(1000);
+        BlockC.setCommandedSpeed(10);
+
+        trn.placeOn(BlockA);
+
+        trn.start();
+        physicsClk.start();
+
+        //while(!trn.blockExceededFlag) {}
+        while(true) {
+            //try{ TimeUnit.SECONDS.sleep(1);} catch(Exception e) {}
+            //System.out.println(trn.informationString());
+        }
+        //trn.halt();
+        //physicsClk.halt();
+
+    }
 
     /*
         Helper Functions
