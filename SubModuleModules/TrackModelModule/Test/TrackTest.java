@@ -244,6 +244,12 @@ class TrackTest {
         Track instance = new Track();
         instance.importTrack(filepath);
 
+        TrackGUI testGUI = new TrackGUI(instance);
+        testGUI.setVisible(true);
+        testGUI.updateTrack(instance);
+
+
+
 
         //Testing for Green Line Switches
         instance.getSwitches().get(11).setSwitchState(false);
