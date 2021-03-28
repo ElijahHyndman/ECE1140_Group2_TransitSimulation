@@ -1,20 +1,16 @@
+package CTCUI;
+
 import java.awt.*;       // Using AWT's Graphics and Color
-import java.awt.event.*; // Using AWT event classes and listener interfaces
 import javax.swing.*;    // Using Swing's components and containers
- 
-/** Custom Drawing Code Template */
-// A Swing application extends javax.swing.JFrame
-public class CGTemplate extends JFrame {
+public class TransitDisplay extends JFrame {
    // Define constants
    public static final int CANVAS_WIDTH  = 640;
    public static final int CANVAS_HEIGHT = 480;
- 
-   // Declare an instance of the drawing canvas,
-   // which is an inner class called DrawCanvas extending javax.swing.JPanel.
+
    private DrawCanvas canvas;
  
    // Constructor to set up the GUI components and event handlers
-   public CGTemplate() {
+   public TransitDisplay() {
       canvas = new DrawCanvas();    // Construct the drawing canvas
       canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
  
@@ -28,12 +24,7 @@ public class CGTemplate extends JFrame {
       setTitle("Blue Line Track");  // "super" JFrame sets the title
       setVisible(true);    // "super" JFrame show
    }
- 
-   /**
-    * Define inner class DrawCanvas, which is a JPanel used for custom drawing.
-    */
    private class DrawCanvas extends JPanel {
-      // Override paintComponent to perform your own painting
       @Override
       public void paintComponent(Graphics g) {
          super.paintComponent(g);     // paint parent's background
@@ -88,7 +79,7 @@ public class CGTemplate extends JFrame {
       SwingUtilities.invokeLater(new Runnable() {
          @Override
          public void run() {
-            new CGTemplate(); // Let the constructor do the job
+            new TransitDisplay(); // Let the constructor do the job
          }
       });
    }

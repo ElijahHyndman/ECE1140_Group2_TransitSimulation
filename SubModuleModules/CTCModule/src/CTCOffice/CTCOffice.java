@@ -9,9 +9,8 @@ import WaysideController.WaysideSystem;
 public class CTCOffice
 {
     private int thruP;
-    private Object[] speedAuthority = new Object[3];
+    private Object[] speedAuthorityTime = new Object[3];
     private boolean status;
-    //private String fileName;
     private int blockNum;
     private String lineCol;
     ArrayList<DisplayLine> dispArr = new ArrayList<>();
@@ -28,14 +27,18 @@ public class CTCOffice
     private String t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
     private boolean occ;
     private double speed;
+    private int authority;
     private WaysideSystem waysides;
+    private double[] speedArrG = new double[150];
+    private double[] speedArrR = new double[150];
+    private double[] route = new double[150];
+    private int[] authArr = new int[150];
     
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
-        //calculate speed and authority from destination for a specific train
         
         if (tNum.equals("Train 1"))
             trainNum = 1;
@@ -149,15 +152,16 @@ public class CTCOffice
            hsub = hsub-1;
        }
        temp = temp+hsub;
-       
-       if(dest.equals("Station B"))
-           routeLength = 10*50;
-       else if(dest.equals("Station C"))
-           routeLength = 10*50;
-       else
-           routeLength = 0;
+
+       route = calcRoute(blockNum, lineCol);
+
+       routeLength = calcRouteLength(blockNum, lineCol);
        
        speed = routeLength/1000/temp;
+
+       authority = calcAuthority(route);
+       authArr = createAuthArr(route, authority);
+
        if (speed<30)
        {
             speed = 30;
@@ -169,21 +173,28 @@ public class CTCOffice
        {
            timeDisp = LocalTime.now();
        }
+
+        if (lineCol.equals("Green"))
+            speedArrG = createSpeedArr(route, speed);
+        if (lineCol.equals("Red"))
+            speedArrR = createSpeedArr(route, speed);
                
        if(LocalTime.now().isBefore(timeDis) && speed<50)    
        {
-           speedAuthority[0] = speed*0.621371;
-           speedAuthority[1] = 10;
-           speedAuthority[2] = timeDisp;
+           speedAuthorityTime[0] = speed*0.621371;
+           speedAuthorityTime[1] = authority;
+           speedAuthorityTime[2] = timeDisp;
        }
        else
        {
-           speedAuthority[0] = 0;
-           speedAuthority[1] = 0;
-           speedAuthority[2] = 0;
+           speedAuthorityTime[0] = 0;
+           speedAuthorityTime[1] = 0;
+           speedAuthorityTime[2] = 0;
        }
 
-       return speedAuthority;
+       //waysides.broadcastToControllers(speedArrG, authArr);
+
+       return speedAuthorityTime;
     }
 
     public void LoadSchedule(String filename)
@@ -305,11 +316,9 @@ public class CTCOffice
         return status;
     }
 
-    public int OpenTrack(int blockNum)
+    public void OpenTrack(int blockNum, String lineCol)
     {
-        //communicate the block number that dispatcher wants to open to wayside controller
-        this.blockNum = blockNum;
-        return blockNum;
+        //waysides.setClose(blockNum, lineCol);
     }
 
     public int CloseTrack(int blockNum)
@@ -317,6 +326,70 @@ public class CTCOffice
         //communicate the block number that dispatcher wants to close to wayside controller
         this.blockNum = blockNum;
         return blockNum;
+    }
+
+    public int calcRouteLength(int bn, String lc)
+    {
+        int rl;
+        if(bn==10 && lc.equals("Blue"))
+            rl = 10*50;
+        else if(bn==15 && lc.equals("Blue"))
+            rl = 10*50;
+        else if(bn==73 && lc.equals("Green"))
+            rl = 50+200+400+700;
+        else
+            rl = 0;
+        return rl;
+    }
+
+    public double[] calcRoute(int bn, String lc)
+    {
+        double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        if(bn==73 && lc.equals("Green")){
+            for (int i=63; i<75; i++){
+                routeArr[i] = 1;
+            }
+        }
+        return routeArr;
+    }
+
+    public double[] createSpeedArr(double[] rA, double sp)
+    {
+        double[] sArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0; i<150; i++)
+        {
+            if(rA[i] != 0)
+                sArr[i] = sp;
+        }
+
+        return sArr;
+    }
+
+    public int calcAuthority(double[] routeArr)
+    {
+        int count=0;
+        for (int i=0; i<150; i++){
+            if(routeArr[i]!=0)
+                count++;
+        }
+        return count;
+    }
+
+    public int[] createAuthArr(double[] rA, int auth)
+    {
+        int a = auth;
+        int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0; i<150; i++){
+            if (rA[i]!=0) {
+                for (int j = i; j < auth+i; j++) {
+                    aArr[j] = a;
+                    a--;
+                }
+                break;
+            }
+        }
+
+        return aArr;
     }
     
     public ArrayList getDisps()
