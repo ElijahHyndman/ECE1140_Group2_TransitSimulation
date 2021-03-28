@@ -2,7 +2,7 @@ package TrackConstruction;
 
 public class TrackBlock extends TrackElement {
     /*normal*/
-    TrackBlock(){
+    public TrackBlock(){
         this.occupied = false;
     }
 
@@ -21,6 +21,7 @@ public class TrackBlock extends TrackElement {
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDirection = -1; // THIS IS IMPORTANT
     }
 
 

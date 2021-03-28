@@ -342,7 +342,7 @@ public class trainGUI extends javax.swing.JFrame {
                 .addGap(31, 31, 31))
         );
 
-        mainPanel.add(mainView, "main");
+        mainPanel.add(mainView, "TrainModel.main");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setText("Additional Information");
@@ -535,7 +535,7 @@ public class trainGUI extends javax.swing.JFrame {
         testFailure.setRowHeight(20);
         jScrollPane8.setViewportView(testFailure);
 
-        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image.png"))); // NOI18N
+        //imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("image.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);

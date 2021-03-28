@@ -12,9 +12,10 @@ public class Switch extends TrackElement{
     boolean occupied;
     String[] switches;
     String switchState;
+    int[] directionStates = {0,0,0,0};
 
     /*normal*/
-    Switch(){
+    public Switch(){
         this.occupied = false;
     }
 
@@ -33,26 +34,51 @@ public class Switch extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDirection = -1;
 
         //need to add swithces here
 
         if(infrastructure.length() > 8) {
             String test = infrastructure.substring(7);
+            String[] dirStates;
             switches = test.split(";");
             switches[0] = switches[0].replace("(", "");
             switches[0] = switches[0].replace(")","");
+
+           //can only do if NOT Yard
+            if(switches[0].length() <= 5) {
+                dirStates = switches[0].split("-");
+                directionStates[0] = Integer.parseInt(dirStates[0]);
+                directionStates[1] = Integer.parseInt(dirStates[1]);
+            }
             switches[0] += " DEFAULT ";
 
             if(switches.length>1){
-                switches[1] = switches[1].replace(")", "");
+                switches[1] = switches[1].replace(")","");
+                switches[1] = switches[1].replaceAll("\\s","");
+                if(switches[1].length() <= 6) {
+                    dirStates = switches[1].split("-");
+                    directionStates[2] = Integer.parseInt(dirStates[0].replaceAll("\\s",""));
+                    directionStates[3] = Integer.parseInt(dirStates[1]);
+                }
                 switches[1] += " SECONDARY";
             }
         }
 
         //Setting switch state to normal
         this.switchState = switches[0];
+
+
+
     }
 
+    @Override
+    public int getDirectionStates(int index){
+        int ret = -1;
+        if(index >=0 && index <= 3)
+            ret =  directionStates[index];
+        return ret;
+    }
 
     /*set Switch State*/
     @Override

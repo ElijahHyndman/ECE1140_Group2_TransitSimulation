@@ -281,6 +281,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     public static DefaultTableModel buildInputTableModel() {
         /**
          * creates table model for the input table.
+         * @before the table in the Advanced menu does not reflect the current wayside controller status
          */
 
         Vector<String> columnIdentifiers = new Vector<String>();

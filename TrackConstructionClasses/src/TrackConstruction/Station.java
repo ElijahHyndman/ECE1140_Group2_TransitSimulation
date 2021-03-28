@@ -8,7 +8,7 @@ public class Station extends TrackElement{
     int ticketSales; //Ticket sales per station
     boolean occupied;
 
-    Station(){
+    public Station(){
         this.occupied = false;
     }
 
@@ -27,10 +27,11 @@ public class Station extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDirection = -1;
     }
 
     /*Set Ticket Sales */
-    void setTicketSales(){
+    public void setTicketSales(){
         Random rand = new Random();
         this.ticketSales = Math.abs(rand.nextInt()) % 80;
     }
