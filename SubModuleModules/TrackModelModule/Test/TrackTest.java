@@ -1,5 +1,6 @@
 import Track.Track;
 import TrackConstruction.TrackElement;
+import Track.TrackGUI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -173,23 +174,28 @@ class TrackTest {
         TrackElement cur = instance.getGreenLine().get(11);
 
         //setting Switches
-        instance.setSwitch(instance.getSwitches().get(7),1); // 12 is connecting 1A to 13
-        instance.setSwitch(instance.getSwitches().get(8),0); //switch is 29 -30
-        instance.setSwitch(instance.getSwitches().get(11),0); // switch from 77 to 76
-        instance.setSwitch(instance.getSwitches().get(12),0); // switch from 85 to 86
-        instance.setSwitch(instance.getSwitches().get(9),1); // switch NOT to the yard
-        instance.setSwitch(instance.getSwitches().get(10),0); // switch NOT to the yard
+        instance.getSwitches().get(7).setSwitchState(true); // 12 1a to 13
+        instance.getSwitches().get(8).setSwitchState(false); // 29 to -30
+        instance.getSwitches().get(11).setSwitchState(false); // 77 to 76
+        instance.getSwitches().get(12).setSwitchState(false); // 85 to 86
+        instance.getSwitches().get(9).setSwitchState(true); //switch not to yard
+        instance.getSwitches().get(10).setSwitchState(false); // switch not to yard
+        instance.updateSwitches();
+
 
         for(int i = 0 ; i < 200 ; i++ ) {
             if(i == 90) {
                 //Here we need to TOGGLE SWITCH
-                instance.setSwitch(instance.getSwitches().get(11),1); // setting 76 to 150
-                instance.setSwitch(instance.getSwitches().get(8),1); // setting 76 to 150
-                instance.setSwitch(instance.getSwitches().get(12),1); // switch from 100 - 85 ????? (should be 1 but 0 )
+                instance.getSwitches().get(11).setSwitchState(true); // 76 to 150
+                instance.getSwitches().get(8).setSwitchState(true); // 76 to 150
+                instance.getSwitches().get(12).setSwitchState(true); // 100 - 85
+                instance.updateSwitches();
+
             }
             if(i == 150) {
-                instance.setSwitch(instance.getSwitches().get(11), 1); // setting 150 to be connected to F
-                instance.setSwitch(instance.getSwitches().get(7), 0); // 12 to  13
+                instance.getSwitches().get(11).setSwitchState(true); // 150 to f
+                instance.getSwitches().get(7).setSwitchState(false); // 12 to 13
+                instance.updateSwitches();
             }
             TrackElement test = instance.getNext(cur,prev);
             if(test != null) {
@@ -210,8 +216,9 @@ class TrackTest {
          prev = instance.getGreenLine().get(0);
          cur = instance.getGreenLine().get(62);
 
-        //setting Switches
-        instance.setSwitch(instance.getSwitches().get(10),0); // switch NOT to the yard
+        //setting Switchesst
+        instance.getSwitches().get(10).setSwitchState(false);
+        instance.updateSwitches();
 
         for(int i = 0 ; i < 20 ; i++ ) {
             TrackElement test = instance.getNext(cur,prev);
@@ -239,57 +246,82 @@ class TrackTest {
 
 
         //Testing for Green Line Switches
-        instance.setSwitch(instance.getSwitches().get(11),0);
+        instance.getSwitches().get(11).setSwitchState(false);
+        instance.getSwitches().get(12).setSwitchState(false); // testing 86
+        instance.getSwitches().get(7).setSwitchState(false);
+        instance.getSwitches().get(8).setSwitchState(false);
+        instance.getSwitches().get(8).setSwitchState(false);
+        instance.getSwitches().get(9).setSwitchState(false);
+        instance.getSwitches().get(10).setSwitchState(false);
+        instance.updateSwitches();
         assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), 77);
         assertEquals(instance.getGreenLine().get(77).getCurrentDirection(), -2);
-        instance.setSwitch(instance.getSwitches().get(11),1);
+        assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), 86);
+        assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), -2);
+        assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), 12);
+        assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), -2);
+        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), 30);
+        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), -2);
+        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), 30);
+        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), -2);
+        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
+        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
+
+
+        instance.getSwitches().get(11).setSwitchState(true);
+        instance.getSwitches().get(12).setSwitchState(true);
+        instance.getSwitches().get(7).setSwitchState(true);
+        instance.getSwitches().get(8).setSwitchState(true);
+        instance.getSwitches().get(9).setSwitchState(true);
+        instance.getSwitches().get(10).setSwitchState(true);
+        instance.updateSwitches();
         assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), -2);
         assertEquals(instance.getGreenLine().get(77).getCurrentDirection(), 101);
 
         //Testing Switch 86
-        instance.setSwitch(instance.getSwitches().get(12),0);
-        assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), 86);
-        assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), -2);
-        instance.setSwitch(instance.getSwitches().get(12),1);
         assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), -2);
         assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), 85);
 
-
-
-
         //Testing Switch 12
-        instance.setSwitch(instance.getSwitches().get(7),0);
-        assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), 12);
-        assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), -2);
-        instance.setSwitch(instance.getSwitches().get(7),1);
         assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), 13);
         assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), -2);
 
         //Testing Switch 29
-        instance.setSwitch(instance.getSwitches().get(8),0);
-        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), 30);
-        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), -2);
-        instance.setSwitch(instance.getSwitches().get(8),1);
         assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), 28);
         assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), -2);
 
+        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
+        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
 
-        //Testing Switch 58 & 62 are YARD will do after
-        for(int i =0 ; i < 4; i ++)
-            System.out.println(instance.getGreenLine().get(58).getDirectionStates(i));
-        System.out.println("--");
-        for(int i =0 ; i < 4; i ++)
-            System.out.println(instance.getGreenLine().get(62).getDirectionStates(i));
-        System.out.println("--");
-        instance.setSwitch(instance.getSwitches().get(9),0);
-        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
-        instance.setSwitch(instance.getSwitches().get(9),1);
-        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
-        System.out.println("--");
-        instance.setSwitch(instance.getSwitches().get(10),0);
-        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
-        instance.setSwitch(instance.getSwitches().get(10),1);
-        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
+
+
+    }
+
+    @org.junit.jupiter.api.Test
+    void testingGUIUpdate() {
+        System.out.println("Testing UI ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        //Instantiate UI
+
+            TrackGUI testGUI = new TrackGUI(instance);
+            testGUI.setVisible(true);
+            testGUI.updateTrack(instance);
+            /*
+        while(true){
+
+            for(int i=0; i< 100 ; i ++ ) {
+                instance.getGreenLine().get(i).setOccupied(true);
+                testGUI.updateTrack(instance);
+                try {
+                    Thread.sleep(1000);
+                }catch (Exception e) {
+
+                }
+            }
+        }*/
 
     }
 }

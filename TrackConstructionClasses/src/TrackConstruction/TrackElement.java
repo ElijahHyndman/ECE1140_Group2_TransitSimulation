@@ -41,6 +41,7 @@ public class TrackElement {
     int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
     char biDirecitional;
     int[] directionStates = {0,0,0,0};
+    String type;
 
 
 
@@ -54,6 +55,7 @@ public class TrackElement {
         this.directionArray = null;
         this.biDirecitional = 'u';
         this.currentDirection = -3;
+        type = "";
     }
 
 
@@ -157,6 +159,10 @@ public class TrackElement {
         if(index >= 0 && index <= 2)
             ret = directionArray[index];
         return ret;
+    }
+
+    public String getType(){
+        return type;
     }
 
     /*get string directions */

@@ -13,6 +13,7 @@ public class Switch extends TrackElement{
     String[] switches;
     String switchState;
     int[] directionStates = {0,0,0,0};
+    boolean INDEX = false;
 
     /*normal*/
     Switch(){
@@ -35,6 +36,7 @@ public class Switch extends TrackElement{
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
         this.currentDirection = -3;
+        this.type = "Switch";
 
         //need to add swithces here
 
@@ -88,10 +90,18 @@ public class Switch extends TrackElement{
     }
 
     /*set Switch State*/
-    @Override
-    public void setSwitchState(int index){
+  //  @Override
+    public void setSwitchState(boolean ind){
+        int index = (ind) ? 1 : 0;
         if(index >=0 && index < switches.length)
             this.switchState = switches[index];
+
+        INDEX = ind;
+    }
+
+    /*get Index */
+    public boolean getIndex(){
+        return INDEX;
     }
 
     /*set Occupied*/
@@ -104,11 +114,6 @@ public class Switch extends TrackElement{
     /*get Occupied*/
     @Override
     public boolean getOccupied() {return this.occupied;}
-
-    /*get type*/
-    String getType(){
-        return "Switch";
-    }
 
     @Override
     public String toString() {
