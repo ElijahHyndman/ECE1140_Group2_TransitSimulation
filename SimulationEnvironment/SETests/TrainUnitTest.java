@@ -2,7 +2,9 @@ import SimulationEnvironment.*;
 import TrackConstruction.*;
 import Track.*;
 
+import TrainControlUI.DriverUI;
 import TrainModel.Train;
+import TrainModel.trainGUI;
 import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
@@ -769,8 +771,15 @@ class TrainUnitTest {
         trn.setReferenceTrack(circleTrack);
         trn.blockExceededFlag = false;
 
+        // Create TrainModel UI
+        //trainGUI trainModelUI = new trainGUI(0);
+        //trainModelUI.giveTrain(trn.getHull());
+
+        // Create TrainController UI
+        //DriverUI trainControllerUI = new DriverUI(trn.getController());
+
         // Create physics clock
-        WorldClock physicsClk = new WorldClock();
+        WorldClock physicsClk = new WorldClock(1.0,10.0);
         physicsClk.addListener(trn);
 
         // print info to console
@@ -787,9 +796,9 @@ class TrainUnitTest {
         BlockB.setLength(50);
         BlockB.setAuthority(1000);
         BlockB.setCommandedSpeed(10.0);
-        BlockC.setLength(50);
+        BlockC.setLength(120);
         BlockC.setAuthority(1000);
-        BlockC.setCommandedSpeed(10);
+        BlockC.setCommandedSpeed(10.0);
 
         trn.placeOn(BlockA);
 
@@ -797,12 +806,25 @@ class TrainUnitTest {
         physicsClk.start();
 
         //while(!trn.blockExceededFlag) {}
-        while(true) {
-            //try{ TimeUnit.SECONDS.sleep(1);} catch(Exception e) {}
-            //System.out.println(trn.informationString());
-        }
-        //trn.halt();
-        //physicsClk.halt();
+        //while(true) {
+            //try{TimeUnit.MILLISECONDS.sleep(100);} catch (Exception e) {}
+            //trainControllerUI.updateDisplay();
+            //trainModelUI.updateDisplay();
+        //}
+        // Wait until next block transition
+        assertEquals(BlockA, trn.getLocation());
+        while(!trn.blockExceededFlag){}
+        trn.blockExceededFlag = false;
+        waitForTrainObjectToCatchUp();
+        assertEquals(BlockC, trn.getLocation());
+        while(!trn.blockExceededFlag){}
+        waitForTrainObjectToCatchUp();
+        assertEquals(BlockB, trn.getLocation());
+
+        System.out.println(trn.informationString());
+
+        trn.halt();
+        physicsClk.halt();
 
     }
 
