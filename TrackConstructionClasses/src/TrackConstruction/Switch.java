@@ -16,7 +16,7 @@ public class Switch extends TrackElement{
     boolean INDEX = false;
 
     /*normal*/
-    Switch(){
+    public Switch(){
         this.occupied = false;
     }
 
