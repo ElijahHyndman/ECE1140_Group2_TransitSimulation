@@ -14,7 +14,7 @@ public class Switch extends TrackElement{
     String switchState;
 
     /*normal*/
-    Switch(){
+    public Switch(){
         this.occupied = false;
     }
 

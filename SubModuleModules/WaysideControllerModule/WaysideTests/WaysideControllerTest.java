@@ -30,7 +30,7 @@ class WaysideControllerTest {
         boolean[] outputs;
 
         WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
-        waysideController.addOutputSignal("testtoken3", "Switch1");
+        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
         waysideController.generateOutputSignal("Switch1");
         outputs = waysideController.getOutputValues();
 
@@ -43,7 +43,7 @@ class WaysideControllerTest {
 
     @Test
     @DisplayName("Testing Read Helper Function")
-    public void testFunctions() throws IOException, URISyntaxException {
+    public void testControllerFunctions() throws IOException, URISyntaxException {
         int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         String currentLine = "Blue";
         List<String> currentInputNames = Arrays.asList("A", "C", "D");
@@ -51,7 +51,7 @@ class WaysideControllerTest {
         boolean[] outputs;
 
         WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
-        waysideController.addOutputSignal("testtoken3", "Switch1");
+        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
         waysideController.generateOutputSignal("Switch1");
         outputs = waysideController.getOutputValues();
 

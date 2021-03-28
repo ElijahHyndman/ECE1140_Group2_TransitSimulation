@@ -18,7 +18,7 @@ import java.util.Scanner;
 
         //Track Variables
         boolean TRACK_HEATER;
-        int SIZE_LINE_A =0;
+        int SIZE_LINE_A=0;
         int SIZE_LINE_B=0;
         String lineA;
         String lineB;

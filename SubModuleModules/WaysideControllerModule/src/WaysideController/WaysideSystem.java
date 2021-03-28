@@ -1,25 +1,32 @@
 package WaysideController;
 
 import WaysideGUI.WaysideUIClass;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
+import TrackConstruction.*;
 
 public class WaysideSystem {
 
     List<WaysideController> controllers;
+    ArrayList<TrackBlock> blocks;
 
     public WaysideSystem() {
         controllers = new LinkedList<>();
     }
+
     public WaysideSystem(LinkedList<WaysideController> controllers) {
         this.controllers = controllers;
     }
 
+    public WaysideSystem(String specificLine, ArrayList<TrackBlock> blocks) throws IOException {
+        if(specificLine.equalsIgnoreCase("green") && (blocks.size() == 150)){
+            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
+            String currentLine = "Green";
+        }else{
+            throw new IOException("Generation Error: Invalid line generation");
+        }
+    }
 
     public Vector<WaysideController> getControllersVector() {
         Vector<WaysideController> out = new Vector<WaysideController>();

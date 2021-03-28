@@ -43,6 +43,7 @@ public class WaysideController {
     public WaysideController(){
         name = "BASE";
 
+        GPIO gpio = new GPIO();
         this.inputNames = new LinkedList<>();
         this.inputValues = new boolean[0];
 

@@ -32,7 +32,7 @@ class WaysideSystemTest {
         guiUpdater = new WaysideUIClass(testSystem);
         testSystem.generateTestController();
 
-        System.out.println(testSystem.readConsole("upload Controller1 testtoken3 Switch1"));
+        System.out.println(testSystem.readConsole("upload Controller1 C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3 Switch1"));
         System.out.println(testSystem.readConsole("compile Controller1 Switch1"));
         System.out.println("starting GUI");
         try {
@@ -40,5 +40,12 @@ class WaysideSystemTest {
         } catch (Exception e) {
             System.out.println("failed when running");
         }
+    }
+
+    @Test
+    @DisplayName("Block generation and assignment")
+    public void testBlockCreationAndAssignment() throws IOException, URISyntaxException {
+        WaysideSystem testSystem = new WaysideSystem();
+
     }
 }
