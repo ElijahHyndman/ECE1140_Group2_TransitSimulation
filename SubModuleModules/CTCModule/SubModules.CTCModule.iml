@@ -35,5 +35,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="SubModules.WaysideControllerModule" />
+    <orderEntry type="module" module-name="SimulationEnvironment" />
   </component>
 </module>

@@ -5,8 +5,9 @@ import java.util.*;
 import java.io.*;
 import java.time.*;
 import WaysideController.WaysideSystem;
+import SimulationEnvironment.*;
 
-public class CTCOffice
+public class CTCOffice implements PhysicsUpdateListener
 {
     private int thruP;
     private Object[] speedAuthorityTime = new Object[3];
@@ -33,6 +34,8 @@ public class CTCOffice
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
+    private CharSequence timeNow;
+    private LocalTime now;
     
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
@@ -138,11 +141,12 @@ public class CTCOffice
        
        CharSequence timeChar = timeD;
        timeDis = LocalTime.parse(timeChar);
-       
+       now = LocalTime.parse(timeNow);
+
        int h1 = timeDis.getHour();
-       int h2 = LocalTime.now().getHour();
+       int h2 = now.getHour();
        int m1 = timeDis.getMinute();
-       int m2 = LocalTime.now().getMinute();
+       int m2 = now.getMinute();
        
        double temp = m1-m2;
        temp = temp/60;
@@ -246,8 +250,9 @@ public class CTCOffice
     
     public int CalcThroughput(int tix)
     {
-        int hours = LocalTime.now().getHour();
-        int mins = LocalTime.now().getMinute();
+        now = LocalTime.parse(timeNow);
+        int hours = now.getHour();
+        int mins = now.getMinute();
         double totalT = mins/60;
         totalT = totalT+hours;
         
@@ -277,7 +282,7 @@ public class CTCOffice
     
     public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
     {
-            LocalTime nowT = LocalTime.now();
+            LocalTime nowT = LocalTime.parse(timeNow);
             LocalTime t12 = LocalTime.parse(t1);
             LocalTime t22 = LocalTime.parse(t2);
             LocalTime t32 = LocalTime.parse(t3);
@@ -307,25 +312,29 @@ public class CTCOffice
         
         return occ;
     }
-    public boolean CheckStatus(String line, int blockNum)
+    public boolean CheckOcc(int blockNum)
     {
-        //checks maintenance status of certain block number on a line
-        this.lineCol = line;
-        this.blockNum = blockNum;
+        //status = waysides.getOccupancy(blockNum);
 
         return status;
     }
 
-    public void OpenTrack(int blockNum, String lineCol)
+    public boolean CheckSwitch(int blockNum)
     {
-        //waysides.setClose(blockNum, lineCol);
+        boolean switchstat=false;
+        //switchstat = waysides.getSwitchStatus(blockNum);
+        return switchstat;
     }
 
-    public int CloseTrack(int blockNum)
+    public void OpenTrack(int blockNum, String lineCol)
     {
-        //communicate the block number that dispatcher wants to close to wayside controller
-        this.blockNum = blockNum;
-        return blockNum;
+        //waysides.setClose(blockNum);
+
+    }
+
+    public void CloseTrack(int blockNum, String lineCol)
+    {
+        //waysides.setOpen(blockNum);
     }
 
     public int calcRouteLength(int bn, String lc)
@@ -390,6 +399,11 @@ public class CTCOffice
         }
 
         return aArr;
+    }
+
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
+    {
+        this.timeNow = currentTimeString;
     }
     
     public ArrayList getDisps()
