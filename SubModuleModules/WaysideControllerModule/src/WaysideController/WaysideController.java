@@ -2,6 +2,8 @@ package WaysideController;
 
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
+import TrackConstruction.TrackBlock;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -30,12 +32,13 @@ public class WaysideController {
 
     //values to monitor
     private int speedLimit;
-    private int[] speed;
-    private int[] authority;
+//    private int[] speed;
+//    private int[] authority;
     private boolean isActive;
 
     //all connections
-    private int[] blocks; //values corresponds to value in track model and index references to speed in arr
+    private ArrayList<TrackBlock> blocks;
+    //private int[] blocks; //values corresponds to value in track model and index references to speed in arr
     private String currentLine;
     private boolean isSoftware;
     private List<String> PLCScript;
@@ -51,73 +54,83 @@ public class WaysideController {
         this.outputTables = new LinkedList<>();
         this.outputValues = new LinkedList<>();
 
-        this.blocks = new int[0];
+        //this.blocks = new int[0];
         this.currentLine = DEFAULT_LINE;
 
         this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[0];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
-        }
-        this.authority = new int[0];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
+//        this.speed = new int[0];
+//        for(int i=0;i < blocks.length;i++){
+//            speed[i] = DEFAULT_SPEED;
+//        }
+//        this.authority = new int[0];
+//        for(int i=0;i < blocks.length;i++){
+//            authority[i] = DEFAULT_AUTHORITY;
+//        }
         this.isActive = DEFAULT_STATUS;
+        isSoftware = true;
+    }
+
+    public WaysideController(String name, String currentLine, ArrayList<TrackBlock> blocks){
+        GPIO gpio = new GPIO();
+
+        this.name = name;
+        this.blocks = blocks;
+        this.currentLine = currentLine;
+        this.speedLimit = DEFAULT_SPEEDLIMIT;
         isSoftware = true;
     }
     
-    public WaysideController(int[] blocks, String currentLine, String name){
-        this.name = name;
+//    public WaysideController(int[] blocks, String currentLine, String name){
+//        this.name = name;
+//
+//        this.inputNames = new LinkedList<>();
+//        this.inputValues = new boolean[0];
+//
+//        this.outputTableDevices = new LinkedList<>();
+//        this.outputTables = new LinkedList<>();
+//        this.outputValues = new LinkedList<>();
+//
+//        this.blocks = blocks;
+//        this.currentLine = currentLine;
+//
+//        this.speedLimit = DEFAULT_SPEEDLIMIT;
+//        this.speed = new int[blocks.length];
+//        for(int i=0;i < blocks.length;i++){
+//            speed[i] = DEFAULT_SPEED;
+//        }
+//        this.authority = new int[blocks.length];
+//        for(int i=0;i < blocks.length;i++){
+//            authority[i] = DEFAULT_AUTHORITY;
+//        }
+//        this.isActive = DEFAULT_STATUS;
+//        isSoftware = true;
+//    }
 
-        this.inputNames = new LinkedList<>();
-        this.inputValues = new boolean[0];
-
-        this.outputTableDevices = new LinkedList<>();
-        this.outputTables = new LinkedList<>();
-        this.outputValues = new LinkedList<>();
-
-        this.blocks = blocks;
-        this.currentLine = currentLine;
-
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
-        }
-        this.authority = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
-        this.isActive = DEFAULT_STATUS;
-        isSoftware = true;
-    }
-
-    public WaysideController(int[] blocks, String currentLine, List<String> inputNames, boolean[] inputValues, String name){
-        this.name = name;
-
-        this.inputNames = inputNames;
-        this.inputValues = inputValues;
-
-        this.outputTableDevices = new LinkedList<>();
-        this.outputTables = new LinkedList<>();
-        this.outputValues = new LinkedList<>();
-
-        this.blocks = blocks;
-        this.currentLine = currentLine;
-
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
-        }
-        this.authority = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
-        this.isActive = DEFAULT_STATUS;
-        isSoftware = true;
-    }
+//    public WaysideController(int[] blocks, String currentLine, List<String> inputNames, boolean[] inputValues, String name){
+//        this.name = name;
+//
+//        this.inputNames = inputNames;
+//        this.inputValues = inputValues;
+//
+//        this.outputTableDevices = new LinkedList<>();
+//        this.outputTables = new LinkedList<>();
+//        this.outputValues = new LinkedList<>();
+//
+//        this.blocks = blocks;
+//        this.currentLine = currentLine;
+//
+//        this.speedLimit = DEFAULT_SPEEDLIMIT;
+//        this.speed = new int[blocks.length];
+//        for(int i=0;i < blocks.length;i++){
+//            speed[i] = DEFAULT_SPEED;
+//        }
+//        this.authority = new int[blocks.length];
+//        for(int i=0;i < blocks.length;i++){
+//            authority[i] = DEFAULT_AUTHORITY;
+//        }
+//        this.isActive = DEFAULT_STATUS;
+//        isSoftware = true;
+//    }
 
     public boolean containsInput(String str) throws IOException {
         if(!inputNames.contains(str)){
@@ -156,6 +169,13 @@ public class WaysideController {
         return authority;
     }
 
+    /*
+    Add output (with GPIO instead)
+     */
+
+    /*
+    Add an output signal with the corresponding output types...
+     */
     public void addOutputSignal(String PLCFile, String outputType) throws IOException, URISyntaxException {
         PLCEngine engine = new PLCEngine();
         engine.createTokens(PLCFile);
@@ -256,31 +276,31 @@ public class WaysideController {
         }
     }
 
-    public List<String> getAllNames(){
-        List<String> temp = new LinkedList<>();
-
-        temp.addAll(inputNames);
-        for(int i=0;i < speed.length;i++){
-            temp.add("speed " + i + " : ");
-        }
-        for(int i=0;i < authority.length;i++){
-            temp.add("authority " + i + " : ");
-        }
-        temp.add("isActive");
-
-        return temp;
-    }
-
-    public List<Object> getAllData(){
-        List<Object> temp = new LinkedList<>();
-
-        temp.addAll(Collections.singleton(inputValues));
-        temp.addAll(Collections.singleton(speed));
-        temp.addAll(Collections.singleton(authority));
-        temp.addAll(Collections.singleton(isActive));
-
-        return temp;
-    }
+//    public List<String> getAllNames(){
+//        List<String> temp = new LinkedList<>();
+//
+//        temp.addAll(inputNames);
+//        for(int i=0;i < speed.length;i++){
+//            temp.add("speed " + i + " : ");
+//        }
+//        for(int i=0;i < authority.length;i++){
+//            temp.add("authority " + i + " : ");
+//        }
+//        temp.add("isActive");
+//
+//        return temp;
+//    }
+//
+//    public List<Object> getAllData(){
+//        List<Object> temp = new LinkedList<>();
+//
+//        temp.addAll(Collections.singleton(inputValues));
+//        temp.addAll(Collections.singleton(speed));
+//        temp.addAll(Collections.singleton(authority));
+//        temp.addAll(Collections.singleton(isActive));
+//
+//        return temp;
+//    }
 
     public boolean updateInputs(String valueString, int index) throws IOException {
         boolean temp;
@@ -307,25 +327,25 @@ public class WaysideController {
         return true;
     }
 
-    public int[] getSpeedAllBlocks(){
-        return speed;
-    }
-
-    public void setSpeedAllBlocks(int newSpeed){
-        for(int i=0;i < speed.length;i++){
-            speed[i] = checkSuggestedSpeed(newSpeed);
-        }
-    }
-
-    public int[] getAuthorityAllBlocks(){
-        return authority;
-    }
-
-    public void setAuthorityAllBlocks(int newAuthority){
-        for(int i=0;i < authority.length;i++){
-            authority[i] = checkSuggestedAuthority(newAuthority);
-        }
-    }
+//    public int[] getSpeedAllBlocks(){
+//        return speed;
+//    }
+//
+//    public void setSpeedAllBlocks(int newSpeed){
+//        for(int i=0;i < speed.length;i++){
+//            speed[i] = checkSuggestedSpeed(newSpeed);
+//        }
+//    }
+//
+//    public int[] getAuthorityAllBlocks(){
+//        return authority;
+//    }
+//
+//    public void setAuthorityAllBlocks(int newAuthority){
+//        for(int i=0;i < authority.length;i++){
+//            authority[i] = checkSuggestedAuthority(newAuthority);
+//        }
+//    }
 
     public void setSpeedPerBlock(int speed, int block){
         //speed;
@@ -335,46 +355,46 @@ public class WaysideController {
         return speed;
     }
 
-    public HashMap<String, Vector<String>> generateDescriptionNodes() {
-        HashMap<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
-
-        //inputs - input signals
-        String inputCategory = "Input Signals";
-        Vector<String> inputVector = new Vector<>();
-        for(int i=0;i < inputValues.length;i++){
-            inputVector.add("input "+i+" : "+inputValues[i]);
-        }
-        hash.put(inputCategory, inputVector);
-
-        //outputs - output signals, speed, authority, active
-        String outputCategory = "Output Signals";
-        Vector<String> outputVector = new Vector<>();
-        for(int i=0;i < outputValues.size();i++){
-            outputVector.add("output "+i+" : "+outputValues.get(i));
-        }
-        hash.put(outputCategory, outputVector);
-
-        String speedCategory = "Speed";
-        Vector<String> speedVector = new Vector<>();
-        for(int i=0;i < speed.length;i++){
-            speedVector.add("block speed "+i+" : "+speed[i]);
-        }
-        hash.put(speedCategory, speedVector);
-
-        String authorityCategory = "Authority";
-        Vector<String> authorityVector = new Vector<>();
-        for(int i=0;i < authority.length;i++){
-            authorityVector.add("block authority "+i+" : "+authority[i]);
-        }
-        hash.put(authorityCategory, authorityVector);
-
-        String activeCategory = "Active";
-        Vector<String> activeVector = new Vector<>();
-        activeVector.add("Controller status : " + isActive);
-        hash.put(activeCategory, activeVector);
-
-        return hash;
-    }
+//    public HashMap<String, Vector<String>> generateDescriptionNodes() {
+//        HashMap<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
+//
+//        //inputs - input signals
+//        String inputCategory = "Input Signals";
+//        Vector<String> inputVector = new Vector<>();
+//        for(int i=0;i < inputValues.length;i++){
+//            inputVector.add("input "+i+" : "+inputValues[i]);
+//        }
+//        hash.put(inputCategory, inputVector);
+//
+//        //outputs - output signals, speed, authority, active
+//        String outputCategory = "Output Signals";
+//        Vector<String> outputVector = new Vector<>();
+//        for(int i=0;i < outputValues.size();i++){
+//            outputVector.add("output "+i+" : "+outputValues.get(i));
+//        }
+//        hash.put(outputCategory, outputVector);
+//
+//        String speedCategory = "Speed";
+//        Vector<String> speedVector = new Vector<>();
+//        for(int i=0;i < speed.length;i++){
+//            speedVector.add("block speed "+i+" : "+speed[i]);
+//        }
+//        hash.put(speedCategory, speedVector);
+//
+//        String authorityCategory = "Authority";
+//        Vector<String> authorityVector = new Vector<>();
+//        for(int i=0;i < authority.length;i++){
+//            authorityVector.add("block authority "+i+" : "+authority[i]);
+//        }
+//        hash.put(authorityCategory, authorityVector);
+//
+//        String activeCategory = "Active";
+//        Vector<String> activeVector = new Vector<>();
+//        activeVector.add("Controller status : " + isActive);
+//        hash.put(activeCategory, activeVector);
+//
+//        return hash;
+//    }
 
     //GETTERS AND SETTERS
     //these values will be received from the TRACK MODEL, CTC or set beforehand
@@ -387,11 +407,11 @@ public class WaysideController {
     public void setSpeedLimit(int speedLimit){ this.speedLimit = speedLimit; }
     public int getSpeedLimit(){ return speedLimit; }
 
-    public void setAllSpeed(int[] speed){ this.speed = speed; }
-    public int[] getAllSpeed(){ return speed; }
-    
-    public void setAuthority(int[] authority) { this.authority = authority; }
-    public int[] getAuthority() { return authority; }
+//    public void setAllSpeed(int[] speed){ this.speed = speed; }
+//    public int[] getAllSpeed(){ return speed; }
+//
+//    public void setAuthority(int[] authority) { this.authority = authority; }
+//    public int[] getAuthority() { return authority; }
 
     public void setActive(boolean isActive) { this.isActive = isActive; }
     public boolean getActive() { return isActive; }

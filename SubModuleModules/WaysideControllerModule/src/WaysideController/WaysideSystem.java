@@ -8,26 +8,31 @@ import TrackConstruction.*;
 
 public class WaysideSystem {
 
+    String currentLine;
     List<WaysideController> controllers;
     ArrayList<TrackBlock> blocks;
 
-    public WaysideSystem() {
+    public WaysideSystem() throws IOException{
+        currentLine = "Green";
         controllers = new LinkedList<>();
+
+        generateLine();
     }
 
-    public WaysideSystem(LinkedList<WaysideController> controllers) {
+    public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
+        currentLine = "Green";
         this.controllers = controllers;
+        generateLine();
     }
 
-    public WaysideSystem(String specificLine, ArrayList<TrackBlock> blocks) throws IOException {
-        if(specificLine.equalsIgnoreCase("green") && (blocks.size() == 150)){
-            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
-            String currentLine = "Green";
-        }else{
-            throw new IOException("Generation Error: Invalid line generation");
-        }
+    public WaysideSystem(ArrayList<TrackBlock> blocks) throws IOException {
+        currentLine = "Green";
+        this.blocks = blocks;
     }
 
+    /*
+    Helper function that gets all the wayside controllers within the system in a vector
+     */
     public Vector<WaysideController> getControllersVector() {
         Vector<WaysideController> out = new Vector<WaysideController>();
         for(WaysideController controller : controllers) {
@@ -36,7 +41,9 @@ public class WaysideSystem {
         return out;
     }
 
-
+    /*
+    Helper Function that generators some test controllers (DEPRECATED)
+     */
     public static LinkedList<WaysideController> generateTestControllers(int nControllers) {
         int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         String currentLine = "Blue";
@@ -50,15 +57,17 @@ public class WaysideSystem {
         return out;
     }
 
-
+    /*
+    Generates a single test controller to use
+     */
     public void generateTestController() {
         int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         String currentLine = "Blue";
         List<String> currentInputNames = Arrays.asList("A", "C", "D");
         boolean[] inputs = new boolean[]{false, true, true};
 
-        WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "Controller" + (controllers.size()+1));
-        controllers.add(waysideController);
+       // WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "Controller" + (controllers.size()+1));
+       // controllers.add(waysideController);
     }
 
     /*
@@ -144,8 +153,53 @@ public class WaysideSystem {
         }
     }
 
+    /*
 
-    public static void main(String[] args) {
+     */
+    public void generateLine() throws IOException {
+        if(currentLine.equalsIgnoreCase("green") && (blocks.size() == 150)) {
+            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
+            String currentLine = "Green";
+        }else{
+            throw new IOException("Generation Error: Invalid line generation");
+        }
+    }
+    /*
+
+     */
+    public boolean broadcastToControllers(int[] speeds, int[] authority){
+        return false;
+    }
+
+    /*
+
+     */
+    public boolean getOccupancy(int block){
+        return false;
+    }
+
+    /*
+
+     */
+    public boolean getSwitchStatus(int block){
+        return false;
+    }
+
+    /*
+
+     */
+    public boolean setClose(int block){
+        return false;
+    }
+
+    /*
+
+     */
+    public boolean openClose(int block){
+        return false;
+    }
+
+    public static void main(String[] args) throws IOException {
         WaysideSystem testSystem = new WaysideSystem();
         WaysideUIClass guiUpdater;
 

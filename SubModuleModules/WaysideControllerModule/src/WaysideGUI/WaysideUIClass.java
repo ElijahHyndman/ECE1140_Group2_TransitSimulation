@@ -3,6 +3,7 @@ package WaysideGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 
+import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -33,12 +34,12 @@ public class WaysideUIClass extends Thread {
     WaysideSystem WS;
     WaysideUIJFrameWindow guiWindow;
 
-    public WaysideUIClass() {
+    public WaysideUIClass() throws IOException {
         WS = new WaysideSystem();
         guiWindow = new WaysideUIJFrameWindow(WS);
     }
 
-    public WaysideUIClass(WaysideSystem existingSystem) {
+    public WaysideUIClass(WaysideSystem existingSystem) throws IOException {
         WS = existingSystem;
         guiWindow = new WaysideUIJFrameWindow(existingSystem);
     }

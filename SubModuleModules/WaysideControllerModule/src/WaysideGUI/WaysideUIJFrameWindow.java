@@ -3,6 +3,7 @@ import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 
 import java.awt.CardLayout;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
@@ -50,18 +51,18 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     private static boolean protectedUpdate = false;
 
 
-    public WaysideUIJFrameWindow() {
+    public WaysideUIJFrameWindow() throws IOException {
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) {
+    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) throws IOException {
         this.controllers = defaultControllers;
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(WaysideSystem existingSystem) {
+    public WaysideUIJFrameWindow(WaysideSystem existingSystem) throws IOException {
         this.controllers = existingSystem.getControllersVector();
         system = existingSystem;
         initComponents();

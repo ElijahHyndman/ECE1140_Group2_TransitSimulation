@@ -2,4 +2,4 @@ LD A
 LD C
 LD D
 AND
-SET
+SET E
