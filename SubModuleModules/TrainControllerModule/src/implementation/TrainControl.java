@@ -12,8 +12,8 @@ public class TrainControl {
     private final NonVitalComponents nonVitalComponents;
     private trackData track;
 
-    private double velocityCmd; //the train's ideal velocity, units km/h
-    private double trainVelocity; //the actual velocity of the train, units km/h
+    private double velocityCmd; //the train's ideal velocity, units m/s
+    private double trainVelocity; //the actual velocity of the train, units m/s
     private double manualVelocity; //the driver's inputted velocity, in mph
     private double power; // train power, in kW
     private double acceleration; //the trains ideal acceleration, in m/s
@@ -87,7 +87,7 @@ public class TrainControl {
     }
 
     public double getSafeBreakingDistance(){
-        double velocityMeters = (trainVelocity/3.6);
+        double velocityMeters = (trainVelocity);
         //shouldBrake is meters distance
         shouldBrake = (-1)*(Math.pow(velocityMeters,2))/(2*serviceBrake);
         return shouldBrake;
@@ -121,7 +121,7 @@ public class TrainControl {
         }else if(sBrake){
             acceleration = serviceBrake;
         }else{
-            idealAcceleration = ((velocityCmd/3.6) - (trainVelocity/3.6))/(sampleTime);
+            idealAcceleration = ((velocityCmd) - (trainVelocity))/(sampleTime);
             if (idealAcceleration > .5){
                 acceleration = .5;
             }else if (idealAcceleration < -1.2){
@@ -190,7 +190,7 @@ public class TrainControl {
     //Manual setpoint speed
     public String inputSpeed(double newSpeed){
         //Convert the driver input speed to Km/h
-        double newMetricSpeed = newSpeed * 1.60934;
+        double newMetricSpeed = newSpeed/2.237;
         if (getControlMode().equals("Automatic")){
             return "In Automatic Mode. Please switch to manual";
         }
@@ -209,14 +209,14 @@ public class TrainControl {
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
         if (eBrake){
-            velocityCmd = 3.6*(velocityCmd/3.6 + emergencyBrake*(sampleTime));
+            velocityCmd = (velocityCmd + emergencyBrake*(sampleTime));
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
             manualVelocity = velocityCmd;
         //Check if service brake in use
         }else if (sBrake){
-            velocityCmd = 3.6*(velocityCmd/3.6 + serviceBrake*(sampleTime));
+            velocityCmd = (velocityCmd + serviceBrake*(sampleTime));
             if (velocityCmd <= 0){
                 velocityCmd = 0;
             }
@@ -233,8 +233,8 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
-        actualAcceleration = ((speed / 3.6) - (prevVelocity / 3.6));
-        distanceTraveled = ((prevVelocity/3.6) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
+        actualAcceleration = ((speed) - (prevVelocity));
+        distanceTraveled = ((prevVelocity) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
         if (distanceTraveled > authority){
             authority = 0;
         }else {
@@ -255,7 +255,7 @@ public class TrainControl {
         double secondaryPower;
 
         //for now, just uses main motor power
-        power = motor.getPower(velocityCmd, trainVelocity);
+        power = (motor.getPower(velocityCmd, trainVelocity));
     }
 
     //Speed Limit input from Train Model, in km/h

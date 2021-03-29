@@ -44,8 +44,8 @@ public class TrainIntegrationTest {
 
         //first set controller values
         theTrain.setAuthority(800);
-        theTrain.setSpeed(15);
-        theTrain.setCommandedSpeed(30);
+        theTrain.setSpeed(0);
+        theTrain.setCommandedSpeed(8);
 
         control.getTrainData();
 
@@ -92,7 +92,7 @@ public class TrainIntegrationTest {
         //first set controller values
         theTrain.setAuthority(15000);
         theTrain.setSpeed(0);
-        theTrain.setCommandedSpeed(30);
+        theTrain.setCommandedSpeed(8);
 
         control.getTrainData();
 
@@ -129,8 +129,7 @@ public class TrainIntegrationTest {
         //first set controller values
         theTrain.setAuthority(15000);
         theTrain.setSpeed(0);
-        theTrain.setCommandedSpeed(30);
-
+        theTrain.setCommandedSpeed(8);
         control.updateCommandOutputs("first test", 1.0);
 
         double initialTrainVelocity = control.getActualSpeed();
@@ -150,9 +149,46 @@ public class TrainIntegrationTest {
         }
 
 
-        assertThat(control.getActualSpeed(), is(theTrain.getActualSpeed()));
-        boolean speedRegulated = ((theTrain.getActualSpeed() == control.getCommandedSpeed()));
+        control.updateCommandOutputs("test time", 1.0);
+        boolean speedRegulated = ((control.getActualSpeed() >= control.getCommandedSpeed() - .001) &&
+                control.getActualSpeed() <= control.getCommandedSpeed() + .001);
         assertThat(speedRegulated, is(true));
+    }
 
+
+    @Test
+    public void runSpeedRegulation(){
+
+        //first set controller values
+        theTrain.setAuthority(150000);
+        theTrain.setSpeed(0);
+        theTrain.setCommandedSpeed(8);
+
+        System.out.println("-----start over-----");
+        control.updateCommandOutputs("first test", 1.0);
+
+        double initialTrainVelocity = control.getActualSpeed();
+
+        int i = 0;
+        while(i < 3000){
+
+            i++;
+            control.updateCommandOutputs("test time", 1.0);
+            double power = control.getPower();
+            assertThat(theTrain.getPower(), is(power));
+            if (control.getActualSpeed() < control.getCommandedSpeed()){
+                boolean changedActualSpeed = control.getActualSpeed() > initialTrainVelocity;
+                assertThat(changedActualSpeed, is(true));
+            }
+
+            System.out.println(control.getActualSpeed());
+            initialTrainVelocity = control.getActualSpeed();
+        }
+
+
+       // control.updateCommandOutputs("test time", 1.0);
+       // boolean speedRegulated = ((control.getActualSpeed() >= control.getCommandedSpeed() - .001) &&
+                //control.getActualSpeed() <= control.getCommandedSpeed() + .001);
+        //assertThat(speedRegulated, is(true));
     }
 }
