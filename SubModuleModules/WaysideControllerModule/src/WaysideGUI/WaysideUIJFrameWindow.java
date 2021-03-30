@@ -293,7 +293,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
 
         // Fill Data Vector
         List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getInputValues();
+        boolean[] InputValues = thisController.getGPIO().getInputValues();
 
         //List<String> InputNames = thisController.getAllNames();
         //List<Object> InputValues = thisController.getAllData();
@@ -1155,7 +1155,11 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WaysideUIJFrameWindow().setVisible(true);
+                try {
+                    new WaysideUIJFrameWindow().setVisible(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

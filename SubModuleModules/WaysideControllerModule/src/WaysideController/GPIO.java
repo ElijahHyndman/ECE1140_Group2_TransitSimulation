@@ -15,6 +15,7 @@ public class GPIO {
     int numberOfOutputs;
     String controllerName;
 
+    ArrayList<TrackElement> allBlocks;  //jurisdiction
     ArrayList<TrackBlock> blocks;  //jurisdiction
     HashMap<TrackElement, Boolean> outputValues;
 
@@ -24,7 +25,8 @@ public class GPIO {
         numberOfBlocks = 0;
     }
 
-    public GPIO(ArrayList<TrackBlock> blocks, String controllerName){
+    public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
+        this.allBlocks = allBlocks;
         this.blocks = blocks;
         this.controllerName = controllerName;
         outputValues = new HashMap<>();
@@ -48,6 +50,13 @@ public class GPIO {
 
         return inputs;
     }
+
+    public boolean getOccupancy(int blockNumber) throws IOException {
+        TrackBlock trackBlock = (TrackBlock) getBlockElement(blockNumber);
+
+        return trackBlock.getOccupied();
+    }
+
 
     /*
     Generates an output, requires some value by default
@@ -98,6 +107,9 @@ public class GPIO {
         return outputValues.get(temp);
     }
 
+    /*
+
+     */
     public List<String> getOutputNames(){
         Integer[] outputs = outputValues.keySet().toArray(new Integer[outputValues.size()]);
         List<String> outputNames = new LinkedList<>();
@@ -108,10 +120,31 @@ public class GPIO {
 
         return outputNames;
     }
+
+    /*
+
+     */
     public Boolean[] getOutputValues(){
         return outputValues.values().toArray(new Boolean[outputValues.size()]);
     }
 
+
+    /*
+
+     */
+    public TrackElement getBlockElement(int blockNumber) throws IOException {
+        for(int i = 0; i < allBlocks.size(); i++){
+            if(blockNumber == allBlocks.get(i).getBlockNum()){
+                return allBlocks.get(i);
+            }
+        }
+
+        throw new IOException("Controller Error: No block with that number in the wayside...");
+    }
+
+    /*
+    gets the controller name
+     */
     public String getControllerName(){
         return controllerName;
     }

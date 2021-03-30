@@ -39,7 +39,7 @@ public class FakeController {
         this.blocks = blocks;
         this.name = name;
 
-        gpio = new GPIO(blocks, name);
+        //gpio = new GPIO(blocks, name);
     }
 
     /*

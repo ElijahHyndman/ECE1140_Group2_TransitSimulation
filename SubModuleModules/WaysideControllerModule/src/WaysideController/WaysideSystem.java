@@ -2,6 +2,7 @@ package WaysideController;
 
 import WaysideGUI.WaysideUIClass;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.*;
 import TrackConstruction.*;
@@ -51,8 +52,19 @@ public class WaysideSystem {
     /*
     add a wayside controller
      */
-    public void addWaysideController(int[] blockNumbers){
-        WaysideController controller = new WaysideController();
+    public void addWaysideController(int[] blockNumbers) throws IOException {
+        ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
+        ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
+        String controllerName = "Controller " + Integer.toString(++numberOfControllers);
+
+        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
+        controllers.add(controller);
+
+        TrackElement trackElement;
+        for(int i=0;i < blockNumbers.length;i++){
+            trackElement = getBlockElement(blockNumbers[i], blocks);
+            lut.put(trackElement, controller);
+        }
     }
 
     //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
@@ -95,6 +107,88 @@ public class WaysideSystem {
      */
     public WaysideController findController(int blockNumber){
         return lut.get(blockNumber);
+    }
+
+    /*
+    somes lines are pre-defined, here is a quick way to generate the lines for the assignment!
+     */
+    public void generateLine() throws IOException {
+        if(currentLine.equalsIgnoreCase("green") && (blocks.size() == 150)) {
+            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
+            String currentLine = "Green";
+        }else{
+            throw new IOException("Generation Error: Invalid line generation");
+        }
+    }
+
+    /*
+
+     */
+    public boolean broadcastToControllers(int[] speeds, int[] authority) throws IOException {
+        WaysideController temp;
+
+        //RUN CHECKS TO MAKE SURE THE INPUTS ARE VALID HERE!
+
+        for(int i=0;i < speeds.length;i++){
+            temp = lut.get(i);
+            temp.setSpeed(i, speeds[i]);
+        }
+
+        temp = null;
+        for(int i=0;i < authority.length;i++){
+            temp = lut.get(i);
+            temp.setSpeed(i, authority[i]);
+        }
+
+        return false;
+    }
+
+    /*
+    gets the occupancy from the proper controller
+     */
+    public boolean getOccupancy(int blockNumber) throws IOException {
+        return findController(blockNumber).getGPIO().getOccupancy(blockNumber);
+    }
+
+    /*
+
+     */
+    public boolean getSwitchStatus(int blockNumber) throws IOException {
+        return findController(blockNumber).getSwitchStatus(blockNumber);
+    }
+
+    /*
+
+     */
+    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
+        findController(blockNumber).setSwitchStatus(blockNumber ,status);
+    }
+
+    /*
+
+     */
+    public void setClose(int blockNumber){
+
+    }
+
+    /*
+
+     */
+    public void openClose(int blockNumber){
+
+    }
+
+    /*
+    helper function - finds the specific block element from the block number
+    */
+    public TrackElement getBlockElement(int blockNumber, ArrayList<TrackElement> blocks) throws IOException {
+        for(int i = 0; i < blocks.size(); i++){
+            if(blockNumber == blocks.get(i).getBlockNum()){
+                return blocks.get(i);
+            }
+        }
+
+        throw new IOException("Controller Error: No block with that number in the wayside...");
     }
 
     /*
@@ -182,54 +276,6 @@ public class WaysideSystem {
             return "Command Error: The current command was invalid...";
         }
     }
-
-    /*
-
-     */
-    public void generateLine() throws IOException {
-        if(currentLine.equalsIgnoreCase("green") && (blocks.size() == 150)) {
-            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
-            String currentLine = "Green";
-        }else{
-            throw new IOException("Generation Error: Invalid line generation");
-        }
-    }
-
-    /*
-
-     */
-    public boolean broadcastToControllers(int[] speeds, int[] authority){
-        return false;
-    }
-
-    /*
-
-     */
-    public boolean getOccupancy(int block){
-        return false;
-    }
-
-    /*
-
-     */
-    public boolean getSwitchStatus(int block){
-        return false;
-    }
-
-    /*
-
-     */
-    public boolean setClose(int block){
-        return false;
-    }
-
-    /*
-
-     */
-    public boolean openClose(int block){
-        return false;
-    }
-
 
     public static void main(String[] args) throws IOException {
         WaysideSystem testSystem = new WaysideSystem();

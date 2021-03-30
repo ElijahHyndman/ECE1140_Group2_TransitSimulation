@@ -30,7 +30,7 @@ class WaysideSystemTest {
         WaysideSystem testSystem = new WaysideSystem();
         WaysideUIClass guiUpdater;
         guiUpdater = new WaysideUIClass(testSystem);
-        testSystem.generateTestController();
+        //testSystem.generateTestController();
 
         System.out.println(testSystem.readConsole("upload Controller1 C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3 Switch1"));
         System.out.println(testSystem.readConsole("compile Controller1 Switch1"));

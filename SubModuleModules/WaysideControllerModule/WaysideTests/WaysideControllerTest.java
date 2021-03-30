@@ -64,11 +64,13 @@ class WaysideControllerTest {
 //        System.out.println("Finished");
 //    }
 
-    //DEPRECATED!
+    /*
+
+     */
     @Test
     @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
     public void testControllerCreation() throws IOException, URISyntaxException {
-
+        WaysideController controller;
     }
 
 }

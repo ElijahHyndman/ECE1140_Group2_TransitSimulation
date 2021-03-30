@@ -2,6 +2,7 @@ package WaysideController;
 
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
+import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 
@@ -50,7 +51,7 @@ public class WaysideController {
         this.allBlocks = allBlocks;
         this.name = name;
 
-        gpio = new GPIO(blocks, name);
+        gpio = new GPIO(allBlocks, blocks, name);
     }
 
     /*
@@ -70,6 +71,14 @@ public class WaysideController {
         for(int i=0;i < blocks.size();i++){
             blocks.get(i).setCommandedSpeed(speeds[i]);
         }
+    }
+
+    /*
+    sets the speed for all blocks within the jurisdiction
+     */
+    public void setSpeed(int blockNumber, double speeds) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+        blocks.get(blocks.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
     /*
@@ -112,10 +121,29 @@ public class WaysideController {
     }
 
     /*
-    Get input values
+
      */
-    public boolean[] getInputValues(){
-        return gpio.getInputValues();
+    public boolean getSwitchStatus(int blockNumber) throws IOException {
+        Switch aSwitch = (Switch) getBlockElement(blockNumber);
+
+        return aSwitch.getIndex();
+    }
+
+    /*
+
+     */
+    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
+        Switch aSwitch = (Switch) getBlockElement(blockNumber);
+        aSwitch.setSwitchState(status);
+    }
+
+    /*
+    sets block close
+     */
+    public void setClose(int blockNumber) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+
+        //trackElement.setFailureStatus();
     }
 
     /*
@@ -252,7 +280,7 @@ public class WaysideController {
         //inputs - input signals
         String inputCategory = "Input Signals";
         Vector<String> inputVector = new Vector<>();
-        boolean[] inputValues = getInputValues();
+        boolean[] inputValues = gpio.getInputValues();
         for(int i=0;i < inputValues.length;i++){
             inputVector.add("input "+i+" : "+inputValues[i]);
         }
@@ -305,6 +333,9 @@ public class WaysideController {
         testInputs.put(trackElement, totalInputs);
     }
 
+    /*
+    NEEDS TO BE UPDATED FOR CURRENT CONTROLLER!
+     */
     public boolean updateTestInputs(String valueString, int index){
         boolean temp;
 
@@ -316,7 +347,7 @@ public class WaysideController {
             return false; //doesn't work
         }
 
-        boolean[] inputValues = getInputValues();
+        boolean[] inputValues = gpio.getInputValues();
         for(int i=0;i < inputValues.length;i++){
             if(index == i){
                 inputValues[i] = temp;
