@@ -241,6 +241,15 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         return false;
     }
 
+    public void spawnOn(TrackElement location, TrackElement awayFrom) {
+        /** spawns the train on a block, oriented away from an adjacent block.
+         *  placeOn() does not have the functionality to determine a train's direction when it is first spawned, so this
+         *  method allows the train to be spawned on a block with a user's defined orientation
+         */
+        placeOn(location);
+        lastOccupied = awayFrom;
+    }
+
     public boolean transition(TrackElement location) {
         /** handles transition from current TrackElement to next TrackElement
          * @before Train may or may not be on a TrackElement

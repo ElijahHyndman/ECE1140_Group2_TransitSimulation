@@ -10,6 +10,8 @@ import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -829,6 +831,107 @@ class TrainUnitTest {
 
         trn.halt();
         physicsClk.halt();
+
+    }
+
+
+    @Test
+    @DisplayName("Block Movement\t\t[TrainUnit will correctly move around a circlular, three block track]")
+    void trainMovesAroundGreenLine() {
+        // Import track for use
+        String filepath = "SEResources/GreenAndRedLine.csv";
+        Track NorthShoreExtension = new Track();
+        NorthShoreExtension.importTrack(filepath);
+
+        // Create Train
+        trn = new TrainUnit("Three Circle Train");
+        trn.setReferenceTrack(NorthShoreExtension);
+        trn.blockExceededFlag = false;
+        trn.setConsoleVerboseness(Level.INFO);
+
+        ArrayList<TrackElement> greenLine = NorthShoreExtension.getGreenLine();
+        TrackElement spawnBlock = greenLine.get(11);
+        TrackElement orientBlock = greenLine.get(12);
+        trn.spawnOn(spawnBlock,orientBlock);
+
+        for(TrackElement block : greenLine) {
+            block.setAuthority(1000);
+            block.setCommandedSpeed(10.0);
+        }
+
+        // Setting switches from Grace's test file
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(7),1); // 12 is connecting 1A to 13
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(8),0); //switch is 29 -30
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11),0); // switch from 77 to 76
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(12),0); // switch from 85 to 86
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(9),1); // switch NOT to the yard
+        NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(10),0); // switch NOT to the yard
+        /*for(int i = 0 ; i < 200 ; i++ ) {
+            if(i == 90) {
+                //Here we need to TOGGLE SWITCH
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11),1); // setting 76 to 150
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(8),1); // setting 76 to 150
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(12),1); // switch from 100 - 85 ????? (should be 1 but 0 )
+            }
+            if(i == 150) {
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11), 1); // setting 150 to be connected to F
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(7), 0); // 12 to  13
+            }
+        }*/
+
+        // Create TrainModel UI
+        trainGUI trainModelUI = new trainGUI(0);
+        trainModelUI.giveTrain(trn.getHull());
+
+        // Create TrainController UI
+        DriverUI trainControllerUI = new DriverUI(trn.getController());
+
+        // Create physics clock
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        physicsClk.addListener(trn);
+
+        // print info to console
+        System.out.println(trn.informationString());
+        System.out.println(NorthShoreExtension);
+
+        // get Blocks of the track circuit
+        /*TrackElement BlockA = circleTrack.getBlock(0);
+        TrackElement BlockB = circleTrack.getBlock(1);
+        TrackElement BlockC = circleTrack.getBlock(2);
+        BlockA.setLength(50);
+        BlockA.setAuthority(1000);
+        BlockA.setCommandedSpeed(10.0);
+        BlockB.setLength(50);
+        BlockB.setAuthority(1000);
+        BlockB.setCommandedSpeed(10.0);
+        BlockC.setLength(120);
+        BlockC.setAuthority(1000);
+        BlockC.setCommandedSpeed(10.0);*/
+
+        trn.start();
+        physicsClk.start();
+
+        while(true) {
+            if(trn.getLocation().getBlockNum() == 90) {
+                //Here we need to TOGGLE SWITCH
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11),1); // setting 76 to 150
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(8),1); // setting 76 to 150
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(12),1); // switch from 100 - 85 ????? (should be 1 but 0 )
+            }
+            if(trn.getLocation().getBlockNum() == 150) {
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11), 1); // setting 150 to be connected to F
+                NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(7), 0); // 12 to  13
+            }
+            if(trn.blockExceededFlag)
+                System.out.println(trn.getLocation());
+            trn.blockExceededFlag = false;
+
+            trainModelUI.updateDisplay();
+            trainControllerUI.updateDisplay();
+        }
+
+        //trn.halt();
+        //physicsClk.halt();
 
     }
 
