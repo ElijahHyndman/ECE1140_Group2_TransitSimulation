@@ -297,6 +297,14 @@ import java.util.Scanner;
         }
 
 
+        //updating tickets
+        public int updateTickets(){
+            int ticketTotal = 0;
+            for(int i=0; i<stationsArrayList.size();i++)
+                ticketTotal += stationsArrayList.get(i).getTicketSales();
+
+            return ticketTotal;
+        }
 
         /*Set Environmental Temperature*/
         public void setEnvironmentalTemperature(double a){

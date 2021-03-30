@@ -1089,8 +1089,8 @@ public class TrackGUI extends javax.swing.JFrame {
 
         //Parsing info into different areas to test functionality
         int bN=0;
-        double auth;
-        double speed;
+        int auth;
+        int speed;
         int passenger;
         int switches;
         double LenT;
@@ -1122,12 +1122,12 @@ public class TrackGUI extends javax.swing.JFrame {
                     trackList.setFailure(bN,lineT,3);
 
                 if(!authorityT.equals("Authority")) {
-                    auth = Double.parseDouble(authorityT);
+                    auth = Integer.parseInt(authorityT);
                     temp.setAuthority(auth);
                 }
 
                 if(!speedT.equals("Speed")) {
-                    speed = Double.parseDouble(speedT);
+                    speed = Integer.parseInt(speedT);
                     temp.setCommandedSpeed(speed);
                 }
 
