@@ -183,6 +183,15 @@ public class Train {
         this.displayCommandedSpeed = commandedSpeed;
         this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
+
+    public void setBlockGrade(double blockGrade) {
+        this.blockGrade = blockGrade;
+    }
+
+    public void setSpeedLimit(double speedLimit) {
+        this.speedLimit = speedLimit;
+    }
+
     public void setAuthority(double a) {
         this.authority = a;
     }
