@@ -149,6 +149,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     /** Debugging Variables
      */
     private boolean controllerDisconnected = false;
+    private boolean simpleTrackTest = false;
 
 
     public TrainUnit() {
@@ -406,22 +407,33 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             blockExceededFlag = true;
             // Find how far we are onto the next block (since physicsUpdates are spontaneous)
             double overshoot = currentDistanceOnBlock - blockLength;
-            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+            trainEventLogger.finer(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
 
+            TrackElement nextBlock;
             // Next track block has to be retrieved from Track object
             if(trackLayout != null) {
                 // Uses current block and last occupied block to determine appropriate next block
-                TrackElement nextBlock = trackLayout.getNextSimple(occupies,lastOccupied);
+                if(simpleTrackTest) {
+                    nextBlock = trackLayout.getNextSimple(occupies, lastOccupied);
+                } else {
+                    nextBlock = trackLayout.getNext(occupies,lastOccupied);
+                }
                 // Place Train onto next block
                 transition(nextBlock);
                 // Account for possible overshoot
                 hull.setBlockDistance(overshoot);
-                trainEventLogger.fine(String.format("TrainUnit (%s : %s) has been fast fowarded on block (%s) to account for overshoot of %.2f meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+                trainEventLogger.fine(String.format("Train (%s : %s) has transitioned to block (%s%c%d : %s)",
+                                        name,this.hashCode(),
+                                        occupies.getLine(),occupies.getSection(),occupies.getBlockNum(),occupies.hashCode()));
+                trainEventLogger.finer(String.format("TrainUnit (%s : %s) has been fast fowarded on block (%s) to account for overshoot of %.2f meters",name,this.hashCode(),occupies.hashCode(),overshoot));
             }
 
              }
     }
 
+    public void configureForSimpleBlockLayout() {
+        simpleTrackTest = true;
+    }
     /*
             Utility methods
      */

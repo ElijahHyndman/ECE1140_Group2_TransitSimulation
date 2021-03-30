@@ -460,7 +460,7 @@ class TrainUnitTest {
         trn.setControllerDisconnect(true);
 
         // World clock for physics calls
-        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        WorldClock physicsClk = new WorldClock(1.0,10.0);
         physicsClk.addListener(trn);
 
         // Display more information about trainLogs, since physics updates are "Finer" level
@@ -512,7 +512,7 @@ class TrainUnitTest {
         trn = new TrainUnit("Moving Hull");
         trn.setControllerDisconnect(true);
         // Physics Clock for physics update calls
-        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        WorldClock physicsClk = new WorldClock(1.0,10.0);
         physicsClk.addListener(trn);
         // Display more information about trainLogs, since physics updates are "Finer" level
         //trn.consoleVerboseness = Level.ALL;
@@ -522,7 +522,7 @@ class TrainUnitTest {
         // Put hull under constant power command of 100KW
         // I pulled these values directly from output of a test run
         hull.setPower(100);
-        double[] velocities = {2.32, 4.20, 5.09, 5.66, 6.15, 6.60, 7.01, 7.40, 7.77, 8.11, 8.45, 8.76, 9.07};
+        double[] velocities = {3.17, 6.02, 7.06, 7.73, 8.32, 8.86, 9.37, 9.84, 10.29, 10.72, 11.14, 11.53, 11.92};
 
         // Begin physics update calls
         physicsClk.start();
@@ -533,7 +533,7 @@ class TrainUnitTest {
             // Wait for next update to occur
             while (!trn.updateFlag) {}
             trn.updateFlag = false;
-            // Velocity from power calculations matches expected velocity?
+            // Velocity from power calculations matches expected velocity by +-1.0
             assertEquals(true, aboutEqual(velocities[index],hull.getActualSpeed(),1.0));
         }
 
@@ -725,6 +725,7 @@ class TrainUnitTest {
         trn = new TrainUnit("Two Circle Train");
         trn.setReferenceTrack(circleTrack);
         trn.blockExceededFlag = false;
+        trn.configureForSimpleBlockLayout();
 
         // Create physics clock
         WorldClock physicsClk = new WorldClock();
@@ -749,10 +750,12 @@ class TrainUnitTest {
         trn.start();
         physicsClk.start();
 
-        //while(!trn.blockExceededFlag) {}
-        while(true) {}
-        //trn.halt();
-        //physicsClk.halt();
+        while(!trn.blockExceededFlag) {}
+        trn.blockExceededFlag = false;
+        while(!trn.blockExceededFlag) {}
+
+        trn.halt();
+        physicsClk.halt();
 
     }
 
@@ -770,6 +773,7 @@ class TrainUnitTest {
         trn = new TrainUnit("Three Circle Train");
         trn.setReferenceTrack(circleTrack);
         trn.blockExceededFlag = false;
+        trn.configureForSimpleBlockLayout();
 
         // Create TrainModel UI
         //trainGUI trainModelUI = new trainGUI(0);
