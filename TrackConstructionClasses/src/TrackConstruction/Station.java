@@ -8,7 +8,7 @@ public class Station extends TrackElement{
     int ticketSales; //Ticket sales per station
     boolean occupied;
 
-    Station(){
+    public Station(){
         this.occupied = false;
     }
 

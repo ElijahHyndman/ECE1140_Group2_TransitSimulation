@@ -238,11 +238,38 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
+    void updateTickets(){
+        System.out.println("updateTickets");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        assertEquals(instance.updateTickets(),0);
+        int sales =0;
+        for(int i =0; i< instance.getStations().size(); i++) {
+            instance.getStations().get(i).setTicketSales();
+            sales = sales +  instance.getStations().get(i).getTicketSales();
+           // System.out.println("new tickets: " + instance.getStations().get(i).getTicketSales() + " and sales " + sales);
+        }
+        assertEquals(instance.updateTickets(),sales);
+
+
+
+
+
+    }
+
+    @org.junit.jupiter.api.Test
     void setSwitch() {
         System.out.println("setSwitch");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
+
+        TrackGUI testGUI = new TrackGUI(instance);
+        testGUI.setVisible(true);
+        testGUI.updateTrack(instance);
+
+
 
 
         //Testing for Green Line Switches

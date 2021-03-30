@@ -2,11 +2,8 @@ package implementation;
 
 import systemData.*;
 
-import java.time.LocalTime;
-
 public class NonVitalComponents {
 
-    private SystemTime theTime;
     private boolean cabinLights;
     private boolean headLights;
     private String station;
@@ -22,7 +19,6 @@ public class NonVitalComponents {
 
     public NonVitalComponents(trackData theTrack){
 
-        theTime = new SystemTime();
         track = theTrack;
 
         //Initialize non-vital components
@@ -89,7 +85,7 @@ public class NonVitalComponents {
     //========MUTATOR METHODS==========
 
     public void setTemperature(){
-        if (theTime.getDate().getMonthValue() <= 3 || theTime.getDate().getMonthValue() >= 10){
+        if (java.time.LocalDate.now().getMonthValue() <= 3 || java.time.LocalDate.now().getMonthValue() >= 10){
             cabinTemp = 68;
         }else {
             cabinTemp = 66;
@@ -150,7 +146,7 @@ public class NonVitalComponents {
 
     public void setCabinLights(){
 
-        if (theTime.getTime().getHour() >= 18 || theTime.getTime().getHour() < 7){
+        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             cabinLights = true;
         } else {
             cabinLights = false;
@@ -159,7 +155,7 @@ public class NonVitalComponents {
 
     public void setExternalLights(){
 
-        if (theTime.getTime().getHour() >= 18 || theTime.getTime().getHour() < 7){
+        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             externalLights = true;
         } else {
             externalLights = false;

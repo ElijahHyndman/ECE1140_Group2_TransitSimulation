@@ -3,7 +3,7 @@ package TrackConstruction;
 public class TrackBlock extends TrackElement {
     /*normal*/
     String beacon;
-    TrackBlock(){
+    public TrackBlock(){
         this.occupied = false;
     }
 
