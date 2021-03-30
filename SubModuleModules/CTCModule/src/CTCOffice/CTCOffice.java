@@ -29,20 +29,20 @@ public class CTCOffice implements PhysicsUpdateListener
     private boolean occ;
     private double speed;
     private int authority;
-    private WaysideSystem waysides;
+    private WaysideSystem waysides, waysideG, waysideR;
     private double[] speedArrG = new double[150];
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
-    private CharSequence timeNow;
+    public CharSequence timeNow;
     private LocalTime now;
-    
+
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
-        
+
         if (tNum.equals("Train 1"))
             trainNum = 1;
         else if (tNum.equals("Train 2"))
@@ -65,7 +65,7 @@ public class CTCOffice implements PhysicsUpdateListener
             trainNum = 10;
         else
             trainNum = 1;
-        
+
         if (dest.equals("Station B")){
             blockNum = 10;
             lineCol = "Blue";}
@@ -138,67 +138,67 @@ public class CTCOffice implements PhysicsUpdateListener
         else{
             blockNum = 0;
             lineCol = "Blue";}
-       
-       CharSequence timeChar = timeD;
-       timeDis = LocalTime.parse(timeChar);
-       now = LocalTime.parse(timeNow);
 
-       int h1 = timeDis.getHour();
-       int h2 = now.getHour();
-       int m1 = timeDis.getMinute();
-       int m2 = now.getMinute();
-       
-       double temp = m1-m2;
-       temp = temp/60;
-       int hsub = h1-h2;
-       if (m1<m2)
-       {
-           hsub = hsub-1;
-       }
-       temp = temp+hsub;
+        CharSequence timeChar = timeD;
+        timeDis = LocalTime.parse(timeChar);
+        now = LocalTime.parse(timeNow);
 
-       route = calcRoute(blockNum, lineCol);
+        int h1 = timeDis.getHour();
+        int h2 = now.getHour();
+        int m1 = timeDis.getMinute();
+        int m2 = now.getMinute();
 
-       routeLength = calcRouteLength(blockNum, lineCol);
-       
-       speed = routeLength/1000/temp;
+        double temp = m1-m2;
+        temp = temp/60;
+        int hsub = h1-h2;
+        if (m1<m2)
+        {
+            hsub = hsub-1;
+        }
+        temp = temp+hsub;
 
-       authority = calcAuthority(route);
-       authArr = createAuthArr(route, authority);
+        route = calcRoute(blockNum, lineCol);
 
-       if (speed<30)
-       {
+        routeLength = calcRouteLength(blockNum, lineCol);
+
+        speed = routeLength/1000/temp;
+
+        authority = calcAuthority(route);
+        authArr = createAuthArr(route, authority);
+
+        if (speed<30)
+        {
             speed = 30;
             double timeTravel = 1/(speed*1000/routeLength/60);
             long mins = (long)timeTravel;
             timeDisp = timeDis.minusMinutes(mins);
-       }
-       else
-       {
-           timeDisp = LocalTime.now();
-       }
+        }
+        else
+        {
+            timeDisp = now;
+        }
 
         if (lineCol.equals("Green"))
             speedArrG = createSpeedArr(route, speed);
         if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
-               
-       if(LocalTime.now().isBefore(timeDis) && speed<50)    
-       {
-           speedAuthorityTime[0] = speed*0.621371;
-           speedAuthorityTime[1] = authority;
-           speedAuthorityTime[2] = timeDisp;
-       }
-       else
-       {
-           speedAuthorityTime[0] = 0;
-           speedAuthorityTime[1] = 0;
-           speedAuthorityTime[2] = 0;
-       }
 
-       //waysides.broadcastToControllers(speedArrG, authArr);
+        if(LocalTime.now().isBefore(timeDis) && speed<50)
+        {
+            speedAuthorityTime[0] = speed*0.621371;
+            speedAuthorityTime[1] = authority;
+            speedAuthorityTime[2] = timeDisp;
+        }
+        else
+        {
+            speedAuthorityTime[0] = 0;
+            speedAuthorityTime[1] = 0;
+            speedAuthorityTime[2] = 0;
+        }
 
-       return speedAuthorityTime;
+        //waysides.broadcastToControllers(speedArrG, authArr);
+
+        return speedAuthorityTime;
     }
 
     public void LoadSchedule(String filename)
@@ -236,7 +236,7 @@ public class CTCOffice implements PhysicsUpdateListener
             t8 = input.next();
             t9 = input.next();
             t10 = input.next();
-            
+
             DisplayLine disp = new DisplayLine(blockNum, lineCol, sect, blockL, sLim, bGrade, elev, cElev, inf, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
             dispArr.add(disp);
             count++;
@@ -247,7 +247,7 @@ public class CTCOffice implements PhysicsUpdateListener
         e.printStackTrace();
     }
     }
-    
+
     public int CalcThroughput(int tix)
     {
         now = LocalTime.parse(timeNow);
@@ -255,32 +255,12 @@ public class CTCOffice implements PhysicsUpdateListener
         int mins = now.getMinute();
         double totalT = mins/60;
         totalT = totalT+hours;
-        
+
         thruP = (int) Math.round(tix/totalT);
         return thruP;
     }
 
-    public void DisplayTransit()
-    {
-        //displays transit system
-    }
-
-    public void DisplaySchedule()
-    {
-        //read input from files to create schedule display
-    }
-
-    public void DisplayStatus()
-    {
-        //read input from files to create status display
-    }
-
-    public void LoadData(String line, int blockNum)
-    {
-        //display a certain block's data from file
-    }
-    
-    public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
+    /*public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
     {
             LocalTime nowT = LocalTime.parse(timeNow);
             LocalTime t12 = LocalTime.parse(t1);
@@ -309,14 +289,18 @@ public class CTCOffice implements PhysicsUpdateListener
                 occ = true;
             else
                 occ = false;
-        
+
         return occ;
-    }
-    public boolean CheckOcc(int blockNum)
+    }*/
+    public boolean CheckOcc(int blockNum, String lineCol)
     {
+       /*if (lineCol.equals("Green"))
+            occ = waysideG.getOccupancy(blockNum);
+        else
+            occ = waysideR.getOccupancy(blockNum);*/
         //status = waysides.getOccupancy(blockNum);
 
-        return status;
+        return occ;
     }
 
     public boolean CheckSwitch(int blockNum)
@@ -328,7 +312,34 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void OpenTrack(int blockNum, String lineCol)
     {
-        //waysides.setClose(blockNum);
+        //waysides.setOpen(blockNum);
+        /*if (lineCol.equals("Green"))
+        {
+            for(int i=1; i<4; i++)
+            {
+                if (blockNum==i)
+                {
+                    for(int j=0; j<3; j++)
+                        waysideG.setOpen(j);
+                }
+            }
+            for(int i=4; i<7; i++)
+            {
+                if (blockNum==i)
+                {
+                    for (int j=3; j<6; j++)
+                        waysideG.setOpen(j);
+                }
+            }
+            for(int i=7; i<13; i++)
+            {
+                if(blockNum==i)
+                {
+                    for (int j = 6; j<12; j++)
+                        waysideG.setOpen(j);
+                }
+            }
+        }*/
 
     }
 
@@ -401,11 +412,18 @@ public class CTCOffice implements PhysicsUpdateListener
         return aArr;
     }
 
+    public int getTickets()
+    {
+        int tix = 0;
+        //tix = Track.updateTix();
+        return tix;
+    }
+
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
     {
         this.timeNow = currentTimeString;
     }
-    
+
     public ArrayList getDisps()
     {
         return dispArr;
