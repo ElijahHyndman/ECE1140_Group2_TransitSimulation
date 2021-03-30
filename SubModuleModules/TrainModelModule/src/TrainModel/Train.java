@@ -45,7 +45,8 @@ public class Train {
     //TrackBlock myTrackBlock;
     double totalDistance; //meters
     double blockDistance;
-
+    double blockGrade; //%
+    double speedLimit; //km/h  (1 km/hr = .2778 m/s)
     //Fails
     boolean signalPickupFail;
     boolean engineFail;

@@ -17,11 +17,15 @@ import javax.swing.ImageIcon;
  */
 public class trainGUI extends javax.swing.JFrame {
        
-    //set of Trains across the systemz
+    //set of Trains across the system
+    Train mainTrain;
+
+    //Below data was mostly just for iteration 2... maybe use in future?
     public ArrayList<Train> trains = new ArrayList<Train>();
+    public int mainTrainIndex;
     int namesIndex = 2;
     int trainIndex = 0;
-    public int mainTrainIndex;
+
     
     /**
      * Creates new form trainGUI
@@ -46,33 +50,33 @@ public class trainGUI extends javax.swing.JFrame {
     }
     public void updateDisplay(){
         
-        table1.setValueAt(trains.get(mainTrainIndex).displayAcceleration, 0, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).displayActualSpeed, 1, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).displayCommandedSpeed, 2, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).power, 3, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).authority, 4, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).mass, 5, 1);
+        table1.setValueAt(mainTrain.displayAcceleration, 0, 1);
+        table1.setValueAt(mainTrain.displayActualSpeed, 1, 1);
+        table1.setValueAt(mainTrain.displayCommandedSpeed, 2, 1);
+        table1.setValueAt(mainTrain.power, 3, 1);
+        table1.setValueAt(mainTrain.authority, 4, 1);
+        table1.setValueAt(mainTrain.mass, 5, 1);
         
-        table2.setValueAt(trains.get(mainTrainIndex).serviceBrake, 0, 1);
-        table2.setValueAt(trains.get(mainTrainIndex).emergencyBrake, 1, 1);
-        table2.setValueAt(trains.get(mainTrainIndex).passengerBrake, 2, 1);
+        table2.setValueAt(mainTrain.serviceBrake, 0, 1);
+        table2.setValueAt(mainTrain.emergencyBrake, 1, 1);
+        table2.setValueAt(mainTrain.passengerBrake, 2, 1);
         
-        table4.setValueAt(trains.get(mainTrainIndex).signalPickupFail, 0, 1);
-        table4.setValueAt(trains.get(mainTrainIndex).brakeFail, 1, 1);
-        table4.setValueAt(trains.get(mainTrainIndex).engineFail, 2, 1);
+        table4.setValueAt(mainTrain.signalPickupFail, 0, 1);
+        table4.setValueAt(mainTrain.brakeFail, 1, 1);
+        table4.setValueAt(mainTrain.engineFail, 2, 1);
         
-        additionalTable.setValueAt(trains.get(mainTrainIndex).advertisements, 0, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).announcements, 1, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).beacon, 2, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).crewCount, 3, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).leftDoors, 4, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).rightDoors, 5, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).headlights, 6, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).cabinLights, 7, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).outerLights, 8, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).nextStop, 9, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).passengerCount, 10, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).cabinTemp, 11, 1);
+        additionalTable.setValueAt(mainTrain.advertisements, 0, 1);
+        additionalTable.setValueAt(mainTrain.announcements, 1, 1);
+        additionalTable.setValueAt(mainTrain.beacon, 2, 1);
+        additionalTable.setValueAt(mainTrain.crewCount, 3, 1);
+        additionalTable.setValueAt(mainTrain.leftDoors, 4, 1);
+        additionalTable.setValueAt(mainTrain.rightDoors, 5, 1);
+        additionalTable.setValueAt(mainTrain.headlights, 6, 1);
+        additionalTable.setValueAt(mainTrain.cabinLights, 7, 1);
+        additionalTable.setValueAt(mainTrain.outerLights, 8, 1);
+        additionalTable.setValueAt(mainTrain.nextStop, 9, 1);
+        additionalTable.setValueAt(mainTrain.passengerCount, 10, 1);
+        additionalTable.setValueAt(mainTrain.cabinTemp, 11, 1);
         
         updateTestDisplay();
            
