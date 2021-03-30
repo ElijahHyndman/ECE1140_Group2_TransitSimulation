@@ -9,7 +9,7 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 
-public class Controller {
+public class FakeController {
 
     final private int DEFAULT_SPEEDLIMIT = 50;
     final private boolean DEFAULT_ISACTIVE = true;
@@ -28,11 +28,11 @@ public class Controller {
     ArrayList<TrackBlock> blocks; //jurisdiction
     private List<boolean[][]> outputTables;
 
-    public Controller(){
+    public FakeController(){
         name = "FAKE";
     }
 
-    public Controller(ArrayList<TrackBlock> blocks, String name){
+    public FakeController(ArrayList<TrackBlock> blocks, String name){
         this.isActive = DEFAULT_ISACTIVE;
         this.isSoftware = DEFAULT_ISSOFTWARE;
         this.speedLimit = DEFAULT_SPEEDLIMIT;
@@ -95,6 +95,13 @@ public class Controller {
     }
 
     /*
+    Get input values
+     */
+    public boolean[] getInputValues(){
+        return gpio.getInputValues();
+    }
+
+    /*
     add an output under the jurisdiction of this controller, a PLCFile MUST be associated during creation. It can be later updated too!
      */
     public void addOutput(int blockNumber, String PLCFile) throws IOException, URISyntaxException {
@@ -119,8 +126,8 @@ public class Controller {
         PLCEngine engine = new PLCEngine();
         engine.createTokens(PLCFile);
 
-        PLCScriptMap.put(trackElement, engine.getPLCString());
-        outputMap.put(trackElement, engine.calculateOutputMapNew(getInputNames()));
+        PLCScriptMap.replace(trackElement, engine.getPLCString());
+        outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
 
         bool = generateOutputSignal(trackElement.getBlockNum());
         gpio.updateOutput(trackElement, bool);
@@ -200,6 +207,51 @@ public class Controller {
         temp.addAll(Collections.singleton(isActive));
 
         return temp;
+    }
+
+    public HashMap<String, Vector<String>> generateDescriptionNodes() throws IOException {
+        HashMap<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
+
+        //inputs - input signals
+        String inputCategory = "Input Signals";
+        Vector<String> inputVector = new Vector<>();
+        boolean[] inputValues = getInputValues();
+        for(int i=0;i < inputValues.length;i++){
+            inputVector.add("input "+i+" : "+inputValues[i]);
+        }
+        hash.put(inputCategory, inputVector);
+
+        //outputs - output signals, speed, authority, active
+        String outputCategory = "Output Signals";
+        Vector<String> outputVector = new Vector<>();
+        Boolean[] outputValues = gpio.getOutputValues();
+        for(int i=0;i < outputValues.length;i++){
+            outputVector.add("output "+i+" : "+outputValues[i]);
+        }
+        hash.put(outputCategory, outputVector);
+
+        String speedCategory = "Speed";
+        Vector<String> speedVector = new Vector<>();
+        double[] speed = getSpeed();
+        for(int i=0;i < speed.length;i++){
+            speedVector.add("block speed "+i+" : "+speed[i]);
+        }
+        hash.put(speedCategory, speedVector);
+
+        double[] authority = getAuthority();
+        String authorityCategory = "Authority";
+        Vector<String> authorityVector = new Vector<>();
+        for(int i=0;i < authority.length;i++){
+            authorityVector.add("block authority "+i+" : "+authority[i]);
+        }
+        hash.put(authorityCategory, authorityVector);
+
+        String activeCategory = "Active";
+        Vector<String> activeVector = new Vector<>();
+        activeVector.add("Controller status : " + isActive);
+        hash.put(activeCategory, activeVector);
+
+        return hash;
     }
 
     //GPIO *************************************************************************************************************

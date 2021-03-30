@@ -6,6 +6,7 @@ import TrackConstruction.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GPIO {
@@ -31,9 +32,13 @@ public class GPIO {
         numberOfOutputs = outputValues.size();
     }
 
+    public int getNumberOfBlocks() {
+        return numberOfBlocks;
+    }
+
     /*
-    Gets the values from the occupied blocks
-     */
+        Gets the values from the occupied blocks
+         */
     public boolean[] getInputValues(){
         boolean[] inputs = new boolean[numberOfBlocks];
 
@@ -91,6 +96,20 @@ public class GPIO {
         }
 
         return outputValues.get(temp);
+    }
+
+    public List<String> getOutputNames(){
+        Integer[] outputs = outputValues.keySet().toArray(new Integer[outputValues.size()]);
+        List<String> outputNames = new LinkedList<>();
+
+        for(int i=0;i < outputs.length;i++){
+            outputNames.add(outputs.toString());
+        }
+
+        return outputNames;
+    }
+    public Boolean[] getOutputValues(){
+        return outputValues.values().toArray(new Boolean[outputValues.size()]);
     }
 
     public String getControllerName(){

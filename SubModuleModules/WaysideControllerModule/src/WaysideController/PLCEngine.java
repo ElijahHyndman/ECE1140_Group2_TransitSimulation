@@ -274,7 +274,7 @@ public class PLCEngine {
         outputTablese: boolean values of the output based on inputs of all inputs, creating a truth table of sorts
      */
     public boolean[][] calculateOutputMap(List<String> inputNames) throws IOException {
-        numberOfInputs = inputNames.toArray().length;
+        numberOfInputs = varQueue.toArray().length;
         int rows = (int) Math.pow(2,numberOfInputs);
         boolean[][] temp = new boolean[rows][numberOfInputs];
         boolean[][] outputTable = new boolean[rows][numberOfInputs+1];

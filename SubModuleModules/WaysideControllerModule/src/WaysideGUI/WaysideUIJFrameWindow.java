@@ -1,6 +1,7 @@
 package WaysideGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
+import WaysideController.GPIO;
 
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -321,8 +322,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
         columnIdentifiers.add("Output Values");
 
         // Fill Data Vector
-        List<String> InputNames = thisController.getOutputNames();
-        boolean[] InputValues = thisController.getOutputValues();
+        GPIO gpio = thisController.getGPIO();
+        List<String> InputNames = gpio.getOutputNames();
+        Boolean[] InputValues = gpio.getOutputValues();
 
         for (int i=0; i<InputValues.length; i++) {
             Vector<Object> newrow = new Vector<Object>();
@@ -1111,7 +1113,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
 
             // Update controller inputs with string
             try {
-                thisController.updateInputs(newInputValue, row);
+                thisController.updateTestInputs(newInputValue, row);
                 updateControllerSelection();
 
             } catch (Exception e) {

@@ -10,24 +10,31 @@ public class WaysideSystem {
 
     String currentLine;
     List<WaysideController> controllers;
-    ArrayList<TrackBlock> blocks;
+    ArrayList<TrackElement> blocks;
+    int numberOfControllers;
+
+    //each track element has a wayside controller, this is an easy way to find each one!
+    HashMap<TrackElement, WaysideController> lut;
 
     public WaysideSystem() throws IOException{
         currentLine = "Green";
         controllers = new LinkedList<>();
-
+        numberOfControllers = 0;
         generateLine();
     }
 
     public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
         currentLine = "Green";
         this.controllers = controllers;
+        numberOfControllers = controllers.size();
         generateLine();
     }
 
-    public WaysideSystem(ArrayList<TrackBlock> blocks) throws IOException {
-        currentLine = "Green";
+    public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {
+        currentLine = line;
+        controllers = new LinkedList<WaysideController>();
         this.blocks = blocks;
+        numberOfControllers = 0;
     }
 
     /*
@@ -42,32 +49,52 @@ public class WaysideSystem {
     }
 
     /*
-    Helper Function that generators some test controllers (DEPRECATED)
+    add a wayside controller
      */
-    public static LinkedList<WaysideController> generateTestControllers(int nControllers) {
-        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-        String currentLine = "Blue";
-        List<String> currentInputNames = Arrays.asList("A", "C", "D");
-        boolean[] inputs = new boolean[]{false, true, true};
+    public void addWaysideController(int[] blockNumbers){
+        WaysideController controller = new WaysideController();
+    }
 
-        LinkedList<WaysideController> out = new LinkedList<WaysideController>();
-        for (int i=0; i<nControllers; i++) {
-            out.add( new WaysideController() );
+    //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
+    public ArrayList<TrackElement> findAllElements(int[] blockNumbers) throws IOException {
+        ArrayList<TrackElement> newElementSet = new ArrayList<>();
+
+        //needs check to see if the blocks numbers are even part of the system, if not, throw exception!
+
+        for(int i=0;i < blockNumbers.length;i++){
+            for(int j=0;j < blocks.size();j++){
+                if((blocks.get(j).getBlockNum() == blockNumbers[i]) && (!newElementSet.contains(blocks.get(j)))){
+                    newElementSet.add(blocks.get(j));
+                }
+            }
         }
-        return out;
+
+        return newElementSet;
+    }
+
+    //helper function that finds all the track BLOCKS with the corresponding blocks numbers and returns the array list (needs improvement)
+    public ArrayList<TrackBlock> findAllBlocks(int[] blockNumbers) throws IOException {
+        ArrayList<TrackBlock> newBlockSet = new ArrayList<>();
+
+        //needs check to see if the blocks numbers are even part of the system, if not, throw exception!
+
+        for(int i=0;i < blockNumbers.length;i++){
+            for(int j=0;j < blocks.size();j++){
+                if((blocks.get(j).getBlockNum() == blockNumbers[i]) && (!newBlockSet.contains(blocks.get(j))) &&
+                        (blocks.get(i).getType().equalsIgnoreCase("block"))){
+                    newBlockSet.add((TrackBlock) blocks.get(j)); //casting should not change the reference.
+                }
+            }
+        }
+
+        return newBlockSet;
     }
 
     /*
-    Generates a single test controller to use
+    finds the corresponding controller for each block!
      */
-    public void generateTestController() {
-        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-        String currentLine = "Blue";
-        List<String> currentInputNames = Arrays.asList("A", "C", "D");
-        boolean[] inputs = new boolean[]{false, true, true};
-
-       // WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "Controller" + (controllers.size()+1));
-       // controllers.add(waysideController);
+    public WaysideController findController(int blockNumber){
+        return lut.get(blockNumber);
     }
 
     /*
@@ -88,7 +115,7 @@ public class WaysideSystem {
 
         String controllerName;
         String PLCfile;
-        String outputName;
+        String blockNumber;
 
         //test if valid input was inputed
         if(commands.length <= 0 || commands.length > 4) {
@@ -99,7 +126,7 @@ public class WaysideSystem {
         if(commands[0].equals("upload")) { //UPLOAD COMMAND
             controllerName = commands[1];
             PLCfile = commands[2];
-            outputName = commands[3];
+            blockNumber = commands[3];
             int nameIndex = -1;
             String currName;
 
@@ -114,15 +141,18 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            controllers.get(nameIndex).addOutputSignal(PLCfile, outputName);
-            return "You have successfully added a PLCfile and Output To a Controller!";
-        }else if(commands[0].equals("compile")){ //COMPILE COMMAND
+            controllers.get(nameIndex).addOutput(Integer.parseInt(blockNumber),PLCfile);
+            return "You have successfully added an output on " + controllerName;
+        }else if(commands[0].equals("update")){ //COMPILE COMMAND
             controllerName = commands[1];
-            outputName = commands[2];
+            PLCfile = commands[2];
+            blockNumber = commands[3];
             int nameIndex = -1;
+            String currName;
 
             for(int i=0;i < controllers.size();i++){
-                if(controllers.get(i).getName().equals(controllerName)){
+                currName = controllers.get(i).getName();
+                if(currName.equals(controllerName)){
                     nameIndex = i;
                 }
             }
@@ -131,8 +161,8 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            controllers.get(nameIndex).generateOutputSignal(outputName);
-            return "You have successfully compiled the PLC!";
+            controllers.get(nameIndex).updateOutput(Integer.parseInt(blockNumber),PLCfile);
+            return "You have successfully updated a PLC on " + controllerName;
         }if(commands[0].equals("add")){ //COMPILE COMMAND
             controllerName = commands[1];
 
@@ -146,7 +176,7 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            generateTestController();
+            //generateTestController();
             return "Nice new controller!";
         }else{
             return "Command Error: The current command was invalid...";
@@ -164,6 +194,7 @@ public class WaysideSystem {
             throw new IOException("Generation Error: Invalid line generation");
         }
     }
+
     /*
 
      */
@@ -199,13 +230,14 @@ public class WaysideSystem {
         return false;
     }
 
+
     public static void main(String[] args) throws IOException {
         WaysideSystem testSystem = new WaysideSystem();
         WaysideUIClass guiUpdater;
 
         //WaysideController testControllers = generateTestController();
         //testSystem = new WaysideSystem(testControllers);
-        testSystem.generateTestController();
+        //testSystem.generateTestController();
         guiUpdater = new WaysideUIClass(testSystem);
 
         System.out.println("starting GUI");
