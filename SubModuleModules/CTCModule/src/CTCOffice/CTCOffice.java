@@ -29,7 +29,7 @@ public class CTCOffice implements PhysicsUpdateListener
     private boolean occ;
     private double speed;
     private int authority;
-    private WaysideSystem waysides, waysideG, waysideR;
+    public WaysideSystem waysides, waysideG, waysideR;
     private double[] speedArrG = new double[150];
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
