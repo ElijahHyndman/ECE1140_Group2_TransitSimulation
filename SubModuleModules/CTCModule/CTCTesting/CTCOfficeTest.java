@@ -42,8 +42,7 @@ class CTCOfficeTest {
     void calcThroughput() {
         DisplayLine display = new DisplayLine();
         System.out.println("Calculate Throughput");
-        int tix = 500;
-        int tp = display.CalcThroughput(tix);
+        int tp = display.CalcThroughput();
         System.out.println(tp);
     }
 
