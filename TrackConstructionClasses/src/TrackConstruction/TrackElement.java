@@ -22,9 +22,11 @@ public class TrackElement {
     int speedLimit;              //km/hr
     double elevation;            //meters
     double cumulativeElevation;  //meters
+    int currentDirection;
 
     //for printing purposes
     String infrastructure;
+    String beacon;
 
     //keeping track of failures
     String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE"};
@@ -38,6 +40,7 @@ public class TrackElement {
     //Information on node connections
     int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
     char biDirecitional;
+    int[] directionStates = {0,0,0,0};
 
 
 
@@ -50,6 +53,7 @@ public class TrackElement {
         this.commandedSpeed = 0;
         this.directionArray = null;
         this.biDirecitional = 'u';
+        this.currentDirection = -3;
     }
 
 
@@ -58,6 +62,11 @@ public class TrackElement {
 
     /*Setting Line */
     void setLine(String line){this.line = line;}
+
+    /*set Beacon*/
+    public void setBeacon(String beacon){
+        this.beacon = beacon;
+    }
 
     /*Setting section */
     void setSection(char section){this.section = section;}
@@ -94,6 +103,11 @@ public class TrackElement {
     /*set Infrastructure*/
     void setInfrastructure(String infrastructure){this.infrastructure = infrastructure;}
 
+    /*set Current Direciton*/
+    public void setCurrentDirection(int index){
+        currentDirection = index;
+    }
+
     /*set failure status */
     public void setFailureStatus(int index) {
         if(index >=0 && index <= 3)
@@ -112,6 +126,9 @@ public class TrackElement {
     /*get Grade*/
     public double getGrade(){ return this.grade;}
 
+    /*get Beacon*/
+    public String getBeacon() { return this.beacon;}
+
     /*get length */
     public double getLength(){ return this.length;}
 
@@ -124,6 +141,9 @@ public class TrackElement {
     /*get cumulative elvation*/
     public double getCumulativeElevation(){ return this.cumulativeElevation;}
 
+    /*direction*/
+    public int getCurrentDirection() {return this.currentDirection;}
+
 
     /*get Authority */
     public double getAuthority() { return this.authority;}
@@ -132,7 +152,12 @@ public class TrackElement {
     public double getCommandedSpeed() { return this.commandedSpeed;}
 
     /*get Direciton Array */
-    int[] getDirectionArray() { return this.directionArray;}
+    public int getDirection(int index) {
+        int ret = -2;
+        if(index >= 0 && index <= 2)
+            ret = directionArray[index];
+        return ret;
+    }
 
     /*get string directions */
     public String getDirectionString(){
@@ -146,7 +171,7 @@ public class TrackElement {
         return ret;}
 
     /*get if track section is bidirectional*/
-    boolean getBiDirectional() {
+    public boolean getBiDirectional() {
         if(biDirecitional=='y')
             return true;
         return false;
@@ -170,4 +195,6 @@ public class TrackElement {
 
     /*get swithc state*/
     public void setSwitchState(int switches) {}
+
+    public int getDirectionStates(int index) { return 0;}
 }
