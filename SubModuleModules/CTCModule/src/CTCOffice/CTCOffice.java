@@ -7,6 +7,8 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 
+import javax.sound.midi.Track;
+
 public class CTCOffice implements PhysicsUpdateListener
 {
     private int thruP;
@@ -36,6 +38,12 @@ public class CTCOffice implements PhysicsUpdateListener
     private int[] authArr = new int[150];
     public CharSequence timeNow;
     private LocalTime now;
+    public Track trackObj;
+
+    public CTCOffice()
+    {
+        waysides = new WaysideSystem();
+    }
 
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
@@ -250,6 +258,8 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public int CalcThroughput(int tix)
     {
+        //trackObj = new Track();
+        //int tix = trackObj.
         now = LocalTime.parse(timeNow);
         int hours = now.getHour();
         int mins = now.getMinute();
