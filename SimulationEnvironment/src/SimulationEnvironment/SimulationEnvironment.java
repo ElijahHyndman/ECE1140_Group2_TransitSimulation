@@ -49,7 +49,8 @@ public class SimulationEnvironment {
         addTrain(newTrain);
         newTrain.placeOn(spawnLocation);
     }
-    public void addTrain(TrainUnit newTrain) {
+
+    private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }
 
