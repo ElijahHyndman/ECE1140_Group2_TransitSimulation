@@ -72,9 +72,10 @@ public class GPIO {
     Generates an output, requires some value by default
      */
     public void addOutput(TrackElement trackElement, boolean defaultOutputValue) throws IOException {
-        Switch trackSwitch = (Switch) trackElement;
-        if(trackSwitch.getType().equalsIgnoreCase("switch")){ //needs a way to check if the trackelement is the correct one without the string
+        if(trackElement.getType().equalsIgnoreCase("switch")){ //needs a way to check if the trackelement is the correct one without the string
+            Switch trackSwitch = (Switch) trackElement;
             outputValues.put(trackElement, defaultOutputValue);
+            trackSwitch.setSwitchState(defaultOutputValue);
             //numberOfBlocks++;
         }else{
             throw new IOException("GPIO Error: Bad Output Type!");
@@ -89,7 +90,14 @@ public class GPIO {
             throw new IOException("GPIO Error: Bad Track Element!");
         }
 
-        outputValues.replace(trackElement, value);
+        if(trackElement.getType().equalsIgnoreCase("switch")){ //needs a way to check if the trackelement is the correct one without the string
+            Switch trackSwitch = (Switch) trackElement;
+            outputValues.replace(trackElement, value);
+            trackSwitch.setSwitchState(value);
+            //numberOfBlocks++;
+        }else{
+            throw new IOException("GPIO Error: Bad Output Type!");
+        }
     }
 
     /*

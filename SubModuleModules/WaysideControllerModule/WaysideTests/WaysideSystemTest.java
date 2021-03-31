@@ -167,4 +167,54 @@ class WaysideSystemTest {
 
 
     }
+
+    @Test
+    @DisplayName("Check all data related to switches")
+    public void testWaysideSystemSwitches() throws IOException, URISyntaxException {
+        int[] setDirection = new int[]{0,0,0};
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, setDirection,"n");
+        TrackBlock block1 = new TrackBlock();
+        TrackBlock block2 = new TrackBlock();
+        TrackBlock block3 = new TrackBlock();
+        TrackBlock block4 = new TrackBlock();
+        TrackBlock block5 = new TrackBlock();
+        TrackBlock block6 = new TrackBlock();
+
+        int[] blockNumbersController1 = new int[]{0, 1, 2, 3};
+        int[] blockNumbersController2 = new int[]{4, 5, 6};
+        double[] speed = new double[]{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0};
+        int[] authority = new int[]{1, 2, 3, 4, 5, 6, 7};
+
+        boolean[] occupiedElements = new boolean[]{false, true, false, false, true, true, true};
+
+        //add the track elements
+        ArrayList<TrackElement> trackElements = new ArrayList<>();
+        trackElements.add(trackSwitch);
+        trackElements.add(block1);
+        trackElements.add(block2);
+        trackElements.add(block3);
+        trackElements.add(block4);
+        trackElements.add(block5);
+        trackElements.add(block6);
+
+        //set some blocks as occupied
+        for(int i=0;i < trackElements.size();i++){
+            trackElements.get(i).setOccupied(occupiedElements[i]);
+        }
+
+        //set the block numbers
+        for(int i=0;i < blockNumbersController1.length;i++){
+            trackElements.get(i).setBlockNum(blockNumbersController1[i]);
+        }
+
+        for(int i=0;i < blockNumbersController2.length;i++){
+            trackElements.get(i+4).setBlockNum(blockNumbersController2[i]);
+        }
+
+        //creation of the test system
+        WaysideSystem system = new WaysideSystem(trackElements, "testLine");
+        system.addWaysideController(blockNumbersController1);
+        system.addOutputWaysideController(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
+
+    }
 }
