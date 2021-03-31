@@ -90,6 +90,9 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
+    public double getPower() {
+        return power;
+    }
 
     //setters
 
