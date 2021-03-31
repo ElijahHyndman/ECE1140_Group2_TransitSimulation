@@ -302,7 +302,7 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
 
                 },
                 new String [] {
-                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit", "Elevation", "Cummulative Elevation"
+                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit MPH", "Elevation", "Cummulative Elevation"
                 }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -491,7 +491,7 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
                         {null, null, null, null, null}
                 },
                 new String [] {
-                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed"
+                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed MPH"
                 }
         ));
         jScrollPane6.setViewportView(jTable4);
@@ -981,7 +981,7 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
 
             }
             for(int i=0; i<blockList.size(); i++) {
-                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).getCommandedSpeed()});
+                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).dispCommandedSpeed()});
 
             }
 

@@ -1,6 +1,12 @@
 import Track.Track;
+import TrackConstruction.Station;
+import TrackConstruction.Switch;
+import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import Track.TrackGUI;
+
+import java.io.File;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -332,6 +338,62 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
+    void switchConstructor() {
+        System.out.println("setSwitch");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        try {
+            Scanner sc = new Scanner(new File(filepath));
+            sc.useDelimiter(",|\\n");
+            //creating wb object for xls file
+            int count = 0;
+            while(sc.hasNext()){
+
+                if(count < 15 ) {
+                    sc.next();
+                    count++;
+                    continue;
+                }
+
+                //Parsing File into components
+
+                String line = sc.next();
+                char section = sc.next().charAt(0);
+                int blockNum = Integer.parseInt(sc.next());
+                double length = Double.parseDouble(sc.next());
+                double grade= Double.parseDouble(sc.next());
+                int speedLimit = Integer.parseInt(sc.next());
+                String infrastructure = sc.next();
+                sc.next(); //a BLANK
+                double elevation = Double.parseDouble(sc.next());
+                double cumulativeElevation = Double.parseDouble(sc.next());
+
+                //Adding the ToPointers and Bidirecitonality
+                int[] setDirection = new int[] {Integer.parseInt(sc.next()),Integer.parseInt(sc.next()),Integer.parseInt(sc.next())};
+                String setBiDirectional = sc.next();
+                String beacon = sc.next();
+
+                  if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
+                //    Switch Test = new Switch(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
+                //Need to check to see if stations are here and if so need to set Beacon Value and calculate tickets
+                    System.out.println(" " + line + " " + section + " " +blockNum + " " +length + " " +grade + " " +speedLimit + " " +infrastructure + " " +elevation + " " +cumulativeElevation + " [" + setDirection[0] + " " + setDirection[1] + " " + setDirection[2] + "] " +setBiDirectional);
+
+
+                }
+
+
+
+                }
+                count++;
+
+            //getting sheet object 0
+            sc.close();
+        } catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
@@ -339,7 +401,7 @@ class TrackTest {
         instance.importTrack(filepath);
 
         //Instantiate UI
-
+/*
             TrackGUI testGUI = new TrackGUI(instance);
             testGUI.setVisible(true);
             testGUI.draw();
@@ -356,7 +418,7 @@ class TrackTest {
                 testGUI.latch(instance);
                 instance.getGreenLine().get(2).setAuthority(i);
                 testGUI.latch(instance);
-                instance.getGreenLine().get(2).setCommandedSpeed(i);
+                instance.getGreenLine().get(2).setCommandedSpeed(15);
                 testGUI.latch(instance);
                     instance.setFailure(2,"Green",1);
                 testGUI.latch(instance);
@@ -367,7 +429,7 @@ class TrackTest {
 
             }
 
-
+    */
     }
 }
 

@@ -35,7 +35,7 @@ public class TrackElement {
 
     //Information sent to individual blocks
     int  authority;          //authority if FINAL block destination?
-    int commandedSpeed;     //km / hour
+    double commandedSpeed;     //km / hour
 
     //Information on node connections
     int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
@@ -51,7 +51,7 @@ public class TrackElement {
         this.section = '-';
         this.line = "-";
         this.authority = 0;
-        this.commandedSpeed = 0;
+        this.commandedSpeed = 0.0;
         this.directionArray = null;
         this.biDirecitional = 'u';
         this.currentDirection = -3;
@@ -93,7 +93,7 @@ public class TrackElement {
     public void setAuthority(int authority) { this.authority = authority;}
 
     /*Setting Commanded Speed*/
-    public void setCommandedSpeed(int commandedSpeed) { this.commandedSpeed = commandedSpeed;}
+    public void setCommandedSpeed(double commandedSpeed) { this.commandedSpeed = commandedSpeed;}
 
     /*Setting direction array*/
     public void setDirection(int [] directionArray) {this.directionArray = directionArray;}
@@ -151,7 +151,11 @@ public class TrackElement {
     public int getAuthority() { return this.authority;}
 
     /*get CommandedSpeed*/
-    public int getCommandedSpeed() { return this.commandedSpeed;}
+    public double getCommandedSpeed() { return this.commandedSpeed;}
+
+    /*display commanded speed*/
+    public double dispCommandedSpeed() {
+        return commandedSpeed*2.23694;}
 
     /*get Direciton Array */
     public int getDirection(int index) {
