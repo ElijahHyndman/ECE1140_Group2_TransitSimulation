@@ -22,7 +22,7 @@ public class TrainIntegrationTest {
     public void setUp(){
         theTrain = new Train(5,4);
         control = new TrainControl(theTrain);
-        theTrain.setBeacon("Dormont: 250");
+        theTrain.setBeacon("Dormont: 200");
     }
 
     @Test
@@ -168,31 +168,23 @@ public class TrainIntegrationTest {
         //first set controller values
         theTrain.setAuthority(150000);
         theTrain.setSpeed(0);
-        theTrain.setCommandedSpeed(10);
-
-        control.updateCommandOutputs("first test", .5);
-
-        System.out.println("Beacon: " + theTrain.getBeacon());
-        System.out.println("STOPPING DISTANCE: " + control.getStoppingDistance());
+        theTrain.setCommandedSpeed(6);
 
        // theTrain.setCommandedSpeed(10);
         System.out.println("-----start over-----");
-        control.updateCommandOutputs("first test", 1.0);
+        control.updateCommandOutputs("first test", .1);
 
         double initialTrainVelocity = control.getActualSpeed();
 
         //int i = 0;
-        while(control.getActualSpeed() > 0){
-
-            //i++;
-            control.updateCommandOutputs("test time", .5);
+        boolean stop = false;
+        while(!stop){
+            control.updateCommandOutputs("test time", .1);
             double power = control.getPower();
             assertThat(theTrain.getPower(), is(power));
-            if (control.getActualSpeed() < control.getCommandedSpeed()){
-                boolean changedActualSpeed = control.getActualSpeed() > initialTrainVelocity;
-                //assertThat(changedActualSpeed, is(true));
+            if (theTrain.getActualSpeed() == 0){
+                stop = true;
             }
-
             System.out.println(control.getActualSpeed());
             initialTrainVelocity = control.getActualSpeed();
         }

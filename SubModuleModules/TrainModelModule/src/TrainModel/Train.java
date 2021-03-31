@@ -18,6 +18,7 @@ public class Train {
         this.emergencyBrake = false;
         this.passengerBrake = false;
         this.serviceBrake = false;
+        this.sampleTime = 1; //default
         
         this.calculateMass();
     }
@@ -51,6 +52,7 @@ public class Train {
     boolean outerLights;
     boolean headlights;
     double actualSpeed;// m/s
+    double sampleTime;
     
     //display variable with customary units
     double displayActualSpeed;  //  ft/s
@@ -101,13 +103,17 @@ public class Train {
         calculateSpeed();
     }
 
+    public void setSampleTime(double sample){
+        sampleTime = sample;
+    }
+
     //ADDED FOR TESTING
     public double getPower(){
         return power;
     }
 
     public void calculateSpeed(){
-        int sampleTime = 1; //need to determine if this is constant
+        //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
         double newA;
@@ -140,6 +146,9 @@ public class Train {
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             newA = F/calculateMass(); //A is in m/s^2
+            if (newA > .5){
+                newA = .5;
+            }
             newV = this.actualSpeed + (newA+this.accel)/(2*sampleTime); // m/s + average of 2 accels / time
             setSpeed(newV);
             setAccel(newA);

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/GraphicUserInterfaces/GraphicUserInterfaces.iml" filepath="$PROJECT_DIR$/GraphicUserInterfaces/GraphicUserInterfaces.iml" />
       <module fileurl="file://$PROJECT_DIR$/SimulationEnvironment/SimulationEnvironment.iml" filepath="$PROJECT_DIR$/SimulationEnvironment/SimulationEnvironment.iml" />
       <module fileurl="file://$PROJECT_DIR$/SimulationEnvironmentPrototyping/SimulationEnvironmentPrototyping.iml" filepath="$PROJECT_DIR$/SimulationEnvironmentPrototyping/SimulationEnvironmentPrototyping.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" />

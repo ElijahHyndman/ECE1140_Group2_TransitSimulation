@@ -33,6 +33,7 @@ public class TrainControl {
     private double stoppingDistance;
     boolean beaconSet;
     private double stopTraveled;
+    private double route;
 
     public TrainControl(){
       this(null);
@@ -46,6 +47,7 @@ public class TrainControl {
 
         beaconSet = false;
         controlMode = "Automatic";
+        route = 0;
         eBrake = false;
         sBrake = false;
         emergencyBrake = -2.73;
@@ -120,7 +122,7 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
-               if (stoppingDistance <= breakingDist) {
+               if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
                     } else {
@@ -179,7 +181,7 @@ public class TrainControl {
     }
 
     //Returns the current authority, in blocks?
-    public double getAuthority(){
+    public int getAuthority(){
         return authority;
     }
 
@@ -263,7 +265,6 @@ public class TrainControl {
 
         if (beaconSet){
             stoppingDistance = stoppingDistance - distanceTraveled;
-            stopTraveled += distanceTraveled;
         }
 
         prevVelocity = trainVelocity;
@@ -328,7 +329,7 @@ public class TrainControl {
         nonVitalComponents.setNextStation(beacon);
         nonVitalComponents.setAnnouncement(authority, beacon);
 
-        if (authority  == 0){
+        if (authority  == 1 && trainVelocity == 0){
             nonVitalComponents.setDoors(beacon);
         }
     }
@@ -357,6 +358,7 @@ public class TrainControl {
 
     public void updateCommandOutputs(String currentTime, double deltaTime){
         sampleTime = deltaTime;
+        //trainModel.setSampleTime(deltaTime);
         getTrainData();
         setTrainData();
     }
@@ -376,6 +378,10 @@ public class TrainControl {
     public void setTrainData(){
         trainModel.setPower(power);
         setNonVitalComponents();
+    }
+
+    public void setRouteLength(double routeLength){
+        route = routeLength;
     }
 
 }

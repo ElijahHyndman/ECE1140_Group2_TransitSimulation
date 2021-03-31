@@ -103,10 +103,12 @@ public class NonVitalComponents {
     public void setDoors(String currentBeacon){
         String doors = null;
         if (currentBeacon != null){
-            String stationName = currentBeacon.substring(0, currentBeacon.indexOf(" "));
-            trackData trackData = new trackData("Blue");
-            doors = trackData.getStationSide(stationName);
+            rightDoors = true;
+            leftDoors = false;
+
         }
+
+        /*
         if (doors != null){
             if (doors.equals("Left")){
                 leftDoors = true;
@@ -119,6 +121,8 @@ public class NonVitalComponents {
             rightDoors = false;
             leftDoors = false;
         }
+
+         */
     }
 
     public void setAnnouncement(double authority, String beacon){
