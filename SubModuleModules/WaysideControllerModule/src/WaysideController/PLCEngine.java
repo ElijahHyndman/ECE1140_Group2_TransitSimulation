@@ -487,7 +487,7 @@ public class PLCEngine {
         char[] chars = str.toCharArray();
 
         for(char c : chars) {
-            if(!Character.isLetter(c)){
+            if(!Character.isLetter(c) && !Character.isDigit(c)){
                 return false;
             }
         }

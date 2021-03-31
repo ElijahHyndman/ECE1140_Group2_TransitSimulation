@@ -39,6 +39,7 @@ public class WaysideController {
     private List<boolean[][]> testTables;
     private List<boolean[][]> outputTables;
 
+    //not usable right now...
     public WaysideController(){
         name = "FAKE";
     }
@@ -47,6 +48,9 @@ public class WaysideController {
         this.isActive = DEFAULT_ISACTIVE;
         this.isSoftware = DEFAULT_ISSOFTWARE;
         this.speedLimit = DEFAULT_SPEEDLIMIT;
+        this.PLCScriptMap = new HashMap<>();
+        this.outputMap = new HashMap<>();
+        this.testInputs = new HashMap<>();
         this.blocks = blocks;
         this.allBlocks = allBlocks;
         this.name = name;
@@ -78,7 +82,7 @@ public class WaysideController {
      */
     public void setSpeed(int blockNumber, double speeds) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
-        blocks.get(blocks.indexOf(trackElement)).setCommandedSpeed(speeds);
+        allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
     /*
@@ -97,7 +101,7 @@ public class WaysideController {
     /*
     sets the authority for all blocks within the jurisdiction
      */
-    public void setAuthority(double[] authorities) throws IOException {
+    public void setAuthority(int[] authorities) throws IOException {
         if(authorities.length != blocks.size()){
             throw new IOException("Controller Error: There are too many/too few input authories values...");
         }
@@ -105,6 +109,11 @@ public class WaysideController {
         for(int i=0;i < blocks.size();i++){
             blocks.get(i).setAuthority(authorities[i]);
         }
+    }
+
+    public void setAuthority(int blockNumber, int authority) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+        allBlocks.get(allBlocks.indexOf(trackElement)).setAuthority(authority);
     }
 
     /*
@@ -159,6 +168,7 @@ public class WaysideController {
         outputMap.put(trackElement, engine.calculateOutputMapNew(getInputNames()));
         addTestInput(trackElement);
 
+        gpio.addOutput(trackElement, false);
         bool = generateOutputSignal(trackElement.getBlockNum(), false);
         gpio.addOutput(trackElement, bool);
     }

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GPIO {
 
-    int numberOfBlocks; //total blocks to read from
+    //int numberOfBlocks; //total blocks to read from
     int numberOfOutputs;
     String controllerName;
 
@@ -22,7 +22,7 @@ public class GPIO {
     public GPIO(){
         blocks = new ArrayList<>();
         outputValues = new HashMap<>();
-        numberOfBlocks = 0;
+        //numberOfBlocks = 0;
     }
 
     public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
@@ -30,22 +30,32 @@ public class GPIO {
         this.blocks = blocks;
         this.controllerName = controllerName;
         outputValues = new HashMap<>();
-        numberOfBlocks = blocks.size();
+        //numberOfBlocks = this.blocks.size();
         numberOfOutputs = outputValues.size();
     }
 
     public int getNumberOfBlocks() {
-        return numberOfBlocks;
+        return blocks.size();
     }
 
     /*
         Gets the values from the occupied blocks
          */
     public boolean[] getInputValues(){
-        boolean[] inputs = new boolean[numberOfBlocks];
+        boolean[] inputs = new boolean[blocks.size()];
 
-        for(int i=0;i < numberOfBlocks;i++){
+        for(int i=0;i < blocks.size();i++){
             inputs[i] = blocks.get(i).getOccupied();
+        }
+
+        return inputs;
+    }
+
+    public boolean[] getAllInputValues(){
+        boolean[] inputs = new boolean[allBlocks.size()];
+
+        for(int i=0;i < allBlocks.size();i++){
+            inputs[i] = allBlocks.get(i).getOccupied();
         }
 
         return inputs;
@@ -62,8 +72,10 @@ public class GPIO {
     Generates an output, requires some value by default
      */
     public void addOutput(TrackElement trackElement, boolean defaultOutputValue) throws IOException {
-        if(trackElement.getType().equalsIgnoreCase("switch")){ //needs a way to check if the trackelement is the correct one without the string
+        Switch trackSwitch = (Switch) trackElement;
+        if(trackSwitch.getType().equalsIgnoreCase("switch")){ //needs a way to check if the trackelement is the correct one without the string
             outputValues.put(trackElement, defaultOutputValue);
+            //numberOfBlocks++;
         }else{
             throw new IOException("GPIO Error: Bad Output Type!");
         }
@@ -93,9 +105,9 @@ public class GPIO {
     public boolean getOutput(int blockNumber) throws IOException {
         TrackElement temp = null;
 
-        for(int i=0;i < blocks.size();i++){
-            if(blockNumber == blocks.get(i).getBlockNum()){
-                temp = blocks.get(i);
+        for(int i=0;i < allBlocks.size();i++){
+            if(blockNumber == allBlocks.get(i).getBlockNum()){
+                temp = allBlocks.get(i);
                 break;
             }
         }
@@ -127,7 +139,6 @@ public class GPIO {
     public Boolean[] getOutputValues(){
         return outputValues.values().toArray(new Boolean[outputValues.size()]);
     }
-
 
     /*
 

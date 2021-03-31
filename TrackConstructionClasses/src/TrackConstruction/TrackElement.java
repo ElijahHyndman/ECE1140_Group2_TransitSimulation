@@ -35,7 +35,7 @@ public class TrackElement {
 
     //Information sent to individual blocks
     int  authority;          //authority if FINAL block destination?
-    int commandedSpeed;     //km / hour
+    double commandedSpeed;     //km / hour
 
     //Information on node connections
     int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
@@ -60,10 +60,10 @@ public class TrackElement {
 
 
     /* Setting Block Number */
-    void setBlockNum(int blockNum){this.blockNum = blockNum;}
+    public void setBlockNum(int blockNum){this.blockNum = blockNum;}
 
     /*Setting Line */
-    void setLine(String line){this.line = line;}
+    public void setLine(String line){this.line = line;}
 
     /*set Beacon*/
     public void setBeacon(String beacon){
@@ -93,7 +93,7 @@ public class TrackElement {
     public void setAuthority(int authority) { this.authority = authority;}
 
     /*Setting Commanded Speed*/
-    public void setCommandedSpeed(int commandedSpeed) { this.commandedSpeed = commandedSpeed;}
+    public void setCommandedSpeed(double commandedSpeed) { this.commandedSpeed = commandedSpeed;}
 
     /*Setting direction array*/
     void setDirection(int [] directionArray) {this.directionArray = directionArray;}
@@ -151,7 +151,7 @@ public class TrackElement {
     public int getAuthority() { return this.authority;}
 
     /*get CommandedSpeed*/
-    public int getCommandedSpeed() { return this.commandedSpeed;}
+    public double getCommandedSpeed() { return this.commandedSpeed;}
 
     /*get Direciton Array */
     public int getDirection(int index) {

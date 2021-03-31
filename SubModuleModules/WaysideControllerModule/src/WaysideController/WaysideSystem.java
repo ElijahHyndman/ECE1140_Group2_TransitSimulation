@@ -2,7 +2,6 @@ package WaysideController;
 
 import WaysideGUI.WaysideUIClass;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.*;
 import TrackConstruction.*;
@@ -24,6 +23,7 @@ public class WaysideSystem {
         generateLine();
     }
 
+    //This construction is bad, doesn't use the lut at all...
     public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
         currentLine = "Green";
         this.controllers = controllers;
@@ -137,7 +137,7 @@ public class WaysideSystem {
         temp = null;
         for(int i=0;i < authority.length;i++){
             temp = lut.get(i);
-            temp.setSpeed(i, authority[i]);
+            temp.setAuthority(i, authority[i]);
         }
 
         return false;
@@ -174,7 +174,7 @@ public class WaysideSystem {
     /*
 
      */
-    public void openClose(int blockNumber){
+    public void openClose(int blockNumber) {
 
     }
 
@@ -275,6 +275,11 @@ public class WaysideSystem {
         }else{
             return "Command Error: The current command was invalid...";
         }
+    }
+
+    //TEST GETTERS AND SETTER ******************************************************************************************
+    public HashMap<TrackElement, WaysideController> getLut(){
+        return lut;
     }
 
     public static void main(String[] args) throws IOException {

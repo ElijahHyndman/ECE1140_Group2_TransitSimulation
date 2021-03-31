@@ -49,9 +49,10 @@ class PLCEngineTest {
         PLCEngine engine = new PLCEngine();
 
         assertTrue(engine.verifyString("A"));
+        assertTrue(engine.verifyString("1"));
         assertFalse(engine.verifyString("ABC DEF"));
         assertFalse(engine.verifyString("ABC:DEF"));
-        assertFalse(engine.verifyString("ABC10231DEF"));
+        assertTrue(engine.verifyString("ABC10231DEF"));
         assertTrue(engine.verifyString("ABCDEF"));
     }
 
