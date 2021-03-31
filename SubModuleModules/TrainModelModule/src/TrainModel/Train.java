@@ -38,7 +38,7 @@ public class Train {
     Boolean emergencyBrake;
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
-    double authority;
+    int authority;
     String beacon;
     double power;// watts
     double accel;//  m/s^2
@@ -77,7 +77,7 @@ public class Train {
     public double getCommandedSpeed() {
         return commandedSpeed;
     }
-    public double getAuthority() {
+    public int getAuthority() {
         return authority;
     }
     public String getBeacon() {
@@ -193,7 +193,7 @@ public class Train {
         this.speedLimit = speedLimit;
     }
 
-    public void setAuthority(double a) {
+    public void setAuthority(int a) {
         this.authority = a;
     }
     public void setBeacon(String beaconVal) {
