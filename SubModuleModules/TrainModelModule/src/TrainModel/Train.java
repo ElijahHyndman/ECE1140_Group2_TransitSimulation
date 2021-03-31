@@ -20,6 +20,7 @@ public class Train {
         this.serviceBrake = false;
         this.id = id;
         this.calculateMass();
+        this.sampleTime = 1;
     }
 
     int numberOfCars;
@@ -63,6 +64,7 @@ public class Train {
     boolean outerLights;
     boolean headlights;
     double actualSpeed;// m/s
+    double sampleTime; //s
     
     //display variable with customary units
     double displayActualSpeed;  //  m/h
@@ -274,6 +276,7 @@ public class Train {
 
     public void updatePhysicalState(String currentTime, double deltaTime){
         calculateSpeed(deltaTime);
+        this.sampleTime = deltaTime;
     }
 
     
