@@ -52,10 +52,19 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
     /**
      * update Tracklist -- method to be called by simulation environment
      */
-    public void latch(Track updatedTrack) {
-        trackList = updatedTrack;
-    }
+    @Override
+    public void latch(Object myObject) {
 
+        Track givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        trackList = (Track) myObject;
+    }
+    @Override
     public void update() {} //automatically updates no need to do this
 
     public void draw() {} // for interface
