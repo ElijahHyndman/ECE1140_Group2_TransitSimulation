@@ -39,7 +39,7 @@ public class Train {
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
     double authority;
-    int beacon;
+    String beacon;
     double power;// watts
     double accel;//  m/s^2
     //TrackBlock myTrackBlock;
@@ -80,7 +80,7 @@ public class Train {
     public double getAuthority() {
         return authority;
     }
-    public int getBeacon() {
+    public String getBeacon() {
         return beacon;
     }
     public double getActualSpeed() {
@@ -195,7 +195,7 @@ public class Train {
     public void setAuthority(double a) {
         this.authority = a;
     }
-    public void setBeacon(int beaconVal) {
+    public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
