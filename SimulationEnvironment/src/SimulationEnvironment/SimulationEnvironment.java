@@ -3,6 +3,7 @@ package SimulationEnvironment;
 import java.util.Vector;
 
 import WorldClock.*;
+import CTCOffice.*;
 import TrackConstruction.*;
 
 public class SimulationEnvironment {
@@ -10,7 +11,7 @@ public class SimulationEnvironment {
      * SimulationEnvironment also handles synchronization using a WorldClock, as well as hosting a server to
      * send copies of objects down to local machines for viewing and manipulating.
      * TODO should the simulation environment be contained in a SimulationProject class, which tracks the admin's settings
-     * TODO for the project, and that will host the server instead of the simulation environment? it would make more sense. Then, the GUI would be for the project which can exist without an SE existing yet
+     * TODO the project will host the server instead of the simulation environment? it would make more sense. Then, the GUI would be for the project which can exist without an SE existing yet
      *
      * @assert physicsUpdates wi
      * ll happen automatically and constinually so long as the WorldClock is running
@@ -18,12 +19,13 @@ public class SimulationEnvironment {
      */
     /** World Management Variables
      */
-    private String PROJECT_NAME;
     private WorldClock clk;
+    private CTCOffice ctc;
 
     /** World Object Variables
      */
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
+
     public SimulationEnvironment() {
         clk= new WorldClock();
     }
@@ -40,7 +42,7 @@ public class SimulationEnvironment {
 
     public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
         /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-         *  on new thread.
+         *  on new thread=]]
          *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
          *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
          */
