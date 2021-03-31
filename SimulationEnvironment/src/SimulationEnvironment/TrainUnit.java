@@ -90,6 +90,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      * @member lastOccupied TrackElement, the TrackElement which the train last occupied, in case this is useful to know
      */
     private String name = "NoName";
+    private int trainID;
+
+    // Route length will be integer of meters
 
     private TrainControl control;
     private Train hull;
@@ -154,7 +157,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
     public TrainUnit() {
         //control = new TrainControl();
-        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW,trainID);
         control = new TrainControl(hull);
         instantiateLogger();
         trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
@@ -163,7 +166,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public TrainUnit(String name) {
         this.name = name;
         //control = new TrainControl();
-        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW,trainID);
         control = new TrainControl(hull);
         instantiateLogger();
         trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
@@ -171,7 +174,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
     public TrainUnit(boolean runOnStart) {
         //control = new TrainControl();
-        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW,trainID);
         control = new TrainControl(hull);
         instantiateLogger();
         if (runOnStart) start();
@@ -181,7 +184,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public TrainUnit(String name, boolean runOnStart) {
         this.name = name;
         //control = new TrainControl();
-        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW);
+        hull = new Train(DEFAULT_NUM_CARS,DEFAULT_NUM_TRAIN_CREW,trainID);
         control = new TrainControl(hull);
         instantiateLogger();
         if (runOnStart) start();
@@ -199,6 +202,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
         // TODO get block grade
         // TODO
+        if(occupies != null) {}
+            hull.setBeacon(occupies.getBeacon());
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
@@ -523,6 +528,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public Train getHull() {
         return hull;
     }
+    public int getID() {return trainID;}
     public TrackElement getLocation() {
         return occupies;
     }
@@ -544,5 +550,22 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public double getActualSpeed() {
         actualSpeed = hull.getActualSpeed();
         return actualSpeed;
+    }
+    @Override
+    public boolean equals(Object o) {
+        TrainUnit other;
+        try {
+            other = (TrainUnit) o;
+        } catch (Exception e) {
+            System.out.println("Tried to compare TrainUnit to a non TrainUnit");
+            e.printStackTrace();
+            return false;
+        }
+        // Compare IDs to determine equality
+        if(other.getID() == this.getID()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

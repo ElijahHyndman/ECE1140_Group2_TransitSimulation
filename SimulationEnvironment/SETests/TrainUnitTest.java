@@ -927,7 +927,7 @@ class TrainUnitTest {
             trn.blockExceededFlag = false;
 
             trainModelUI.updateDisplay();
-            trainControllerUI.updateDisplay();
+            //trainControllerUI.updateDisplay();
         }
 
         //trn.halt();
