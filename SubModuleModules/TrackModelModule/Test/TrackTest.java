@@ -267,7 +267,7 @@ class TrackTest {
 
         TrackGUI testGUI = new TrackGUI(instance);
         testGUI.setVisible(true);
-        testGUI.updateTrack(instance);
+        testGUI.latch(instance);
 
 
 
@@ -335,7 +335,7 @@ class TrackTest {
 
             TrackGUI testGUI = new TrackGUI(instance);
             testGUI.setVisible(true);
-            testGUI.updateTrack(instance);
+            testGUI.latch(instance);
             /*
         while(true){
 
