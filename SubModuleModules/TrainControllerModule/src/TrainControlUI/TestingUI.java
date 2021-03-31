@@ -175,7 +175,7 @@ public class TestingUI implements ActionListener{
             }
             case "authority" -> {
                 newAuthority(Double.parseDouble(inputAuthority.getText()));
-                currentControl.setAuthority(Double.parseDouble(inputAuthority.getText()));
+                currentControl.setAuthority(Integer.parseInt(inputAuthority.getText()));
                 inputAuthority.setText("");
             }
         }
