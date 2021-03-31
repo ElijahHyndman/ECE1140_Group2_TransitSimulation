@@ -17,7 +17,7 @@ import java.util.Scanner;
 
         //Track Variables
         boolean TRACK_HEATER;
-        int SIZE_LINE_A =0;
+        int SIZE_LINE_A=0;
         int SIZE_LINE_B=0;
         double environmentalTemperature;
 
@@ -172,36 +172,38 @@ import java.util.Scanner;
         public ArrayList<TrackElement> getRedLine() {return redTrack;}
 
         /*needed to add for direcitonality*/
-        public void setSwitch(Switch switchT, int index){
-            switchT.setSwitchState(index);
-            int blocka = switchT.getDirectionStates(0);
-            int toA =switchT.getDirectionStates(1);
-            int blockb = switchT.getDirectionStates(2);
-            int toB = switchT.getDirectionStates(3);
-            //here need to CHANGE getCurrent Direction
-            if(index == 0) {
-               if(blocka != 0 && blocka != -1){
-                   greenTrack.get(blocka).setCurrentDirection(toA); // toA
-                   if(!(blocka == blockb) && blockb != 0)
-                       greenTrack.get(blockb).setCurrentDirection(-2); // -2 -- means need this switch to work
-               }
-               else if(blocka == -1) { // this is switching TO THE YARD
-                   switchT.setCurrentDirection(-1);
-               }else if(blockb == -1 && blocka == 0) { // this is switching TO THE YARD
-                   switchT.setCurrentDirection(-2);
-               }
-            }
-            else if(index == 1){
-                //Second Number Block Points to last number
-                if(blockb != 0 && blockb != -1){
-                    greenTrack.get(blockb).setCurrentDirection(toB); // toB
+        public void updateSwitches(){
 
-                    if(blocka != blockb)
-                    greenTrack.get(blocka).setCurrentDirection(-2); //-2 means need this switch to work
-                }else if(blockb == 0 && blocka == -1) { // this is switching TO THE YARD
-                    switchT.setCurrentDirection(-2);
-                }else if(blockb == -1 && blocka == 0) { // this is switching TO THE YARD
-                    switchT.setCurrentDirection(-1);
+            for(int i = 7; i <= 12; i++) {
+                Switch switchT = switchesArrayList.get(i);
+                boolean index = switchT.getIndex();
+                int blocka = switchT.getDirectionStates(0);
+                int toA = switchT.getDirectionStates(1);
+                int blockb = switchT.getDirectionStates(2);
+                int toB = switchT.getDirectionStates(3);
+                //here need to CHANGE getCurrent Direction
+                if (index == false) {
+                    if (blocka != 0 && blocka != -1) {
+                        greenTrack.get(blocka).setCurrentDirection(toA); // toA
+                        if (!(blocka == blockb) && blockb != 0)
+                            greenTrack.get(blockb).setCurrentDirection(-2); // -2 -- means need this switch to work
+                    } else if (blocka == -1) { // this is switching TO THE YARD
+                        switchT.setCurrentDirection(-1);
+                    } else if (blockb == -1 && blocka == 0) { // this is switching TO THE YARD
+                        switchT.setCurrentDirection(-2);
+                    }
+                } else if (index == true) {
+                    //Second Number Block Points to last number
+                    if (blockb != 0 && blockb != -1) {
+                        greenTrack.get(blockb).setCurrentDirection(toB); // toB
+
+                        if (blocka != blockb)
+                            greenTrack.get(blocka).setCurrentDirection(-2); //-2 means need this switch to work
+                    } else if (blockb == 0 && blocka == -1) { // this is switching TO THE YARD
+                        switchT.setCurrentDirection(-2);
+                    } else if (blockb == -1 && blocka == 0) { // this is switching TO THE YARD
+                        switchT.setCurrentDirection(-1);
+                    }
                 }
             }
 
@@ -295,6 +297,14 @@ import java.util.Scanner;
         }
 
 
+        //updating tickets
+        public int updateTickets(){
+            int ticketTotal = 0;
+            for(int i=0; i<stationsArrayList.size();i++)
+                ticketTotal += stationsArrayList.get(i).getTicketSales();
+
+            return ticketTotal;
+        }
 
         /*Set Environmental Temperature*/
         public void setEnvironmentalTemperature(double a){

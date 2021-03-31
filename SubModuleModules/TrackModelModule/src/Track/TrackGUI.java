@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author grhen
@@ -35,8 +36,9 @@ public class TrackGUI extends javax.swing.JFrame {
     /**
      * Creates new form TrackGUI
      */
-    public TrackGUI() {
+    public TrackGUI(Track trackL) {
         initComponents();
+        this.trackList = trackL;
     }
 
     /**
@@ -1087,8 +1089,8 @@ public class TrackGUI extends javax.swing.JFrame {
 
         //Parsing info into different areas to test functionality
         int bN=0;
-        double auth;
-        double speed;
+        int auth;
+        int speed;
         int passenger;
         int switches;
         double LenT;
@@ -1120,12 +1122,12 @@ public class TrackGUI extends javax.swing.JFrame {
                     trackList.setFailure(bN,lineT,3);
 
                 if(!authorityT.equals("Authority")) {
-                    auth = Double.parseDouble(authorityT);
+                    auth = Integer.parseInt(authorityT);
                     temp.setAuthority(auth);
                 }
 
                 if(!speedT.equals("Speed")) {
-                    speed = Double.parseDouble(speedT);
+                    speed = Integer.parseInt(speedT);
                     temp.setCommandedSpeed(speed);
                 }
 
@@ -1201,7 +1203,10 @@ public class TrackGUI extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 
-    public static void main(String args[]) {
+
+
+
+   public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -1229,10 +1234,12 @@ public class TrackGUI extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TrackGUI().setVisible(true);
+                new TrackGUI(null).setVisible(true);
             }
         });
     }
+
+
 
     // Variables declaration - do not modify
     private javax.swing.JTextField BlockNumTest;

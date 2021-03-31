@@ -34,13 +34,14 @@ public class TrackElement {
 
 
     //Information sent to individual blocks
-    double authority;          //authority if FINAL block destination?
+    int  authority;          //authority if FINAL block destination?
     double commandedSpeed;     //km / hour
 
     //Information on node connections
     int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
     char biDirecitional;
     int[] directionStates = {0,0,0,0};
+    String type;
 
 
 
@@ -54,14 +55,15 @@ public class TrackElement {
         this.directionArray = null;
         this.biDirecitional = 'u';
         this.currentDirection = -3;
+        type = "";
     }
 
 
     /* Setting Block Number */
-    void setBlockNum(int blockNum){this.blockNum = blockNum;}
+    public void setBlockNum(int blockNum){this.blockNum = blockNum;}
 
     /*Setting Line */
-    void setLine(String line){this.line = line;}
+    public void setLine(String line){this.line = line;}
 
     /*set Beacon*/
     public void setBeacon(String beacon){
@@ -75,7 +77,7 @@ public class TrackElement {
     void setGrade(double grade){ this.grade = grade;}
 
     /*setting length*/
-    void setLength(double length){ this.length = length;}
+    public void setLength(double length){ this.length = length;}
 
     /*Setting SpeedLimit*/
     void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
@@ -88,7 +90,7 @@ public class TrackElement {
 
 
     /*Setting Authority*/
-    public void setAuthority(double authority) { this.authority = authority;}
+    public void setAuthority(int authority) { this.authority = authority;}
 
     /*Setting Commanded Speed*/
     public void setCommandedSpeed(double commandedSpeed) { this.commandedSpeed = commandedSpeed;}
@@ -146,7 +148,7 @@ public class TrackElement {
 
 
     /*get Authority */
-    public double getAuthority() { return this.authority;}
+    public int getAuthority() { return this.authority;}
 
     /*get CommandedSpeed*/
     public double getCommandedSpeed() { return this.commandedSpeed;}
@@ -157,6 +159,10 @@ public class TrackElement {
         if(index >= 0 && index <= 2)
             ret = directionArray[index];
         return ret;
+    }
+
+    public String getType(){
+        return type;
     }
 
     /*get string directions */
