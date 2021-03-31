@@ -105,6 +105,22 @@ public class Train {
         this.displayActualSpeed = speed; 
         this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
+    public void setAccel(double acceleration) {
+        this.accel = acceleration;
+        this.displayAcceleration = this.accel * 2.236936;
+    }
+    public void setDisplayAccel(double acceleration) {
+        this.displayAcceleration = acceleration;
+        this.accel = this.displayAcceleration / 2.236936;
+    }
+    public void setCommandedSpeed(double commandedSpeed) {
+        this.commandedSpeed = commandedSpeed;
+        this.displayCommandedSpeed = this.commandedSpeed * 2.236936;
+    }
+    public void setDisplayCommandedSpeed(double commandedSpeed) {
+        this.displayCommandedSpeed = commandedSpeed;
+        this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
+    }
     public void setPower(double pow) {
         if(this.engineFail != true){
             this.power = pow;
@@ -167,22 +183,7 @@ public class Train {
         this.mass = 75*(passengerCount+crewCount) + (37194/5 * numberOfCars);
         return this.mass;
     }
-    public void setAccel(double acceleration) {
-        this.accel = acceleration;
-        this.displayAcceleration = this.accel * 2.236936;
-    }
-    public void setDisplayAccel(double acceleration) {
-        this.displayAcceleration = acceleration;
-        this.accel = this.displayAcceleration / 2.236936;
-    }
-    public void setCommandedSpeed(double commandedSpeed) {
-        this.commandedSpeed = commandedSpeed;
-        this.displayCommandedSpeed = this.commandedSpeed * 2.236936;
-    }
-    public void setDisplayCommandedSpeed(double commandedSpeed) {
-        this.displayCommandedSpeed = commandedSpeed;
-        this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
-    }
+
 
     public void setBlockGrade(double blockGrade) {
         this.blockGrade = blockGrade;
