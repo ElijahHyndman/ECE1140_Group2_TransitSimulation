@@ -11,10 +11,11 @@ public class WaysideSystem {
     String currentLine;
     List<WaysideController> controllers;
     ArrayList<TrackElement> blocks;
+    ArrayList<TrackElement> outputBlocks; //every block that is an output, might be useful later
     int numberOfControllers;
 
     //each track element has a wayside controller, this is an easy way to find each one!
-    HashMap<TrackElement, WaysideController> lut;
+    HashMap<Integer, WaysideController> lut;
 
     public WaysideSystem() throws IOException{
         currentLine = "Green";
@@ -34,6 +35,7 @@ public class WaysideSystem {
     public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {
         currentLine = line;
         controllers = new LinkedList<WaysideController>();
+        this.lut = new HashMap<>();
         this.blocks = blocks;
         numberOfControllers = 0;
     }
@@ -63,8 +65,23 @@ public class WaysideSystem {
         TrackElement trackElement;
         for(int i=0;i < blockNumbers.length;i++){
             trackElement = getBlockElement(blockNumbers[i], blocks);
-            lut.put(trackElement, controller);
+            lut.put(trackElement.getBlockNum(), controller);
         }
+    }
+
+    /*
+    add output w/plc within a wayside controller
+     */
+    public void addOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
+        getController(blockNumber).addOutput(blockNumber, PLCfile);
+        getController(blockNumber).generateOutputSignal(blockNumber, false);
+    }
+
+    /*
+    update output within a wayside controller
+     */
+    public void updateOutputWaysideController(int blockNumber) throws IOException, URISyntaxException {
+        getController(blockNumber).generateOutputSignal(blockNumber, false);
     }
 
     //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
@@ -102,10 +119,14 @@ public class WaysideSystem {
         return newBlockSet;
     }
 
+    public TrackElement findBlock(int blockNumber) throws IOException {
+        return getController(blockNumber).getBlockElement(blockNumber);
+    }
+
     /*
     finds the corresponding controller for each block!
      */
-    public WaysideController findController(int blockNumber){
+    public WaysideController getController(int blockNumber){
         return lut.get(blockNumber);
     }
 
@@ -124,7 +145,7 @@ public class WaysideSystem {
     /*
 
      */
-    public boolean broadcastToControllers(int[] speeds, int[] authority) throws IOException {
+    public boolean broadcastToControllers(double[] speeds, int[] authority) throws IOException {
         WaysideController temp;
 
         //RUN CHECKS TO MAKE SURE THE INPUTS ARE VALID HERE!
@@ -147,21 +168,21 @@ public class WaysideSystem {
     gets the occupancy from the proper controller
      */
     public boolean getOccupancy(int blockNumber) throws IOException {
-        return findController(blockNumber).getGPIO().getOccupancy(blockNumber);
+        return getController(blockNumber).getGPIO().getOccupancy(blockNumber);
     }
 
     /*
 
      */
     public boolean getSwitchStatus(int blockNumber) throws IOException {
-        return findController(blockNumber).getSwitchStatus(blockNumber);
+        return getController(blockNumber).getSwitchStatus(blockNumber);
     }
 
     /*
 
      */
     public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
-        findController(blockNumber).setSwitchStatus(blockNumber ,status);
+        getController(blockNumber).setSwitchStatus(blockNumber ,status);
     }
 
     /*
@@ -189,6 +210,13 @@ public class WaysideSystem {
         }
 
         throw new IOException("Controller Error: No block with that number in the wayside...");
+    }
+
+    /*
+    Test Function that gets all the blocks
+     */
+    public ArrayList<TrackElement> getBlocks(){
+        return blocks;
     }
 
     /*
@@ -278,7 +306,7 @@ public class WaysideSystem {
     }
 
     //TEST GETTERS AND SETTER ******************************************************************************************
-    public HashMap<TrackElement, WaysideController> getLut(){
+    public HashMap<Integer, WaysideController> getLut(){
         return lut;
     }
 

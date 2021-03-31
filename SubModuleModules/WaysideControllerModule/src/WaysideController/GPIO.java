@@ -62,9 +62,9 @@ public class GPIO {
     }
 
     public boolean getOccupancy(int blockNumber) throws IOException {
-        TrackBlock trackBlock = (TrackBlock) getBlockElement(blockNumber);
+        TrackElement trackElement = getBlockElement(blockNumber);
 
-        return trackBlock.getOccupied();
+        return trackElement.getOccupied();
     }
 
 
