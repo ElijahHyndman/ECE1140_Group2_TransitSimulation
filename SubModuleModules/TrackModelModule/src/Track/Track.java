@@ -324,7 +324,7 @@ import java.util.Scanner;
             return this.environmentalTemperature;
         }
 
-        int getSize(){
+        public int getSize(){
             return this.blockArrayList.size();
         }
 

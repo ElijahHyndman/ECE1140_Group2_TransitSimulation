@@ -65,9 +65,12 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
         trackList = (Track) myObject;
     }
     @Override
-    public void update() {} //automatically updates no need to do this
+    public void update() {
+    } //automatically updates no need to do this
 
-    public void draw() {} // for interface
+    public void draw() {
+
+    } // for interface
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -815,7 +818,7 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
             //Load in Temperature
             TemperaturePane.setText("Environmental Temperature:" + trackList.getEnvironmentalTemperature() + "\n Track Heater Status: " + trackList.getTrackHeaterStatus());
             //Load in the Track
-                refreshRedGreenTrack();
+               refreshRedGreenTrack();
 
 
         }

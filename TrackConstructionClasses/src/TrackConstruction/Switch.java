@@ -17,7 +17,9 @@ public class Switch extends TrackElement{
 
     /*normal*/
     public Switch(){
+
         this.occupied = false;
+        this.type = "Switch";
     }
 
     /*Active Constructor*/

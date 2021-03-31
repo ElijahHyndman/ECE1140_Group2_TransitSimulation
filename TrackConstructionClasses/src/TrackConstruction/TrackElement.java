@@ -45,7 +45,7 @@ public class TrackElement {
 
 
 
-    TrackElement(){
+    public TrackElement(){
         this.blockNum = this.speedLimit  = -1;
         this.cumulativeElevation = this.elevation = this.grade = this.length = -1.0;
         this.section = '-';
@@ -60,10 +60,10 @@ public class TrackElement {
 
 
     /* Setting Block Number */
-    void setBlockNum(int blockNum){this.blockNum = blockNum;}
+    public void setBlockNum(int blockNum){this.blockNum = blockNum;}
 
     /*Setting Line */
-    void setLine(String line){this.line = line;}
+     public void setLine(String line){this.line = line;}
 
     /*set Beacon*/
     public void setBeacon(String beacon){
@@ -71,22 +71,22 @@ public class TrackElement {
     }
 
     /*Setting section */
-    void setSection(char section){this.section = section;}
+    public void setSection(char section){this.section = section;}
 
     /*Setting grade*/
-    void setGrade(double grade){ this.grade = grade;}
+    public void setGrade(double grade){ this.grade = grade;}
 
     /*setting length*/
     public void setLength(double length){ this.length = length;}
 
     /*Setting SpeedLimit*/
-    void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
+    public void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
 
     /*Setting elevation*/
-    void setElevation(double elevation){ this.elevation = elevation;}
+    public void setElevation(double elevation){ this.elevation = elevation;}
 
     /*Setting cumulative elevation*/
-    void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
+    public void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
 
 
     /*Setting Authority*/
@@ -96,14 +96,14 @@ public class TrackElement {
     public void setCommandedSpeed(int commandedSpeed) { this.commandedSpeed = commandedSpeed;}
 
     /*Setting direction array*/
-    void setDirection(int [] directionArray) {this.directionArray = directionArray;}
+    public void setDirection(int [] directionArray) {this.directionArray = directionArray;}
 
     /*setting bidirectionality*/
-    void setBiDirectional(String biDirection){this.biDirecitional = biDirection.charAt(0);}
+    public void setBiDirectional(String biDirection){this.biDirecitional = biDirection.charAt(0);}
 
 
     /*set Infrastructure*/
-    void setInfrastructure(String infrastructure){this.infrastructure = infrastructure;}
+    public void setInfrastructure(String infrastructure){this.infrastructure = infrastructure;}
 
     /*set Current Direciton*/
     public void setCurrentDirection(int index){
