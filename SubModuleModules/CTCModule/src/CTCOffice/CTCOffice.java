@@ -6,6 +6,7 @@ import java.io.*;
 import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
+import Track.Track;
 
 public class CTCOffice implements PhysicsUpdateListener
 {
@@ -29,13 +30,46 @@ public class CTCOffice implements PhysicsUpdateListener
     private boolean occ;
     private double speed;
     private int authority;
-    private WaysideSystem waysides, waysideG, waysideR;
+    public WaysideSystem waysides, waysideG, waysideR;
     private double[] speedArrG = new double[150];
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
     public CharSequence timeNow;
     private LocalTime now;
+    public Track trackObj;
+
+    public CTCOffice()
+    {
+        waysides = new WaysideSystem();
+        trackObj = null;
+    }
+
+    public CTCOffice(Track SEtrack)
+    {
+        waysides = new WaysideSystem();
+        trackObj = SEtrack;
+    }
+
+    public WaysideSystem getWaysideSystem()
+    {
+        return waysides;
+    }
+
+    public void setWaysideSystem(WaysideSystem SEws)
+    {
+        waysides = SEws;
+    }
+
+    public Track getTrack()
+    {
+        return trackObj;
+    }
+
+    public void setTrack(Track SEt)
+    {
+        trackObj = SEt;
+    }
 
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
@@ -248,8 +282,10 @@ public class CTCOffice implements PhysicsUpdateListener
     }
     }
 
-    public int CalcThroughput(int tix)
+    public int CalcThroughput()
     {
+        trackObj = new Track();
+        int tix = trackObj.updateTickets();
         now = LocalTime.parse(timeNow);
         int hours = now.getHour();
         int mins = now.getMinute();

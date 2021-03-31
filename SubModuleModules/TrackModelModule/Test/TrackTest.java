@@ -94,18 +94,25 @@ class TrackTest {
         assertEquals(instance.getEnvironmentalTemperature(), 20);
 
 
+    }
+
+    @org.junit.jupiter.api.Test
+    void getBeacon() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
         for(int i = 0; i<=150; i++) {
             System.out.println(instance.getGreenLine().get(i).getBeacon());
         }
         System.out.println("71: " + instance.getGreenLine().get(71).getBeacon());
 
-
     }
 
     @org.junit.jupiter.api.Test
     void getSwitches() {
-        System.out.println("importTrack");
+        System.out.println("get Switches");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
@@ -267,7 +274,7 @@ class TrackTest {
 
         TrackGUI testGUI = new TrackGUI(instance);
         testGUI.setVisible(true);
-        testGUI.updateTrack(instance);
+        testGUI.latch(instance);
 
 
 
@@ -335,20 +342,31 @@ class TrackTest {
 
             TrackGUI testGUI = new TrackGUI(instance);
             testGUI.setVisible(true);
-            testGUI.updateTrack(instance);
-            /*
-        while(true){
+            testGUI.draw();
+            testGUI.latch(instance);
+            instance.setFailure(2,"Green",1);
+            testGUI.latch(instance);
+            System.out.println(instance.getFailures());
+            int i =0;
+            while (true){
+                testGUI.draw();
+                instance.getGreenLine().get(2).setOccupied(true);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setOccupied(false);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setAuthority(i);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setCommandedSpeed(i);
+                testGUI.latch(instance);
+                    instance.setFailure(2,"Green",1);
+                testGUI.latch(instance);
+                instance.setFailure(2,"Green",2);
+                testGUI.latch(instance);
+                i++;
 
-            for(int i=0; i< 100 ; i ++ ) {
-                instance.getGreenLine().get(i).setOccupied(true);
-                testGUI.updateTrack(instance);
-                try {
-                    Thread.sleep(1000);
-                }catch (Exception e) {
 
-                }
             }
-        }*/
+
 
     }
 }

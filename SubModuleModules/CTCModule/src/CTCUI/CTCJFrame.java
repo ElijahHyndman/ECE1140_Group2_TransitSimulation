@@ -946,9 +946,8 @@ public class CTCJFrame extends javax.swing.JFrame {
     }
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        int tix = display.getTickets();
-        int tp = display.CalcThroughput(tix);
+        // TODO add your handling code here:\
+        int tp = display.CalcThroughput();
         display.setThroughput(tp);
 
         jTextField1.setText(String.valueOf(display.getThroughput()));
