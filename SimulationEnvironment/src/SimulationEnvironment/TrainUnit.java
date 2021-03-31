@@ -197,6 +197,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          *  is called during the run() function, which executes on a new thread.
          * @param
          */
+        // TODO get block grade
+        // TODO
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
