@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package TrainModel;
-
+import java.util.Random;
 /**
  *
  * @author Devon
@@ -12,20 +12,20 @@ package TrainModel;
 public class Train {
 
     
-    public Train(int numCars, int numCrew) {
+    public Train(int numCars, int numCrew, int id) {
         this.numberOfCars = numCars;
         this.crewCount = numCrew;
         this.emergencyBrake = false;
         this.passengerBrake = false;
         this.serviceBrake = false;
-        
+        this.id = id;
         this.calculateMass();
     }
 
     int numberOfCars;
     double standardDecelLimit = 1.2 ; //  m/s^2
     double emergencyDecelLimit = 2.73; //  m/s^2
-
+    int id;
     //Mass info
     double mass; //total kg with passengers
     double trainMass = 37194/5; //kg of empty train
@@ -252,10 +252,17 @@ public class Train {
     }
     public void setLeftDoors(boolean status){
         this.leftDoors = status;
+        if(this.leftDoors == true){
+            disembark();
+        }
     }
     public void setRightDoors(boolean status){
         this.rightDoors = status;
+        if(this.rightDoors == true){
+            disembark();
+        }
     }
+
     public void setPassengerCount(int count){
         this.passengerCount = count;
         calculateMass();
@@ -274,6 +281,12 @@ public class Train {
         this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
         this.displayAcceleration = this.accel * 3.2808399;
         
+    }
+    public void disembark(){
+        Random rand = new Random(); //instance of random class
+        int upperbound = (int) (.5 * this.passengerCount);
+        int random = rand.nextInt(upperbound);
+        setPassengerCount(this.passengerCount - random);
     }
 
     public boolean getEmergencyBrake() {

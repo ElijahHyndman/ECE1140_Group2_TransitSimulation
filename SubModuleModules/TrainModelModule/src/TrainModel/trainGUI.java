@@ -5,6 +5,8 @@
  */
 package TrainModel;
 
+import GUIInterface.AppGUIModule;
+
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,7 +17,7 @@ import javax.swing.ImageIcon;
  *
  * @author Devon
  */
-public class trainGUI extends javax.swing.JFrame {
+public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
        
     //set of Trains across the system
     Train mainTrain;
@@ -42,7 +44,7 @@ public class trainGUI extends javax.swing.JFrame {
         
     }
     public void newTrain() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
         trains.add(t1);
     }
     public void giveTrain(Train t1) {
@@ -856,7 +858,7 @@ public class trainGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void addTrainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrainActionPerformed
-        Train t2 = new Train(5, 2);
+        Train t2 = new Train(5, 2, 1);
         trains.add(t2);
         selectTrain.addItem("Train "+Integer.toString(namesIndex));
         namesIndex++;
@@ -952,5 +954,15 @@ public class trainGUI extends javax.swing.JFrame {
     private javax.swing.JTable testTable;
     private javax.swing.JPanel testView;
     private javax.swing.JTable trainTable;
+
+    @Override
+    public void latch(Object myObject) {
+        mainTrain = (Train) myObject;
+    }
+
+    @Override
+    public void update() {
+        updateDisplay();
+    }
     // End of variables declaration//GEN-END:variables
 }
