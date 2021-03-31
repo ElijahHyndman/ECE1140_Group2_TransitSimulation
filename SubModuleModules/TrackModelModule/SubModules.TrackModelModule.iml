@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="TrackConstructionClasses" />
+    <orderEntry type="module" module-name="GraphicUserInterfaces" />
   </component>
 </module>

@@ -2,6 +2,7 @@ package SimulationEnvironment;
 
 import java.util.Vector;
 
+import Track.Track;
 import WorldClock.*;
 import CTCOffice.*;
 import TrackConstruction.*;
@@ -21,40 +22,108 @@ public class SimulationEnvironment {
      */
     private WorldClock clk;
     private CTCOffice ctc;
+    private Track trackSystem;
 
     /** World Object Variables
      */
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
     public SimulationEnvironment() {
+        /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
+         */
         clk= new WorldClock();
+        ctc= new CTCOffice();
     }
 
-    public void spawnRunningTrain(TrainUnit newTrain, TrackElement spawnLocation) {
-        /** spawns an already created, given train at a specific, already created TrackElement and DOES set it to running
-         *  on new thread.
+    /*
+        World Time Methods
+     */
+    public void setWorldTime(double worldTimeInHours) {
+        /** sets the current world time to a double of hours since midnight.
+         *  effect is immediate, if clk is running then it will continue accumulating onto new time.
+         *  Usage:
+         *  setWorldTime(2.5) sets world time to 2:50am
+         *  setWorldTime(14.0) sets world time to 2:00pm
+         */
+        clk.setWorldTime(worldTimeInHours);
+    }
+
+    /*
+        Track Methods
+    */
+    public void setTrack(Track newTrackSystem) {
+        /** sets the track system for the entire simulation environment, updates the CTC.
+         */
+        trackSystem = newTrackSystem;
+        ctc.setTrack(trackSystem);
+    }
+
+    public boolean importTrack(String trackCSVFilePath) {
+        /** attempts to build trackSystem from the given TrackCSVFilePath.
+         */
+        Track newTrack = new Track();
+        try {
+            newTrack.importTrack(trackCSVFilePath);
+        } catch (Exception e) {
+            return false;
+        }
+        setTrack(newTrack);
+        return true;
+    }
+
+
+    /*
+        Train Methods
+     */
+    public TrainUnit spawnRunningTrain(TrackElement location, TrackElement awayFrom) {
+        /** spawns a brand new train, given train at a specific, already created TrackElement and DOES set it to running
+         *  on new thread. Gives the TrainUnit an individual train index
          *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
          *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
          */
-        spawnTrain(newTrain,spawnLocation);
-        newTrain.start();
-    }
+        // Create Train, set it to running on start
+        TrainUnit newTrain = new TrainUnit(true);
+        newTrain.setID(trains.size());
 
-    public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
-        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-         *  on new thread=]]
-         *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
-         *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
-         */
+        // Place train onto spawn location
+        newTrain.spawnOn(location,awayFrom);
         addTrain(newTrain);
-        newTrain.placeOn(spawnLocation);
+
+        // Add to physics listeners
+        clk.addListener(newTrain);
+
+        return newTrain;
     }
+
+
+//    public void placeRunningTrain(TrainUnit newTrain, TrackElement location) {
+//        /** places an already created, given train at a specific, already created TrackElement and DOES set it to running
+//         *  on new thread. Gives the TrainUnit an individual train index
+//         *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
+//         *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
+//         */
+//        placeTrain(newTrain,location);
+//        newTrain.start();
+//    }
+//
+//    public void placeTrain(TrainUnit newTrain, TrackElement location) {
+//        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
+//         *  on new thread. Gives the TrainUnit an individual train index
+//         *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
+//         *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
+//         */
+//        addTrain(newTrain);
+//        newTrain.placeOn(location);
+//    }
+
 
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }
 
-    public WorldClock getClock() {
-        return clk;
-    }
+    public WorldClock getClock() {return clk;}
+    public void pauseTime() {clk.halt();}
+    public void startTime() {clk.start();}
+    public CTCOffice getCTC() {return ctc;}
+    public Track getTrackSystem() {return trackSystem;}
 }
