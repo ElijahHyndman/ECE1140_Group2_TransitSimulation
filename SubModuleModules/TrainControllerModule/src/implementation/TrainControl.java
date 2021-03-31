@@ -17,7 +17,7 @@ public class TrainControl {
     private double manualVelocity; //the driver's inputted velocity, in mph
     private double power; // train power, in kW
     private double acceleration; //the trains ideal acceleration, in m/s
-    private double authority; // the trains authority, in meters
+    private int authority; // the trains authority, in blocks
     private double speedLimit; // train speed limit, in km/h
     private String beacon;
     private final double emergencyBrake; //emergency brake deceleration rate, in m/s
@@ -30,6 +30,9 @@ public class TrainControl {
     private boolean sBrake;
     private String alert;
     private double sampleTime;
+    private double stoppingDistance;
+    boolean beaconSet;
+    private double stopTraveled;
 
     public TrainControl(){
       this(null);
@@ -41,6 +44,7 @@ public class TrainControl {
         motor = new MainMotor();
         backupMotor = new BackupMotor();
 
+        beaconSet = false;
         controlMode = "Automatic";
         eBrake = false;
         sBrake = false;
@@ -69,6 +73,24 @@ public class TrainControl {
         return nonVitalComponents;
     }
 
+    public void setNonVitalComponents(){
+        controlNonVital();
+
+        int temperature = nonVitalComponents.getTemperature();
+        boolean headlights = nonVitalComponents.getHeadLights();
+        boolean cabinLights = nonVitalComponents.getCabinLights();
+        boolean externalLights = nonVitalComponents.getExternalLights();
+        boolean rightDoors = nonVitalComponents.getRightDoors();
+        boolean leftDoors = nonVitalComponents.getLeftDoors();
+
+        trainModel.setCabinTemp(temperature);
+        trainModel.setHeadlights(headlights);
+        trainModel.setCabinLights(cabinLights);
+        trainModel.setOuterLights(externalLights);
+        trainModel.setRightDoors(rightDoors);
+        trainModel.setLeftDoors(leftDoors);
+    }
+
     public TrainMotor getTrainMotor(){
         return motor;
     }
@@ -94,20 +116,21 @@ public class TrainControl {
     }
 
     public void monitorDistance(){
-        if (authority <= 0){
-            velocityCmd = 0;
-        }
+
         double breakingDist = getSafeBreakingDistance();
-        if (breakingDist != 0){
-            if (authority <= (breakingDist+5)){
-                if (getControlMode().equals("Automatic")){
-                    sBrake = true;
-                }else{
-                    alert = "WARNING: Speed exceeds safe limit for current authority";
+        if (breakingDist > 0) {
+            if (beaconSet){
+               if (stoppingDistance <= breakingDist) {
+                    if (getControlMode().equals("Automatic")) {
+                        useServiceBrake(true);
+                    } else {
+                        alert = "WARNING: Speed exceeds safe limit for current authority";
+                    }
                 }
             }
         }
     }
+
 
     public String getSystemMessage(){
         return alert;
@@ -223,7 +246,6 @@ public class TrainControl {
             manualVelocity = velocityCmd;
         }else {
                 velocityCmd = comSpeed;
-
         }
     }
 
@@ -233,22 +255,26 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
-        actualAcceleration = ((speed) - (prevVelocity));
-        distanceTraveled = ((prevVelocity) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
-        if (distanceTraveled > authority){
-            authority = 0;
-        }else {
-            if (distanceTraveled >= 0){
-                totalDistanceTraveled += distanceTraveled;
-                authority = authority - distanceTraveled;
-            }
+        actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
+        distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
+
+        totalDistanceTraveled += distanceTraveled;
+
+
+        if (beaconSet){
+            stoppingDistance = stoppingDistance - distanceTraveled;
+            stopTraveled += distanceTraveled;
         }
+
         prevVelocity = trainVelocity;
         trainVelocity = speed;
         monitorDistance();
         getIdealAcceleration();
     }
 
+    public double getTotalDistance(){
+        return totalDistanceTraveled;
+    }
     public void setPower(){
         //TO DO: use and compare both train motor powers
         double primaryPower;
@@ -262,14 +288,31 @@ public class TrainControl {
     public void setSpeedLimit(double theLimit){ speedLimit = theLimit; }
 
     //Authority input from Train Model, in blocks
-    public void setAuthority(double dist){
+    public void setAuthority(int distBlock){
 
-        //For integration, set authority to whatever train model passes in
-        // NOTE: this will have to be converted to an actual distance.
-        // NOTE: this change creates side effects for speed control if
-        // distance is only sent as number of blocks.
+        authority = distBlock;
+        if (authority == 0 && beacon.equals("null")){
+            useEmergencyBrake(true);
+        }
+    }
 
-        authority = dist;
+    public void setBeacon(String currentBeacon){
+        beacon = currentBeacon;
+        if (!beacon.equals("null") && !beaconSet){
+            beaconSet = true;
+            int start = beacon.indexOf(" ");
+            double stop = Integer.parseInt(beacon.substring(start+1, beacon.length()));
+            stoppingDistance = stop;
+            stopTraveled = 0;
+        }else if (beacon.equals("null")){
+            stoppingDistance = -1;
+            beaconSet = false;
+        }
+    }
+
+
+    public double getStoppingDistance(){
+        return stoppingDistance;
     }
 
     public void setKpKi(double newKp, double newKi){
@@ -320,18 +363,19 @@ public class TrainControl {
 
     public void getTrainData(){
         setAuthority(trainModel.getAuthority());
+        setBeacon(trainModel.getBeacon());
         setActualSpeed(trainModel.getActualSpeed());
         if (controlMode.equals("Automatic")){
             setCommandedSpeed(trainModel.getCommandedSpeed());
         }else{
             setCommandedSpeed(manualVelocity);
         }
-
         this.setPower();
     }
 
     public void setTrainData(){
         trainModel.setPower(power);
+        setNonVitalComponents();
     }
 
 }

@@ -45,7 +45,7 @@ public class Train {
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
     int authority;
-    int beacon;
+    String beacon;
     int passengerCount; //aka ticket sales
     boolean cabinLights;
     boolean outerLights;
@@ -69,7 +69,7 @@ public class Train {
     public int getAuthority() {
         return authority;
     }
-    public int getBeacon() {
+    public String getBeacon() {
         return beacon;
     }
     public double getActualSpeed() {
@@ -168,7 +168,7 @@ public class Train {
     public void setAuthority(int a) {
         this.authority = a;
     }
-    public void setBeacon(int beaconVal) {
+    public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
