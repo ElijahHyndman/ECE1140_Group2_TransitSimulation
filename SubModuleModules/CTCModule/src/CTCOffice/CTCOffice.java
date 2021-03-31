@@ -42,6 +42,33 @@ public class CTCOffice implements PhysicsUpdateListener
     public CTCOffice()
     {
         waysides = new WaysideSystem();
+        trackObj = null;
+    }
+
+    public CTCOffice(Track SEtrack)
+    {
+        waysides = new WaysideSystem();
+        trackObj = SEtrack;
+    }
+
+    public WaysideSystem getWaysideSystem()
+    {
+        return waysides;
+    }
+
+    public void setWaysideSystem(WaysideSystem SEws)
+    {
+        waysides = SEws;
+    }
+
+    public Track getTrack()
+    {
+        return trackObj;
+    }
+
+    public void setTrack(Track SEt)
+    {
+        trackObj = SEt;
     }
 
     public Object[] Dispatch(String dest, String tNum, String timeD)
