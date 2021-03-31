@@ -66,6 +66,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\SubModuleModules\TrackModelModule\src\Track\Test.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

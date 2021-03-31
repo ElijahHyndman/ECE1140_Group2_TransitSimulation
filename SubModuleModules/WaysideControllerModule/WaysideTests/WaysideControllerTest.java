@@ -1,6 +1,7 @@
 import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
+import com.sun.source.tree.SwitchTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -176,6 +177,78 @@ class WaysideControllerTest {
         block3.setOccupied(true);
         controller.generateOutputSignal(0, false);
         Assertions.assertEquals(true, gpio.getOutput(0));
+    }
+
+    @Test
+    @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
+    public void testControllerExtraInputs() throws IOException, URISyntaxException {
+        WaysideController controller;
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
+        TrackBlock block1 = new TrackBlock();
+        TrackBlock block3 = new TrackBlock();
+        TrackBlock block2 = new TrackBlock();
+        TrackBlock block4 = new TrackBlock();
+
+        int[] blockNumbers = new int[]{0, 1, 2, 3, 4};
+        double[] speed = new double[]{10.0, 20.0, 30.0, 40.0, 50.0};
+        int[] authority = new int[]{1, 2, 3, 4, 5};
+
+        boolean[] occupiedElements = new boolean[]{false, true, false, false, false};
+        boolean[] occupiedBlocks = new boolean[]{true, false, false};
+
+        //add the track elements
+        ArrayList<TrackElement> trackElements = new ArrayList<>();
+        trackElements.add(trackSwitch);
+        trackElements.add(block1);
+        trackElements.add(block2);
+        trackElements.add(block3);
+        trackElements.add(block4);
+
+        //add the track blocks
+        ArrayList<TrackBlock> trackBlocks = new ArrayList<>();
+        trackBlocks.add(block1);
+        trackBlocks.add(block2);
+        trackBlocks.add(block3);
+        trackBlocks.add(block4);
+
+        //set some blocks as occupied
+        for(int i=0;i < trackElements.size();i++){
+            trackElements.get(i).setOccupied(occupiedElements[i]);
+        }
+
+        //set the block numbers
+        for(int i=0;i < blockNumbers.length;i++){
+            trackElements.get(i).setBlockNum(blockNumbers[i]);
+        }
+
+        //set some blocks as occupied
+        for(int i=0;i < speed.length;i++){
+            trackElements.get(i).setCommandedSpeed(speed[i]);
+        }
+        for(int i=0;i < authority.length;i++){
+            trackElements.get(i).setAuthority(authority[i]);
+        }
+
+        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+
+        //testing GPIO functionality
+        GPIO gpio = controller.getGPIO();
+        Switch newSwitch = new Switch();
+
+        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
+        controller.generateOutputSignal(0, false);
+
+        Assertions.assertEquals(false, gpio.getOutput(0));
+        newSwitch = (Switch) gpio.getBlockElement(0);
+        System.out.println(newSwitch.getSwitchState());
+
+        block2.setOccupied(true);
+        block3.setOccupied(true);
+        controller.generateOutputSignal(0, false);
+        Assertions.assertEquals(true, gpio.getOutput(0));
+
+        newSwitch = (Switch) gpio.getBlockElement(0);
+        System.out.println(newSwitch.getSwitchState());
     }
 
 }

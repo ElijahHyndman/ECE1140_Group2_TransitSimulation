@@ -8,14 +8,14 @@ import TrackConstruction.*;
 
 public class WaysideSystem {
 
-    String currentLine;
-    List<WaysideController> controllers;
-    ArrayList<TrackElement> blocks;
-    ArrayList<TrackElement> outputBlocks; //every block that is an output, might be useful later
-    int numberOfControllers;
+    private String currentLine;
+    private List<WaysideController> controllers;
+    private ArrayList<TrackElement> blocks;
+    private ArrayList<TrackElement> outputBlocks; //every block that is an output, might be useful later
+    private int numberOfControllers;
 
     //each track element has a wayside controller, this is an easy way to find each one!
-    HashMap<Integer, WaysideController> lut;
+    private HashMap<Integer, WaysideController> lut;
 
     public WaysideSystem() throws IOException{
         currentLine = "Green";
@@ -186,17 +186,17 @@ public class WaysideSystem {
     }
 
     /*
-
+    sets if a track should be CLOSED! failure status is currently used.
      */
-    public void setClose(int blockNumber){
-
+    public void setClose(int blockNumber) throws IOException {
+        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(1);
     }
 
     /*
-
+    sets if a track should be OPEN! failure status is currently used.
      */
-    public void openClose(int blockNumber) {
-
+    public void openClose(int blockNumber) throws IOException {
+        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(0);
     }
 
     /*

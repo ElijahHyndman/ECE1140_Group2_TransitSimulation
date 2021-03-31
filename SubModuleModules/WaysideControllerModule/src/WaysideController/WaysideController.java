@@ -165,7 +165,7 @@ public class WaysideController {
         engine.createTokens(PLCFile);
 
         PLCScriptMap.put(trackElement, engine.getPLCString());
-        outputMap.put(trackElement, engine.calculateOutputMapNew(getInputNames()));
+        outputMap.put(trackElement, engine.calculateOutputMapNew(getAllInputNames()));
         addTestInput(trackElement);
 
         gpio.addOutput(trackElement, false);
@@ -211,7 +211,7 @@ public class WaysideController {
         TrackElement trackElement = getBlockElement(blockNumber);
         boolean[][] outputs = outputMap.get(trackElement);
         boolean[][] searchMap = new boolean[outputs.length][outputs[0].length-1];
-        boolean[] inputValues = gpio.getInputValues();
+        boolean[] inputValues = gpio.getAllInputValues();
 
         if(outputs == null){
             throw new IOException("Controller Error: The element doesn't exist or bad block number!");
@@ -389,6 +389,19 @@ public class WaysideController {
 
         for(int i=0;i < blocks.size();i++){
             inputNames.add(valueOf(blocks.get(i).getBlockNum()));
+        }
+
+        return inputNames;
+    }
+
+    /*
+    helper function - gets all the inputs of the blocks
+     */
+    public List<String> getAllInputNames(){
+        List<String> inputNames = new LinkedList<>();
+
+        for(int i=0;i < allBlocks.size();i++){
+            inputNames.add(valueOf(allBlocks.get(i).getBlockNum()));
         }
 
         return inputNames;
