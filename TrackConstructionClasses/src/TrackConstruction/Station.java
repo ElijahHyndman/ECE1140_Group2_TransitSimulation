@@ -27,7 +27,8 @@ public class Station extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
-        this.currentDirection = -1;
+        this.currentDirection = -3;
+        this.type = "Station";
     }
 
     /*Set Ticket Sales */
@@ -43,9 +44,7 @@ public class Station extends TrackElement{
     }
 
     /*set Beacon*/
-    public void setBeacon(String station){
-        this.beacon = station;
-    }
+   // public void setBeacon(String station){this.beacon = station;}
 
     /*set Station*/
     void setStation(String station){
@@ -77,12 +76,8 @@ public class Station extends TrackElement{
     String getStation() { return this.station;}
 
     /*get Beacon*/
-    public String getBeacon() { return this.beacon;}
+   // public String getBeacon() { return this.beacon;}
 
-    /*get type of block*/
-    String getType(){
-        return "Station";
-    }
 
     @Override
     public String toString() {

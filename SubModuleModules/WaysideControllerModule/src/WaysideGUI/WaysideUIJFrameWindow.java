@@ -1,6 +1,7 @@
 package WaysideGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
+import GUIInterface.*;
 
 import java.awt.CardLayout;
 import java.util.List;
@@ -18,7 +19,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame {
+public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -37,7 +38,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
      * other jframe panels (Main menu, controller advanced menu, and so on)
      */
 
-    // Data Members to populate GUI with information about
+
+        // Data Members to populate GUI with information about
     private WaysideSystem system = new WaysideSystem();
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController();
@@ -66,6 +68,28 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
+    }
+
+    /*
+        Functions for AppGUIModule interface
+     */
+
+    @Override
+    public void latch(Object myObject) {
+        /** given object myObject must be of type WaysideSystem
+         */
+        WaysideSystem givenSystem = null;
+        try {
+            givenSystem = (WaysideSystem) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        controllers = givenSystem.getControllersVector();
+    }
+
+    @Override
+    public void update() {
+        updateGUI(controllers);
     }
 
 
@@ -1199,5 +1223,6 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+
     // End of variables declaration
 }

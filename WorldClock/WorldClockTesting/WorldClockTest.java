@@ -2,9 +2,6 @@ import WorldClock.WorldClock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
-import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //import static org.junit.jupiter.api.Assertions.*;
@@ -215,7 +212,7 @@ class WorldClockTest {
 
                 // If update happened
                 if (updateHappened) {
-                    actualTime = clk.getTime();
+                    actualTime = clk.getTimeString();
                     expectedTime = expectedTimes[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
@@ -248,7 +245,7 @@ class WorldClockTest {
 
                 // If update happened
                 if (updateHappened) {
-                    actualTime = clk.getTime();
+                    actualTime = clk.getTimeString();
                     expectedTime = expectedTimes1[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
@@ -283,7 +280,7 @@ class WorldClockTest {
 
                 // If update happened
                 if (updateHappened) {
-                    actualTime = clk.getTime();
+                    actualTime = clk.getTimeString();
                     expectedTime = expectedTimes2[index];
                     stringsMatch = actualTime.equals(expectedTime);
                     assertEquals(true,stringsMatch);
@@ -297,6 +294,47 @@ class WorldClockTest {
 
 
 
+    @Test
+    @DisplayName("Setting time of day works")
+    void setTimeOfDay() {
+        int OneAM = 1;
+        int SixAM = 6;
+        int TenAM = 10;
+        int OnePM = 13;
+        int FivePM = 17;
+        int testTime;
+
+        clk = new WorldClock();
+
+        // Test 1:00 am
+        testTime = OneAM;
+        clk.setWorldTime(testTime);
+        assertEquals(testTime,clk.getTimeInHours());
+        assertEquals(testTime*3600,clk.getTimeInSeconds());
+        assertEquals("01:00:00",clk.getTimeString());
+
+        // Test 6:00 am
+        testTime = SixAM;
+        clk.setWorldTime(testTime);
+        assertEquals(testTime,clk.getTimeInHours());
+        assertEquals(testTime*3600,clk.getTimeInSeconds());
+        assertEquals("06:00:00",clk.getTimeString());
+
+        // Test 10:00 am
+        testTime = TenAM;
+        clk.setWorldTime(testTime);
+        assertEquals(testTime,clk.getTimeInHours());
+        assertEquals(testTime*3600,clk.getTimeInSeconds());
+        assertEquals("10:00:00",clk.getTimeString());
+
+        // Test 1:00 pm
+        testTime = OnePM;
+        clk.setWorldTime(testTime);
+        assertEquals(testTime,clk.getTimeInHours());
+        assertEquals(testTime*3600,clk.getTimeInSeconds());
+        assertEquals("13:00:00",clk.getTimeString());
+
+    }
     /*
 
     Utility Functions

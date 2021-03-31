@@ -99,10 +99,10 @@ public class WorldClock extends Thread {
     private final int MINUTE_MILLISECONDS = 60000;
     private final int HOUR_MILLISECONDS = 3600000;
     private final int TIME_ZERO = 5 * HOUR_MILLISECONDS;
-
     SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+
     private int currentTimeInMilliseconds = TIME_ZERO;
-    Date currentDate = new Date(currentTimeInMilliseconds);
+    private Date currentDate = new Date(currentTimeInMilliseconds);
 
     /** Physics Members
      * @member listeners Vector<PhysicsUpdateListener>, vector of all physics items in the world which shall have updatePhysics()
@@ -256,8 +256,9 @@ public class WorldClock extends Thread {
 
 
     public void updateAllPhysics() {
+        //System.out.println(getTimeInSeconds());
         for (PhysicsUpdateListener listener : listeners) {
-            listener.updatePhysics(getTime(), worldSecondsPerUpdate);//microseconds/1000000.0);
+            listener.updatePhysics(getTimeString(), worldSecondsPerUpdate);//microseconds/1000000.0);
         }
     }
 
@@ -283,6 +284,13 @@ public class WorldClock extends Thread {
         return reportString;
     }
 
+    public void setWorldTime(double newTimeInHours) {
+        /** sets the WorldClock's current time to newTimeInHours since midnight (i.e. military time.)
+         */
+        double newTimeInMilliseconds = TIME_ZERO + HOUR_MILLISECONDS * newTimeInHours;
+        currentTimeInMilliseconds = (int) newTimeInMilliseconds;
+    }
+
     public void setFlag() {
         flag = true;
     }
@@ -296,9 +304,12 @@ public class WorldClock extends Thread {
     public void setTickingDebug(boolean willTick) {
         tick = willTick;
     }
-    public String getTime() {
+    public String getTimeString() {
+        currentDate.setTime(currentTimeInMilliseconds);
         return hourFormat.format(currentDate);
     }
+    public int getTimeInSeconds() { return (int) ((currentTimeInMilliseconds - TIME_ZERO) / SECOND_MILLISECONDS); }
+    public double getTimeInHours() { return (double) (getTimeInSeconds() / 3600.0 );};
     public double getResolution() {
         return resolution;
     }
