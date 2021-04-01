@@ -111,8 +111,13 @@ public class Train {
         this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setAccel(double acceleration) {
-        this.accel = acceleration;
-        this.displayAcceleration = this.accel * 2.236936;
+        if(acceleration > 0.5){
+            this.accel = .5;
+            this.displayAcceleration = .5 * 2.236936;
+        }else {
+            this.accel = acceleration;
+            this.displayAcceleration = this.accel * 2.236936;
+        }
     }
     public void setDisplayAccel(double acceleration) {
         this.displayAcceleration = acceleration;
