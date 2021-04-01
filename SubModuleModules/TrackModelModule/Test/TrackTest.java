@@ -174,6 +174,34 @@ class TrackTest {
         //testing to make sure switches are gotten right
     }
 
+    @org.junit.jupiter.api.Test
+    void testDispatchYard(){
+        System.out.println("getNext");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+
+        instance.getSwitches().get(10).setSwitchState(false); // switch not to yard
+        instance.updateSwitches();
+
+        TrackElement cur = instance.getGreenLine().get(0);
+        TrackElement prev = instance.getGreenLine().get(0);
+        TrackElement next = null;
+        //here we want to dispatch from the yard
+        for(int i=0; i < 16; i++) {
+            next = instance.getNext(cur,prev);
+            System.out.println(next);
+            prev = cur;
+            cur = next;
+            if(cur == null) {
+                System.out.println("DONE");
+                break;
+            }
+
+        }
+
+    }
 
     @org.junit.jupiter.api.Test
     void getNext() {
