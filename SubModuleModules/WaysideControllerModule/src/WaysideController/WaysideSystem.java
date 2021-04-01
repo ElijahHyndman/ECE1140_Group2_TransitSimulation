@@ -15,26 +15,26 @@ public class WaysideSystem {
     private int numberOfControllers;
 
     //each track element has a wayside controller, this is an easy way to find each one!
-    private HashMap<Integer, WaysideController> lut;
+    private HashMap<TrackElement, WaysideController> lut;
 
-    public WaysideSystem() throws IOException{
+    public WaysideSystem() {
         currentLine = "Green";
         controllers = new LinkedList<>();
         numberOfControllers = 0;
-        generateLine();
+       // generateLine();
     }
 
     //This construction is bad, doesn't use the lut at all...
-    public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
+    public WaysideSystem(LinkedList<WaysideController> controllers)  {
         currentLine = "Green";
         this.controllers = controllers;
         numberOfControllers = controllers.size();
-        generateLine();
+       // generateLine();
     }
 
-    public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {
-        currentLine = line;
+    public WaysideSystem(ArrayList<TrackElement> blocks)  {
         controllers = new LinkedList<WaysideController>();
+        this.outputBlocks = new ArrayList<>();
         this.lut = new HashMap<>();
         this.blocks = blocks;
         numberOfControllers = 0;
@@ -54,34 +54,40 @@ public class WaysideSystem {
     /*
     add a wayside controller
      */
-    public void addWaysideController(int[] blockNumbers) throws IOException {
-        ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
-        ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
+    public void addWaysideController(ArrayList<TrackElement> trackElements) throws IOException {
         String controllerName = "Controller " + Integer.toString(++numberOfControllers);
 
-        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
+        WaysideController controller = new WaysideController(trackElements, controllerName);
         controllers.add(controller);
 
-        TrackElement trackElement;
-        for(int i=0;i < blockNumbers.length;i++){
-            trackElement = getBlockElement(blockNumbers[i], blocks);
-            lut.put(trackElement.getBlockNum(), controller);
+        for(int i=0;i < trackElements.size();i++){
+            lut.put(trackElements.get(i), controller);
         }
     }
 
     /*
     add output w/plc within a wayside controller
      */
-    public void addOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
-        getController(blockNumber).addOutput(blockNumber, PLCfile);
-        getController(blockNumber).generateOutputSignal(blockNumber, false);
+    public void addOutputWaysideController(TrackElement trackElement, String PLCfile) throws IOException, URISyntaxException {
+        getWaysideController(trackElement).addOutput(trackElement, PLCfile);
+        outputBlocks.add(trackElement);
+        getWaysideController(trackElement).generateOutputSignal(trackElement, false);
     }
 
     /*
     update output within a wayside controller
      */
-    public void updateOutputWaysideController(int blockNumber) throws IOException, URISyntaxException {
-        getController(blockNumber).generateOutputSignal(blockNumber, false);
+    public void updateOutputWaysideController(TrackElement trackElement) throws IOException, URISyntaxException {
+        getWaysideController(trackElement).generateOutputSignal(trackElement, false);
+    }
+
+    /*
+    For all outputs
+     */
+    public void updateAllOutputWaysideController() throws IOException, URISyntaxException {
+        for(int i=0;i < outputBlocks.size();i++){
+            updateOutputWaysideController(outputBlocks.get(i));
+        }
     }
 
     //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
@@ -119,15 +125,46 @@ public class WaysideSystem {
         return newBlockSet;
     }
 
-    public TrackElement findBlock(int blockNumber) throws IOException {
-        return getController(blockNumber).getBlockElement(blockNumber);
+
+    public TrackElement findBlock(TrackElement trackElement) throws IOException {
+        return getWaysideController(trackElement).getTrackElement(trackElement);
+    }
+
+    public TrackElement findTrackElement(int blockNumber) throws IOException {
+        for(int i=0;i < blocks.size();i++){
+            if(blocks.get(i).getBlockNum() == blockNumber){
+                return blocks.get(i);
+            }
+        }
+
+        throw new IOException("WaysideSystem Error: There is no block with that value...");
+    }
+
+    public double[] getSpeed() throws IOException {
+        double[] temp = new double[blocks.size()];
+
+        for(int i=0;i < blocks.size();i++){
+            temp[i] = getWaysideController(findTrackElement(i)).getTrackElement(findTrackElement(i)).getCommandedSpeed();
+        }
+
+        return temp;
+    }
+
+    public int[] getAuthority() throws IOException {
+        int[] temp = new int[blocks.size()];
+
+        for(int i=0;i < blocks.size();i++){
+            temp[i] = getWaysideController(findTrackElement(i)).getTrackElement(findTrackElement(i)).getAuthority();
+        }
+
+        return temp;
     }
 
     /*
     finds the corresponding controller for each block!
      */
-    public WaysideController getController(int blockNumber){
-        return lut.get(blockNumber);
+    public WaysideController getWaysideController(TrackElement trackElement){
+        return lut.get(trackElement);
     }
 
     /*
@@ -151,13 +188,13 @@ public class WaysideSystem {
         //RUN CHECKS TO MAKE SURE THE INPUTS ARE VALID HERE!
 
         for(int i=0;i < speeds.length;i++){
-            temp = lut.get(i);
+            temp = lut.get(findTrackElement(i));
             temp.setSpeed(i, speeds[i]);
         }
 
         temp = null;
         for(int i=0;i < authority.length;i++){
-            temp = lut.get(i);
+            temp = lut.get(findTrackElement(i));
             temp.setAuthority(i, authority[i]);
         }
 
@@ -167,36 +204,43 @@ public class WaysideSystem {
     /*
     gets the occupancy from the proper controller
      */
-    public boolean getOccupancy(int blockNumber) throws IOException {
-        return getController(blockNumber).getGPIO().getOccupancy(blockNumber);
+    public boolean getOccupancy(TrackElement trackElement) throws IOException {
+        return getWaysideController(trackElement).getGPIO().getOccupancy(trackElement);
     }
 
     /*
 
      */
-    public boolean getSwitchStatus(int blockNumber) throws IOException {
-        return getController(blockNumber).getSwitchStatus(blockNumber);
+    public boolean getSwitchStatus(TrackElement trackElement) throws IOException {
+        return getWaysideController(trackElement).getSwitchStatus(trackElement);
     }
 
     /*
 
      */
-    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
-        getController(blockNumber).setSwitchStatus(blockNumber ,status);
+    public void setSwitchStatus(TrackElement trackElement, boolean status) throws IOException {
+        getWaysideController(trackElement).setSwitchStatus(trackElement, status);
     }
 
     /*
     sets if a track should be CLOSED! failure status is currently used.
      */
-    public void setClose(int blockNumber) throws IOException {
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(1);
+    public void setClose(TrackElement trackElement) throws IOException {
+        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(4);
+    }
+
+    /*
+    sets if a track has a failure! failure status is currently used.
+     */
+    public void setFailure(TrackElement trackElement, int statusNumber) throws IOException {
+        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(statusNumber);
     }
 
     /*
     sets if a track should be OPEN! failure status is currently used.
      */
-    public void openClose(int blockNumber) throws IOException {
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(0);
+    public void openClose(TrackElement trackElement) throws IOException {
+        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(0);
     }
 
     /*
@@ -263,7 +307,7 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            controllers.get(nameIndex).addOutput(Integer.parseInt(blockNumber),PLCfile);
+            controllers.get(nameIndex).addOutput(findTrackElement(Integer.parseInt(blockNumber)),PLCfile);
             return "You have successfully added an output on " + controllerName;
         }else if(commands[0].equals("update")){ //COMPILE COMMAND
             controllerName = commands[1];
@@ -283,7 +327,7 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            controllers.get(nameIndex).updateOutput(Integer.parseInt(blockNumber),PLCfile);
+            controllers.get(nameIndex).updateOutput(findTrackElement(Integer.parseInt(blockNumber)),PLCfile);
             return "You have successfully updated a PLC on " + controllerName;
         }if(commands[0].equals("add")){ //COMPILE COMMAND
             controllerName = commands[1];
@@ -306,7 +350,7 @@ public class WaysideSystem {
     }
 
     //TEST GETTERS AND SETTER ******************************************************************************************
-    public HashMap<Integer, WaysideController> getLut(){
+    public HashMap<TrackElement, WaysideController> getLut(){
         return lut;
     }
 

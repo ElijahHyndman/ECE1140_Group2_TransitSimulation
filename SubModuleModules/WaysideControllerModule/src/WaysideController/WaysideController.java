@@ -44,18 +44,18 @@ public class WaysideController {
         name = "FAKE";
     }
 
-    public WaysideController(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String name){
+    public WaysideController(ArrayList<TrackElement> allBlocks, String name){
         this.isActive = DEFAULT_ISACTIVE;
         this.isSoftware = DEFAULT_ISSOFTWARE;
         this.speedLimit = DEFAULT_SPEEDLIMIT;
         this.PLCScriptMap = new HashMap<>();
         this.outputMap = new HashMap<>();
         this.testInputs = new HashMap<>();
-        this.blocks = blocks;
+       // this.blocks = blocks;
         this.allBlocks = allBlocks;
         this.name = name;
 
-        gpio = new GPIO(allBlocks, blocks, name);
+        gpio = new GPIO(allBlocks, name);
     }
 
     /*
@@ -82,6 +82,9 @@ public class WaysideController {
      */
     public void setSpeed(int blockNumber, double speeds) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
+        if(speeds > trackElement.getSpeedLimit()){
+            speeds = trackElement.getSpeedLimit();
+        }
         allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
@@ -132,17 +135,16 @@ public class WaysideController {
     /*
 
      */
-    public boolean getSwitchStatus(int blockNumber) throws IOException {
-        Switch aSwitch = (Switch) getBlockElement(blockNumber);
-
+    public boolean getSwitchStatus(TrackElement trackElement) throws IOException {
+        Switch aSwitch = (Switch) trackElement;
         return aSwitch.getIndex();
     }
 
     /*
 
      */
-    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
-        Switch aSwitch = (Switch) getBlockElement(blockNumber);
+    public void setSwitchStatus(TrackElement trackElement, boolean status) throws IOException {
+        Switch aSwitch = (Switch) trackElement;
         aSwitch.setSwitchState(status);
     }
 
@@ -158,9 +160,8 @@ public class WaysideController {
     /*
     add an output under the jurisdiction of this controller, a PLCFile MUST be associated during creation. It can be later updated too!
      */
-    public void addOutput(int blockNumber, String PLCFile) throws IOException, URISyntaxException {
+    public void addOutput(TrackElement trackElement, String PLCFile) throws IOException, URISyntaxException {
         boolean bool;
-        TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
         engine.createTokens(PLCFile);
 
@@ -169,23 +170,23 @@ public class WaysideController {
         addTestInput(trackElement);
 
         gpio.addOutput(trackElement, false);
-        bool = generateOutputSignal(trackElement.getBlockNum(), false);
+        bool = generateOutputSignal(trackElement, false);
         gpio.addOutput(trackElement, bool);
     }
 
     /*
     Updates the current block number with a new PLCFile
      */
-    public void updateOutput(int blockNumber, String PLCFile) throws IOException, URISyntaxException {
+    public void updateOutput(TrackElement trackElement, String PLCFile) throws IOException, URISyntaxException {
         boolean bool;
-        TrackElement trackElement = getBlockElement(blockNumber);
+
         PLCEngine engine = new PLCEngine();
         engine.createTokens(PLCFile);
 
         PLCScriptMap.replace(trackElement, engine.getPLCString());
         outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
 
-        bool = generateOutputSignal(trackElement.getBlockNum(), false);
+        bool = generateOutputSignal(trackElement, false);
         gpio.updateOutput(trackElement, bool);
     }
 
@@ -207,8 +208,7 @@ public class WaysideController {
     /*
     Generates an output single for a specific block number
      */
-    public boolean generateOutputSignal(int blockNumber, boolean isTest) throws IOException { //or any unique identifier, change for other iterations...
-        TrackElement trackElement = getBlockElement(blockNumber);
+    public boolean generateOutputSignal(TrackElement trackElement, boolean isTest) throws IOException { //or any unique identifier, change for other iterations...
         boolean[][] outputs = outputMap.get(trackElement);
         boolean[][] searchMap = new boolean[outputs.length][outputs[0].length-1];
         boolean[] inputValues = gpio.getAllInputValues();
@@ -336,7 +336,7 @@ public class WaysideController {
     public void addTestInput(TrackElement trackElement){
         boolean[] totalInputs = new boolean[gpio.getNumberOfBlocks()];
 
-        for(int i=0;i < blocks.size();i++){
+        for(int i=0;i < allBlocks.size();i++){
             totalInputs[i] = false;
         }
 
@@ -413,6 +413,19 @@ public class WaysideController {
     public TrackElement getBlockElement(int blockNumber) throws IOException {
         for(int i = 0; i < allBlocks.size(); i++){
             if(blockNumber == allBlocks.get(i).getBlockNum()){
+                return allBlocks.get(i);
+            }
+        }
+
+        throw new IOException("Controller Error: No block with that number in controller - " + name);
+    }
+
+    /*
+    helper function - finds the specific block element from the block number
+     */
+    public TrackElement getTrackElement(TrackElement trackElement) throws IOException {
+        for(int i = 0; i < allBlocks.size(); i++){
+            if(trackElement == allBlocks.get(i)){
                 return allBlocks.get(i);
             }
         }

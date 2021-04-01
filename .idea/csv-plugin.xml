@@ -73,6 +73,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\SubModuleModules\WaysideControllerModule\src\WaysideController\WaysideSystem.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

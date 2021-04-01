@@ -25,7 +25,7 @@ public class GPIO {
         //numberOfBlocks = 0;
     }
 
-    public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
+    public GPIO(ArrayList<TrackElement> allBlocks, String controllerName){
         this.allBlocks = allBlocks;
         this.blocks = blocks;
         this.controllerName = controllerName;
@@ -35,7 +35,7 @@ public class GPIO {
     }
 
     public int getNumberOfBlocks() {
-        return blocks.size();
+        return allBlocks.size();
     }
 
     /*
@@ -61,9 +61,7 @@ public class GPIO {
         return inputs;
     }
 
-    public boolean getOccupancy(int blockNumber) throws IOException {
-        TrackElement trackElement = getBlockElement(blockNumber);
-
+    public boolean getOccupancy(TrackElement trackElement) throws IOException {
         return trackElement.getOccupied();
     }
 
