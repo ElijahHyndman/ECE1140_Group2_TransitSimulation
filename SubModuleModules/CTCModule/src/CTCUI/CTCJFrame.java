@@ -23,7 +23,7 @@ import java.time.*;
  */
 //iteration 2
 
-public class CTCJFrame extends javax.swing.JFrame {
+public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule{
 
     DisplayLine display = new DisplayLine();
     DefaultTableModel model, model2;
@@ -35,6 +35,19 @@ public class CTCJFrame extends javax.swing.JFrame {
         display = ctc;
         initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+    }
+
+    @Override
+    public void update(){
+
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

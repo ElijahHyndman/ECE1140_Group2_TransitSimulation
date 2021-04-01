@@ -464,5 +464,12 @@ public class CTCOffice implements PhysicsUpdateListener
         return dispArr;
     }
 
+    public SimulationEnvironment getSE()
+    {
+        return SEobj;
+    }
+
+
+
 
 }
