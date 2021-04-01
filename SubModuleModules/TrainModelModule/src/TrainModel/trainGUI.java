@@ -5,6 +5,8 @@
  */
 package TrainModel;
 
+import GUIInterface.AppGUIModule;
+
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,13 +17,17 @@ import javax.swing.ImageIcon;
  *
  * @author Devon
  */
-public class trainGUI extends javax.swing.JFrame {
+public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
        
-    //set of Trains across the systemz
+    //set of Trains across the system
+    Train mainTrain;
+
+    //Below data was mostly just for iteration 2... maybe use in future?
     public ArrayList<Train> trains = new ArrayList<Train>();
+    public int mainTrainIndex;
     int namesIndex = 2;
     int trainIndex = 0;
-    public int mainTrainIndex;
+
     
     /**
      * Creates new form trainGUI
@@ -38,38 +44,42 @@ public class trainGUI extends javax.swing.JFrame {
         
     }
     public void newTrain() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
+        trains.add(t1);
+    }
+    public void giveTrain(Train t1) {
         trains.add(t1);
     }
     public void updateDisplay(){
         
-        table1.setValueAt(trains.get(mainTrainIndex).displayAcceleration, 0, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).displayActualSpeed, 1, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).displayCommandedSpeed, 2, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).power, 3, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).authority, 4, 1);
-        table1.setValueAt(trains.get(mainTrainIndex).mass, 5, 1);
+        table1.setValueAt(mainTrain.displayAcceleration, 0, 1);
+        table1.setValueAt(mainTrain.displayActualSpeed, 1, 1);
+        table1.setValueAt(mainTrain.displayCommandedSpeed, 2, 1);
+        table1.setValueAt(mainTrain.power, 3, 1);
+        table1.setValueAt(mainTrain.authority, 4, 1);
+        table1.setValueAt(mainTrain.mass, 5, 1);
         
-        table2.setValueAt(trains.get(mainTrainIndex).serviceBrake, 0, 1);
-        table2.setValueAt(trains.get(mainTrainIndex).emergencyBrake, 1, 1);
-        table2.setValueAt(trains.get(mainTrainIndex).passengerBrake, 2, 1);
+        table2.setValueAt(mainTrain.serviceBrake, 0, 1);
+        table2.setValueAt(mainTrain.emergencyBrake, 1, 1);
+        table2.setValueAt(mainTrain.passengerBrake, 2, 1);
         
-        table4.setValueAt(trains.get(mainTrainIndex).signalPickupFail, 0, 1);
-        table4.setValueAt(trains.get(mainTrainIndex).brakeFail, 1, 1);
-        table4.setValueAt(trains.get(mainTrainIndex).engineFail, 2, 1);
+        table4.setValueAt(mainTrain.signalPickupFail, 0, 1);
+        table4.setValueAt(mainTrain.brakeFail, 1, 1);
+        table4.setValueAt(mainTrain.engineFail, 2, 1);
         
-        additionalTable.setValueAt(trains.get(mainTrainIndex).advertisements, 0, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).announcements, 1, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).beacon, 2, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).crewCount, 3, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).leftDoors, 4, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).rightDoors, 5, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).headlights, 6, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).cabinLights, 7, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).outerLights, 8, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).nextStop, 9, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).passengerCount, 10, 1);
-        additionalTable.setValueAt(trains.get(mainTrainIndex).cabinTemp, 11, 1);
+        additionalTable.setValueAt(mainTrain.advertisements, 0, 1);
+        additionalTable.setValueAt(mainTrain.announcements, 1, 1);
+        additionalTable.setValueAt(mainTrain.beacon, 2, 1);
+        additionalTable.setValueAt(mainTrain.crewCount, 3, 1);
+        additionalTable.setValueAt(mainTrain.leftDoors, 4, 1);
+        additionalTable.setValueAt(mainTrain.rightDoors, 5, 1);
+        additionalTable.setValueAt(mainTrain.headlights, 6, 1);
+        additionalTable.setValueAt(mainTrain.cabinLights, 7, 1);
+        additionalTable.setValueAt(mainTrain.outerLights, 8, 1);
+        additionalTable.setValueAt(mainTrain.nextStop, 9, 1);
+        additionalTable.setValueAt(mainTrain.passengerCount, 10, 1);
+        additionalTable.setValueAt(mainTrain.cabinTemp, 11, 1);
+        additionalTable.setValueAt(mainTrain.numberOfCars, 12, 1);
         
         updateTestDisplay();
            
@@ -214,9 +224,9 @@ public class trainGUI extends javax.swing.JFrame {
         table1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Acceleration", null, "ft/s^2", "Train Model"},
-                {"Actual Speed", null, "ft/s", "Train Model"},
-                {"Commanded Speed", null, "ft/s", "Track Model"},
+                {"Acceleration", null, "mph/s^2", "Train Model"},
+                {"Actual Speed", null, "m/h", "Train Model"},
+                {"Commanded Speed", null, "m/h", "Track Model"},
                 {"Power", null, "HP", "Train Controller"},
                 {"Authority", null, "blocks", "Track Model"},
                 {"Mass", null, "kg", "Train Model"}
@@ -342,7 +352,7 @@ public class trainGUI extends javax.swing.JFrame {
                 .addGap(31, 31, 31))
         );
 
-        mainPanel.add(mainView, "main");
+        mainPanel.add(mainView, "TrainModel.main");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setText("Additional Information");
@@ -361,7 +371,8 @@ public class trainGUI extends javax.swing.JFrame {
                 {"Lights (Outer)", null, "Train Controller"},
                 {"Next Stop", null, "Train Controller"},
                 {"Passenger Count", null, "Train Model"},
-                {"Cabin Temperature (°F)", null, "Train Controller"}
+                {"Cabin Temperature (°F)", null, "Train Controller"},
+                {"Number of Cars", null, "Train Model"}
             },
             new String [] {
                 "Information", "Data", "Source"
@@ -535,7 +546,7 @@ public class trainGUI extends javax.swing.JFrame {
         testFailure.setRowHeight(20);
         jScrollPane8.setViewportView(testFailure);
 
-        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image.png"))); // NOI18N
+        //imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("image.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -784,7 +795,7 @@ public class trainGUI extends javax.swing.JFrame {
             trains.get(trainIndex).setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
         }
         if(testTable.getValueAt(3,3) != null && testTable.getValueAt(3,3) != ""){
-            trains.get(trainIndex).setBeacon(testTable.getValueAt(3,3).toString());
+            trains.get(trainIndex).setBeacon((testTable.getValueAt(3,3).toString()));
         }
         if(testTable.getValueAt(4,3) != null && testTable.getValueAt(4,3) != ""){
             trains.get(trainIndex).setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));
@@ -849,7 +860,7 @@ public class trainGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void addTrainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrainActionPerformed
-        Train t2 = new Train(5, 2);
+        Train t2 = new Train(5, 2, 1);
         trains.add(t2);
         selectTrain.addItem("Train "+Integer.toString(namesIndex));
         namesIndex++;
@@ -945,5 +956,15 @@ public class trainGUI extends javax.swing.JFrame {
     private javax.swing.JTable testTable;
     private javax.swing.JPanel testView;
     private javax.swing.JTable trainTable;
+
+    @Override
+    public void latch(Object myObject) {
+        mainTrain = (Train) myObject;
+    }
+
+    @Override
+    public void update() {
+        updateDisplay();
+    }
     // End of variables declaration//GEN-END:variables
 }
