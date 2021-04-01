@@ -19,6 +19,7 @@ public class TrainSimulation extends Thread {
 
     public void spawnSEGUI() {
         appGUI = new SimulationEnvironmentJFrame(SE);
+        appGUI.latch(SE);
     }
 
     public void run() {
@@ -32,7 +33,18 @@ public class TrainSimulation extends Thread {
         running = false;
     }
 
+    public SimulationEnvironment getSE() {
+        return SE;
+    }
+
+    public SimulationEnvironmentJFrame getJFrame() {
+        return appGUI;
+    }
+
     public static void main(String[] args) {
-        new TrainSimulation().start();
+        TrainSimulation run = new TrainSimulation();
+        run.getSE().castGreenLine();
+        run.getJFrame().setGreenLine();
+        run.start();
     }
 }
