@@ -114,7 +114,6 @@ class WaysideControllerTest {
         GPIO gpio = controller.getGPIO();
 
         Assertions.assertArrayEquals(occupiedElements, gpio.getAllInputValues());
-        Assertions.assertArrayEquals(occupiedBlocks, gpio.getInputValues());
     }
 
     @Test
