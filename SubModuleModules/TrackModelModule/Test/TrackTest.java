@@ -182,7 +182,7 @@ class TrackTest {
         instance.importTrack(filepath);
 
 
-        instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
+        instance.getSwitches().get(10).setSwitchState(false); // switch not to yard
         instance.updateSwitches();
 
         TrackElement cur = instance.getGreenLine().get(0);
