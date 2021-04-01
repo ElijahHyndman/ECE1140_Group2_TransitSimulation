@@ -314,7 +314,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
         // Fill Data Vector
         List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getGPIO().getInputValues();
+        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
 
         //List<String> InputNames = thisController.getAllNames();
         //List<Object> InputValues = thisController.getAllData();
