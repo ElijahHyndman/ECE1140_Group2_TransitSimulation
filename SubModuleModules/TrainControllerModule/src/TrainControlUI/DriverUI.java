@@ -55,7 +55,7 @@ public class DriverUI implements ActionListener, AppGUIModule {
 
     public DriverUI() {
         //The train control associated for this train/driver
-        //control = trainController;
+        control = new TrainControl();
 
         main = new JFrame("Train X");
         main.setSize(1600, 900);
@@ -64,6 +64,8 @@ public class DriverUI implements ActionListener, AppGUIModule {
 
         format = new DecimalFormat("#.##");
 
+        setUpWindow();
+        setFrames();
     }
 
     public void setFrames(){
@@ -127,8 +129,7 @@ public class DriverUI implements ActionListener, AppGUIModule {
 
         //Create an engineer UI for the train
         new EngineerUI(control.getTrainMotor());
-        setUpWindow();
-        setFrames();
+
     }
 
     public void update(){
