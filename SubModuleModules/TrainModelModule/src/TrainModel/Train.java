@@ -141,11 +141,9 @@ public class Train {
             setSpeed(newV);
         }
         else{
+
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             newA = F/calculateMass(); //A is in m/s^2
-            if (newA > .5){
-                newA = .5;
-            }
             newV = this.actualSpeed + (newA+this.accel)/(2*sampleTime); // m/s + average of 2 accels / time
             setSpeed(newV);
             setAccel(newA);

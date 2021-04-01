@@ -254,17 +254,17 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
-        actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
-        distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
+        //actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
 
+        prevVelocity = trainVelocity;
+        trainVelocity = speed;
+
+        distanceTraveled = trainVelocity * sampleTime;
         totalDistanceTraveled += distanceTraveled;
-
         if (beaconSet){
             stoppingDistance = stoppingDistance - distanceTraveled;
         }
 
-        prevVelocity = trainVelocity;
-        trainVelocity = speed;
         monitorDistance();
         getIdealAcceleration();
     }
