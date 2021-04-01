@@ -394,6 +394,42 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
+    void blocksInSection() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        System.out.println("sectionA: " + instance.blocksInSection('A').toString());
+        System.out.println("sectionB: " + instance.blocksInSection('B').toString());
+        System.out.println("sectionC: " + instance.blocksInSection('C').toString());
+        System.out.println("sectionD: " + instance.blocksInSection('D').toString());
+        System.out.println("sectionE: " + instance.blocksInSection('E').toString());
+        System.out.println("sectionF: " + instance.blocksInSection('F').toString());
+        System.out.println("sectionG: " + instance.blocksInSection('G').toString());
+        System.out.println("sectionH: " + instance.blocksInSection('H').toString());
+        System.out.println("sectionI: " + instance.blocksInSection('I').toString());
+        System.out.println("sectionJ: " + instance.blocksInSection('J').toString());
+        System.out.println("sectionK: " + instance.blocksInSection('K').toString());
+        System.out.println("sectionL: " + instance.blocksInSection('L').toString());
+        System.out.println("sectionM: " + instance.blocksInSection('M').toString());
+        System.out.println("sectionN: " + instance.blocksInSection('N').toString());
+        System.out.println("sectionO: " + instance.blocksInSection('O').toString());
+        System.out.println("sectionP: " + instance.blocksInSection('P').toString());
+        System.out.println("sectionQ: " + instance.blocksInSection('Q').toString());
+        System.out.println("sectionR: " + instance.blocksInSection('R').toString());
+        System.out.println("sectionS: " + instance.blocksInSection('S').toString());
+        System.out.println("sectionT: " + instance.blocksInSection('T').toString());
+        System.out.println("sectionU: " + instance.blocksInSection('U').toString());
+        System.out.println("sectionV: " + instance.blocksInSection('V').toString());
+        System.out.println("sectionW: " + instance.blocksInSection('W').toString());
+        System.out.println("sectionX: " + instance.blocksInSection('X').toString());
+        System.out.println("sectionY: " + instance.blocksInSection('Y').toString());
+        System.out.println("sectionZ: " + instance.blocksInSection('Z').toString());
+
+    }
+
+    @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";

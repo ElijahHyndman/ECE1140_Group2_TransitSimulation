@@ -26,7 +26,7 @@ public class TrackElement {
 
     //for printing purposes
     String infrastructure;
-    String beacon;
+    String beacon = null;
 
     //keeping track of failures
     String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE"};
@@ -42,6 +42,7 @@ public class TrackElement {
     char biDirecitional;
     int[] directionStates = {0,0,0,0};
     String type;
+    boolean open;
 
 
 
@@ -56,6 +57,7 @@ public class TrackElement {
         this.biDirecitional = 'u';
         this.currentDirection = -3;
         type = "";
+        this.open = true;
     }
 
 
@@ -88,6 +90,11 @@ public class TrackElement {
     /*Setting cumulative elevation*/
     public void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
 
+    /*get block opens*/
+    public boolean getBlockOpen() { return this.open; }
+
+    /*setBlockOpen*/
+    public void setBlockOpen(boolean open){this.open = open;}
 
     /*Setting Authority*/
     public void setAuthority(int authority) { this.authority = authority;}
