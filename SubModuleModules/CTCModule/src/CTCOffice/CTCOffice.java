@@ -391,7 +391,12 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public double[] calcRoute(int bn, String lc)
     {
+
+
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        // Always add yard to route
+        // TODO this won't be the case when we don't dispatch non-new train
+        routeArr[0] = 1;
         if(bn==73 && lc.equals("Green")){
             for (int i=62; i<75; i++){
                 routeArr[i] = 1;
