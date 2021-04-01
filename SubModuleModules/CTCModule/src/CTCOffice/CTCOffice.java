@@ -45,7 +45,7 @@ public class CTCOffice implements PhysicsUpdateListener
     public CTCOffice()
     {
         try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(), "Green Line");
+            waysides = new WaysideSystem(new Track().getBlocks(), "Green Line");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,7 +117,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else
-            SEobj.spawnRunningTrain(trackObj.getBlock(0),trackObj.getBlock(9));
+            SEobj.spawnRunningTrain(trackObj.getGreenLine().get(0),trackObj.getGreenLine().get(0));
 
         if (dest.equals("Station B")){
             blockNum = 10;
@@ -393,32 +393,32 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         if(bn==73 && lc.equals("Green")){
-            for (int i=63; i<75; i++){
+            for (int i=62; i<75; i++){
                 routeArr[i] = 1;
             }
         }
         if (bn==65 && lc.equals("Green")){
-            for (int i=63; i<67; i++){
+            for (int i=62; i<67; i++){
                 routeArr[i] = 1;
             }
         }
         if (bn==77 && lc.equals("Green")){
-            for (int i=63; i<79; i++){
+            for (int i=62; i<79; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==88 && lc.equals("Green")){
-            for (int i=63; i<90; i++){
+            for (int i=62; i<90; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==96 && lc.equals("Green")){
-            for (int i=63; i<98; i++){
+            for (int i=62; i<98; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==123 && lc.equals("Green")){
-            for (int i=63; i<125; i++){
+            for (int i=62; i<125; i++){
                 routeArr[i] = 1;
             }
         }

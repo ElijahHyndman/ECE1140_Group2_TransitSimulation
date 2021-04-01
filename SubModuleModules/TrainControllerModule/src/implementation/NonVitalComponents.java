@@ -1,6 +1,6 @@
 package implementation;
 
-import systemData.*;
+//import systemData.*;
 
 public class NonVitalComponents {
 
@@ -11,12 +11,16 @@ public class NonVitalComponents {
     private boolean rightDoors;
     private boolean leftDoors;
     private int cabinTemp;
-    private Advertisements adList;
+    //private trackData track;
+    //private Advertisements adList;
     private boolean announcementProgress;
     private String theAnnouncement;
 
 
-    public NonVitalComponents(){
+
+    public NonVitalComponents(){//trackData theTrack){
+
+        //track = theTrack;
 
         //Initialize non-vital components
         cabinLights = false;
@@ -28,7 +32,9 @@ public class NonVitalComponents {
         station = null;
         announcementProgress = false;
         theAnnouncement = null;
-        adList = new Advertisements();
+        //adList = new Advertisements();
+
+
     }
 
     //=======ACCESSOR METHODS========
@@ -73,7 +79,8 @@ public class NonVitalComponents {
     }
 
     public int getCurrentAdvertisement(){
-        return adList.playAd();
+        //return adList.playAd();
+        return 0;
     }
 
 
@@ -97,12 +104,12 @@ public class NonVitalComponents {
 
     public void setDoors(String currentBeacon){
         String doors = null;
-
         if (currentBeacon != null){
             rightDoors = true;
             leftDoors = false;
 
         }
+
         /*
         if (doors != null){
             if (doors.equals("Left")){

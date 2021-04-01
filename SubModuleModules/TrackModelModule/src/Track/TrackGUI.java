@@ -68,6 +68,11 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
     public void update() {
     } //automatically updates no need to do this
 
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+
     public void draw() {
 
     } // for interface

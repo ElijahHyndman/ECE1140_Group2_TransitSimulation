@@ -90,6 +90,11 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateGUI(controllers);
     }
 
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+
 
     /*
      * Elijah: Functions useful for generating GUI data

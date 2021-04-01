@@ -150,6 +150,11 @@ public class DriverUI implements ActionListener, AppGUIModule {
         powerVal.setText(String.valueOf(format.format(control.getPower())));
     }
 
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+
     public void setUpWindow() {
 
         //=====STATIC LABELS======

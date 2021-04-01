@@ -21,7 +21,7 @@ public class WaysideSystem {
         currentLine = "Green";
         controllers = new LinkedList<>();
         numberOfControllers = 0;
-        generateLine();
+        //generateLine();
     }
 
     //This construction is bad, doesn't use the lut at all...

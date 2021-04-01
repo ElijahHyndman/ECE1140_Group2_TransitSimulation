@@ -1,6 +1,7 @@
 package implementation;
 
 import TrainModel.Train;
+//import systemData.trackData;
 
 
 public class TrainControl {
@@ -9,6 +10,7 @@ public class TrainControl {
     private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
+    //private trackData track;
 
     private double velocityCmd; //the train's ideal velocity, units m/s
     private double trainVelocity; //the actual velocity of the train, units m/s
@@ -28,7 +30,7 @@ public class TrainControl {
     private boolean sBrake;
     private String alert;
     private double sampleTime;
-    private double stoppingDistance;
+    public double stoppingDistance;
     boolean beaconSet;
     private double route;
 
@@ -62,7 +64,8 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        nonVitalComponents = new NonVitalComponents();
+        //track = new trackData("Blue");
+        nonVitalComponents = new NonVitalComponents();//track);
         sampleTime = 1;
         controlNonVital();
     }
@@ -119,7 +122,7 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
-               if (stoppingDistance <= breakingDist) {
+               if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
                     } else {
@@ -256,7 +259,7 @@ public class TrainControl {
         //1 s sample time
         actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
         distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
-
+        //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
         totalDistanceTraveled += distanceTraveled;
 
         if (beaconSet){
@@ -299,8 +302,9 @@ public class TrainControl {
             beaconSet = true;
             int start = beacon.indexOf(" ");
             double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
+            System.out.println(stop);
             stoppingDistance = stop;
-        }else if (beacon == null){
+        }else if (beacon == null && beaconSet == false){
             stoppingDistance = -1;
             beaconSet = false;
         }

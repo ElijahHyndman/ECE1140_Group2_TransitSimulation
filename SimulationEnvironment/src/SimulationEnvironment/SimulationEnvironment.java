@@ -39,7 +39,7 @@ public class SimulationEnvironment {
     public void castGreenLine() {
         /** spawns a simulationEnvironment specifically built for the green line;
          */
-        String greenLineFile = "SEResources/GreenAndRedLine.csv";
+        String greenLineFile = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SimulationEnvironment/SEResources/GreenAndRedLine.csv";
         importTrack(greenLineFile);
 
         // Create single wayside controller for GreenLine

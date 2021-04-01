@@ -64,10 +64,10 @@ public class WorldClock extends Thread {
      *                  time, which allows us to account for system calls and other delays when waiting
      */
     // Clock-Pace Variables
-    private final double MAX_ALLOWABLE_RESOLUTION = 50.000;
-    private final double MIN_ALLOWABLE_RESOLUTION = 0.001;
-    private final double MAX_ALLOWABLE_RATIO = 20.000;
-    private final double MIN_ALLOWABLE_RATIO = 00.001;
+    public final double MAX_ALLOWABLE_RESOLUTION = 10.000;
+    public final double MIN_ALLOWABLE_RESOLUTION = 0.001;
+    public final double MAX_ALLOWABLE_RATIO = 20.000;
+    public final double MIN_ALLOWABLE_RATIO = 00.001;
     private final double DEFAULT_RESOLUTION = 10.000;
     private final double DEFAULT_RATIO = 01.000;
     private final int QUICK_ADVANCE_PERIODS = 1000;

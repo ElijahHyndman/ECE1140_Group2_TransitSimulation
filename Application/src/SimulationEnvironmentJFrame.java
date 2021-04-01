@@ -17,6 +17,12 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import java.awt.CardLayout;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+
 /**
  *
  * @author elijah
@@ -42,7 +48,12 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         DisplaySE = (SimulationEnvironment) myObj;
     }
     public void update() {
+        //TimeLabel.setText(DisplaySE.getClock().getTimeString());
+    }
 
+    public void setGreenLine() {
+        CardLayout card = (CardLayout) mainPanel.getLayout();
+        card.show(mainPanel,"MainMenuCard");
     }
 
     public void UpdateSpawnTables() {
@@ -55,7 +66,13 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         // Set the WaysideSystem table
         DefaultTableModel waysideTableModel = (DefaultTableModel) WaysideSystemSpawnTable.getModel();
         Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
-        waysideTableModel.setRowCount(WSystems.size());
+        waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
+        //TODO this is hard coded
+        if(WSystems.size() != 0) {
+            waysideTableModel.setRowCount(WSystems.size());
+            waysideTableModel.setValueAt(WSystems.get(0),0,0);
+            waysideTableModel.setValueAt("Spawn GUI",0,1);
+        }
 
         // Set the TrainUnit table
         DefaultTableModel trainTableModel = (DefaultTableModel) TrainUnitSpawnTable.getModel();
@@ -64,7 +81,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         for(int index =0;index<trains.size(); index++) {
             TrainUnit train = trains.get(index);
             trainTableModel.setValueAt(train.getName(),index,0);
-            trainTableModel.setValueAt("Spawn GUI",index,1);
+            trainTableModel.setValueAt("Spawn Controller GUI",index,1);
+            trainTableModel.setValueAt("Spawn Model GUI",index,1);
         }
     }
 
@@ -92,11 +110,12 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         MainMenu = new javax.swing.JPanel();
         ClockControlPane = new javax.swing.JPanel();
         ClockResolutionSlider = new javax.swing.JSlider();
+        WorldClock clk = DisplaySE.getClock();
         ClockRatioSlider = new javax.swing.JSlider();
         ClockPauseButton = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        WorldClockSpeedLabel = new javax.swing.JLabel();
+        PhysicsResolutionLabel = new javax.swing.JLabel();
+        TimeLabel = new javax.swing.JLabel();
         GUISpawnPane = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         CTCSpawnTable = new javax.swing.JTable();
@@ -145,7 +164,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
                         .addGroup(ImportTrackPanelLayout.createSequentialGroup()
                                 .addGap(210, 210, 210)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(213, Short.MAX_VALUE))
+                                .addContainerGap(446, Short.MAX_VALUE))
         );
         ImportTrackPanelLayout.setVerticalGroup(
                 ImportTrackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,6 +185,29 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         ClockControlPane.setBackground(new java.awt.Color(102, 102, 102));
         ClockControlPane.setBorder(javax.swing.BorderFactory.createCompoundBorder());
 
+        ClockResolutionSlider.setMinimum(1);
+        ClockResolutionSlider.setMaximum((int)clk.MAX_ALLOWABLE_RESOLUTION);
+        ClockResolutionSlider.setMajorTickSpacing(2);
+        ClockResolutionSlider.setPaintTicks(true);
+        ClockResolutionSlider.setPaintLabels(true);
+        ClockResolutionSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                ClockResolutionSliderMouseReleased(evt);
+            }
+        });
+
+        ClockRatioSlider.setMajorTickSpacing(1);
+        ClockRatioSlider.setMinimum(1);
+        ClockRatioSlider.setMaximum((int)clk.MAX_ALLOWABLE_RATIO);
+        ClockRatioSlider.setMajorTickSpacing(2);
+        ClockRatioSlider.setPaintTicks(true);
+        ClockRatioSlider.setPaintLabels(true);
+        ClockRatioSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                ClockRatioSliderMouseReleased(evt);
+            }
+        });
+
         ClockPauseButton.setText("Start");
         ClockPauseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,11 +215,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("World Clock Speed");
+        WorldClockSpeedLabel.setText("World Clock Speed");
 
-        jLabel3.setText("Physics Resolution");
+        PhysicsResolutionLabel.setText("Physics Resolution");
 
-        jLabel4.setText("HH:mm:ss");
+        TimeLabel.setText("HH:mm:ss");
 
         javax.swing.GroupLayout ClockControlPaneLayout = new javax.swing.GroupLayout(ClockControlPane);
         ClockControlPane.setLayout(ClockControlPaneLayout);
@@ -186,19 +228,19 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
                         .addGroup(ClockControlPaneLayout.createSequentialGroup()
                                 .addGap(26, 26, 26)
                                 .addComponent(ClockPauseButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                                 .addGroup(ClockControlPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addGroup(ClockControlPaneLayout.createSequentialGroup()
-                                                .addComponent(jLabel4)
+                                                .addComponent(TimeLabel)
                                                 .addGap(39, 39, 39)
                                                 .addComponent(ClockRatioSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(ClockResolutionSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(155, 155, 155))
                                         .addGroup(ClockControlPaneLayout.createSequentialGroup()
-                                                .addComponent(jLabel2)
-                                                .addGap(90, 90, 90)
-                                                .addComponent(jLabel3)
+                                                .addComponent(WorldClockSpeedLabel)
+                                                .addGap(82, 82, 82)
+                                                .addComponent(PhysicsResolutionLabel)
                                                 .addGap(189, 189, 189))))
         );
         ClockControlPaneLayout.setVerticalGroup(
@@ -208,16 +250,20 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
                                 .addGroup(ClockControlPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(ClockResolutionSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(ClockRatioSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(ClockControlPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel3))
-                                .addContainerGap())
+                                .addGroup(ClockControlPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ClockControlPaneLayout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                                                .addComponent(PhysicsResolutionLabel)
+                                                .addContainerGap())
+                                        .addGroup(ClockControlPaneLayout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(WorldClockSpeedLabel)
+                                                .addGap(0, 0, Short.MAX_VALUE))))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ClockControlPaneLayout.createSequentialGroup()
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(ClockControlPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(ClockPauseButton)
-                                        .addComponent(jLabel4))
+                                        .addComponent(TimeLabel))
                                 .addGap(20, 20, 20))
         );
 
@@ -308,16 +354,16 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
                                 .addGroup(MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(GUISpawnPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(ClockControlPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(116, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         MainMenuLayout.setVerticalGroup(
                 MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(MainMenuLayout.createSequentialGroup()
                                 .addGap(23, 23, 23)
                                 .addComponent(ClockControlPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(28, 28, 28)
+                                .addGap(18, 18, 18)
                                 .addComponent(GUISpawnPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(53, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         mainPanel.add(MainMenu, "MainMenuCard");
@@ -326,13 +372,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 722, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 10, Short.MAX_VALUE))
+                        .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 467, Short.MAX_VALUE)
         );
 
         pack();
@@ -373,6 +417,23 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         UpdateSpawnTables();
     }
 
+    private void ClockRatioSliderMouseReleased(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        double clockratiomax = DisplaySE.getClock().MAX_ALLOWABLE_RATIO;
+        double clockratiomin = DisplaySE.getClock().MIN_ALLOWABLE_RATIO;
+        //double dist = (clockratiomax -clockratiomin) / 100.0;
+        //System.out.println("new ratio: " + dist*ClockRatioSlider.getValue());
+        System.out.println(ClockRatioSlider.getValue());
+        DisplaySE.getClock().setRatio(ClockRatioSlider.getValue());
+    }
+
+    private void ClockResolutionSliderMouseReleased(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+
+        DisplaySE.getClock().setResolution(ClockResolutionSlider.getValue());
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -403,7 +464,10 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SimulationEnvironmentJFrame( new SimulationEnvironment()).setVisible(true);
+                SimulationEnvironmentJFrame se = new SimulationEnvironmentJFrame( new SimulationEnvironment());
+//                while(true) {
+//                    se.update();
+//                }
             }
         });
     }
@@ -418,14 +482,14 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel GUISpawnPane;
     private javax.swing.JPanel ImportTrackPanel;
     private javax.swing.JPanel MainMenu;
+    private javax.swing.JLabel PhysicsResolutionLabel;
     private javax.swing.JButton SpawnTrainButton;
+    private javax.swing.JLabel TimeLabel;
     private javax.swing.JTable TrainUnitSpawnTable;
     private javax.swing.JTable WaysideSystemSpawnTable;
+    private javax.swing.JLabel WorldClockSpeedLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

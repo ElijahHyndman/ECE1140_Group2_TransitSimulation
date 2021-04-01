@@ -18,14 +18,14 @@ import java.time.*;
  */
 public class CTCJFrame extends javax.swing.JFrame {
 
-    DisplayLine display = new DisplayLine();
+    DisplayLine display= new DisplayLine();
     DefaultTableModel model, model2;
 
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame() {
-        initComponents();
+    public CTCJFrame(CTCOffice ctc) {
+        initComponents(ctc);
     }
 
     /**
@@ -35,9 +35,9 @@ public class CTCJFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    private void initComponents() {
+    private void initComponents(CTCOffice ctc) {
 
-        cTCOffice1 = new CTCOffice();
+        cTCOffice1 = ctc;//new CTCOffice();
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
@@ -1042,7 +1042,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame().setVisible(true);
+                new CTCJFrame(new CTCOffice()).setVisible(true);
             }
         });
     }

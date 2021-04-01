@@ -1,5 +1,5 @@
 ﻿Line,Section,Block Number,Block Length (m),Block Grade (%),Speed Limit (Km/Hr),Infrastructure,,ELEVATION (M),CUMALTIVE ELEVATION (M),TOa ,Tob,Toc,BIDIRECTIONAL,Beacon
-YARD,-,-1,0,0,0,YARD,,0,0,0,0,0,n,1
+YARD,-,0,0,0,0,YARD,,0,0,0,0,0,n,1
 Red,A,1,50,0.5,40,,,0.25,0.25,2,15,0,y,1
 Red,A,2,50,1,40,,,0.5,0.75,3,1,0,y,1
 Red,A,3,50,1.5,40,,,0.75,1.5,4,2,0,y,1

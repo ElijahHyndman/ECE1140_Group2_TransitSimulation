@@ -155,6 +155,8 @@ public class Train {
         
         //check for zero velocity & power command
 
+        totalDistance += this.actualSpeed*deltaTime;
+        blockDistance += this.actualSpeed*deltaTime;
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
@@ -187,8 +189,6 @@ public class Train {
             setSpeed(newV);
             setAccel(newA);
         }
-        totalDistance += this.actualSpeed*deltaTime;
-        blockDistance += this.actualSpeed*deltaTime;
     }
     public double getTotalDistance(){
         return totalDistance;
