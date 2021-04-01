@@ -200,6 +200,9 @@ class WaysideSystemTest {
         block1.setOccupied(false);
         system.updateOutputWaysideController(trackSwitch);
         System.out.println(system.getSwitchStatus(trackSwitch));
+        block1.setOccupied(true);
+        system.updateAllOutputWaysideController();
+        System.out.println(system.getSwitchStatus(trackSwitch));
     }
 
     //DEPRECATED

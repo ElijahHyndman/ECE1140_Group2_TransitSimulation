@@ -34,6 +34,7 @@ public class WaysideSystem {
 
     public WaysideSystem(ArrayList<TrackElement> blocks)  {
         controllers = new LinkedList<WaysideController>();
+        this.outputBlocks = new ArrayList<>();
         this.lut = new HashMap<>();
         this.blocks = blocks;
         numberOfControllers = 0;
@@ -69,6 +70,7 @@ public class WaysideSystem {
      */
     public void addOutputWaysideController(TrackElement trackElement, String PLCfile) throws IOException, URISyntaxException {
         getWaysideController(trackElement).addOutput(trackElement, PLCfile);
+        outputBlocks.add(trackElement);
         getWaysideController(trackElement).generateOutputSignal(trackElement, false);
     }
 
@@ -77,6 +79,15 @@ public class WaysideSystem {
      */
     public void updateOutputWaysideController(TrackElement trackElement) throws IOException, URISyntaxException {
         getWaysideController(trackElement).generateOutputSignal(trackElement, false);
+    }
+
+    /*
+    For all outputs
+     */
+    public void updateAllOutputWaysideController() throws IOException, URISyntaxException {
+        for(int i=0;i < outputBlocks.size();i++){
+            updateOutputWaysideController(outputBlocks.get(i));
+        }
     }
 
     //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
