@@ -59,7 +59,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         DisplaySE = (SimulationEnvironment) myObj;
     }
     public void update() {
-        //TimeLabel.setText(DisplaySE.getClock().getTimeString());
+        TimeLabel.setText(DisplaySE.getClock().getTimeString());
+        UpdateSpawnTables();
     }
 
     public void setGreenLine() {

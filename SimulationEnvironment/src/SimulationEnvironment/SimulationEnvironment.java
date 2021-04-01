@@ -8,6 +8,7 @@ import Track.*;
 import TrainControlUI.DriverUI;
 import TrainModel.Train;
 import TrainModel.trainGUI;
+import WaysideController.WaysideSystem;
 import WorldClock.*;
 import CTCOffice.*;
 import TrackConstruction.*;
@@ -27,7 +28,7 @@ public class SimulationEnvironment {
     /** World Management Variables
      */
     private WorldClock clk;
-    private CTCOffice ctc;
+    private DisplayLine ctc;
     private Track trackSystem = new Track();
 
     /** World Object Variables
@@ -38,7 +39,7 @@ public class SimulationEnvironment {
         /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
          */
         clk= new WorldClock();
-        ctc= new CTCOffice(trackSystem,this);
+        ctc= new DisplayLine(trackSystem,this);
     }
 
     public void castGreenLine() {
@@ -47,6 +48,7 @@ public class SimulationEnvironment {
         String greenLineFile = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SimulationEnvironment/SEResources/GreenAndRedLine.csv";
         importTrack(greenLineFile);
 
+        WaysideSystem system = ctc.getWaysideSystem();
         // Create single wayside controller for GreenLine
         // Create bock jurisdiction
         int sizeOfGreenLine = trackSystem.getGreenLine().size();
@@ -60,11 +62,24 @@ public class SimulationEnvironment {
         //
         try {
             // Give jurisdiction to controller
-            ctc.getWaysideSystem().addWaysideController(blockNumbers);
+            system.addWaysideController(blockNumbers);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Add PLCs to controller
+        /*
+        system.addOutputWaysideController(12, "SwitchBlock12PLC");
+        system.addOutputWaysideController(29, "SwitchBlock29PLC");
+        system.addOutputWaysideController(58, "SwitchBlock58PLC");
+        system.addOutputWaysideController(62, "SwitchBlock62PLC");
+        system.addOutputWaysideController(76, "SwitchBlock76PLC");
+        system.addOutputWaysideController(85, "SwitchBlock85PLC");
+        system.updateAllOutputsWaysideController();
+        system.addOutputWaysideController(0, "SwitchYardPLC");
+        */
     }
+
 
     /*
         World Time Methods
@@ -169,7 +184,7 @@ public class SimulationEnvironment {
         TrackGUI newUI = new TrackGUI(system);
         return newUI;
     }
-    public CTCJFrame spawnCTCGUI(CTCOffice ctc) {
+    public CTCJFrame spawnCTCGUI(DisplayLine ctc) {
         return new CTCJFrame(ctc);
     }
 
@@ -183,7 +198,7 @@ public class SimulationEnvironment {
     public void startTime() {clk.start();}
     public void setClockSpeed(double speed) {clk.setRatio(speed);}
     public void setClockResolution(double res) {clk.setResolution(res);}
-    public CTCOffice getCTC() {return ctc;}
+    public DisplayLine getCTC() {return ctc;}
     public Track getTrackSystem() {return trackSystem;}
     public Vector<TrainUnit> getTrains() {return trains;}
 }

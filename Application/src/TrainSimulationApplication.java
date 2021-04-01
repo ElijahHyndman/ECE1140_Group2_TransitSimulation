@@ -125,6 +125,7 @@ public class TrainSimulationApplication extends Thread {
 
         CTCJFrame ctcui = new CTCJFrame(run.getSE().getCTC());
         ctcui.setVisible(true);
+        //System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
 
         TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
         //yard.setCommandedSpeed(10.0);

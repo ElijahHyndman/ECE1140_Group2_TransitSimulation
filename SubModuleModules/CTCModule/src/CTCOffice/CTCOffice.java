@@ -94,7 +94,8 @@ public class CTCOffice implements PhysicsUpdateListener
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
-        Vector<TrainUnit> trains = SEobj.getTrains();
+
+        //Vector<TrainUnit> trains = SEobj.getTrains();
 
         if (tNum.equals("Train 1"))
             trainNum = 1;
@@ -503,5 +504,8 @@ public class CTCOffice implements PhysicsUpdateListener
         Vector<WaysideSystem> ws = new Vector<WaysideSystem>();
         ws.add(waysides);
         return ws;
+    }
+    public SimulationEnvironment getSE() {
+        return SEobj;
     }
 }

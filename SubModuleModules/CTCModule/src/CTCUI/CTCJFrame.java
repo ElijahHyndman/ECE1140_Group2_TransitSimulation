@@ -24,7 +24,9 @@ public class CTCJFrame extends javax.swing.JFrame {
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame(CTCOffice ctc) {
+    public CTCJFrame(DisplayLine ctc) {
+        display = ctc;
+        //System.out.println("CTC constructor: " + ctc.hashCode());
         initComponents(ctc);
     }
 
@@ -209,7 +211,7 @@ public class CTCJFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Train:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormant", "Mt Lebanon", "Castle Shannon" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormont", "Mt Lebanon", "Castle Shannon" }));
 
         jLabel6.setText("Destination:");
 
@@ -830,7 +832,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        DisplayLine dispatch = new DisplayLine();
+        DisplayLine dispatch = new DisplayLine(display.getTrack(),display.getSE());
 
         speedAuthority = dispatch.Dispatch(destination, train, timeD);
 
@@ -966,7 +968,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         }
         else if (filename.equals("GreenLine"))
         {
-            filename = "/Users/haleighdefoor/schedule.csv";
+            filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";//"/Users/haleighdefoor/schedule.csv";
         }
         else
         {
@@ -1042,7 +1044,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame(new CTCOffice()).setVisible(true);
+                new CTCJFrame(new DisplayLine()).setVisible(true);
             }
         });
     }

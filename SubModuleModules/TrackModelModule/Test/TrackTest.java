@@ -177,12 +177,12 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testDispatchYard(){
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SimulationEnvironment/SEResources/GreenAndRedLine.csv";//"C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
 
-        instance.getSwitches().get(10).setSwitchState(false); // switch not to yard
+        instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
         instance.updateSwitches();
 
         TrackElement cur = instance.getGreenLine().get(0);
