@@ -1,6 +1,7 @@
 package SimulationEnvironment;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Vector;
 
 import CTCUI.CTCJFrame;
@@ -15,7 +16,7 @@ import CTCOffice.*;
 import TrackConstruction.*;
 import implementation.TrainControl;
 
-public class SimulationEnvironment {
+public class SimulationEnvironment extends Thread {
     /** hosts the entirety of a Simulation World, including all submodules, for a train simulation project.
      * SimulationEnvironment also handles synchronization using a WorldClock, as well as hosting a server to
      * send copies of objects down to local machines for viewing and manipulating.
@@ -41,6 +42,7 @@ public class SimulationEnvironment {
          */
         clk= new WorldClock();
         ctc= new DisplayLine(trackSystem,this);
+        this.start();
     }
 
     public void castGreenLine() {
@@ -52,6 +54,7 @@ public class SimulationEnvironment {
         WaysideSystem system = ctc.getWaysideSystem();
         // Create single wayside controller for GreenLine
         // Create bock jurisdiction
+        /* Old code for one controller with all of green line
         int sizeOfGreenLine = trackSystem.getGreenLine().size();
         int[] blockNumbers = new int[sizeOfGreenLine];
         for (int i=0; i<sizeOfGreenLine;i++) {
@@ -60,10 +63,83 @@ public class SimulationEnvironment {
             TrackElement element = trackSystem.getGreenLine().get(i);
             blockNumbers[i] = element.getBlockNum();
         }
+        */
+        int[] controller1Blocks = new int[21];
+        int[] controller2Blocks = new int[38];
+        int[] controller3Blocks = new int[13];
+        int[] controller4Blocks = new int[13];
+        int[] controller5Blocks = new int[8];
+        int[] controller6Blocks = new int[20];
+        int[] controller7Blocks = new int[1];
+        int[] controller8Blocks = new int[38];
+        int j;
+
+        //controller1
+        for(int i=0;i <= 20;i++){
+            controller1Blocks[i] = i;
+        }
+
+        //controller2
+        j = 21;
+        for(int i=0;i <= 26;i++){
+            controller2Blocks[i] = j;
+            j++;
+        }
+        j = 140;
+        for(int i=27;i <= 37;i++){
+            controller2Blocks[i] = j;
+            j++;
+        }
+
+        //controller3
+        j=48;
+        for(int i=0;i <= 12;i++){
+            controller3Blocks[i] = j;
+            j++;
+        }
+
+        //controller4
+        j=61;
+        for(int i=0;i <= 12;i++){
+            controller4Blocks[i] = j;
+            j++;
+        }
+
+        //controller5
+        j=74;
+        for(int i=0;i <= 6;i++){
+            controller5Blocks[i] = j;
+            j++;
+        }
+        controller5Blocks[7] = 101;
+
+        //controller6
+        j=81;
+        for(int i=0;i <= 19;i++){
+            controller6Blocks[i] = j;
+            j++;
+        }
+
+        //controller7
+        controller7Blocks[0] = 0;
+
+        //controller8
+        j=102;
+        for(int i=0;i <= 37;i++){
+            controller8Blocks[i] = j;
+            j++;
+        }
         //
         try {
-            // Give jurisdiction to controller
-            system.addWaysideController(blockNumbers);
+            // Create controllers from jurisdictions
+            system.addWaysideController(controller1Blocks);
+            system.addWaysideController(controller2Blocks);
+            system.addWaysideController(controller3Blocks);
+            system.addWaysideController(controller4Blocks);
+            system.addWaysideController(controller5Blocks);
+            system.addWaysideController(controller6Blocks);
+            system.addWaysideController(controller7Blocks);
+            system.addWaysideController(controller8Blocks);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,16 +147,19 @@ public class SimulationEnvironment {
         String scheduleFilename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
 
         // Add PLCs to controller
-        /*
-        system.addOutputWaysideController(12, "SwitchBlock12PLC");
-        system.addOutputWaysideController(29, "SwitchBlock29PLC");
-        system.addOutputWaysideController(58, "SwitchBlock58PLC");
-        system.addOutputWaysideController(62, "SwitchBlock62PLC");
-        system.addOutputWaysideController(76, "SwitchBlock76PLC");
-        system.addOutputWaysideController(85, "SwitchBlock85PLC");
-        system.updateAllOutputsWaysideController();
-        system.addOutputWaysideController(0, "SwitchYardPLC");
-        */
+        try {
+            system.addOutputWaysideController(12, "SwitchBlock12PLC");
+            system.addOutputWaysideController(29, "SwitchBlock29PLC");
+            system.addOutputWaysideController(58, "SwitchBlock58PLC");
+            system.addOutputWaysideController(62, "SwitchBlock62PLC");
+            system.addOutputWaysideController(76, "SwitchBlock76PLC");
+            system.addOutputWaysideController(85, "SwitchBlock85PLC");
+            system.addOutputWaysideController(0, "SwitchYardPLC");
+            system.updateAllOutputsWaysideController();
+        } catch(Exception e) {
+            System.out.println(":(");
+        }
+
     }
 
 
@@ -206,6 +285,21 @@ public class SimulationEnvironment {
 
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
+    }
+
+    public void run() {
+        while(true) {
+            Vector<WaysideSystem> ws = ctc.getWaysideSystems();
+            for (WaysideSystem system : ws) {
+                try {
+                    system.updateAllOutputsWaysideController();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public WorldClock getClock() {return clk;}

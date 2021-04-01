@@ -374,6 +374,7 @@ public class TrainControl {
         }else{
             setCommandedSpeed(manualVelocity);
         }
+        this.setSpeedLimit(60/3.6);
         this.setPower();
     }
 

@@ -324,7 +324,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         ));
         jScrollPane6.setViewportView(jTable3);
 
-        jLabel18.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon(("/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/TransDisplay.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -476,7 +476,7 @@ public class CTCJFrame extends javax.swing.JFrame {
 
         jLabel21.setText("Switch Number:");
 
-        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
+        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/TransDisplay.png"));//"/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
