@@ -17,19 +17,19 @@ public class WaysideSystem {
     //each track element has a wayside controller, this is an easy way to find each one!
     private HashMap<Integer, WaysideController> lut;
 
-    public WaysideSystem() throws IOException{
+    public WaysideSystem() {
         currentLine = "Green";
         controllers = new LinkedList<>();
         numberOfControllers = 0;
-        generateLine();
+        //generateLine();
     }
 
     //This construction is bad, doesn't use the lut at all...
-    public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
+    public WaysideSystem(LinkedList<WaysideController> controllers) {
         currentLine = "Green";
         this.controllers = controllers;
         numberOfControllers = controllers.size();
-        generateLine();
+        //generateLine();
     }
 
     public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {

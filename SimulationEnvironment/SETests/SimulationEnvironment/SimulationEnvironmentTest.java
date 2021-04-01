@@ -1,11 +1,13 @@
 package SimulationEnvironment;
 
-import TrainModel.Train;
-import org.junit.jupiter.api.BeforeAll;
+import Track.*;
+import TrainControlUI.DriverUI;
+import TrainModel.trainGUI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import TrackConstruction.*;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,34 +24,38 @@ class SimulationEnvironmentTest {
     }
 
 
+    /*
+        Track System Tests
+     */
+
+    @Test
+    @DisplayName("Track Import\t\t[SE can import the Green Line]")
+    void importGreenLine() {
+        String greenLinePath = "SEResources/GreenAndRedLine.csv";
+        SE = new SimulationEnvironment();
+        SE.importTrack(greenLinePath);
+
+        Track importedTrack = new Track();
+        importedTrack.importTrack(greenLinePath);
+
+        // Tracks yield the same output strings
+        assertEquals(true, importedTrack.toString().equals(SE.getTrackSystem().toString()));
+        assertEquals(true, importedTrack.toString().equals(SE.getCTC().getTrack().toString()));
+
+        // Track that SE points to is the same that CTC points to
+        assertSame(SE.getTrackSystem(),SE.getCTC().getTrack());
+    }
 
     /*
         Train Tests
      */
 
-
     @Test
-    @DisplayName("Trains can be constructed without being set to run")
-    void trainsCanBeSpawnedWithinATrainYard() {
-        SE = new SimulationEnvironment();
-        // TODO will a trainyard always be a trackblock? wil we make one specifically for the trainyard?
-        TrackBlock TrainYard1 = new TrackBlock();
-        TrainUnit nonRunningTrain = new TrainUnit();
-        SE.spawnTrain(nonRunningTrain, TrainYard1);
-
-        assertEquals(false,nonRunningTrain.isRunning());
-        assertEquals(TrainYard1,nonRunningTrain.getLocation());
-    }
-
-
-    @Test
-    @DisplayName("Trains can be be constructed and set to run on construction")
+    @DisplayName("Train Spawning\t\t[Running TrainUnit can be spawned on a synthesized yard]")
     void trainsCanBeSpawnedRunningWithinATrainYard() {
         SE = new SimulationEnvironment();
-        // TODO will a trainyard always be a trackblock? wil we make one specifically for the trainyard?
         TrackBlock TrainYard1 = new TrackBlock();
-        TrainUnit runningTrain = new TrainUnit();
-        SE.spawnRunningTrain(runningTrain,TrainYard1);
+        TrainUnit runningTrain = SE.spawnRunningTrain(TrainYard1,new TrackBlock());
 
         // Train takes a few microseconds for changes to become apparent
         waitForTrainObjectToCatchUp();
@@ -58,6 +64,67 @@ class SimulationEnvironmentTest {
         runningTrain.halt();
     }
 
+    @Test
+    @DisplayName("Train Spawning\t\t[Running TrainUnit will listen to physics updates]]")
+    void trainUnitPhysicsUpdates() {
+        SE = new SimulationEnvironment();
+        TrackBlock TrainYard1 = new TrackBlock();
+        TrainUnit runningTrain = SE.spawnRunningTrain(TrainYard1,new TrackBlock());
+
+        SE.startTime();
+        runningTrain.updateFlag = false;
+
+        // Wait for update to occur
+        // If update does not occur, wait forever
+        while(!runningTrain.updateFlag) {}
+
+        SE.pauseTime();
+        runningTrain.halt();
+    }
+
+    @Test
+    @DisplayName("Train Movement\t\t[TrainUnit will run around Green Line]")
+    void trainRunsGreenLine() {
+        String greenLinePath = "SEResources/GreenAndRedLine.csv";
+        SE = new SimulationEnvironment();
+        SE.importTrack(greenLinePath);
+        SE.setClockSpeed(10.0);
+
+        ArrayList<TrackElement> greenLine = SE.getTrackSystem().getGreenLine();
+        for(TrackElement block : greenLine) {
+            block.setAuthority(10);
+            block.setCommandedSpeed(20.0);
+        }
+
+        TrackElement startBlock = greenLine.get(60);
+        TrackElement orientBlock = greenLine.get(59);
+        TrainUnit runningTrain = SE.spawnRunningTrain(startBlock,orientBlock);
+
+
+        SE.startTime();
+
+        runningTrain.blockExceededFlag=false;
+
+        DriverUI controllerUI = new DriverUI();
+        trainGUI modelUI = new trainGUI(1);
+        controllerUI.latch(runningTrain.getController());
+        modelUI.latch(runningTrain.getHull());
+        TrackGUI trackui = new TrackGUI(SE.getTrackSystem());
+        trackui.setVisible(true);
+        trackui.latch(SE.getTrackSystem());
+
+        while(true) {
+            controllerUI.update();
+            modelUI.updateDisplay();
+            trackui.latch(SE.getTrackSystem());
+        }
+    }
+
+    @Test
+    @DisplayName("Train Spawning\t\t[TrainUnits will spawn with correct, incrementing TrainIDs]")
+    void trainIDs() {
+
+    }
 
     /*
         Helper Functions

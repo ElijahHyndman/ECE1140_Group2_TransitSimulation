@@ -26,10 +26,10 @@ public class TrackElement {
 
     //for printing purposes
     String infrastructure;
-    String beacon = null;
+    String beacon;
 
     //keeping track of failures
-    String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE", "CLOSED"};
+    String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE"};
     String failureStatus;
 
 
@@ -45,14 +45,13 @@ public class TrackElement {
 
 
 
-
-    public TrackElement(){
+    TrackElement(){
         this.blockNum = this.speedLimit  = -1;
         this.cumulativeElevation = this.elevation = this.grade = this.length = -1.0;
         this.section = '-';
         this.line = "-";
         this.authority = 0;
-        this.commandedSpeed = 0.0;
+        this.commandedSpeed = 0;
         this.directionArray = null;
         this.biDirecitional = 'u';
         this.currentDirection = -3;
@@ -64,7 +63,7 @@ public class TrackElement {
     public void setBlockNum(int blockNum){this.blockNum = blockNum;}
 
     /*Setting Line */
-     public void setLine(String line){this.line = line;}
+    public void setLine(String line){this.line = line;}
 
     /*set Beacon*/
     public void setBeacon(String beacon){
@@ -72,22 +71,23 @@ public class TrackElement {
     }
 
     /*Setting section */
-    public void setSection(char section){this.section = section;}
+    void setSection(char section){this.section = section;}
 
     /*Setting grade*/
-    public void setGrade(double grade){ this.grade = grade;}
+    void setGrade(double grade){ this.grade = grade;}
 
     /*setting length*/
     public void setLength(double length){ this.length = length;}
 
     /*Setting SpeedLimit*/
-    public void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
+    void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
 
     /*Setting elevation*/
-    public void setElevation(double elevation){ this.elevation = elevation;}
+    void setElevation(double elevation){ this.elevation = elevation;}
 
     /*Setting cumulative elevation*/
-    public void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
+    void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
+
 
     /*Setting Authority*/
     public void setAuthority(int authority) { this.authority = authority;}
@@ -96,14 +96,14 @@ public class TrackElement {
     public void setCommandedSpeed(double commandedSpeed) { this.commandedSpeed = commandedSpeed;}
 
     /*Setting direction array*/
-    public void setDirection(int [] directionArray) {this.directionArray = directionArray;}
+    void setDirection(int [] directionArray) {this.directionArray = directionArray;}
 
     /*setting bidirectionality*/
-    public void setBiDirectional(String biDirection){this.biDirecitional = biDirection.charAt(0);}
+    void setBiDirectional(String biDirection){this.biDirecitional = biDirection.charAt(0);}
 
 
     /*set Infrastructure*/
-    public void setInfrastructure(String infrastructure){this.infrastructure = infrastructure;}
+    void setInfrastructure(String infrastructure){this.infrastructure = infrastructure;}
 
     /*set Current Direciton*/
     public void setCurrentDirection(int index){
@@ -112,7 +112,7 @@ public class TrackElement {
 
     /*set failure status */
     public void setFailureStatus(int index) {
-        if(index >=0 && index <= 4)
+        if(index >=0 && index <= 3)
             this.failureStatus = possibleStates[index];
     }
 
@@ -152,10 +152,6 @@ public class TrackElement {
 
     /*get CommandedSpeed*/
     public double getCommandedSpeed() { return this.commandedSpeed;}
-
-    /*display commanded speed*/
-    public double dispCommandedSpeed() {
-        return commandedSpeed*2.23694;}
 
     /*get Direciton Array */
     public int getDirection(int index) {

@@ -1,3 +1,4 @@
+import TrainModel.Train;
 import implementation.*;
 
 import org.junit.*;
@@ -20,7 +21,7 @@ public class TrainControlTest {
 
     @Before
     public void setUp(){
-        control = new TrainControl();
+        control = new TrainControl(new Train(5, 10));
     }
 
     @Test

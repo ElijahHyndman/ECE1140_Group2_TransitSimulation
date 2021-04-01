@@ -24,6 +24,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SimulationEnvironment/SETests/SimulationEnvironment/SimulationEnvironmentTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SimulationEnvironment/src/SimulationEnvironment/SimulationEnvironment.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SimulationEnvironment/src/SimulationEnvironment/TrainUnit.java">
           <value>
             <Attribute>
@@ -59,10 +73,24 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/TrackModelModule/src/Track/TrackGUI.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/TrackModelModule/src/Track/circle.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideGUI/WaysideUIJFrameWindow.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
             </Attribute>
           </value>
         </entry>
