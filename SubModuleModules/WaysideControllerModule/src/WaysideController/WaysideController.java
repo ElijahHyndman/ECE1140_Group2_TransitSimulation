@@ -44,7 +44,7 @@ public class WaysideController {
         name = "FAKE";
     }
 
-    public WaysideController(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String name){
+    public WaysideController(ArrayList<TrackElement> allBlocks, String name){
         this.isActive = DEFAULT_ISACTIVE;
         this.isSoftware = DEFAULT_ISSOFTWARE;
         this.speedLimit = DEFAULT_SPEEDLIMIT;
@@ -55,7 +55,7 @@ public class WaysideController {
         this.allBlocks = allBlocks;
         this.name = name;
 
-        gpio = new GPIO(allBlocks, blocks, name);
+        gpio = new GPIO(allBlocks, name);
     }
 
     /*
@@ -82,6 +82,9 @@ public class WaysideController {
      */
     public void setSpeed(int blockNumber, double speeds) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
+        if(speeds > trackElement.getSpeedLimit())
+            speeds = trackElement.getSpeedLimit();
+
         allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
