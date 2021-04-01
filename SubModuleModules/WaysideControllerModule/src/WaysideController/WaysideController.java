@@ -432,4 +432,9 @@ public class WaysideController {
 
         throw new IOException("Controller Error: No block with that number in controller - " + name);
     }
+
+    public TrackElement getTrackElement(TrackElement trackElement) {
+        // TODO implement
+        return new TrackElement();
+    }
 }

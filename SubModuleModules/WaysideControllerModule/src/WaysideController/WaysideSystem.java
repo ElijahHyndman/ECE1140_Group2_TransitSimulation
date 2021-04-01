@@ -120,9 +120,13 @@ public class WaysideSystem {
 
         for(int i=0;i < blockNumbers.length;i++){
             for(int j=0;j < blocks.size();j++){
-                if((blocks.get(j).getBlockNum() == blockNumbers[i]) && (!newBlockSet.contains(blocks.get(j))) &&
-                        (blocks.get(i).getType().equalsIgnoreCase("block"))){
-                    newBlockSet.add((TrackBlock) blocks.get(j)); //casting should not change the reference.
+                if((blocks.get(j).getBlockNum() == blockNumbers[i]) && (!newBlockSet.contains(blocks.get(j))) && (blocks.get(i).getType().equalsIgnoreCase("block") )){
+                    //newBlockSet.add((TrackBlock) blocks.get(j)); //casting should not change the reference.
+                    try {
+                        newBlockSet.add((TrackBlock) blocks.get(j)); //casting should not change the reference.
+                    } catch (Exception e) {
+                        // skip
+                    }
                 }
             }
         }
@@ -154,7 +158,6 @@ public class WaysideSystem {
     }
 
     /*
-
      */
     public boolean broadcastToControllers(double[] speeds, int[] authority) throws IOException {
         WaysideController temp;
@@ -183,14 +186,12 @@ public class WaysideSystem {
     }
 
     /*
-
      */
     public boolean getSwitchStatus(int blockNumber) throws IOException {
         return getController(blockNumber).getSwitchStatus(blockNumber);
     }
 
     /*
-
      */
     public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
         getController(blockNumber).setSwitchStatus(blockNumber ,status);

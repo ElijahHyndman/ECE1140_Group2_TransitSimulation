@@ -1,5 +1,6 @@
 package SimulationEnvironment;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import Track.Track;
@@ -33,6 +34,31 @@ public class SimulationEnvironment {
          */
         clk= new WorldClock();
         ctc= new CTCOffice(trackSystem,this);
+    }
+
+    public void castGreenLine() {
+        /** spawns a simulationEnvironment specifically built for the green line;
+         */
+        String greenLineFile = "SEResources/GreenAndRedLine.csv";
+        importTrack(greenLineFile);
+
+        // Create single wayside controller for GreenLine
+        // Create bock jurisdiction
+        int sizeOfGreenLine = trackSystem.getGreenLine().size();
+        int[] blockNumbers = new int[sizeOfGreenLine];
+        for (int i=0; i<sizeOfGreenLine;i++) {
+            // BlockNum may be an arbitrary number, treat it as such
+            // Skip i=0, train yard
+            TrackElement element = trackSystem.getGreenLine().get(i);
+            blockNumbers[i] = element.getBlockNum();
+        }
+        //
+        try {
+            // Give jurisdiction to controller
+            ctc.getWaysideSystem().addWaysideController(blockNumbers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -93,6 +119,7 @@ public class SimulationEnvironment {
 
         // Add to physics listeners
         clk.addListener(newTrain);
+        System.out.println(String.format("New running train spawned (%s) and placed on block %s",newTrain,newTrain.getLocation()));
 
         return newTrain;
     }

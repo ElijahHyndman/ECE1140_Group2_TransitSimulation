@@ -37,7 +37,7 @@ public class CTCOffice implements PhysicsUpdateListener
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
-    public CharSequence timeNow;
+    public CharSequence timeNow = "00:00:00";
     private LocalTime now;
     public Track trackObj;
     public SimulationEnvironment SEobj;
@@ -45,7 +45,7 @@ public class CTCOffice implements PhysicsUpdateListener
     public CTCOffice()
     {
         try {
-            waysides = new WaysideSystem(trackObj.getBlocks());
+            waysides = new WaysideSystem(trackObj.getGreenLine(), "Green Line");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,7 +57,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         trackObj = SEtrack;
         try {
-            waysides = new WaysideSystem(trackObj.getBlocks());
+            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,6 +82,11 @@ public class CTCOffice implements PhysicsUpdateListener
     public void setTrack(Track SEt)
     {
         trackObj = SEt;
+        try {
+            waysides = new WaysideSystem(trackObj.getGreenLine(), "Green Line");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Object[] Dispatch(String dest, String tNum, String timeD)
@@ -321,7 +326,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else
             occ = waysideR.getOccupancy(blockNum);*/
         try {
-            occ = waysides.getOccupancy(findBlockObject(blockNum,lineCol));//blockNum, lineCol);
+            occ = waysides.getOccupancy(blockNum);//blockNum,lineCol));//blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -333,7 +338,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         boolean switchstat=false;
         try {
-            switchstat = waysides.getSwitchStatus(findBlockObject(blockNum,lineCol));//blockNum, lineCol);
+            switchstat = waysides.getSwitchStatus(blockNum);//findBlockObject(blockNum,lineCol));//blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -348,7 +353,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
         for (int i=0; i<length; i++){
             try {
-                waysides.openClose(findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
+                waysides.openClose(blocks.get(i));//findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -363,7 +368,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
         for (int i=0; i<length; i++){
             try {
-                waysides.setClose(findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
+                waysides.setClose(blocks.get(i));//findBlockObject(blocks.get(i),lineCol));//
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -489,4 +494,9 @@ public class CTCOffice implements PhysicsUpdateListener
     }
 
 
+    public Vector<WaysideSystem> getWaysideSystems() {
+        Vector<WaysideSystem> ws = new Vector<WaysideSystem>();
+        ws.add(waysides);
+        return ws;
+    }
 }

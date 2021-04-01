@@ -10,5 +10,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="SubModules.WaysideControllerModule" />
+    <orderEntry type="module" module-name="SimulationEnvironment" />
+    <orderEntry type="module" module-name="WorldClock" />
+    <orderEntry type="module" module-name="SubModules.CTCModule" />
   </component>
 </module>
