@@ -32,7 +32,6 @@ public class TrainControl {
     private double sampleTime;
     private double stoppingDistance;
     boolean beaconSet;
-    private double stopTraveled;
     private double route;
 
     public TrainControl(){
@@ -58,8 +57,9 @@ public class TrainControl {
         manualVelocity = 0;
         power = 0;
         acceleration = 0;
-        authority = 0;
+        authority = -2;
         totalDistanceTraveled = 0;
+        stoppingDistance = -1;
         speedLimit = 0;
         beacon = null;
         alert = null;
@@ -262,7 +262,6 @@ public class TrainControl {
 
         totalDistanceTraveled += distanceTraveled;
 
-
         if (beaconSet){
             stoppingDistance = stoppingDistance - distanceTraveled;
         }
@@ -292,20 +291,19 @@ public class TrainControl {
     public void setAuthority(int distBlock){
 
         authority = distBlock;
-        if (authority == 0 && beacon.equals("null")){
+        if (authority == 0 && beacon == null){
             useEmergencyBrake(true);
         }
     }
 
     public void setBeacon(String currentBeacon){
         beacon = currentBeacon;
-        if (!beacon.equals("null") && !beaconSet){
+        if (!(beacon==null) && !beaconSet){
             beaconSet = true;
             int start = beacon.indexOf(" ");
             double stop = Integer.parseInt(beacon.substring(start+1, beacon.length()));
             stoppingDistance = stop;
-            stopTraveled = 0;
-        }else if (beacon.equals("null")){
+        }else if (beacon == null){
             stoppingDistance = -1;
             beaconSet = false;
         }
@@ -329,11 +327,12 @@ public class TrainControl {
         nonVitalComponents.setNextStation(beacon);
         nonVitalComponents.setAnnouncement(authority, beacon);
 
-        if (authority  == 1 && trainVelocity == 0){
+        if (beaconSet && trainVelocity == 0){
             nonVitalComponents.setDoors(beacon);
         }
     }
 
+    /*
     //Replicating inputs from the Train Model, used by TestingUI
     public void newTrainInput(TrainModelInput currentInput){
         setActualSpeed(currentInput.getActualSpeed());
@@ -350,6 +349,8 @@ public class TrainControl {
         //monitorDistance();
         power = motor.getPower(velocityCmd, trainVelocity);
     }
+
+     */
 
 
     /**

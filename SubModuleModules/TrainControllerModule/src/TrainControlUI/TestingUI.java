@@ -57,7 +57,7 @@ public class TestingUI implements ActionListener{
     }
 
     public void setTrainInputs(){
-        currentControl.newTrainInput(new TrainModelInput(actualSpeedTest, comSpeedTest, speedLimitTest, authorityTest, beaconTest));
+        //currentControl.newTrainInput(new TrainModelInput(actualSpeedTest, comSpeedTest, speedLimitTest, authorityTest, beaconTest));
     }
 
     public void setActualVelocity(double inputVelocity){

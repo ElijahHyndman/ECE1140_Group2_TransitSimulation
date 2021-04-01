@@ -103,9 +103,6 @@ public class Train {
         calculateSpeed();
     }
 
-    public void setSampleTime(double sample){
-        sampleTime = sample;
-    }
 
     //ADDED FOR TESTING
     public double getPower(){
