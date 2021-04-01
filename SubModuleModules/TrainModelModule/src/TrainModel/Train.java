@@ -43,11 +43,15 @@ public class Train {
     String beacon;
     double power;// watts
     double accel;//  m/s^2
+    double maxServiceDecel = 1.2;
+    double maxEmergencyDecel = 2.73;
+    double maxAccel = 0.5;
     //TrackBlock myTrackBlock;
     double totalDistance; //meters
     double blockDistance;
     double blockGrade; //%
     double speedLimit; //km/h  (1 km/hr = .2778 m/s)
+
     //Fails
     boolean signalPickupFail;
     boolean engineFail;
@@ -97,7 +101,11 @@ public class Train {
     //setters
 
     public void setSpeed(double speed) {
-        if(speed >= 0){
+        if (speed > 19.44){
+            this.actualSpeed = 19.44;
+            this.displayActualSpeed = this.actualSpeed * 2.236936;
+        }
+        else if(speed >= 0){
             this.actualSpeed = speed;  
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         } else {
@@ -111,9 +119,10 @@ public class Train {
         this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setAccel(double acceleration) {
-        if(acceleration > 0.5){
-            this.accel = .5;
-            this.displayAcceleration = .5 * 2.236936;
+        this.maxAccel = 23330 / this.mass;
+        if(acceleration > maxAccel){
+            this.accel = this.maxAccel;
+            this.displayAcceleration = this.maxAccel * 2.236936;
         }else {
             this.accel = acceleration;
             this.displayAcceleration = this.accel * 2.236936;
@@ -172,8 +181,10 @@ public class Train {
         }
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
+
+            //F += this.blockGrade * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
-            newV = this.actualSpeed + (newA+this.accel)/(2*deltaTime); // m/s + average of 2 accels / time
+            newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels / time
             setSpeed(newV);
             setAccel(newA);
         }
@@ -210,6 +221,7 @@ public class Train {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
+        //this.maxEmergencyDecel = 127382 / this.mass;
         if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -218,6 +230,7 @@ public class Train {
         }
     }
     public void setEmergencyBrake(Boolean brake) {
+        //this.maxEmergencyDecel = 127382 / this.mass;
         if(this.brakeFail != true){
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -226,6 +239,7 @@ public class Train {
         }
     }
     public void setServiceBrake(Boolean brake) {
+        //this.maxServiceDecel = 55992 / this.mass;
         if(this.brakeFail != true){
             this.serviceBrake = brake;
             setAccel(-1 * this.standardDecelLimit);
