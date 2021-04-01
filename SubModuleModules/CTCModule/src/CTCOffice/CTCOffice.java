@@ -38,6 +38,7 @@ public class CTCOffice implements PhysicsUpdateListener
     public CharSequence timeNow;
     private LocalTime now;
     public Track trackObj;
+    public SimulationEnvironment SEobj;
 
     public CTCOffice()
     {
@@ -46,10 +47,11 @@ public class CTCOffice implements PhysicsUpdateListener
         } catch (IOException e) {
             e.printStackTrace();
         }
+        SEobj = null;
         trackObj = null;
     }
 
-    public CTCOffice(Track SEtrack)
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
     {
         try {
             waysides = new WaysideSystem();
@@ -57,6 +59,7 @@ public class CTCOffice implements PhysicsUpdateListener
             e.printStackTrace();
         }
         trackObj = SEtrack;
+        SEobj = SE;
     }
 
     public WaysideSystem getWaysideSystem()
@@ -208,9 +211,9 @@ public class CTCOffice implements PhysicsUpdateListener
         authority = calcAuthority(route);
         authArr = createAuthArr(route, authority);
 
-        if (speed<30)
+        if (speed<5)
         {
-            speed = 30;
+            speed = 5;
             double timeTravel = 1/(speed*1000/routeLength/60);
             long mins = (long)timeTravel;
             timeDisp = timeDis.minusMinutes(mins);
