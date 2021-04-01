@@ -26,50 +26,6 @@ class WaysideControllerTest {
         WaysideController controller = new WaysideController();
     }
 
-    //DEPRECATED!
-//    @Test
-//    @DisplayName("Testing Read Helper Function")
-//    public void testReader() throws IOException, URISyntaxException {
-//        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-//        String currentLine = "Blue";
-//        List<String> currentInputNames = Arrays.asList("A", "C", "D");
-//        boolean[] inputs = new boolean[]{false, true, true};
-//        boolean[] outputs;
-//
-//        WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
-//        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
-//        waysideController.generateOutputSignal("Switch1");
-//        outputs = waysideController.getOutputValues();
-//
-//        for(int i=0;i < outputs.length;i++){
-//            System.out.println("This is " + i + " : " + outputs[i]);
-//        }
-//
-//        System.out.println("Finished");
-//    }
-
-    //DEPRECATED!
-//    @Test
-//    @DisplayName("Testing Read Helper Function")
-//    public void testControllerFunctions() throws IOException, URISyntaxException {
-//        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-//        String currentLine = "Blue";
-//        List<String> currentInputNames = Arrays.asList("A", "C", "D");
-//        boolean[] inputs = new boolean[]{false, true, true};
-//        boolean[] outputs;
-//
-//        WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
-//        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
-//        waysideController.generateOutputSignal("Switch1");
-//        outputs = waysideController.getOutputValues();
-//
-//        for(int i=0;i < outputs.length;i++){
-//            System.out.println("This is " + i + " : " + outputs[i]);
-//        }
-//
-//        System.out.println("Finished");
-//    }
-
     /*
 
      */
@@ -83,7 +39,6 @@ class WaysideControllerTest {
         TrackBlock block2 = new TrackBlock();
         int[] blockNumbers = new int[]{0, 1, 2, 3};
         boolean[] occupiedElements = new boolean[]{false, true, false, false};
-        boolean[] occupiedBlocks = new boolean[]{true, false, false};
 
         //add the track elements
         ArrayList<TrackElement> trackElements = new ArrayList<>();
@@ -91,12 +46,6 @@ class WaysideControllerTest {
         trackElements.add(block1);
         trackElements.add(block2);
         trackElements.add(block3);
-
-        //add the track blocks
-        ArrayList<TrackBlock> trackBlocks = new ArrayList<>();
-        trackBlocks.add(block1);
-        trackBlocks.add(block2);
-        trackBlocks.add(block3);
 
         //set the block numbers
         for(int i=0;i < blockNumbers.length;i++){
@@ -108,17 +57,16 @@ class WaysideControllerTest {
             trackElements.get(i).setOccupied(occupiedElements[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
 
         Assertions.assertArrayEquals(occupiedElements, gpio.getAllInputValues());
-        Assertions.assertArrayEquals(occupiedBlocks, gpio.getInputValues());
     }
 
     @Test
-    @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
+    @DisplayName("Check if speed and authority can be set and received")
     public void testControllerSpeedAuthority() throws IOException, URISyntaxException {
         WaysideController controller;
         Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
@@ -131,7 +79,6 @@ class WaysideControllerTest {
         int[] authority = new int[]{1, 2, 3, 4};
 
         boolean[] occupiedElements = new boolean[]{false, true, false, false};
-        boolean[] occupiedBlocks = new boolean[]{true, false, false};
 
         //add the track elements
         ArrayList<TrackElement> trackElements = new ArrayList<>();
@@ -164,23 +111,23 @@ class WaysideControllerTest {
             trackElements.get(i).setAuthority(authority[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
 
-        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
-        controller.generateOutputSignal(0, false);
+        controller.addOutput(trackSwitch, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
+        controller.generateOutputSignal(trackSwitch, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));
         block2.setOccupied(true);
         block3.setOccupied(true);
-        controller.generateOutputSignal(0, false);
+        controller.generateOutputSignal(trackSwitch, false);
         Assertions.assertEquals(true, gpio.getOutput(0));
     }
 
     @Test
-    @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
+    @DisplayName("Add more inputs and outputs to test if PLC is working correctly")
     public void testControllerExtraInputs() throws IOException, URISyntaxException {
         WaysideController controller;
         Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
@@ -229,14 +176,14 @@ class WaysideControllerTest {
             trackElements.get(i).setAuthority(authority[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
         Switch newSwitch = new Switch();
 
-        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
-        controller.generateOutputSignal(0, false);
+        controller.addOutput(trackSwitch, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
+        controller.generateOutputSignal(trackSwitch, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));
         newSwitch = (Switch) gpio.getBlockElement(0);
@@ -244,11 +191,55 @@ class WaysideControllerTest {
 
         block2.setOccupied(true);
         block3.setOccupied(true);
-        controller.generateOutputSignal(0, false);
+        controller.generateOutputSignal(trackSwitch, false);
         Assertions.assertEquals(true, gpio.getOutput(0));
 
         newSwitch = (Switch) gpio.getBlockElement(0);
         System.out.println(newSwitch.getSwitchState());
     }
+
+    //DEPRECATED!
+//    @Test
+//    @DisplayName("Testing Read Helper Function")
+//    public void testReader() throws IOException, URISyntaxException {
+//        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//        String currentLine = "Blue";
+//        List<String> currentInputNames = Arrays.asList("A", "C", "D");
+//        boolean[] inputs = new boolean[]{false, true, true};
+//        boolean[] outputs;
+//
+//        WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
+//        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
+//        waysideController.generateOutputSignal("Switch1");
+//        outputs = waysideController.getOutputValues();
+//
+//        for(int i=0;i < outputs.length;i++){
+//            System.out.println("This is " + i + " : " + outputs[i]);
+//        }
+//
+//        System.out.println("Finished");
+//    }
+
+    //DEPRECATED!
+//    @Test
+//    @DisplayName("Testing Read Helper Function")
+//    public void testControllerFunctions() throws IOException, URISyntaxException {
+//        int[] blocks = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//        String currentLine = "Blue";
+//        List<String> currentInputNames = Arrays.asList("A", "C", "D");
+//        boolean[] inputs = new boolean[]{false, true, true};
+//        boolean[] outputs;
+//
+//        WaysideController waysideController = new WaysideController(blocks, currentLine, currentInputNames, inputs, "First Controller");
+//        waysideController.addOutputSignal("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3", "Switch1");
+//        waysideController.generateOutputSignal("Switch1");
+//        outputs = waysideController.getOutputValues();
+//
+//        for(int i=0;i < outputs.length;i++){
+//            System.out.println("This is " + i + " : " + outputs[i]);
+//        }
+//
+//        System.out.println("Finished");
+//    }
 
 }
