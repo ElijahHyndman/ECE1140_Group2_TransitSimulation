@@ -15,6 +15,7 @@ import java.util.Scanner;
         ArrayList<Switch> switchesArrayList;
         ArrayList<TrackElement> failureArrayList;
 
+
         //Track Variables
         boolean TRACK_HEATER;
         int SIZE_LINE_A=0;
@@ -381,6 +382,15 @@ import java.util.Scanner;
         }
 
 
+        /*getting blocks in line*/
+        public ArrayList<Integer> blocksInSection(char section){
+            ArrayList<Integer> blocks = new ArrayList<Integer>();
+            for(int i=1; i<greenTrack.size(); i++){
+                if(greenTrack.get(i).getSection() == section)
+                    blocks.add(greenTrack.get(i).getBlockNum());
+            }
+            return blocks;
+        }
 
         /*May Need a Method for Occupy -- Here send out beacon (if station), and authority / command speed?? */
 
