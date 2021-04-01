@@ -79,6 +79,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         additionalTable.setValueAt(mainTrain.nextStop, 9, 1);
         additionalTable.setValueAt(mainTrain.passengerCount, 10, 1);
         additionalTable.setValueAt(mainTrain.cabinTemp, 11, 1);
+        additionalTable.setValueAt(mainTrain.numberOfCars, 12, 1);
         
         updateTestDisplay();
            
@@ -370,7 +371,8 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                 {"Lights (Outer)", null, "Train Controller"},
                 {"Next Stop", null, "Train Controller"},
                 {"Passenger Count", null, "Train Model"},
-                {"Cabin Temperature (°F)", null, "Train Controller"}
+                {"Cabin Temperature (°F)", null, "Train Controller"},
+                {"Number of Cars", null, "Train Model"}
             },
             new String [] {
                 "Information", "Data", "Source"
