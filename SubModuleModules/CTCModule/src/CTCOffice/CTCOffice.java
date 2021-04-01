@@ -87,6 +87,7 @@ public class CTCOffice implements PhysicsUpdateListener
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
+        Vector<TrainUnit> trains = SEobj.getTrains();
 
         if (tNum.equals("Train 1"))
             trainNum = 1;
@@ -109,7 +110,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else
-            trainNum = 1;
+            SEobj.spawnRunningTrain();
 
         if (dest.equals("Station B")){
             blockNum = 10;
