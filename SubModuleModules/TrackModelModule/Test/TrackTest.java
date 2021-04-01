@@ -191,7 +191,8 @@ class TrackTest {
         //here we want to dispatch from the yard
         for(int i=0; i < 16; i++) {
             next = instance.getNext(cur,prev);
-            System.out.println(next);
+            if(next != null)
+                System.out.println(next.getBlockNum());
             prev = cur;
             cur = next;
             if(cur == null) {

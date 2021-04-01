@@ -57,9 +57,9 @@ public class Switch extends TrackElement{
                 switches[0] += " DEFAULT ";
             }else{
                 if(switches[0].substring(0,3).replaceAll("\\s","").equals("TO"))
-                    directionStates[0] = -1;
+                    directionStates[0] = 0;
                 if(switches[0].substring(0,5).replaceAll("\\s","").equals("FROM"))
-                    directionStates[2] = -1;
+                    directionStates[2] = 0;
             }
 
 
