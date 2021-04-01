@@ -60,7 +60,7 @@ public class WaysideSystem {
         ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
         String controllerName = "Controller " + Integer.toString(++numberOfControllers);
 
-        WaysideController controller = new WaysideController(elementArrayList, controllerName);
+        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
         controllers.add(controller);
 
         TrackElement trackElement;

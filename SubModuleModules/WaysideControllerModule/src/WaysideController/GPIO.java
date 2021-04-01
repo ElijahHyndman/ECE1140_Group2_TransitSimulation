@@ -16,27 +16,18 @@ public class GPIO {
     String controllerName;
 
     ArrayList<TrackElement> allBlocks;  //jurisdiction
-    //ArrayList<TrackBlock> blocks;  //jurisdiction
+    ArrayList<TrackBlock> blocks;  //jurisdiction
     HashMap<TrackElement, Boolean> outputValues;
 
     public GPIO(){
-        allBlocks = new ArrayList<>();
+        blocks = new ArrayList<>();
         outputValues = new HashMap<>();
         //numberOfBlocks = 0;
     }
 
-    public GPIO(ArrayList<TrackElement> allBlocks, String controllerName){
-        this.allBlocks = allBlocks;
-        //this.blocks = blocks;
-        this.controllerName = controllerName;
-        outputValues = new HashMap<>();
-        //numberOfBlocks = this.blocks.size();
-        numberOfOutputs = outputValues.size();
-    }
-
     public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
         this.allBlocks = allBlocks;
-        //this.blocks = blocks;
+        this.blocks = blocks;
         this.controllerName = controllerName;
         outputValues = new HashMap<>();
         //numberOfBlocks = this.blocks.size();
@@ -44,21 +35,21 @@ public class GPIO {
     }
 
     public int getNumberOfBlocks() {
-        return allBlocks.size();
+        return blocks.size();
     }
 
     /*
-        Gets the values from the occupied blocks - DEPRECATED
+        Gets the values from the occupied blocks
          */
-//    public boolean[] getInputValues(){
-//        boolean[] inputs = new boolean[blocks.size()];
-//
-//        for(int i=0;i < blocks.size();i++){
-//            inputs[i] = blocks.get(i).getOccupied();
-//        }
-//
-//        return inputs;
-//    }
+    public boolean[] getInputValues(){
+        boolean[] inputs = new boolean[blocks.size()];
+
+        for(int i=0;i < blocks.size();i++){
+            inputs[i] = blocks.get(i).getOccupied();
+        }
+
+        return inputs;
+    }
 
     public boolean[] getAllInputValues(){
         boolean[] inputs = new boolean[allBlocks.size()];
