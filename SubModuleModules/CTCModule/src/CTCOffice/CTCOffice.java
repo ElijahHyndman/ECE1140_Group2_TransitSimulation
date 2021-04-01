@@ -41,13 +41,21 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public CTCOffice()
     {
-        waysides = new WaysideSystem();
+        try {
+            waysides = new WaysideSystem(trackObj.getBlocks());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         trackObj = null;
     }
 
     public CTCOffice(Track SEtrack)
     {
-        waysides = new WaysideSystem();
+        try {
+            waysides = new WaysideSystem();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         trackObj = SEtrack;
     }
 
@@ -230,7 +238,11 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        //waysides.broadcastToControllers(speedArrG, authArr);
+        try {
+            waysides.broadcastToControllers(speedArrG, authArr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return speedAuthorityTime;
     }
@@ -296,92 +308,52 @@ public class CTCOffice implements PhysicsUpdateListener
         return thruP;
     }
 
-    /*public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
-    {
-            LocalTime nowT = LocalTime.parse(timeNow);
-            LocalTime t12 = LocalTime.parse(t1);
-            LocalTime t22 = LocalTime.parse(t2);
-            LocalTime t32 = LocalTime.parse(t3);
-            LocalTime t42 = LocalTime.parse(t4);
-            LocalTime t52 = LocalTime.parse(t5);
-            LocalTime t62 = LocalTime.parse(t6);
-            LocalTime t72 = LocalTime.parse(t7);
-            LocalTime t82 = LocalTime.parse(t8);
-            LocalTime t92 = LocalTime.parse(t9);
-            LocalTime t102 = LocalTime.parse(t10);
-
-            int val1 = nowT.compareTo(t12);
-            int val2 = nowT.compareTo(t22);
-            int val3 = nowT.compareTo(t32);
-            int val4 = nowT.compareTo(t42);
-            int val5 = nowT.compareTo(t52);
-            int val6 = nowT.compareTo(t62);
-            int val7 = nowT.compareTo(t72);
-            int val8 = nowT.compareTo(t82);
-            int val9 = nowT.compareTo(t92);
-            int val10 = nowT.compareTo(t102);
-
-            if(val1==0 || val2==0 || val3==0 || val4==0 || val5==0 || val6==0 || val7==0 || val8==0 || val9==0 || val10==0)
-                occ = true;
-            else
-                occ = false;
-
-        return occ;
-    }*/
     public boolean CheckOcc(int blockNum, String lineCol)
     {
        /*if (lineCol.equals("Green"))
             occ = waysideG.getOccupancy(blockNum);
         else
             occ = waysideR.getOccupancy(blockNum);*/
-        //status = waysides.getOccupancy(blockNum);
+        try {
+            occ = waysides.getOccupancy(blockNum, lineCol);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return occ;
     }
 
-    public boolean CheckSwitch(int blockNum)
+    public boolean CheckSwitch(int blockNum, String lineCol)
     {
         boolean switchstat=false;
-        //switchstat = waysides.getSwitchStatus(blockNum);
+        try {
+            switchstat = waysides.getSwitchStatus(blockNum, lineCol);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return switchstat;
     }
 
     public void OpenTrack(int blockNum, String lineCol)
     {
-        //waysides.setOpen(blockNum);
-        /*if (lineCol.equals("Green"))
-        {
-            for(int i=1; i<4; i++)
-            {
-                if (blockNum==i)
-                {
-                    for(int j=0; j<3; j++)
-                        waysideG.setOpen(j);
-                }
-            }
-            for(int i=4; i<7; i++)
-            {
-                if (blockNum==i)
-                {
-                    for (int j=3; j<6; j++)
-                        waysideG.setOpen(j);
-                }
-            }
-            for(int i=7; i<13; i++)
-            {
-                if(blockNum==i)
-                {
-                    for (int j = 6; j<12; j++)
-                        waysideG.setOpen(j);
-                }
-            }
-        }*/
+        char section = dispArr.get(blockNum).getSection();
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        int length = blocks.size();
 
+        for (int i=0; i<length; i++){
+            waysides.setOpen(blocks.get(i), lineCol);
+        }
     }
 
     public void CloseTrack(int blockNum, String lineCol)
     {
-        //waysides.setOpen(blockNum);
+        char section = dispArr.get(blockNum).getSection();
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        int length = blocks.size();
+
+        for (int i=0; i<length; i++){
+            waysides.setClose(blocks.get(i), lineCol);
+        }
     }
 
     public int calcRouteLength(int bn, String lc)
