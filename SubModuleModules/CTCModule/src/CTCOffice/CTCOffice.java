@@ -406,6 +406,32 @@ public class CTCOffice implements PhysicsUpdateListener
                 routeArr[i] = 1;
             }
         }
+        if (bn==65 && lc.equals("Green")){
+            for (int i=63; i<67; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if (bn==77 && lc.equals("Green")){
+            for (int i=63; i<79; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==88 && lc.equals("Green")){
+            for (int i=63; i<90; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==96 && lc.equals("Green")){
+            for (int i=63; i<98; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==123 && lc.equals("Green")){
+            for (int i=63; i<125; i++){
+                routeArr[i] = 1;
+            }
+        }
+
         return routeArr;
     }
 
@@ -433,15 +459,15 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public int[] createAuthArr(double[] rA, int auth)
     {
-        int a = auth;
         int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++){
             if (rA[i]!=0) {
-                for (int j = i; j < auth+i; j++) {
+                /*for (int j = i; j < auth+i; j++) {
                     aArr[j] = a;
                     a--;
                 }
-                break;
+                break;*/
+                aArr[i] = auth;
             }
         }
 
