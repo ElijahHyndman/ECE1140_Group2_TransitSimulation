@@ -220,7 +220,7 @@ import java.util.Scanner;
             int cur = current.getBlockNum();
 
 
-           if(cur == -1){
+           if(cur == 0){
                if(switchesArrayList.get(10).getIndex()==true)
                    return greenTrack.get(62);
                else
