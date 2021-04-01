@@ -32,6 +32,7 @@ public class GPIO {
         outputValues = new HashMap<>();
         //numberOfBlocks = this.blocks.size();
         numberOfOutputs = outputValues.size();
+
     }
 
     public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
