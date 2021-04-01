@@ -53,11 +53,8 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public CTCOffice(Track SEtrack, SimulationEnvironment SE)
     {
-        try {
-            waysides = new WaysideSystem();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        waysides = new WaysideSystem();
+=
         trackObj = SEtrack;
         SEobj = SE;
     }
@@ -110,7 +107,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else
-            SEobj.spawnRunningTrain();
+            SEobj.spawnRunningTrain(trackObj.getBlock(0),trackObj.getBlock(9));
 
         if (dest.equals("Station B")){
             blockNum = 10;
