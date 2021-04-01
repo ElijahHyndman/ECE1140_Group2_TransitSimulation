@@ -32,7 +32,7 @@ public class WaysideSystem {
        // generateLine();
     }
 
-    public WaysideSystem(ArrayList<TrackElement> blocks)  {
+    public WaysideSystem(ArrayList<TrackElement> blocks) throws IOException {
         controllers = new LinkedList<WaysideController>();
         this.outputBlocks = new ArrayList<>();
         this.lut = new HashMap<>();

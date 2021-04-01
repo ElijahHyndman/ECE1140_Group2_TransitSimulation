@@ -4,6 +4,8 @@ package CTCOffice;//Haleigh DeFoor
 import java.util.*;
 import java.io.*;
 import java.time.*;
+
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
@@ -53,9 +55,12 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public CTCOffice(Track SEtrack, SimulationEnvironment SE)
     {
-        waysides = new WaysideSystem();
-=
         trackObj = SEtrack;
+        try {
+            waysides = new WaysideSystem(trackObj.getBlocks());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         SEobj = SE;
     }
 
@@ -316,7 +321,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else
             occ = waysideR.getOccupancy(blockNum);*/
         try {
-            occ = waysides.getOccupancy(blockNum, lineCol);
+            occ = waysides.getOccupancy(findBlockObject(blockNum,lineCol));//blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -328,7 +333,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         boolean switchstat=false;
         try {
-            switchstat = waysides.getSwitchStatus(blockNum, lineCol);
+            switchstat = waysides.getSwitchStatus(findBlockObject(blockNum,lineCol));//blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -342,7 +347,11 @@ public class CTCOffice implements PhysicsUpdateListener
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setOpen(blocks.get(i), lineCol);
+            try {
+                waysides.openClose(findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -353,7 +362,11 @@ public class CTCOffice implements PhysicsUpdateListener
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setClose(blocks.get(i), lineCol);
+            try {
+                waysides.setClose(findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -462,6 +475,17 @@ public class CTCOffice implements PhysicsUpdateListener
     public ArrayList getDisps()
     {
         return dispArr;
+    }
+
+    private TrackElement findBlockObject(int blockIndex, String fromLine) {
+        ArrayList<TrackElement> allBlocks = trackObj.getBlocks();
+        // Search for block in array list
+        for (TrackElement block : allBlocks ) {
+            if(block.getBlockNum() == blockIndex && block.getLine() == fromLine)
+                return block;
+        }
+        // Was not found in array list
+        return null;
     }
 
 
