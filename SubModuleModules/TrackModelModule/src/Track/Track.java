@@ -148,6 +148,11 @@ import java.util.Scanner;
             {
                 e.printStackTrace();
             }
+
+            for(int i =0; i < switchesArrayList.size(); i++)
+                  switchesArrayList.get(i).setSwitchState(true); // 76 to 150
+
+
             return success;
         }
 

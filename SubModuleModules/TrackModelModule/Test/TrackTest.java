@@ -181,8 +181,6 @@ class TrackTest {
         Track instance = new Track();
         instance.importTrack(filepath);
 
-        for(int i = 7; i <13; i++)
-            instance.getSwitches().get(i).setSwitchState(true); // 76 to 150
 
         instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
         instance.updateSwitches();
