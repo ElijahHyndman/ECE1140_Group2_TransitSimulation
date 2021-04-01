@@ -181,8 +181,7 @@ public class Train {
         }
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
-
-            //F += this.blockGrade * this.mass * 9.81;
+            //F -= Math.sin(Math.atan(this.blockGrade/100)) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels / time
             setSpeed(newV);
