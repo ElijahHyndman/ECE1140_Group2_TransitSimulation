@@ -2,184 +2,224 @@ package WaysideController;
 
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
+import TrackConstruction.Switch;
+import TrackConstruction.TrackBlock;
+import TrackConstruction.TrackElement;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+
+import static java.lang.String.valueOf;
 
 public class WaysideController {
 
     //overall system defaults
     final private int DEFAULT_SPEEDLIMIT = 50;
-    final private int DEFAULT_SPEED= 0;
-    final private int DEFAULT_AUTHORITY = 1;
-    final private boolean DEFAULT_STATUS = true;
-    final private String DEFAULT_LINE = "BLUE";
-    final private int DEFAULT_OUTPUTS = 0;
-    final private int DEFAULT_BLOCKS = 1;
+    final private boolean DEFAULT_ISACTIVE = true;
+    final private boolean DEFAULT_ISSOFTWARE = true;
 
+    //controller information and statuses
     String name;
+    GPIO gpio;
+    boolean isActive;
+    boolean isSoftware;
+    int speedLimit;
 
-    //inputs from the blocks that are a part of this system (these are placeholders until the track is made)
-    private List<String> inputNames;
-    private boolean[] inputValues;
+    //input/output related data
+    HashMap<TrackElement, boolean[][]> outputMap; //overall output map
+    HashMap<TrackElement, List<String>> PLCScriptMap; //PLC saver output map
+    ArrayList<TrackBlock> blocks; //jurisdiction
+    ArrayList<TrackElement> allBlocks; //jurisdiction
 
-    //outputs and their respective devices
-    private List<String> outputTableDevices;
+    //testInputs/testOutputs
+    HashMap<TrackElement, boolean[]> testInputs; //some test inputs!
+    HashMap<TrackElement, Boolean> testOutputs; //overall output map
+
+    private List<boolean[][]> testTables;
     private List<boolean[][]> outputTables;
-    private List<Boolean> outputValues;
 
-    //values to monitor
-    private int speedLimit;
-    private int[] speed;
-    private int[] authority;
-    private boolean isActive;
-
-    //all connections
-    private int[] blocks; //values corresponds to value in track model and index references to speed in arr
-    private String currentLine;
-    private boolean isSoftware;
-    private List<String> PLCScript;
-
+    //not usable right now...
     public WaysideController(){
-        name = "BASE";
-
-        this.inputNames = new LinkedList<>();
-        this.inputValues = new boolean[0];
-
-        this.outputTableDevices = new LinkedList<>();
-        this.outputTables = new LinkedList<>();
-        this.outputValues = new LinkedList<>();
-
-        this.blocks = new int[0];
-        this.currentLine = DEFAULT_LINE;
-
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[0];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
-        }
-        this.authority = new int[0];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
-        this.isActive = DEFAULT_STATUS;
-        isSoftware = true;
+        name = "FAKE";
     }
-    
-    public WaysideController(int[] blocks, String currentLine, String name){
+
+    public WaysideController(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String name){
+        this.isActive = DEFAULT_ISACTIVE;
+        this.isSoftware = DEFAULT_ISSOFTWARE;
+        this.speedLimit = DEFAULT_SPEEDLIMIT;
+        this.PLCScriptMap = new HashMap<>();
+        this.outputMap = new HashMap<>();
+        this.testInputs = new HashMap<>();
+        this.blocks = blocks;
+        this.allBlocks = allBlocks;
         this.name = name;
 
-        this.inputNames = new LinkedList<>();
-        this.inputValues = new boolean[0];
-
-        this.outputTableDevices = new LinkedList<>();
-        this.outputTables = new LinkedList<>();
-        this.outputValues = new LinkedList<>();
-
-        this.blocks = blocks;
-        this.currentLine = currentLine;
-
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
-        }
-        this.authority = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
-        this.isActive = DEFAULT_STATUS;
-        isSoftware = true;
+        gpio = new GPIO(allBlocks, blocks, name);
     }
 
-    public WaysideController(int[] blocks, String currentLine, List<String> inputNames, boolean[] inputValues, String name){
-        this.name = name;
+    /*
+    Getters and setters for the name
+     */
+    public String getName(){ return name; }
+    public void setName(String newName){ this.name = newName; }
 
-        this.inputNames = inputNames;
-        this.inputValues = inputValues;
-
-        this.outputTableDevices = new LinkedList<>();
-        this.outputTables = new LinkedList<>();
-        this.outputValues = new LinkedList<>();
-
-        this.blocks = blocks;
-        this.currentLine = currentLine;
-
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.speed = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            speed[i] = DEFAULT_SPEED;
+    /*
+    sets the speed for all blocks within the jurisdiction
+     */
+    public void setSpeed(double[] speeds) throws IOException {
+        if(speeds.length != blocks.size()){
+            throw new IOException("Controller Error: There are too many/too few input speed values...");
         }
-        this.authority = new int[blocks.length];
-        for(int i=0;i < blocks.length;i++){
-            authority[i] = DEFAULT_AUTHORITY;
-        }
-        this.isActive = DEFAULT_STATUS;
-        isSoftware = true;
-    }
 
-    public boolean containsInput(String str) throws IOException {
-        if(!inputNames.contains(str)){
-            throw new IOException("Generate Error: The controller input doesn't exist...");
-        }
-        return true;
-    }
-
-    public boolean getInputValue(String name) throws IOException {
-        if(!inputNames.contains(name)){
-            throw new IOException("Generate Error: The controller input doesn't exist...");
-        }
-        return inputValues[inputNames.indexOf(name)];
-    }
-
-    public void recalculatePLC(){
-        //order of the inputs sent will return a table with the inputs in the same order
-
-    }
-
-    //helper functions
-    public int checkSuggestedSpeed(int speed){
-        if(speed > speedLimit){
-            return speedLimit;
-        }else{
-            return speed;
+        for(int i=0;i < blocks.size();i++){
+            blocks.get(i).setCommandedSpeed(speeds[i]);
         }
     }
 
-    //no real way to have a safety net for authority (don't have the track model to check next blocks+...)
-    public int checkSuggestedAuthority(int authority){
-//        for(int i = 0;i < 4; i++){
-//
-//        }
+    /*
+    sets the speed for all blocks within the jurisdiction
+     */
+    public void setSpeed(int blockNumber, double speeds) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+        allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
+    }
+
+    /*
+    gets the speed for all blocks within the jurisdiction
+     */
+    public double[] getSpeed() {
+        double[] speeds = new double[blocks.size()];
+
+        for(int i=0;i < blocks.size();i++){
+            speeds[i] = blocks.get(i).getCommandedSpeed();
+        }
+
+        return speeds;
+    }
+
+    /*
+    sets the authority for all blocks within the jurisdiction
+     */
+    public void setAuthority(int[] authorities) throws IOException {
+        if(authorities.length != blocks.size()){
+            throw new IOException("Controller Error: There are too many/too few input authories values...");
+        }
+
+        for(int i=0;i < blocks.size();i++){
+            blocks.get(i).setAuthority(authorities[i]);
+        }
+    }
+
+    public void setAuthority(int blockNumber, int authority) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+        allBlocks.get(allBlocks.indexOf(trackElement)).setAuthority(authority);
+    }
+
+    /*
+    gets the authority for all blocks within the jurisdiction
+     */
+    public double[] getAuthority() {
+        double[] authority = new double[blocks.size()];
+
+        for(int i=0;i < blocks.size();i++){
+            authority[i] = blocks.get(i).getAuthority();
+        }
 
         return authority;
     }
 
-    public void addOutputSignal(String PLCFile, String outputType) throws IOException, URISyntaxException {
+    /*
+
+     */
+    public boolean getSwitchStatus(int blockNumber) throws IOException {
+        Switch aSwitch = (Switch) getBlockElement(blockNumber);
+
+        return aSwitch.getIndex();
+    }
+
+    /*
+
+     */
+    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
+        Switch aSwitch = (Switch) getBlockElement(blockNumber);
+        aSwitch.setSwitchState(status);
+    }
+
+    /*
+    sets block close
+     */
+    public void setClose(int blockNumber) throws IOException {
+        TrackElement trackElement = getBlockElement(blockNumber);
+
+        //trackElement.setFailureStatus();
+    }
+
+    /*
+    add an output under the jurisdiction of this controller, a PLCFile MUST be associated during creation. It can be later updated too!
+     */
+    public void addOutput(int blockNumber, String PLCFile) throws IOException, URISyntaxException {
+        boolean bool;
+        TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
         engine.createTokens(PLCFile);
-        PLCScript = engine.getPLCString();
 
-        outputTableDevices.add(outputType);
-        outputTables.add(engine.calculateOutputMapNew(inputNames));
+        PLCScriptMap.put(trackElement, engine.getPLCString());
+        outputMap.put(trackElement, engine.calculateOutputMapNew(getAllInputNames()));
+        addTestInput(trackElement);
+
+        gpio.addOutput(trackElement, false);
+        bool = generateOutputSignal(trackElement.getBlockNum(), false);
+        gpio.addOutput(trackElement, bool);
     }
 
-    public void generateOutputSignal(String outputType) throws IOException {
-        int outputIndex;
-        boolean[][] outputMap;
-        boolean[][] searchMap;
+    /*
+    Updates the current block number with a new PLCFile
+     */
+    public void updateOutput(int blockNumber, String PLCFile) throws IOException, URISyntaxException {
+        boolean bool;
+        TrackElement trackElement = getBlockElement(blockNumber);
+        PLCEngine engine = new PLCEngine();
+        engine.createTokens(PLCFile);
 
-        outputIndex = outputTableDevices.indexOf(outputType);
-        outputMap = outputTables.get(outputIndex);
-        searchMap = new boolean[outputMap.length][outputMap[0].length-1];
+        PLCScriptMap.replace(trackElement, engine.getPLCString());
+        outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
 
-//        if(inputValues.length != searchMap.length){
-//            throw new IOException("Generate Error: Input values don't match the search map...");
+        bool = generateOutputSignal(trackElement.getBlockNum(), false);
+        gpio.updateOutput(trackElement, bool);
+    }
+
+    /*
+    Updates the test current block number with a new PLCFile
+     */
+    public void updateTestOutput() throws IOException, URISyntaxException {
+//        for(int i=0;i < outputMap.size();i++){
+//            outputMap.
 //        }
+//
+//        PLCScriptMap.replace(trackElement, engine.getPLCString());
+//        outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
+//
+//        bool = generateOutputSignal(trackElement.getBlockNum(), false);
+//        gpio.updateOutput(trackElement, bool);
+    }
 
-        for(int i=0;i < outputMap.length;i++){
-            for(int j=0;j < outputMap[0].length-1;j++)
-            searchMap[i][j] = outputMap[i][j];
+    /*
+    Generates an output single for a specific block number
+     */
+    public boolean generateOutputSignal(int blockNumber, boolean isTest) throws IOException { //or any unique identifier, change for other iterations...
+        TrackElement trackElement = getBlockElement(blockNumber);
+        boolean[][] outputs = outputMap.get(trackElement);
+        boolean[][] searchMap = new boolean[outputs.length][outputs[0].length-1];
+        boolean[] inputValues = gpio.getAllInputValues();
+
+        if(outputs == null){
+            throw new IOException("Controller Error: The element doesn't exist or bad block number!");
+        }
+
+        for(int i=0;i < outputs.length;i++){
+            for(int j=0;j < outputs[0].length-1;j++)
+                searchMap[i][j] = outputs[i][j];
         }
 
         boolean matched;
@@ -202,67 +242,30 @@ public class WaysideController {
         if(index == -1){
             throw new IOException("Generate Error: Bad inputs...");
         }
-        outputValues.add(outputIndex, outputMap[index][outputMap[0].length-1]);
+
+        if(isTest){
+            testOutputs.put(trackElement, outputs[index][outputs[0].length-1]);
+        }else{
+            //updates the gpio object with the new values
+            gpio.updateOutput(trackElement, outputs[index][outputs[0].length-1]);
+        }
+
+        //returns the updated value too!
+        return outputs[index][outputs[0].length-1];
     }
 
-    public void updateOutputSignal(String outputType) throws IOException {
-        int outputIndex;
-        boolean[][] outputMap;
-        boolean[][] searchMap;
-
-        outputIndex = outputTableDevices.indexOf(outputType);
-        outputMap = outputTables.get(outputIndex);
-        searchMap = new boolean[outputMap.length][outputMap[0].length-1];
-
-//        if(inputValues.length != searchMap.length){
-//            throw new IOException("Generate Error: Input values don't match the search map...");
-//        }
-
-        for(int i=0;i < outputMap.length;i++){
-            for(int j=0;j < outputMap[0].length-1;j++)
-                searchMap[i][j] = outputMap[i][j];
-        }
-
-        boolean matched;
-        int index = -1;
-        for(int i=0;i < searchMap.length;i++){
-            matched = true;
-            for(int j = 0;j < searchMap[i].length;j++){
-                if(searchMap[i][j] != inputValues[j]){
-                    matched = false;
-                    break;
-                }
-            }
-
-            if(matched){
-                index = i;
-                break;
-            }
-        }
-
-        if(index == -1){
-            throw new IOException("Generate Error: Bad inputs...");
-        }
-        outputValues.set(outputIndex, outputMap[index][outputMap[0].length-1]);
-    }
-
-    //will update the inputs from the blocks in the future, this will trigger if a block in the area is changed
-    public void updateInputs(boolean[] values) throws IOException {
-        inputValues = values;
-
-        for(int i=0;i < outputTableDevices.size();i++){
-            updateOutputSignal(outputTableDevices.get(i));
-        }
-    }
-
-    public List<String> getAllNames(){
+    //GUI **************************************************************************************************************
+    /*
+    Gets all the names for each of the following variables - inputValues, speed, authority, isActive for GUI
+     */
+    public List<String> getAllNames() throws IOException {
         List<String> temp = new LinkedList<>();
 
-        temp.addAll(inputNames);
-        for(int i=0;i < speed.length;i++){
+        temp.addAll(getInputNames());
+        for(int i=0;i < blocks.size();i++){
             temp.add("speed " + i + " : ");
         }
-        for(int i=0;i < authority.length;i++){
+        for(int i=0;i < blocks.size();i++){
             temp.add("authority " + i + " : ");
         }
         temp.add("isActive");
@@ -270,68 +273,15 @@ public class WaysideController {
         return temp;
     }
 
-    public List<Object> getAllData(){
+    public List<Object> getAllData() throws IOException {
         List<Object> temp = new LinkedList<>();
 
-        temp.addAll(Collections.singleton(inputValues));
-        temp.addAll(Collections.singleton(speed));
-        temp.addAll(Collections.singleton(authority));
+        temp.addAll(Collections.singleton(gpio.getInputValues()));
+        temp.addAll(Collections.singleton(getSpeed()));
+        temp.addAll(Collections.singleton(getAuthority()));
         temp.addAll(Collections.singleton(isActive));
 
         return temp;
-    }
-
-    public boolean updateInputs(String valueString, int index) throws IOException {
-        boolean temp;
-
-        if(valueString.equals("false")){
-            temp = false;
-        }else if(valueString.equals("true")){
-            temp = true;
-        }else{
-            return false; //doesn't work
-        }
-
-        for(int i=0;i < inputValues.length;i++){
-            if(index == i){
-                inputValues[i] = temp;
-                break;
-            }
-        }
-
-        for(int i=0;i < outputTables.size();i++){
-            updateOutputSignal(outputTableDevices.get(i));
-        }
-
-        return true;
-    }
-
-    public int[] getSpeedAllBlocks(){
-        return speed;
-    }
-
-    public void setSpeedAllBlocks(int newSpeed){
-        for(int i=0;i < speed.length;i++){
-            speed[i] = checkSuggestedSpeed(newSpeed);
-        }
-    }
-
-    public int[] getAuthorityAllBlocks(){
-        return authority;
-    }
-
-    public void setAuthorityAllBlocks(int newAuthority){
-        for(int i=0;i < authority.length;i++){
-            authority[i] = checkSuggestedAuthority(newAuthority);
-        }
-    }
-
-    public void setSpeedPerBlock(int speed, int block){
-        //speed;
-    }
-
-    public int getSpeedPerBlock(int speed, int block){
-        return speed;
     }
 
     public HashMap<String, Vector<String>> generateDescriptionNodes() {
@@ -340,6 +290,7 @@ public class WaysideController {
         //inputs - input signals
         String inputCategory = "Input Signals";
         Vector<String> inputVector = new Vector<>();
+        boolean[] inputValues = gpio.getInputValues();
         for(int i=0;i < inputValues.length;i++){
             inputVector.add("input "+i+" : "+inputValues[i]);
         }
@@ -348,18 +299,21 @@ public class WaysideController {
         //outputs - output signals, speed, authority, active
         String outputCategory = "Output Signals";
         Vector<String> outputVector = new Vector<>();
-        for(int i=0;i < outputValues.size();i++){
-            outputVector.add("output "+i+" : "+outputValues.get(i));
+        Boolean[] outputValues = gpio.getOutputValues();
+        for(int i=0;i < outputValues.length;i++){
+            outputVector.add("output "+i+" : "+outputValues[i]);
         }
         hash.put(outputCategory, outputVector);
 
         String speedCategory = "Speed";
         Vector<String> speedVector = new Vector<>();
+        double[] speed = getSpeed();
         for(int i=0;i < speed.length;i++){
             speedVector.add("block speed "+i+" : "+speed[i]);
         }
         hash.put(speedCategory, speedVector);
 
+        double[] authority = getAuthority();
         String authorityCategory = "Authority";
         Vector<String> authorityVector = new Vector<>();
         for(int i=0;i < authority.length;i++){
@@ -375,36 +329,94 @@ public class WaysideController {
         return hash;
     }
 
-    //GETTERS AND SETTERS
-    //these values will be received from the TRACK MODEL, CTC or set beforehand
-    public void setInputNames(List<String> inputNames) { this.inputNames = inputNames; }
-    public List<String> getInputNames(){ return inputNames; }
+    //Testing **********************************************************************************************************
+    /*
+    add,get,set TestInputs
+     */
+    public void addTestInput(TrackElement trackElement){
+        boolean[] totalInputs = new boolean[gpio.getNumberOfBlocks()];
 
-    public void setInputValues(boolean[] inputValues) { this.inputValues = inputValues; }
-    public boolean[] getInputValues(){ return inputValues; }
-
-    public void setSpeedLimit(int speedLimit){ this.speedLimit = speedLimit; }
-    public int getSpeedLimit(){ return speedLimit; }
-
-    public void setAllSpeed(int[] speed){ this.speed = speed; }
-    public int[] getAllSpeed(){ return speed; }
-    
-    public void setAuthority(int[] authority) { this.authority = authority; }
-    public int[] getAuthority() { return authority; }
-
-    public void setActive(boolean isActive) { this.isActive = isActive; }
-    public boolean getActive() { return isActive; }
-
-    public boolean[] getOutputValues() {
-        boolean[] outputs = new boolean[outputValues.size()];
-        for(int i=0;i < outputs.length;i++){
-            outputs[i] = outputValues.get(i);
+        for(int i=0;i < blocks.size();i++){
+            totalInputs[i] = false;
         }
-        return outputs;
+
+        testInputs.put(trackElement, totalInputs);
     }
 
-    public void setName(String name) { this.name = name; }
-    public String getName() { return this.name; }
-    public List<String> getOutputNames() { return outputTableDevices;}
-    public String toString() { return this.name; }
+    /*
+    NEEDS TO BE UPDATED FOR CURRENT CONTROLLER!
+     */
+    public boolean updateTestInputs(String valueString, int index){
+        boolean temp;
+
+        if(valueString.equals("false")){
+            temp = false;
+        }else if(valueString.equals("true")){
+            temp = true;
+        }else{
+            return false; //doesn't work
+        }
+
+        boolean[] inputValues = gpio.getInputValues();
+        for(int i=0;i < inputValues.length;i++){
+            if(index == i){
+                inputValues[i] = temp;
+                break;
+            }
+        }
+
+//        for(int i=0;i < outputTables.size();i++){
+//            updateOutputSignal(outputTableDevices.get(i));
+//        }
+
+        return true;
+    }
+
+    //GPIO *************************************************************************************************************
+    /*
+    Gets the GPIO//GPIO functions!
+     */
+    public GPIO getGPIO(){
+        return gpio;
+    }
+
+    //Helper Functions *************************************************************************************************
+    /*
+    helper function - gets all the inputs of the blocks
+     */
+    public List<String> getInputNames(){
+        List<String> inputNames = new LinkedList<>();
+
+        for(int i=0;i < blocks.size();i++){
+            inputNames.add(valueOf(blocks.get(i).getBlockNum()));
+        }
+
+        return inputNames;
+    }
+
+    /*
+    helper function - gets all the inputs of the blocks
+     */
+    public List<String> getAllInputNames(){
+        List<String> inputNames = new LinkedList<>();
+
+        for(int i=0;i < allBlocks.size();i++){
+            inputNames.add(valueOf(allBlocks.get(i).getBlockNum()));
+        }
+
+        return inputNames;
+    }
+
+    /*
+    helper function - finds the specific block element from the block number
+     */
+    public TrackElement getBlockElement(int blockNumber) throws IOException {
+        for(int i = 0; i < allBlocks.size(); i++){
+            if(blockNumber == allBlocks.get(i).getBlockNum()){
+                return allBlocks.get(i);
+            }
+        }
+
+        throw new IOException("Controller Error: No block with that number in controller - " + name);
+    }
 }
