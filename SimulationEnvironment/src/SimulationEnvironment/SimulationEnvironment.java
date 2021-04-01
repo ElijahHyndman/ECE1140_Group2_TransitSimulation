@@ -130,4 +130,5 @@ public class SimulationEnvironment {
     public void setClockResolution(double res) {clk.setResolution(res);}
     public CTCOffice getCTC() {return ctc;}
     public Track getTrackSystem() {return trackSystem;}
+    public Vector<TrainUnit> getTrains() {return trains;}
 }
