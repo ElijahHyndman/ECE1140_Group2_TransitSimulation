@@ -32,8 +32,7 @@ public class WaysideSystem {
        // generateLine();
     }
 
-    public WaysideSystem(ArrayList<TrackElement> blocks, String line)  {
-        currentLine = line;
+    public WaysideSystem(ArrayList<TrackElement> blocks)  {
         controllers = new LinkedList<WaysideController>();
         this.lut = new HashMap<>();
         this.blocks = blocks;

@@ -64,7 +64,7 @@ class WaysideSystemTest {
         }
 
         //creation of the test system
-        WaysideSystem system = new WaysideSystem(trackElements, "testLine");
+        WaysideSystem system = new WaysideSystem(trackElements);
         system.addWaysideController(trackElementsController1);
         system.addWaysideController(trackElementsController2);
         system.broadcastToControllers(speed, authority);
@@ -133,7 +133,7 @@ class WaysideSystemTest {
         }
 
         //creation of the test system
-        WaysideSystem system = new WaysideSystem(trackElements, "testLine");
+        WaysideSystem system = new WaysideSystem(trackElements);
         system.addWaysideController(trackElementsController1);
         system.addWaysideController(trackElementsController2);
         system.broadcastToControllers(speed, authority);
@@ -190,7 +190,7 @@ class WaysideSystemTest {
         }
 
         //creation of the test system
-        WaysideSystem system = new WaysideSystem(trackElements, "testLine");
+        WaysideSystem system = new WaysideSystem(trackElements);
         system.addWaysideController(trackElementsController1);
         system.addOutputWaysideController(trackSwitch, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
 
