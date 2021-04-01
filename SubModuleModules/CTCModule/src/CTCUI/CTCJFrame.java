@@ -31,7 +31,8 @@ public class CTCJFrame extends javax.swing.JFrame {
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame() {
+    public CTCJFrame(DisplayLine ctc) {
+        display = ctc;
         initComponents();
     }
 
@@ -643,16 +644,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         double blockG = displist.get(blockNo).getGrade();
         int sLim = (int)Math.round(displist.get(blockNo).getSpeedLimit()*0.621371);
         double elev = displist.get(blockNo).getElevation()*3.28084;
-        /*String t1 = displist.get(blockNo).getT1();
-        String t2 = displist.get(blockNo).getT2();
-        String t3 = displist.get(blockNo).getT3();
-        String t4 = displist.get(blockNo).getT4();
-        String t5 = displist.get(blockNo).getT5();
-        String t6 = displist.get(blockNo).getT6();
-        String t7 = displist.get(blockNo).getT7();
-        String t8 = displist.get(blockNo).getT8();
-        String t9 = displist.get(blockNo).getT9();
-        String t10 = displist.get(blockNo).getT10();*/
+
         boolean status = displist.get(blockNo-1).getStatus();
 
         boolean totalocc = false;
@@ -674,7 +666,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         }
 
 
-        if (block==0 || block>15)
+        if (block==0 || block>150)
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
         }
@@ -837,7 +829,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        DisplayLine dispatch = new DisplayLine();
+        DisplayLine dispatch = new DisplayLine(display.getTrack(), display.getSE());
 
         speedAuthority = dispatch.Dispatch(destination, train, timeD);
 
@@ -973,7 +965,9 @@ public class CTCJFrame extends javax.swing.JFrame {
         }
         else if (filename.equals("GreenLine"))
         {
-            filename = "/Users/haleighdefoor/schedule.csv";
+            //filename = "/Users/haleighdefoor/schedule.csv";
+            filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
+            //"/Users/haleighdefoor/schedule.csv";
         }
         else
         {
@@ -1050,7 +1044,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame().setVisible(true);
+                new CTCJFrame(new DisplayLine()).setVisible(true);
             }
         });
     }
