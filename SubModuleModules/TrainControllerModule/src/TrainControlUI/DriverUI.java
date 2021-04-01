@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
 
+import GUIInterface.AppGUIModule;
 import implementation.*;
+import java.util.Vector;
 
 
 /** DriverUI is the central user interface allowing the DRIVER to
@@ -17,9 +19,9 @@ import implementation.*;
  * Author: Reagan Dowling
  * Date: 02/24/2021
  */
-public class DriverUI implements ActionListener{
+public class DriverUI implements ActionListener, AppGUIModule {
 
-    private final TrainControl control;
+    private TrainControl control;
     private final TestingUI testing;
 
     public JFrame main;
@@ -51,9 +53,9 @@ public class DriverUI implements ActionListener{
     public Timer timer;
     public Graphics graphics;
 
-    public DriverUI(TrainControl trainController) {
+    public DriverUI() {
         //The train control associated for this train/driver
-        control = trainController;
+        //control = trainController;
 
         main = new JFrame("Train X");
         main.setSize(1600, 900);
@@ -126,20 +128,24 @@ public class DriverUI implements ActionListener{
         timer.start();
 
 
-        while (main.isVisible()) {
+    }
 
-            time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
-            speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*.621371)));
-            comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*.621371)));
-            limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*.621371)));
-            beaconMessage.setText(control.getBeacon());
-            authVal.setText(String.valueOf(format.format((control.getAuthority())*3.281)));
-            brake.setText(String.valueOf((control.getSafeBreakingDistance())*3.281));
-            message.setText(control.getSystemMessage());
-            accelerationValue.setText(String.valueOf(format.format(control.getAcceleration()*.621371)));
-            powerVal.setText(String.valueOf(format.format(control.getPower())));
-        }
+    public void latch(Object myObject){
 
+        control = (TrainControl) myObject;
+    }
+
+    public void update(){
+        time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
+        speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*2.23694)));
+        comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*2.23694)));
+        limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*2.23694)));
+        beaconMessage.setText(control.getBeacon());
+        authVal.setText(String.valueOf(format.format((control.getStoppingDistance()))));
+        brake.setText(String.valueOf((control.getSafeBreakingDistance())*3.281));
+        message.setText(control.getSystemMessage());
+        accelerationValue.setText(String.valueOf(format.format(control.getAcceleration()*.621371)));
+        powerVal.setText(String.valueOf(format.format(control.getPower())));
     }
 
     public void setUpWindow() {
@@ -495,7 +501,7 @@ public class DriverUI implements ActionListener{
 
 
     public static void main(String args[]){
-        new DriverUI(new TrainControl());
+        new DriverUI();
 
     }
 
