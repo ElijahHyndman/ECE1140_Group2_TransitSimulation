@@ -18,7 +18,7 @@ class WaysideSystemTest {
 
     //DEPRECATED
     @Test
-    @DisplayName("Dummy Test!")
+    @DisplayName("Dummy Test to test commandline functionality!")
     public void testDummy() throws IOException, URISyntaxException {
         String commandLine = "upload gaming potato";
         String[] commands = commandLine.split(" ");
@@ -37,25 +37,25 @@ class WaysideSystemTest {
     @Test
     @DisplayName("CommandLineTest!")
     public void testCommandLine() throws IOException, URISyntaxException {
-        WaysideSystem testSystem = new WaysideSystem();
-        WaysideUIClass guiUpdater;
-        guiUpdater = new WaysideUIClass(testSystem);
-        //testSystem.generateTestController();
-
-        System.out.println(testSystem.readConsole("upload Controller1 C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3 Switch1"));
-        System.out.println(testSystem.readConsole("compile Controller1 Switch1"));
-        System.out.println("starting GUI");
-        try {
-            guiUpdater.start();
-        } catch (Exception e) {
-            System.out.println("failed when running");
-        }
+//        WaysideSystem testSystem = new WaysideSystem();
+//        WaysideUIClass guiUpdater;
+//        guiUpdater = new WaysideUIClass(testSystem);
+//        //testSystem.generateTestController();
+//
+//        System.out.println(testSystem.readConsole("upload Controller1 C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3 Switch1"));
+//        System.out.println(testSystem.readConsole("compile Controller1 Switch1"));
+//        System.out.println("starting GUI");
+//        try {
+//            guiUpdater.start();
+//        } catch (Exception e) {
+//            System.out.println("failed when running");
+//        }
     }
 
     @Test
     @DisplayName("Block generation and assignment")
     public void testWaysideSystemBlockCreationAndAssignment() throws IOException, URISyntaxException {
-        Switch trackSwitch = new Switch();
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
         TrackBlock block1 = new TrackBlock();
         TrackBlock block2 = new TrackBlock();
         TrackBlock block3 = new TrackBlock();
@@ -120,7 +120,7 @@ class WaysideSystemTest {
     @DisplayName("Checks to see if all functionality is maintained")
     public void testWaysideSystemControllerPLCInputOutput() throws IOException, URISyntaxException {
         WaysideController controller;
-        Switch trackSwitch = new Switch();
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
         TrackBlock block1 = new TrackBlock();
         TrackBlock block2 = new TrackBlock();
         TrackBlock block3 = new TrackBlock();
@@ -165,7 +165,18 @@ class WaysideSystemTest {
         system.addWaysideController(blockNumbersController2);
         system.broadcastToControllers(speed, authority);
 
+        system.addWaysideController(blockNumbersController1);
+        system.addOutputWaysideController(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
 
+        System.out.println(system.getSwitchStatus(0));
+        system.setSwitchStatus(0, false);
+        System.out.println(system.getSwitchStatus(0));
+        block1.setOccupied(false);
+        system.updateOutputWaysideController(0);
+        System.out.println(system.getSwitchStatus(0));
+        block1.setOccupied(true);
+        system.updateAllOutputsWaysideController();
+        System.out.println(system.getSwitchStatus(0));
     }
 
     @Test
@@ -216,5 +227,14 @@ class WaysideSystemTest {
         system.addWaysideController(blockNumbersController1);
         system.addOutputWaysideController(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
 
+        System.out.println(system.getSwitchStatus(0));
+        system.setSwitchStatus(0, false);
+        System.out.println(system.getSwitchStatus(0));
+        block1.setOccupied(true);
+        block2.setOccupied(true);
+        block3.setOccupied(true);
+        system.updateAllOutputsWaysideController();
+        system.setSwitchStatus(0, true);
+        System.out.println(system.getSwitchStatus(0));
     }
 }

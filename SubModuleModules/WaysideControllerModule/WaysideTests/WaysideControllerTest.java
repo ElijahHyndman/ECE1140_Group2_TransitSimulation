@@ -121,7 +121,7 @@ class WaysideControllerTest {
     @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
     public void testControllerSpeedAuthority() throws IOException, URISyntaxException {
         WaysideController controller;
-        Switch trackSwitch = new Switch();
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
         TrackBlock block1 = new TrackBlock();
         TrackBlock block3 = new TrackBlock();
         TrackBlock block2 = new TrackBlock();

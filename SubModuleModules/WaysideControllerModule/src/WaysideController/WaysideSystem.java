@@ -35,6 +35,7 @@ public class WaysideSystem {
     public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {
         currentLine = line;
         controllers = new LinkedList<WaysideController>();
+        this.outputBlocks = new ArrayList<>();
         this.lut = new HashMap<>();
         this.blocks = blocks;
         numberOfControllers = 0;
@@ -74,6 +75,7 @@ public class WaysideSystem {
      */
     public void addOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
         getController(blockNumber).addOutput(blockNumber, PLCfile);
+        outputBlocks.add(getBlockElement(blockNumber, blocks));
         getController(blockNumber).generateOutputSignal(blockNumber, false);
     }
 
@@ -82,6 +84,15 @@ public class WaysideSystem {
      */
     public void updateOutputWaysideController(int blockNumber) throws IOException, URISyntaxException {
         getController(blockNumber).generateOutputSignal(blockNumber, false);
+    }
+
+    /*
+    update output within a wayside controller
+     */
+    public void updateAllOutputsWaysideController() throws IOException, URISyntaxException {
+        for(int i=0;i < outputBlocks.size();i++){
+            getController(i).generateOutputSignal(i, false);
+        }
     }
 
     //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
@@ -189,7 +200,7 @@ public class WaysideSystem {
     sets if a track should be CLOSED! failure status is currently used.
      */
     public void setClose(int blockNumber) throws IOException {
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(1);
+        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(4);
     }
 
     /*

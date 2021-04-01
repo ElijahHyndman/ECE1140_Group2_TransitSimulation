@@ -134,7 +134,6 @@ public class WaysideController {
      */
     public boolean getSwitchStatus(int blockNumber) throws IOException {
         Switch aSwitch = (Switch) getBlockElement(blockNumber);
-
         return aSwitch.getIndex();
     }
 
