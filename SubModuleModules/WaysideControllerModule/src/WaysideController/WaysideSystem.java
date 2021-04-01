@@ -1,10 +1,12 @@
 package WaysideController;
 
+import TrackConstruction.TrackBlock;
+import TrackConstruction.TrackElement;
 import WaysideGUI.WaysideUIClass;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import TrackConstruction.*;
 
 public class WaysideSystem {
 
@@ -57,10 +59,10 @@ public class WaysideSystem {
      */
     public void addWaysideController(int[] blockNumbers) throws IOException {
         ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
-        ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
+        //ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
         String controllerName = "Controller " + Integer.toString(++numberOfControllers);
 
-        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
+        WaysideController controller = new WaysideController(elementArrayList, controllerName);
         controllers.add(controller);
 
         TrackElement trackElement;
