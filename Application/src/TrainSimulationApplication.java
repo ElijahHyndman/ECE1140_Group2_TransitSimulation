@@ -121,22 +121,23 @@ public class TrainSimulationApplication extends Thread {
         run.getJFrame().setGreenLine();
         run.start();
 
-        run.getSE().getCTC().Dispatch("Dormont","new","00:08:00");
+        //run.getSE().getCTC().Dispatch("Dormont","new","00:08:00");
 
         CTCJFrame ctcui = new CTCJFrame(run.getSE().getCTC());
         ctcui.setVisible(true);
-        //System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
+        System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
 
         TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
         //yard.setCommandedSpeed(10.0);
         //yard.setAuthority(1);
-        System.out.println(yard);
+        //System.out.println(yard);
 
         run.getSE().getTrackSystem().getSwitches().get(10).setSwitchState(true);
         run.getSE().getTrackSystem().updateSwitches();
 
+        // wait for train to spawn
+        while(run.getSE().getTrains().size() == 0) {}
         TrainUnit runningTrain = run.getSE().getTrains().get(0);
-
         DriverUI ctrlUI = run.getSE().spawnTrainControllerUI(runningTrain);
         trainGUI modelUI = run.getSE().spawnTrainModelGUI(runningTrain);
         TrackGUI trackUI = run.getSE().spawnTrackBuilderGUI(run.getSE().getTrackSystem());

@@ -9,6 +9,7 @@ import TrainControlUI.DriverUI;
 import TrainModel.Train;
 import TrainModel.trainGUI;
 import WaysideController.WaysideSystem;
+import WaysideGUI.WaysideUIJFrameWindow;
 import WorldClock.*;
 import CTCOffice.*;
 import TrackConstruction.*;
@@ -66,6 +67,8 @@ public class SimulationEnvironment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String scheduleFilename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
 
         // Add PLCs to controller
         /*
@@ -186,6 +189,18 @@ public class SimulationEnvironment {
     }
     public CTCJFrame spawnCTCGUI(DisplayLine ctc) {
         return new CTCJFrame(ctc);
+    }
+
+    public WaysideUIJFrameWindow spawnWaysideGUI (WaysideSystem ws) {
+        WaysideUIJFrameWindow newUI = null;
+        try {
+            newUI = new WaysideUIJFrameWindow(ws);
+            newUI.latch(ws);
+            return newUI;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

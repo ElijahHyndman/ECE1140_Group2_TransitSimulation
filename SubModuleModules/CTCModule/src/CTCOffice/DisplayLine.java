@@ -36,6 +36,12 @@ public class DisplayLine extends CTCOffice
         SEobj = SE;
     }
 
+    public void copy(DisplayLine given) {
+        this.trackObj = given.getTrack();
+        this.waysides = given.waysides;
+        this.SEobj = given.SEobj;
+    }
+
     public DisplayLine()
     {
         this.throughput = 0;

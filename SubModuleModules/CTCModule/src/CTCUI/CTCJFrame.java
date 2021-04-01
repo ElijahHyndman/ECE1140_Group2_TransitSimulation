@@ -18,7 +18,7 @@ import java.time.*;
  */
 public class CTCJFrame extends javax.swing.JFrame {
 
-    DisplayLine display= new DisplayLine();
+    DisplayLine display;//= new DisplayLine();
     DefaultTableModel model, model2;
 
     /**
@@ -832,10 +832,11 @@ public class CTCJFrame extends javax.swing.JFrame {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        DisplayLine dispatch = new DisplayLine(display.getTrack(),display.getSE());
+        //DisplayLine dispatch = new DisplayLine(display.getTrack(),display.getSE());
+        DisplayLine dispatch = new DisplayLine();
+        dispatch.copy(display);
 
         speedAuthority = dispatch.Dispatch(destination, train, timeD);
-
         if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction"))
             line="Red";
         else
@@ -901,7 +902,7 @@ public class CTCJFrame extends javax.swing.JFrame {
             t10 = timeD;
         }
 
-        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        //dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
 
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
@@ -974,11 +975,13 @@ public class CTCJFrame extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-        DisplayLine fileLoader = new DisplayLine();
-        display = fileLoader;
-        display.LoadSchedule(filename);
+        filename = filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
+        DisplayLine fileLoader = new DisplayLine(display.getTrack(),display.SEobj);
+        DisplayLine scheduledisplay;
+        scheduledisplay = fileLoader;
+        scheduledisplay.LoadSchedule(filename);
 
-        ArrayList<DisplayLine> displist = display.getDisps();
+        ArrayList<DisplayLine> displist = scheduledisplay.getDisps();
 
         model = (DefaultTableModel)jTable2.getModel();
 
