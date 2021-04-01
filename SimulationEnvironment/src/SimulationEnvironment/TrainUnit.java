@@ -103,7 +103,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private double blockLength;
 
     volatile private double COMMANDED_SPEED=-1.0;
-    volatile private double COMMANDED_AUTHORITY=-1.0;
+    volatile private int COMMANDED_AUTHORITY=-1;
 
     /** Threading Members
      */
@@ -203,7 +203,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // TODO get block grade
         // TODO
         if(occupies != null) {}
-            hull.setBeacon(occupies.getBeacon());
+        hull.setBeacon(occupies.getBeacon());
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
@@ -292,11 +292,11 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
 
-        trainEventLogger.fine(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
-                                                name,this.hashCode(),
-                                                deltaTime_inSeconds,
-                                                hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance(),
-                                                currentTimeString)
+        trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
+                name,this.hashCode(),
+                deltaTime_inSeconds,
+                hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance(),
+                currentTimeString)
         );
 
         // Update Controller's physics
@@ -357,10 +357,10 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Feed Speed and Authority from track to Train Hull
         retrieveAuthorityFromTrack();
         retrieveSpeedFromTrack();
-        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%f) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
+        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%d) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
         control.getTrainData();
-        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%f,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
+        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%d,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
         //System.out.printf("Hull (%f,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
     }
 
@@ -372,7 +372,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          * @after TrainUnit's TrainModel "Hull" now has the Authority
          */
         if (occupies == null) {
-            COMMANDED_AUTHORITY = -1.0;
+            COMMANDED_AUTHORITY = -1;
             hull.setAuthority(COMMANDED_AUTHORITY);
             trainEventLogger.finest(String.format("TrainUnit (%s,%s) TrainModel is not on a rail, pulling invalid CommandedSpeed=-1.0",name,this.hashCode()));
             return;
@@ -423,14 +423,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             blockExceededFlag = true;
             // Find how far we are onto the next block (since physicsUpdates are spontaneous)
             double overshoot = currentDistanceOnBlock - blockLength;
-            trainEventLogger.finer(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
 
-            TrackElement nextBlock;
+            TrackElement nextBlock =null;
             // Next track block has to be retrieved from Track object
             if(trackLayout != null) {
                 // Uses current block and last occupied block to determine appropriate next block
                 if(simpleTrackTest) {
-                    nextBlock = trackLayout.getNextSimple(occupies, lastOccupied);
+                    //nextBlock = trackLayout.getNextSimple(occupies, lastOccupied);
                 } else {
                     nextBlock = trackLayout.getNext(occupies,lastOccupied);
                 }
@@ -438,13 +438,13 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 transition(nextBlock);
                 // Account for possible overshoot
                 hull.setBlockDistance(overshoot);
-                trainEventLogger.fine(String.format("Train (%s : %s) has transitioned to block (%s%c%d : %s)",
-                                        name,this.hashCode(),
-                                        occupies.getLine(),occupies.getSection(),occupies.getBlockNum(),occupies.hashCode()));
+                trainEventLogger.info(String.format("Train (%s : %s) has transitioned to block (%s%c%d : %s)",
+                        name,this.hashCode(),
+                        occupies.getLine(),occupies.getSection(),occupies.getBlockNum(),occupies.hashCode()));
                 trainEventLogger.finer(String.format("TrainUnit (%s : %s) has been fast fowarded on block (%s) to account for overshoot of %.2f meters",name,this.hashCode(),occupies.hashCode(),overshoot));
             }
 
-             }
+        }
     }
 
     public void configureForSimpleBlockLayout() {
@@ -494,7 +494,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                             "Block Location (%s)\n" +
                             "Last Block Location (%s)\n" +
                             "Commanded Speed (%.1f)\n" +
-                            "Authority (%.0f)\n" +
+                            "Authority (%d)\n" +
                             "Actual Speed (%.1f)\n",
                     toString(),
                     occupies, lastOccupied,
@@ -504,7 +504,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                             "Block Location (%s%s)\n" +
                             "Last Block Location (%s%s)\n" +
                             "Commanded Speed (%.1f)\n" +
-                            "Authority (%.0f)\n" +
+                            "Authority (%d)\n" +
                             "Actual Speed (%.1f)\n",
                     toString(),
                     occupies.getSection(), occupies.getBlockNum(),
@@ -528,6 +528,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public Train getHull() {
         return hull;
     }
+    public void setID(int ID) {this.trainID = ID;}
     public int getID() {return trainID;}
     public TrackElement getLocation() {
         return occupies;
@@ -541,7 +542,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public boolean isOnTrack() {
         return occupies != null;
     }
-    public double getCommandedAuthority() {
+    public int getCommandedAuthority() {
         return COMMANDED_AUTHORITY;
     }
     public double getCommandedSpeed() {

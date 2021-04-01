@@ -88,6 +88,8 @@ public class SimulationEnvironment {
         // Place train onto spawn location
         newTrain.spawnOn(location,awayFrom);
         addTrain(newTrain);
+        if(trackSystem != null)
+            newTrain.setReferenceTrack(trackSystem);
 
         // Add to physics listeners
         clk.addListener(newTrain);
@@ -124,6 +126,8 @@ public class SimulationEnvironment {
     public WorldClock getClock() {return clk;}
     public void pauseTime() {clk.halt();}
     public void startTime() {clk.start();}
+    public void setClockSpeed(double speed) {clk.setRatio(speed);}
+    public void setClockResolution(double res) {clk.setResolution(res);}
     public CTCOffice getCTC() {return ctc;}
     public Track getTrackSystem() {return trackSystem;}
 }

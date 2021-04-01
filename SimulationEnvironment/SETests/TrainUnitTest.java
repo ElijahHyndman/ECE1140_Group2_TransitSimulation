@@ -144,7 +144,7 @@ class TrainUnitTest {
 
         // Make TrackElement, put Train on it
         double expectedSpeed = 25.0;
-        double expectedAuthority = 10.0;
+        int expectedAuthority = 10;
         TrackBlock BlockGreenA = new TrackBlock();
         BlockGreenA.setCommandedSpeed(expectedSpeed);
         BlockGreenA.setAuthority(expectedAuthority);
@@ -348,7 +348,7 @@ class TrainUnitTest {
         assertEquals(-1.0,trn.getCommandedAuthority());
 
         // Place Train onto Block
-        double fakeAuthority = 10.0;
+        int fakeAuthority = 10;
         double fakeSpeed = 10.0;
         trn.placeOn(testBlock);
         testBlock.setAuthority(fakeAuthority);
@@ -365,7 +365,7 @@ class TrainUnitTest {
 
         // Updating speed and authority on the block will reflect onto the TrainUnit
         fakeSpeed = 40.0;
-        fakeAuthority = 3.0;
+        fakeAuthority = 3;
         testBlock.setAuthority(fakeAuthority);
         testBlock.setCommandedSpeed(fakeSpeed);
         // it takes a few milliseconds for the train to come back around in its sampling loop
@@ -403,7 +403,7 @@ class TrainUnitTest {
 
         //DriverUI controlgui = new DriverUI();
 
-        BlockGreenA.setAuthority(2.0);
+        BlockGreenA.setAuthority(2);
         BlockGreenA.setCommandedSpeed(25.0);
 
         trn.placeOn(BlockGreenA);
@@ -553,7 +553,7 @@ class TrainUnitTest {
         // Test block with 0 authority
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(10.0);
-        testBlock.setAuthority(0.0);
+        testBlock.setAuthority(0);
 
         // Physics clock for update commands
         WorldClock physicsClk = new WorldClock(4.0,1.0);
@@ -602,7 +602,7 @@ class TrainUnitTest {
         // Test Block
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(desiredSpeed);
-        testBlock.setAuthority(10000.0);
+        testBlock.setAuthority(10000);
 
         // Physics clock for update commands
         WorldClock physicsClk = new WorldClock(1.0,1.0);
@@ -651,7 +651,7 @@ class TrainUnitTest {
         // Test Block
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(desiredSpeed);
-        testBlock.setAuthority(10000.0);
+        testBlock.setAuthority(10000);
         trn.placeOn(testBlock);
 
         // Physics clock for update commands
@@ -836,7 +836,7 @@ class TrainUnitTest {
 
 
     @Test
-    @DisplayName("Block Movement\t\t[TrainUnit will correctly move around a circlular, three block track]")
+    @DisplayName("Block Movement\t\t[TrainUnit will correctly move around green line]")
     void trainMovesAroundGreenLine() {
         // Import track for use
         String filepath = "SEResources/GreenAndRedLine.csv";
@@ -844,7 +844,7 @@ class TrainUnitTest {
         NorthShoreExtension.importTrack(filepath);
 
         // Create Train
-        trn = new TrainUnit("Three Circle Train");
+        trn = new TrainUnit("Greenline Train");
         trn.setReferenceTrack(NorthShoreExtension);
         trn.blockExceededFlag = false;
         trn.setConsoleVerboseness(Level.INFO);
@@ -860,12 +860,14 @@ class TrainUnitTest {
         }
 
         // Setting switches from Grace's test file
+        /*
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(7),1); // 12 is connecting 1A to 13
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(8),0); //switch is 29 -30
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11),0); // switch from 77 to 76
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(12),0); // switch from 85 to 86
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(9),1); // switch NOT to the yard
         NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(10),0); // switch NOT to the yard
+        */
         /*for(int i = 0 ; i < 200 ; i++ ) {
             if(i == 90) {
                 //Here we need to TOGGLE SWITCH
@@ -880,14 +882,14 @@ class TrainUnitTest {
         }*/
 
         // Create TrainModel UI
-        trainGUI trainModelUI = new trainGUI(0);
-        trainModelUI.giveTrain(trn.getHull());
+        //trainGUI trainModelUI = new trainGUI(0);
+        //trainModelUI.giveTrain(trn.getHull());
 
         // Create TrainController UI
-        DriverUI trainControllerUI = new DriverUI(trn.getController());
+        //DriverUI trainControllerUI = new DriverUI();
 
         // Create physics clock
-        WorldClock physicsClk = new WorldClock(1.0,1.0);
+        WorldClock physicsClk = new WorldClock(1.0,10.0);
         physicsClk.addListener(trn);
 
         // print info to console
@@ -912,6 +914,7 @@ class TrainUnitTest {
         physicsClk.start();
 
         while(true) {
+            /*
             if(trn.getLocation().getBlockNum() == 90) {
                 //Here we need to TOGGLE SWITCH
                 NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11),1); // setting 76 to 150
@@ -922,11 +925,13 @@ class TrainUnitTest {
                 NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(11), 1); // setting 150 to be connected to F
                 NorthShoreExtension.setSwitch(NorthShoreExtension.getSwitches().get(7), 0); // 12 to  13
             }
+
+             */
             if(trn.blockExceededFlag)
                 System.out.println(trn.getLocation());
             trn.blockExceededFlag = false;
 
-            trainModelUI.updateDisplay();
+            //trainModelUI.updateDisplay();
             //trainControllerUI.updateDisplay();
         }
 

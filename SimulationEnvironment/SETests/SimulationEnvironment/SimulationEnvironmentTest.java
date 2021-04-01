@@ -1,10 +1,13 @@
 package SimulationEnvironment;
 
-import Track.Track;
+import Track.*;
+import TrainControlUI.DriverUI;
+import TrainModel.trainGUI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import TrackConstruction.*;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,6 +80,44 @@ class SimulationEnvironmentTest {
 
         SE.pauseTime();
         runningTrain.halt();
+    }
+
+    @Test
+    @DisplayName("Train Movement\t\t[TrainUnit will run around Green Line]")
+    void trainRunsGreenLine() {
+        String greenLinePath = "SEResources/GreenAndRedLine.csv";
+        SE = new SimulationEnvironment();
+        SE.importTrack(greenLinePath);
+        SE.setClockSpeed(10.0);
+
+        ArrayList<TrackElement> greenLine = SE.getTrackSystem().getGreenLine();
+        for(TrackElement block : greenLine) {
+            block.setAuthority(10);
+            block.setCommandedSpeed(20.0);
+        }
+
+        TrackElement startBlock = greenLine.get(60);
+        TrackElement orientBlock = greenLine.get(59);
+        TrainUnit runningTrain = SE.spawnRunningTrain(startBlock,orientBlock);
+
+
+        SE.startTime();
+
+        runningTrain.blockExceededFlag=false;
+
+        DriverUI controllerUI = new DriverUI();
+        trainGUI modelUI = new trainGUI(1);
+        controllerUI.latch(runningTrain.getController());
+        modelUI.latch(runningTrain.getHull());
+        TrackGUI trackui = new TrackGUI(SE.getTrackSystem());
+        trackui.setVisible(true);
+        trackui.latch(SE.getTrackSystem());
+
+        while(true) {
+            controllerUI.update();
+            modelUI.updateDisplay();
+            trackui.latch(SE.getTrackSystem());
+        }
     }
 
     @Test
