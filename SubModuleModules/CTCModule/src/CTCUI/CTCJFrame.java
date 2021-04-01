@@ -16,6 +16,13 @@ import java.time.*;
  *
  * @author haleighdefoor
  */
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+//iteration 2
+
 public class CTCJFrame extends javax.swing.JFrame {
 
     DisplayLine display = new DisplayLine();
@@ -209,7 +216,7 @@ public class CTCJFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Train:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormant", "Mt Lebanon", "Castle Shannon" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dormont", "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormant", "Mt Lebanon", "Castle Shannon" }));
 
         jLabel6.setText("Destination:");
 
@@ -946,7 +953,7 @@ public class CTCJFrame extends javax.swing.JFrame {
     }
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:\
+        // TODO add your handling code here:
         int tp = display.CalcThroughput();
         display.setThroughput(tp);
 
@@ -1010,6 +1017,7 @@ public class CTCJFrame extends javax.swing.JFrame {
     }
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
     }
 
     /**
