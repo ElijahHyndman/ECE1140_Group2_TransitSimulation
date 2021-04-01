@@ -21,9 +21,9 @@ public class TestDriverUI {
     }
 
     @Test
-    public void testSetup(){
+    public void testSetup() {
 
-
+/*
 
         DriverUI ui = new DriverUI();
         ui.latch(control);
@@ -31,6 +31,9 @@ public class TestDriverUI {
         while(run){
             ui.update();
         }
+    }
+
+ */
     }
 
 }

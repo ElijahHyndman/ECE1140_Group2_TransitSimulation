@@ -485,8 +485,7 @@ public class DriverUI implements ActionListener, AppGUIModule {
         }
     }
 
-
-
+    
     public static void main(String args[]){
        // new DriverUI();
     }
