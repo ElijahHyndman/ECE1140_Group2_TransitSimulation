@@ -57,10 +57,10 @@ public class WaysideSystem {
      */
     public void addWaysideController(int[] blockNumbers) throws IOException {
         ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
-        ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
+        //ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
         String controllerName = "Controller " + Integer.toString(++numberOfControllers);
 
-        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
+        WaysideController controller = new WaysideController(elementArrayList, controllerName);
         controllers.add(controller);
 
         TrackElement trackElement;

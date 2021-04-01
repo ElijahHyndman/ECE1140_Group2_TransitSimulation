@@ -26,6 +26,15 @@ import javax.swing.table.TableCellRenderer;
 /**
  *
  * @author elijah
+ *//*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author elijah
  */
 public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
@@ -42,6 +51,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         //ClockResolutionSlider.setMinimum((int) clk.MINIMUM_RESOLUTION);
         //ClockResolutionSlider.setMaximum((int) clk.MAXIMUM_RESOLUTION);
         UpdateSpawnTables();
+        ClockRatioSlider.setValue((int) DisplaySE.getClock().getRatio());
+        ClockResolutionSlider.setValue((int) DisplaySE.getClock().getResolution());
         this.setVisible(true);
     }
     public void latch(Object myObj) {
@@ -430,7 +441,6 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
     private void ClockResolutionSliderMouseReleased(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-
         DisplaySE.getClock().setResolution(ClockResolutionSlider.getValue());
     }
 

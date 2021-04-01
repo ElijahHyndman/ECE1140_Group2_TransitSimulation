@@ -108,22 +108,13 @@ public class TrainSimulationApplication extends Thread {
         return null;
     }*/
 
-    public void spawnTrainModelGUI(TrainUnit unit) {
-
-        Train model = unit.getHull();
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                trainGUI ui = new trainGUI(0);
-                ui.latch(model);
-                ui.setVisible(true);
-                while(true) {
-                    ui.update();
-                    System.out.println("train");
-                }
-            }
-        });
+    public DriverUI spawnControllerUI(TrainControl ctrl) {
+        DriverUI newUI = new DriverUI();
+        newUI.latch(ctrl);
+        return newUI;
     }
+
+
 
     public static void main(String[] args) {
         TrainSimulationApplication run = new TrainSimulationApplication("Green");
@@ -136,8 +127,8 @@ public class TrainSimulationApplication extends Thread {
         ctcui.setVisible(true);
 
         TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
-        yard.setCommandedSpeed(10.0);
-        yard.setAuthority(1);
+        //yard.setCommandedSpeed(10.0);
+        //yard.setAuthority(1);
         System.out.println(yard);
 
         run.getSE().getTrackSystem().getSwitches().get(10).setSwitchState(true);
@@ -145,20 +136,16 @@ public class TrainSimulationApplication extends Thread {
 
         TrainUnit runningTrain = run.getSE().getTrains().get(0);
 
-        DriverUI controllerUI = new DriverUI();
-        trainGUI modelUI = new trainGUI(1);
-        controllerUI.latch(runningTrain.getController());
-        modelUI.latch(runningTrain.getHull());
-        TrackGUI trackui = new TrackGUI(run.getSE().getTrackSystem());
-        trackui.setVisible(true);
-        trackui.latch(run.getSE().getTrackSystem());
-
+        DriverUI ctrlUI = run.getSE().spawnTrainControllerUI(runningTrain);
+        trainGUI modelUI = run.getSE().spawnTrainModelGUI(runningTrain);
+        TrackGUI trackUI = run.getSE().spawnTrackBuilderGUI(run.getSE().getTrackSystem());
+        trackUI.setVisible(true);
 
         while(true) {
-            controllerUI.update();
-            //modelUI.updateDisplay();
+            ctrlUI.update();
+            modelUI.updateDisplay();
             modelUI.update();
-            trackui.latch(run.getSE().getTrackSystem());
+            trackUI.latch(run.getSE().getTrackSystem());
         }
     }
 }

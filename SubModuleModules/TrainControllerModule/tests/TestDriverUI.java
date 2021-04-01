@@ -11,7 +11,7 @@ public class TestDriverUI {
 
     @Before
     public void setUp(){
-         theTrain = new Train(5, 4);
+         theTrain = new Train(5, 4,0);
          control = new TrainControl(theTrain);
          theTrain.setBeacon("Dormont: 200");
          theTrain.setAuthority(10);

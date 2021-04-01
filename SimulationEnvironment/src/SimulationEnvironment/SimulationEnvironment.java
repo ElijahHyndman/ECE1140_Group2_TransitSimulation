@@ -3,10 +3,15 @@ package SimulationEnvironment;
 import java.io.IOException;
 import java.util.Vector;
 
-import Track.Track;
+import CTCUI.CTCJFrame;
+import Track.*;
+import TrainControlUI.DriverUI;
+import TrainModel.Train;
+import TrainModel.trainGUI;
 import WorldClock.*;
 import CTCOffice.*;
 import TrackConstruction.*;
+import implementation.TrainControl;
 
 public class SimulationEnvironment {
     /** hosts the entirety of a Simulation World, including all submodules, for a train simulation project.
@@ -144,6 +149,29 @@ public class SimulationEnvironment {
 //        addTrain(newTrain);
 //        newTrain.placeOn(location);
 //    }
+
+    /*
+        GUI Spawning
+     */
+    public DriverUI spawnTrainControllerUI(TrainUnit unit) {
+        TrainControl ctrl = unit.getController();
+        DriverUI newUI = new DriverUI();
+        newUI.latch(ctrl);
+        return newUI;
+    }
+    public trainGUI spawnTrainModelGUI(TrainUnit unit) {
+        Train model = unit.getHull();
+        trainGUI newUI = new trainGUI(0);
+        newUI.latch(model);
+        return newUI;
+    }
+    public TrackGUI spawnTrackBuilderGUI(Track system) {
+        TrackGUI newUI = new TrackGUI(system);
+        return newUI;
+    }
+    public CTCJFrame spawnCTCGUI(CTCOffice ctc) {
+        return new CTCJFrame(ctc);
+    }
 
 
     private void addTrain(TrainUnit newTrain) {
