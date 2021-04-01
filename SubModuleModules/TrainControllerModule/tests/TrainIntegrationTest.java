@@ -31,7 +31,7 @@ public class TrainIntegrationTest {
         theTrain.setAuthority(800);
         theTrain.setCommandedSpeed(30);
         control.getTrainData();
-        assertThat(control.getAuthority(), is(800.0));
+        assertThat(control.getAuthority(), is(800));
         assertThat(control.getCommandedSpeed(), is(30.0));
 
         theTrain.setSpeed(15);
@@ -172,14 +172,14 @@ public class TrainIntegrationTest {
 
        // theTrain.setCommandedSpeed(10);
         System.out.println("-----start over-----");
-        control.updateCommandOutputs("first test", .1);
+        control.updateCommandOutputs("first test", 1);
 
         double initialTrainVelocity = control.getActualSpeed();
 
         //int i = 0;
         boolean stop = false;
         while(!stop){
-            control.updateCommandOutputs("test time", .1);
+            control.updateCommandOutputs("test time", 1);
             double power = control.getPower();
             assertThat(theTrain.getPower(), is(power));
             if (theTrain.getActualSpeed() == 0){

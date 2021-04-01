@@ -1,7 +1,6 @@
 package implementation;
 
 import TrainModel.Train;
-import systemData.trackData;
 
 
 public class TrainControl {
@@ -10,7 +9,6 @@ public class TrainControl {
     private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
-    private trackData track;
 
     private double velocityCmd; //the train's ideal velocity, units m/s
     private double trainVelocity; //the actual velocity of the train, units m/s
@@ -64,8 +62,7 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        track = new trackData("Blue");
-        nonVitalComponents = new NonVitalComponents(track);
+        nonVitalComponents = new NonVitalComponents();
         sampleTime = 1;
         controlNonVital();
     }
@@ -122,7 +119,7 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
-               if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
+               if (stoppingDistance <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
                     } else {
@@ -301,7 +298,7 @@ public class TrainControl {
         if (!(beacon==null) && !beaconSet){
             beaconSet = true;
             int start = beacon.indexOf(" ");
-            double stop = Integer.parseInt(beacon.substring(start+1, beacon.length()));
+            double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
             stoppingDistance = stop;
         }else if (beacon == null){
             stoppingDistance = -1;
