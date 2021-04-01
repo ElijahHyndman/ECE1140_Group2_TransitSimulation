@@ -16,18 +16,27 @@ public class GPIO {
     String controllerName;
 
     ArrayList<TrackElement> allBlocks;  //jurisdiction
-    ArrayList<TrackBlock> blocks;  //jurisdiction
+    //ArrayList<TrackBlock> blocks;  //jurisdiction
     HashMap<TrackElement, Boolean> outputValues;
 
     public GPIO(){
-        blocks = new ArrayList<>();
+        allBlocks = new ArrayList<>();
         outputValues = new HashMap<>();
         //numberOfBlocks = 0;
     }
 
     public GPIO(ArrayList<TrackElement> allBlocks, String controllerName){
         this.allBlocks = allBlocks;
-        this.blocks = blocks;
+        //this.blocks = blocks;
+        this.controllerName = controllerName;
+        outputValues = new HashMap<>();
+        //numberOfBlocks = this.blocks.size();
+        numberOfOutputs = outputValues.size();
+    }
+
+    public GPIO(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String controllerName){
+        this.allBlocks = allBlocks;
+        //this.blocks = blocks;
         this.controllerName = controllerName;
         outputValues = new HashMap<>();
         //numberOfBlocks = this.blocks.size();
@@ -39,17 +48,17 @@ public class GPIO {
     }
 
     /*
-        Gets the values from the occupied blocks
+        Gets the values from the occupied blocks - DEPRECATED
          */
-    public boolean[] getInputValues(){
-        boolean[] inputs = new boolean[blocks.size()];
-
-        for(int i=0;i < blocks.size();i++){
-            inputs[i] = blocks.get(i).getOccupied();
-        }
-
-        return inputs;
-    }
+//    public boolean[] getInputValues(){
+//        boolean[] inputs = new boolean[blocks.size()];
+//
+//        for(int i=0;i < blocks.size();i++){
+//            inputs[i] = blocks.get(i).getOccupied();
+//        }
+//
+//        return inputs;
+//    }
 
     public boolean[] getAllInputValues(){
         boolean[] inputs = new boolean[allBlocks.size()];
@@ -63,6 +72,7 @@ public class GPIO {
 
     public boolean getOccupancy(int blockNumber) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
+
         return trackElement.getOccupied();
     }
 
