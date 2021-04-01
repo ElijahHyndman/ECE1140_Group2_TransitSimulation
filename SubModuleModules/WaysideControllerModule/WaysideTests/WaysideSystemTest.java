@@ -156,7 +156,7 @@ class WaysideSystemTest {
         double[] speed = new double[]{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0};
         int[] authority = new int[]{1, 2, 3, 4, 5, 6, 7};
 
-        boolean[] occupiedElements = new boolean[]{false, true, false, false, true, true, true};
+        boolean[] occupiedElements = new boolean[]{false, true, true, true, true, true, true};
 
         //add the track elements
         ArrayList<TrackElement> trackElements = new ArrayList<>();
@@ -194,6 +194,12 @@ class WaysideSystemTest {
         system.addWaysideController(trackElementsController1);
         system.addOutputWaysideController(trackSwitch, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testPLC1");
 
+        System.out.println(system.getSwitchStatus(trackSwitch));
+        system.setSwitchStatus(trackSwitch, false);
+        System.out.println(system.getSwitchStatus(trackSwitch));
+        block1.setOccupied(false);
+        system.updateOutputWaysideController(trackSwitch);
+        System.out.println(system.getSwitchStatus(trackSwitch));
     }
 
     //DEPRECATED

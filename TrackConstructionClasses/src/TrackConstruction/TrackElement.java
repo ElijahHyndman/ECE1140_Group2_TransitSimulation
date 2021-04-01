@@ -29,7 +29,7 @@ public class TrackElement {
     String beacon;
 
     //keeping track of failures
-    String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE"};
+    String[] possibleStates = {"NONE","BROKEN RAIL", "POWER FAILURE", "CIRCUIT FAILURE","CLOSED"};
     String failureStatus;
 
 

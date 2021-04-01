@@ -216,7 +216,14 @@ public class WaysideSystem {
     sets if a track should be CLOSED! failure status is currently used.
      */
     public void setClose(TrackElement trackElement) throws IOException {
-        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(1);
+        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(4);
+    }
+
+    /*
+    sets if a track has a failure! failure status is currently used.
+     */
+    public void setFailure(TrackElement trackElement, int statusNumber) throws IOException {
+        getWaysideController(trackElement).getTrackElement(trackElement).setFailureStatus(statusNumber);
     }
 
     /*
