@@ -202,8 +202,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          */
         // TODO get block grade
         // TODO
-        if(occupies != null) {}
-        hull.setBeacon(occupies.getBeacon());
+        if(occupies != null) {
+            hull.setBeacon(occupies.getBeacon());
+        }
     }
 
     private void onBlockTransition(TrackElement NewBlock, TrackElement oldBlock) {
@@ -359,7 +360,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         retrieveSpeedFromTrack();
         trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%d) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
-        control.getTrainData();
+        //control.getTrainData();
         trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%d,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
         //System.out.printf("Hull (%f,%f) control (%f,%f)\n",hull.getAuthority(),hull.getCommandedSpeed(),control.getAuthority(),control.getCommandedSpeed());
     }

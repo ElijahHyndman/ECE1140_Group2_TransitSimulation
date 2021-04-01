@@ -22,7 +22,7 @@ public class SimulationEnvironment {
      */
     private WorldClock clk;
     private CTCOffice ctc;
-    private Track trackSystem;
+    private Track trackSystem = new Track();
 
     /** World Object Variables
      */
@@ -32,7 +32,7 @@ public class SimulationEnvironment {
         /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
          */
         clk= new WorldClock();
-        ctc= new CTCOffice();
+        ctc= new CTCOffice(trackSystem,this);
     }
 
     /*
