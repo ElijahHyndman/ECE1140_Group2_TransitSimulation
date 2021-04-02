@@ -1,6 +1,3 @@
 LD 58
 NOT
-LD 0
-NOT
-AND
 SET

@@ -240,7 +240,7 @@ class WaysideSystemTest {
     }
 
     @Test
-    @DisplayName("Testing the track green line!")
+    @DisplayName("Testing the track manual line!")
     public void InterModuleTests() throws IOException, URISyntaxException {
         System.out.println("importTrack");
         String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
@@ -251,13 +251,16 @@ class WaysideSystemTest {
         WaysideSystem system = new WaysideSystem(instance.getGreenLine(), "testLine");
 
         int[] controller1Blocks = new int[20];
-        int[] controller2Blocks = new int[38];
+        int[] controller2Blocks = new int[19];
+        int[] controller10Blocks = new int[12];
+        int[] controller11Blocks = new int[7];
         int[] controller3Blocks = new int[13];
-        int[] controller4Blocks = new int[13];
+        int[] controller4Blocks = new int[14];
         int[] controller5Blocks = new int[8];
         int[] controller6Blocks = new int[20];
-        int[] controller7Blocks = new int[1];
-        int[] controller8Blocks = new int[38];
+        //int[] controller7Blocks = new int[1];
+        int[] controller8Blocks = new int[19];
+        int[] controller9Blocks = new int[19];
         int j;
 
         //controller1
@@ -269,13 +272,27 @@ class WaysideSystemTest {
 
         //controller2
         j = 21;
-        for(int i=0;i <= 26;i++){
+        for(int i=0;i <= 14;i++){
             controller2Blocks[i] = j;
             j++;
         }
-        j = 140;
-        for(int i=27;i <= 37;i++){
+        j = 147;
+        for(int i=15;i <= 18;i++){
             controller2Blocks[i] = j;
+            j++;
+        }
+
+        //controller11
+        j=140;
+        for(int i=0;i <= 6;i++){
+            controller11Blocks[i] = j;
+            j++;
+        }
+
+        //controller10
+        j = 36;
+        for(int i=0;i <= 11;i++){
+            controller10Blocks[i] = j;
             j++;
         }
 
@@ -292,6 +309,7 @@ class WaysideSystemTest {
             controller4Blocks[i] = j;
             j++;
         }
+        controller4Blocks[13] = 0;
 
         //controller5
         j=74;
@@ -308,15 +326,34 @@ class WaysideSystemTest {
             j++;
         }
 
-        //controller7
-        controller7Blocks[0] = 0;
+//        //controller7
+//        controller7Blocks[0] = 0;
 
         //controller8
         j=102;
-        for(int i=0;i <= 37;i++){
+        for(int i=0;i <= 18;i++){
             controller8Blocks[i] = j;
             j++;
         }
+
+        //controller8
+        j=121;
+        for(int i=0;i <= 18;i++){
+            controller9Blocks[i] = j;
+            j++;
+        }
+
+//        printArr(controller1Blocks);
+//        printArr(controller2Blocks);
+//        printArr(controller3Blocks);
+//        printArr(controller4Blocks);
+//        printArr(controller5Blocks);
+//        printArr(controller6Blocks);
+//        //printArr(controller7Blocks);
+//        printArr(controller8Blocks);
+//        printArr(controller9Blocks);
+//        printArr(controller10Blocks);
+//        printArr(controller11Blocks);
 
         // Create controllers from jurisdictions
         system.addWaysideController(controller1Blocks);
@@ -325,8 +362,87 @@ class WaysideSystemTest {
         system.addWaysideController(controller4Blocks);
         system.addWaysideController(controller5Blocks);
         system.addWaysideController(controller6Blocks);
-        system.addWaysideController(controller7Blocks);
+        //system.addWaysideController(controller7Blocks);
         system.addWaysideController(controller8Blocks);
+        system.addWaysideController(controller9Blocks);
+        system.addWaysideController(controller10Blocks);
+        system.addWaysideController(controller11Blocks);
 
+        system.addOutputWaysideController(12, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock12PLC");
+        system.addOutputWaysideController(29, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock29PLC");
+        system.addOutputWaysideController(58, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock58PLC");
+        system.addOutputWaysideController(62, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock62PLC");
+        system.addOutputWaysideController(76, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock76PLC");
+        system.addOutputWaysideController(86, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock85PLC");
+        system.updateAllOutputsWaysideController();
+
+        Switch trackSwitch;
+        trackSwitch = (Switch) system.getBlockElement(12, instance.getGreenLine());
+        System.out.println("Print switch 12 - " + trackSwitch.getSwitchState());
+
+        //update
+        instance.getBlockLine(3, "Green").setOccupied(true);
+        system.updateAllOutputsWaysideController();
+
+        trackSwitch = (Switch) system.getBlockElement(12, instance.getGreenLine());
+        System.out.println("Print switch 12 - " + trackSwitch.getSwitchState());
+    }
+
+    @Test
+    @DisplayName("Testing the track green line generation!")
+    public void InterModuleTestsGenerateLineGreen() throws IOException, URISyntaxException {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        WaysideSystem system = new WaysideSystem(instance.getGreenLine(), "Green line");
+        system.generateLine();
+
+        Switch trackSwitch;
+        trackSwitch = (Switch) system.getBlockElement(12, instance.getGreenLine());
+        System.out.println("Print switch 12 - " + trackSwitch.getSwitchState());
+
+        //update
+        instance.getBlockLine(3, "Green").setOccupied(true);
+        system.updateAllOutputsWaysideController();
+
+        trackSwitch = (Switch) system.getBlockElement(12, instance.getGreenLine());
+        System.out.println("Print switch 12 - " + trackSwitch.getSwitchState());
+
+        //update pt.2
+        system.setSwitchStatus(12, true);
+
+        trackSwitch = (Switch) system.getBlockElement(12, instance.getGreenLine());
+        System.out.println("Print switch 12 - " + trackSwitch.getSwitchState());
+    }
+
+    @Test
+    @DisplayName("Testing the UI")
+    public void generateTheUI() throws IOException, URISyntaxException {
+        String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        WaysideSystem testSystem = new WaysideSystem(instance.getGreenLine(), "Green line");
+        testSystem.generateLine();
+
+        WaysideUIClass guiUpdater;
+        guiUpdater = new WaysideUIClass(testSystem);
+
+        System.out.println("starting GUI");
+        try {
+            guiUpdater.start();
+        } catch (Exception e) {
+            System.out.println("failed when running");
+        }
+    }
+
+    //helper
+    public void printArr(int[] arr){
+        for(int i=0;i < arr.length;i++){
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
     }
 }

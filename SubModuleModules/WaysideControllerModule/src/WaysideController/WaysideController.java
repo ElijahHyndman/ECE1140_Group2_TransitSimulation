@@ -223,12 +223,13 @@ public class WaysideController {
     public boolean generateOutputSignal(int blockNumber, boolean isTest) throws IOException { //or any unique identifier, change for other iterations...
         TrackElement trackElement = getBlockElement(blockNumber);
         boolean[][] outputs = outputMap.get(trackElement);
-        boolean[][] searchMap = new boolean[outputs.length][outputs[0].length-1];
-        boolean[] inputValues = gpio.getAllInputValues();
 
         if(outputs == null){
             throw new IOException("Controller Error: The element doesn't exist or bad block number!");
         }
+
+        boolean[][] searchMap = new boolean[outputs.length][outputs[0].length-1];
+        boolean[] inputValues = gpio.getAllInputValues();
 
         for(int i=0;i < outputs.length;i++){
             for(int j=0;j < outputs[0].length-1;j++)
@@ -430,6 +431,6 @@ public class WaysideController {
             }
         }
 
-        throw new IOException("Controller Error: No block with that number in controller - " + name);
+        throw new IOException("Controller Error: No block with that number in controller - " + name +  " " + Integer.toString(blockNumber));
     }
 }

@@ -40,7 +40,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
      */
 
     // Data Members to populate GUI with information about
-    private WaysideSystem system = new WaysideSystem();
+    private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController();
 
@@ -105,6 +105,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

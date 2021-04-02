@@ -1,5 +1,6 @@
 package WaysideController;
 
+import Track.Track;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import WaysideGUI.WaysideUIClass;
@@ -23,7 +24,6 @@ public class WaysideSystem {
         currentLine = "Green";
         controllers = new LinkedList<>();
         numberOfControllers = 0;
-        generateLine();
     }
 
     //This construction is bad, doesn't use the lut at all...
@@ -31,7 +31,6 @@ public class WaysideSystem {
         currentLine = "Green";
         this.controllers = controllers;
         numberOfControllers = controllers.size();
-        generateLine();
     }
 
     public WaysideSystem(ArrayList<TrackElement> blocks, String line) throws IOException {
@@ -91,9 +90,9 @@ public class WaysideSystem {
     /*
     update output within a wayside controller
      */
-    public void updateAllOutputsWaysideController() throws IOException, URISyntaxException {
+    public void updateAllOutputsWaysideController() throws IOException {
         for(int i=0;i < outputBlocks.size();i++){
-            getController(i).generateOutputSignal(i, false);
+            getController(outputBlocks.get(i).getBlockNum()).generateOutputSignal(outputBlocks.get(i).getBlockNum(), false);
         }
     }
 
@@ -146,17 +145,130 @@ public class WaysideSystem {
     /*
     somes lines are pre-defined, here is a quick way to generate the lines for the assignment!
      */
-    public void generateLine() throws IOException {
-        if(currentLine.equalsIgnoreCase("green line") && (blocks.size() == 150)) {
+    public void generateLine() throws IOException, URISyntaxException {
+        if(currentLine.equalsIgnoreCase("green line") && (blocks.size() == 151)) {
             //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
+            System.out.println("Generating Green Line Wayside Controllers!");
+            int[] controller1Blocks = new int[20];
+            int[] controller2Blocks = new int[19];
+            int[] controller10Blocks = new int[12];
+            int[] controller11Blocks = new int[7];
+            int[] controller3Blocks = new int[13];
+            int[] controller4Blocks = new int[14];
+            int[] controller5Blocks = new int[8];
+            int[] controller6Blocks = new int[20];
+            //int[] controller7Blocks = new int[1];
+            int[] controller8Blocks = new int[19];
+            int[] controller9Blocks = new int[19];
+            int j;
 
+            //controller1
+            j = 1;
+            for(int i=0;i <= 19;i++){
+                controller1Blocks[i] = j;
+                j++;
+            }
+
+            //controller2
+            j = 21;
+            for(int i=0;i <= 14;i++){
+                controller2Blocks[i] = j;
+                j++;
+            }
+            j = 147;
+            for(int i=15;i <= 18;i++){
+                controller2Blocks[i] = j;
+                j++;
+            }
+
+            //controller11
+            j=140;
+            for(int i=0;i <= 6;i++){
+                controller11Blocks[i] = j;
+                j++;
+            }
+
+            //controller10
+            j = 36;
+            for(int i=0;i <= 11;i++){
+                controller10Blocks[i] = j;
+                j++;
+            }
+
+            //controller3
+            j=48;
+            for(int i=0;i <= 12;i++){
+                controller3Blocks[i] = j;
+                j++;
+            }
+
+            //controller4
+            j=61;
+            for(int i=0;i <= 12;i++){
+                controller4Blocks[i] = j;
+                j++;
+            }
+            controller4Blocks[13] = 0;
+
+            //controller5
+            j=74;
+            for(int i=0;i <= 6;i++){
+                controller5Blocks[i] = j;
+                j++;
+            }
+            controller5Blocks[7] = 101;
+
+            //controller6
+            j=81;
+            for(int i=0;i <= 19;i++){
+                controller6Blocks[i] = j;
+                j++;
+            }
+
+//        //controller7
+//        controller7Blocks[0] = 0;
+
+            //controller8
+            j=102;
+            for(int i=0;i <= 18;i++){
+                controller8Blocks[i] = j;
+                j++;
+            }
+
+            //controller8
+            j=121;
+            for(int i=0;i <= 18;i++){
+                controller9Blocks[i] = j;
+                j++;
+            }
+
+            // Create controllers from jurisdictions
+            addWaysideController(controller1Blocks);
+            addWaysideController(controller2Blocks);
+            addWaysideController(controller3Blocks);
+            addWaysideController(controller4Blocks);
+            addWaysideController(controller5Blocks);
+            addWaysideController(controller6Blocks);
+            //addWaysideController(controller7Blocks);
+            addWaysideController(controller8Blocks);
+            addWaysideController(controller9Blocks);
+            addWaysideController(controller10Blocks);
+            addWaysideController(controller11Blocks);
+
+            addOutputWaysideController(12, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock12PLC");
+            addOutputWaysideController(29, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock29PLC");
+            addOutputWaysideController(58, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock58PLC");
+            addOutputWaysideController(62, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock62PLC");
+            addOutputWaysideController(76, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock76PLC");
+            addOutputWaysideController(86, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock85PLC");
+            updateAllOutputsWaysideController();
         }else{
             throw new IOException("Generation Error: Invalid line generation");
         }
     }
 
     /*
-
+    broadcast to all the controllers!
      */
     public boolean broadcastToControllers(double[] speeds, int[] authority) throws IOException {
         WaysideController temp;
@@ -325,18 +437,19 @@ public class WaysideSystem {
         return lut;
     }
 
-    public static void main(String[] args) throws IOException {
-        WaysideSystem testSystem = new WaysideSystem();
-        WaysideUIClass guiUpdater;
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
 
-        //WaysideController testControllers = generateTestController();
-        //testSystem = new WaysideSystem(testControllers);
-        //testSystem.generateTestController();
-        guiUpdater = new WaysideUIClass(testSystem);
+        WaysideSystem testSystem = new WaysideSystem(instance.getGreenLine(), "Green line");
+        testSystem.generateLine();
+        WaysideUIClass guiUpdater = new WaysideUIClass(testSystem);
 
-        System.out.println("starting GUI");
         try {
+            System.out.println("starting GUI");
             guiUpdater.start();
+            System.out.println("working!");
         } catch (Exception e) {
             System.out.println("failed when running");
         }
