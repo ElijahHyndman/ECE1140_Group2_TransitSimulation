@@ -57,10 +57,10 @@ public class WaysideSystem {
      */
     public void addWaysideController(int[] blockNumbers) throws IOException {
         ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
-        ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
+        //ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
         String controllerName = "Controller " + Integer.toString(++numberOfControllers);
 
-        WaysideController controller = new WaysideController(elementArrayList, blockArrayList, controllerName);
+        WaysideController controller = new WaysideController(elementArrayList, controllerName);
         controllers.add(controller);
 
         TrackElement trackElement;
@@ -82,7 +82,7 @@ public class WaysideSystem {
     /*
     update output within a wayside controller
      */
-    public void updateOutputWaysideController(int blockNumber) throws IOException, URISyntaxException {
+    public void updateOutputWaysideController(int blockNumber) throws IOException {
         getController(blockNumber).generateOutputSignal(blockNumber, false);
     }
 
@@ -145,9 +145,9 @@ public class WaysideSystem {
     somes lines are pre-defined, here is a quick way to generate the lines for the assignment!
      */
     public void generateLine() throws IOException {
-        if(currentLine.equalsIgnoreCase("green") && (blocks.size() == 150)) {
+        if(currentLine.equalsIgnoreCase("green line") && (blocks.size() == 150)) {
             //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
-            String currentLine = "Green";
+
         }else{
             throw new IOException("Generation Error: Invalid line generation");
         }
@@ -214,8 +214,10 @@ public class WaysideSystem {
     helper function - finds the specific block element from the block number
     */
     public TrackElement getBlockElement(int blockNumber, ArrayList<TrackElement> blocks) throws IOException {
+        int num;
         for(int i = 0; i < blocks.size(); i++){
-            if(blockNumber == blocks.get(i).getBlockNum()){
+            num = blocks.get(i).getBlockNum();
+            if(blockNumber == num){
                 return blocks.get(i);
             }
         }

@@ -1,3 +1,4 @@
+import Track.*;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import WaysideController.*;
 import WaysideGUI.*;
 
-import javax.naming.ldap.Control;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -236,5 +237,96 @@ class WaysideSystemTest {
         system.updateAllOutputsWaysideController();
         system.setSwitchStatus(0, true);
         System.out.println(system.getSwitchStatus(0));
+    }
+
+    @Test
+    @DisplayName("Testing the track green line!")
+    public void InterModuleTests() throws IOException, URISyntaxException {
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        //creation of the test system
+        WaysideSystem system = new WaysideSystem(instance.getGreenLine(), "testLine");
+
+        int[] controller1Blocks = new int[20];
+        int[] controller2Blocks = new int[38];
+        int[] controller3Blocks = new int[13];
+        int[] controller4Blocks = new int[13];
+        int[] controller5Blocks = new int[8];
+        int[] controller6Blocks = new int[20];
+        int[] controller7Blocks = new int[1];
+        int[] controller8Blocks = new int[38];
+        int j;
+
+        //controller1
+        j = 1;
+        for(int i=0;i <= 19;i++){
+            controller1Blocks[i] = j;
+            j++;
+        }
+
+        //controller2
+        j = 21;
+        for(int i=0;i <= 26;i++){
+            controller2Blocks[i] = j;
+            j++;
+        }
+        j = 140;
+        for(int i=27;i <= 37;i++){
+            controller2Blocks[i] = j;
+            j++;
+        }
+
+        //controller3
+        j=48;
+        for(int i=0;i <= 12;i++){
+            controller3Blocks[i] = j;
+            j++;
+        }
+
+        //controller4
+        j=61;
+        for(int i=0;i <= 12;i++){
+            controller4Blocks[i] = j;
+            j++;
+        }
+
+        //controller5
+        j=74;
+        for(int i=0;i <= 6;i++){
+            controller5Blocks[i] = j;
+            j++;
+        }
+        controller5Blocks[7] = 101;
+
+        //controller6
+        j=81;
+        for(int i=0;i <= 19;i++){
+            controller6Blocks[i] = j;
+            j++;
+        }
+
+        //controller7
+        controller7Blocks[0] = 0;
+
+        //controller8
+        j=102;
+        for(int i=0;i <= 37;i++){
+            controller8Blocks[i] = j;
+            j++;
+        }
+
+        // Create controllers from jurisdictions
+        system.addWaysideController(controller1Blocks);
+        system.addWaysideController(controller2Blocks);
+        system.addWaysideController(controller3Blocks);
+        system.addWaysideController(controller4Blocks);
+        system.addWaysideController(controller5Blocks);
+        system.addWaysideController(controller6Blocks);
+        system.addWaysideController(controller7Blocks);
+        system.addWaysideController(controller8Blocks);
+
     }
 }
