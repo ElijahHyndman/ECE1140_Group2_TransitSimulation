@@ -76,6 +76,7 @@ public class WaysideController {
     Getters and setters for the name
      */
     public String getName(){ return name; }
+    public String toString(){ return name; }
     public void setName(String newName){ this.name = newName; }
 
     /*
