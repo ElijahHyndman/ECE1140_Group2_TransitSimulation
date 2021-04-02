@@ -1,10 +1,12 @@
 package WaysideController;
 
+import TrackConstruction.TrackBlock;
+import TrackConstruction.TrackElement;
 import WaysideGUI.WaysideUIClass;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import TrackConstruction.*;
 
 public class WaysideSystem {
 
