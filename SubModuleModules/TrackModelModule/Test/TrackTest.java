@@ -1,6 +1,12 @@
 import Track.Track;
+import TrackConstruction.Station;
+import TrackConstruction.Switch;
+import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import Track.TrackGUI;
+
+import java.io.File;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,18 +100,25 @@ class TrackTest {
         assertEquals(instance.getEnvironmentalTemperature(), 20);
 
 
+    }
+
+    @org.junit.jupiter.api.Test
+    void getBeacon() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
+        System.out.println("importTrack");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
         for(int i = 0; i<=150; i++) {
             System.out.println(instance.getGreenLine().get(i).getBeacon());
         }
         System.out.println("71: " + instance.getGreenLine().get(71).getBeacon());
 
-
     }
 
     @org.junit.jupiter.api.Test
     void getSwitches() {
-        System.out.println("importTrack");
+        System.out.println("get Switches");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
@@ -161,6 +174,35 @@ class TrackTest {
         //testing to make sure switches are gotten right
     }
 
+    @org.junit.jupiter.api.Test
+    void testDispatchYard(){
+        System.out.println("getNext");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+
+        instance.getSwitches().get(10).setSwitchState(false); // switch not to yard
+        instance.updateSwitches();
+
+        TrackElement cur = instance.getGreenLine().get(0);
+        TrackElement prev = instance.getGreenLine().get(0);
+        TrackElement next = null;
+        //here we want to dispatch from the yard
+        for(int i=0; i < 16; i++) {
+            next = instance.getNext(cur,prev);
+            if(next != null)
+                System.out.println(next.getBlockNum());
+            prev = cur;
+            cur = next;
+            if(cur == null) {
+                System.out.println("DONE");
+                break;
+            }
+
+        }
+
+    }
 
     @org.junit.jupiter.api.Test
     void getNext() {
@@ -267,7 +309,7 @@ class TrackTest {
 
         TrackGUI testGUI = new TrackGUI(instance);
         testGUI.setVisible(true);
-        testGUI.updateTrack(instance);
+        testGUI.latch(instance);
 
 
 
@@ -325,6 +367,98 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
+    void switchConstructor() {
+        System.out.println("setSwitch");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        try {
+            Scanner sc = new Scanner(new File(filepath));
+            sc.useDelimiter(",|\\n");
+            //creating wb object for xls file
+            int count = 0;
+            while(sc.hasNext()){
+
+                if(count < 15 ) {
+                    sc.next();
+                    count++;
+                    continue;
+                }
+
+                //Parsing File into components
+
+                String line = sc.next();
+                char section = sc.next().charAt(0);
+                int blockNum = Integer.parseInt(sc.next());
+                double length = Double.parseDouble(sc.next());
+                double grade= Double.parseDouble(sc.next());
+                int speedLimit = Integer.parseInt(sc.next());
+                String infrastructure = sc.next();
+                sc.next(); //a BLANK
+                double elevation = Double.parseDouble(sc.next());
+                double cumulativeElevation = Double.parseDouble(sc.next());
+
+                //Adding the ToPointers and Bidirecitonality
+                int[] setDirection = new int[] {Integer.parseInt(sc.next()),Integer.parseInt(sc.next()),Integer.parseInt(sc.next())};
+                String setBiDirectional = sc.next();
+                String beacon = sc.next();
+
+                  if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
+                //    Switch Test = new Switch(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
+                //Need to check to see if stations are here and if so need to set Beacon Value and calculate tickets
+                    System.out.println(" " + line + " " + section + " " +blockNum + " " +length + " " +grade + " " +speedLimit + " " +infrastructure + " " +elevation + " " +cumulativeElevation + " [" + setDirection[0] + " " + setDirection[1] + " " + setDirection[2] + "] " +setBiDirectional);
+
+
+                }
+
+
+
+                }
+                count++;
+
+            //getting sheet object 0
+            sc.close();
+        } catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @org.junit.jupiter.api.Test
+    void blocksInSection() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        System.out.println("sectionA: " + instance.blocksInSection('A').toString());
+        System.out.println("sectionB: " + instance.blocksInSection('B').toString());
+        System.out.println("sectionC: " + instance.blocksInSection('C').toString());
+        System.out.println("sectionD: " + instance.blocksInSection('D').toString());
+        System.out.println("sectionE: " + instance.blocksInSection('E').toString());
+        System.out.println("sectionF: " + instance.blocksInSection('F').toString());
+        System.out.println("sectionG: " + instance.blocksInSection('G').toString());
+        System.out.println("sectionH: " + instance.blocksInSection('H').toString());
+        System.out.println("sectionI: " + instance.blocksInSection('I').toString());
+        System.out.println("sectionJ: " + instance.blocksInSection('J').toString());
+        System.out.println("sectionK: " + instance.blocksInSection('K').toString());
+        System.out.println("sectionL: " + instance.blocksInSection('L').toString());
+        System.out.println("sectionM: " + instance.blocksInSection('M').toString());
+        System.out.println("sectionN: " + instance.blocksInSection('N').toString());
+        System.out.println("sectionO: " + instance.blocksInSection('O').toString());
+        System.out.println("sectionP: " + instance.blocksInSection('P').toString());
+        System.out.println("sectionQ: " + instance.blocksInSection('Q').toString());
+        System.out.println("sectionR: " + instance.blocksInSection('R').toString());
+        System.out.println("sectionS: " + instance.blocksInSection('S').toString());
+        System.out.println("sectionT: " + instance.blocksInSection('T').toString());
+        System.out.println("sectionU: " + instance.blocksInSection('U').toString());
+        System.out.println("sectionV: " + instance.blocksInSection('V').toString());
+        System.out.println("sectionW: " + instance.blocksInSection('W').toString());
+        System.out.println("sectionX: " + instance.blocksInSection('X').toString());
+        System.out.println("sectionY: " + instance.blocksInSection('Y').toString());
+        System.out.println("sectionZ: " + instance.blocksInSection('Z').toString());
+
+    }
+
+    @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
@@ -332,24 +466,35 @@ class TrackTest {
         instance.importTrack(filepath);
 
         //Instantiate UI
-
+/*
             TrackGUI testGUI = new TrackGUI(instance);
             testGUI.setVisible(true);
-            testGUI.updateTrack(instance);
-            /*
-        while(true){
+            testGUI.draw();
+            testGUI.latch(instance);
+            instance.setFailure(2,"Green",1);
+            testGUI.latch(instance);
+            System.out.println(instance.getFailures());
+            int i =0;
+            while (true){
+                testGUI.draw();
+                instance.getGreenLine().get(2).setOccupied(true);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setOccupied(false);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setAuthority(i);
+                testGUI.latch(instance);
+                instance.getGreenLine().get(2).setCommandedSpeed(15);
+                testGUI.latch(instance);
+                    instance.setFailure(2,"Green",1);
+                testGUI.latch(instance);
+                instance.setFailure(2,"Green",2);
+                testGUI.latch(instance);
+                i++;
 
-            for(int i=0; i< 100 ; i ++ ) {
-                instance.getGreenLine().get(i).setOccupied(true);
-                testGUI.updateTrack(instance);
-                try {
-                    Thread.sleep(1000);
-                }catch (Exception e) {
 
-                }
             }
-        }*/
 
+    */
     }
 }
 

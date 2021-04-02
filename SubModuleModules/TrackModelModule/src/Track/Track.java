@@ -15,6 +15,7 @@ import java.util.Scanner;
         ArrayList<Switch> switchesArrayList;
         ArrayList<TrackElement> failureArrayList;
 
+
         //Track Variables
         boolean TRACK_HEATER;
         int SIZE_LINE_A=0;
@@ -147,6 +148,11 @@ import java.util.Scanner;
             {
                 e.printStackTrace();
             }
+
+            for(int i =0; i < switchesArrayList.size(); i++)
+                  switchesArrayList.get(i).setSwitchState(false); // 76 to 150
+
+            updateSwitches();
             return success;
         }
 
@@ -212,17 +218,28 @@ import java.util.Scanner;
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             int cur = current.getBlockNum();
+
+
+           if(cur == 0){
+               if(switchesArrayList.get(10).getIndex()==true)
+                   return greenTrack.get(62);
+               else
+                   return null;
+           }
+
+
             int prev = previous.getBlockNum();
             char sectionPrev = previous.getSection();
             char sectionCur = current.getSection();
             TrackElement ret = null;
 
             //dealing with the yard
+            /*
              if(current.getCurrentDirection() == -1 && current.getDirectionStates(0) == -1){
-                return greenTrack.get(0); // This returns the YARD BLOCK when switch is on !!
+                return greenTrack.get(62); // This returns the YARD BLOCK when switch is on !!
             }else if (current.getCurrentDirection() == -1)
                 return null;
-
+            */
              //dealing with directionality
             if(current.getCurrentDirection() > 0) // switch is on
                 ret = greenTrack.get(current.getCurrentDirection());
@@ -324,7 +341,7 @@ import java.util.Scanner;
             return this.environmentalTemperature;
         }
 
-        int getSize(){
+        public int getSize(){
             return this.blockArrayList.size();
         }
 
@@ -381,6 +398,15 @@ import java.util.Scanner;
         }
 
 
+        /*getting blocks in line*/
+        public ArrayList<Integer> blocksInSection(char section){
+            ArrayList<Integer> blocks = new ArrayList<Integer>();
+            for(int i=1; i<greenTrack.size(); i++){
+                if(greenTrack.get(i).getSection() == section)
+                    blocks.add(greenTrack.get(i).getBlockNum());
+            }
+            return blocks;
+        }
 
         /*May Need a Method for Occupy -- Here send out beacon (if station), and authority / command speed?? */
 

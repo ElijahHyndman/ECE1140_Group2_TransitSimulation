@@ -2,6 +2,7 @@ package Track;
 
 import TrackConstruction.*;
 import javax.swing.Timer;
+import GUIInterface.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
  * @author grhen
  */
 
-public class TrackGUI extends javax.swing.JFrame {
+public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
 
     //Adding Track Components
     Track trackList;
@@ -51,10 +52,25 @@ public class TrackGUI extends javax.swing.JFrame {
     /**
      * update Tracklist -- method to be called by simulation environment
      */
-    public void updateTrack(Track updatedTrack) {
-        trackList = updatedTrack;
-    }
+    @Override
+    public void latch(Object myObject) {
 
+        Track givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        trackList = (Track) myObject;
+    }
+    @Override
+    public void update() {
+    } //automatically updates no need to do this
+
+    public void draw() {
+
+    } // for interface
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -286,7 +302,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
                 },
                 new String [] {
-                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit", "Elevation", "Cummulative Elevation"
+                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit MPH", "Elevation", "Cummulative Elevation"
                 }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -475,7 +491,7 @@ public class TrackGUI extends javax.swing.JFrame {
                         {null, null, null, null, null}
                 },
                 new String [] {
-                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed"
+                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed MPH"
                 }
         ));
         jScrollPane6.setViewportView(jTable4);
@@ -802,7 +818,7 @@ public class TrackGUI extends javax.swing.JFrame {
             //Load in Temperature
             TemperaturePane.setText("Environmental Temperature:" + trackList.getEnvironmentalTemperature() + "\n Track Heater Status: " + trackList.getTrackHeaterStatus());
             //Load in the Track
-                refreshRedGreenTrack();
+               refreshRedGreenTrack();
 
 
         }
@@ -965,7 +981,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
             }
             for(int i=0; i<blockList.size(); i++) {
-                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).getCommandedSpeed()});
+                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).dispCommandedSpeed()});
 
             }
 
