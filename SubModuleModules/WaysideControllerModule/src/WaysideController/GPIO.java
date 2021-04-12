@@ -132,13 +132,17 @@ public class GPIO {
      */
     public List<String> getOutputNames(){
         Integer[] outputs = outputValues.keySet().toArray(new Integer[outputValues.size()]);
+        List<TrackElement> list = new ArrayList<>();
+        list.addAll(outputValues.keySet());
         List<String> outputNames = new LinkedList<>();
+        List<String> outputNames2 = new LinkedList<>();
 
         for(int i=0;i < outputs.length;i++){
             outputNames.add(outputs.toString());
+            outputNames2.add(Integer.toString(list.get(i).getBlockNum()));
         }
 
-        return outputNames;
+        return outputNames2;
     }
 
     /*

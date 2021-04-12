@@ -59,7 +59,7 @@ public class WaysideSystem {
     public void addWaysideController(int[] blockNumbers) throws IOException {
         ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
         //ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
-        String controllerName = "Controller " + Integer.toString(++numberOfControllers);
+        String controllerName = "Controller" + Integer.toString(++numberOfControllers);
 
         WaysideController controller = new WaysideController(elementArrayList, controllerName);
         controllers.add(controller);
@@ -76,6 +76,15 @@ public class WaysideSystem {
      */
     public void addOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
         getController(blockNumber).addOutput(blockNumber, PLCfile);
+        outputBlocks.add(getBlockElement(blockNumber, blocks));
+        getController(blockNumber).generateOutputSignal(blockNumber, false);
+    }
+
+    /*
+add output w/plc within a wayside controller
+ */
+    public void updateOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
+        getController(blockNumber).updateOutput(blockNumber, PLCfile);
         outputBlocks.add(getBlockElement(blockNumber, blocks));
         getController(blockNumber).generateOutputSignal(blockNumber, false);
     }
@@ -390,43 +399,42 @@ public class WaysideSystem {
                 throw new IOException("Command Error: Bad Name...");
             }
 
-            controllers.get(nameIndex).addOutput(Integer.parseInt(blockNumber),PLCfile);
-            return "You have successfully added an output on " + controllerName;
-        }else if(commands[0].equals("update")){ //COMPILE COMMAND
-            controllerName = commands[1];
-            PLCfile = commands[2];
-            blockNumber = commands[3];
-            int nameIndex = -1;
-            String currName;
-
-            for(int i=0;i < controllers.size();i++){
-                currName = controllers.get(i).getName();
-                if(currName.equals(controllerName)){
-                    nameIndex = i;
-                }
-            }
-
-            if(nameIndex == -1){
-                throw new IOException("Command Error: Bad Name...");
-            }
-
             controllers.get(nameIndex).updateOutput(Integer.parseInt(blockNumber),PLCfile);
-            return "You have successfully updated a PLC on " + controllerName;
-        }if(commands[0].equals("add")){ //COMPILE COMMAND
-            controllerName = commands[1];
+            updateAllOutputsWaysideController();
+            return "You have successfully uploaded a PLC to " + controllerName;
+        }else if(commands[0].equals("update")){ //COMPILE COMMAND
+//            controllerName = commands[1];
+//            PLCfile = commands[2];
+//            blockNumber = commands[3];
+//            int nameIndex = -1;
+//            String currName;
+//
+//            for(int i=0;i < controllers.size();i++){
+//                currName = controllers.get(i).getName();
+//                if(currName.equals(controllerName)){
+//                    nameIndex = i;
+//                }
+//            }
+//
+//            if(nameIndex == -1){
+//                throw new IOException("Command Error: Bad Name...");
+//            }
+//
+//            controllers.get(nameIndex).updateOutput(Integer.parseInt(blockNumber),PLCfile);
+//            return "You have successfully updated a PLC on " + controllerName;
+        }if(commands[0].equals("broadcastToControllersTest")){ //COMPILE COMMAND
+            double[] speed = new double[151];
+            int[] authority = new int[151];
 
-            int nameIndex = -1;
-
-            if(commands[1].equals("default")){
-                nameIndex = 1;
+            for(int i=0;i < speed.length;i++){
+                speed[i] = i;
+                authority[i] = i;
             }
 
-            if(nameIndex == -1){
-                throw new IOException("Command Error: Bad Name...");
-            }
+            broadcastToControllers(speed, authority);
 
             //generateTestController();
-            return "Nice new controller!";
+            return "Error in broadcasting - something failed...";
         }else{
             return "Command Error: The current command was invalid...";
         }

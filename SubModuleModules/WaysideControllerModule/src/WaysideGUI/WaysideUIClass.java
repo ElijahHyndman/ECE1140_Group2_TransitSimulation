@@ -57,8 +57,8 @@ public class WaysideUIClass extends Thread {
                 System.out.println("A problem occurred using the sleep function inside the WaysideUIClass");
             }
 
-            System.out.println("Sampling wayside system");
-            Vector<WaysideController> samples = WS.getControllersVector();
+            //System.out.println("Sampling wayside system");
+            Vector<WaysideController> samples = (Vector<WaysideController>) WS.getControllersVector();
             guiWindow.updateGUI(samples);
         }
     }
