@@ -102,6 +102,7 @@ public class Switch extends TrackElement{
     }
 
     /*get Index */
+    @Override
     public boolean getIndex(){
         return INDEX;
     }

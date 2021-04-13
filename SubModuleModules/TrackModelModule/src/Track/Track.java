@@ -180,7 +180,7 @@ import java.util.Scanner;
         /*needed to add for direcitonality*/
         public void updateSwitches(){
 
-            for(int i = 7; i <= 12; i++) {
+            for(int i = 0; i <= 12; i++) {
                 Switch switchT = switchesArrayList.get(i);
                 boolean index = switchT.getIndex();
                 int blocka = switchT.getDirectionStates(0);
@@ -188,31 +188,168 @@ import java.util.Scanner;
                 int blockb = switchT.getDirectionStates(2);
                 int toB = switchT.getDirectionStates(3);
                 //here need to CHANGE getCurrent Direction
-                if (index == false) {
-                    if (blocka != 0 && blocka != -1) {
-                        greenTrack.get(blocka).setCurrentDirection(toA); // toA
-                        if (!(blocka == blockb) && blockb != 0)
-                            greenTrack.get(blockb).setCurrentDirection(-2); // -2 -- means need this switch to work
-                    } else if (blocka == -1) { // this is switching TO THE YARD
-                        switchT.setCurrentDirection(-1);
-                    } else if (blockb == -1 && blocka == 0) { // this is switching TO THE YARD
-                        switchT.setCurrentDirection(-2);
-                    }
-                } else if (index == true) {
+                if (index == false && i <7) {
+                    redTrack.get(blockb).setCurrentDirection(-2);
+                    redTrack.get(toB).setCurrentDirection(-2);
+                    redTrack.get(blocka).setCurrentDirection(1);
+                    redTrack.get(toA).setCurrentDirection(1);
+                } else if (index == true && i<7) {
                     //Second Number Block Points to last number
-                    if (blockb != 0 && blockb != -1) {
-                        greenTrack.get(blockb).setCurrentDirection(toB); // toB
+                    redTrack.get(blocka).setCurrentDirection(-2);
+                    redTrack.get(toA).setCurrentDirection(-2);
+                    redTrack.get(blockb).setCurrentDirection(1);
+                    redTrack.get(toB).setCurrentDirection(1);
+                }
+                if (index == false && i >6) {
+                    greenTrack.get(blockb).setCurrentDirection(-2);
+                    greenTrack.get(toB).setCurrentDirection(-2);
+                    greenTrack.get(blocka).setCurrentDirection(1);
+                    greenTrack.get(toA).setCurrentDirection(1);
+                } else if (index == true && i>6) {
+                    //Second Number Block Points to last number
+                    greenTrack.get(blocka).setCurrentDirection(-2);
+                    greenTrack.get(toA).setCurrentDirection(-2);
+                    greenTrack.get(blockb).setCurrentDirection(1);
+                    greenTrack.get(toB).setCurrentDirection(1);
 
-                        if (blocka != blockb)
-                            greenTrack.get(blocka).setCurrentDirection(-2); //-2 means need this switch to work
-                    } else if (blockb == 0 && blocka == -1) { // this is switching TO THE YARD
-                        switchT.setCurrentDirection(-2);
-                    } else if (blockb == -1 && blocka == 0) { // this is switching TO THE YARD
-                        switchT.setCurrentDirection(-1);
-                    }
+
+
                 }
             }
 
+        }
+
+        /*getting next for red track*/
+        public TrackElement getNextRed(TrackElement current, TrackElement previous) {
+            int cur = current.getBlockNum();
+            //checking if yard switch is on
+            if (cur == 0) {
+                if (switchesArrayList.get(0).getIndex() == true)
+                    return redTrack.get(9);
+                else
+                    return null;
+            }
+
+            int prev = previous.getBlockNum();
+
+            TrackElement ret = null;
+
+            //Test cases of switches
+            //switch to YARD
+            if(cur == 9 && prev == 8 || cur ==9 && prev == 10) {
+                if(switchesArrayList.get(0).getIndex() == true)
+                    return redTrack.get(0);
+            }
+
+
+
+            //need to catch ones BEFORE switch
+            if(current.getCurrentDirection() == -2 && !(current.getType().equals("Switch")) && cur != 16) {
+                return null;
+            }
+
+
+            //chose direction FROM SWITCH
+            if (current.getType().equals("Switch")) {
+                int index = (current.getIndex()) ? 1 : 0;
+                if((index == 0 && current.getDirectionStates(0) == prev)) // for 1 direction
+                    return redTrack.get(current.getDirection(1));
+                else if((index == 0 && current.getDirectionStates(1) == (prev+1))) // for 0 direction
+                    return redTrack.get(current.getDirection(0));
+                else if (index == 1 && current.getDirectionStates(2) == prev) {
+                   if(cur == 15)
+                       return redTrack.get(16);
+                    return redTrack.get(current.getDirection(index));
+                }
+                else if (index == 1 && current.getDirectionStates(3) == prev+1) // changing to the 3rd direction
+                    return redTrack.get(current.getDirection(2));
+                else if(cur == 9 && prev == 10)
+                    return redTrack.get(current.getDirection(1));
+                else if( cur == 9 && prev == 8 )
+                    return redTrack.get(current.getDirection(0));
+                else if( cur == 9 && prev == 0 )
+                    return redTrack.get(current.getDirection(1));
+                else
+                    return null;
+            }
+
+            // If one way Track Simply go straight down
+            if (!current.getBiDirectional()) // one way track {
+                return redTrack.get(current.getDirection(0));
+
+            //CORNER CASE
+            if((previous.getDirection(2) == cur) && cur == 76)
+                return redTrack.get(75);
+            if((previous.getDirection(2) == cur) && cur == 71)
+                return redTrack.get(70);
+            if((previous.getDirection(2) == cur) && cur == 66)
+                return redTrack.get(65);
+            //if 2 way track
+            if(previous.getDirection(0) == cur|| (previous.getDirection(2) == cur))
+                return redTrack.get(current.getDirection(0));
+            else if (previous.getDirection(1) == cur)
+                return redTrack.get(current.getDirection(1));
+
+
+            return ret;
+        }
+
+
+        /*trying new getNext*/
+        public TrackElement getNextGreen(TrackElement current, TrackElement previous) {
+            int cur = current.getBlockNum();
+            //checking if yard switch is on
+            if (cur == 0) {
+                if (switchesArrayList.get(10).getIndex() == true)
+                    return greenTrack.get(62);
+                else
+                    return null;
+            }
+            int prev = previous.getBlockNum();
+
+            if(prev == 0)
+                return greenTrack.get(63);
+
+            char sectionPrev = previous.getSection();
+            char sectionCur = current.getSection();
+            TrackElement ret = null;
+
+            //special case for switch 7
+            if(current.getCurrentDirection() == -2 && prev == 12)
+                return greenTrack.get(current.getDirection(0));
+
+            //need to catch ones BEFORE switch
+            if(current.getCurrentDirection() == -2 && !(current.getType().equals("Switch"))) {
+                return null;
+            }
+
+            //chose direction FROM SWITCH
+            if (current.getType().equals("Switch")) {
+                int index = (current.getIndex()) ? 1 : 0;
+                if((index == 0 && current.getDirectionStates(0) == cur))
+                    return greenTrack.get(current.getDirection(index));
+                else if (index == 1 && current.getDirectionStates(2) == prev)
+                    return greenTrack.get(current.getDirection(index));
+                else if(cur == 58 || (cur == 62 && index ==0))
+                    return greenTrack.get(current.getDirection(index));
+                else
+                    return null;
+            }
+
+            // If one way Track Simply go straight down
+            if (!current.getBiDirectional()) // one way track {
+                return greenTrack.get(current.getDirection(0));
+
+            //if 2 way track
+            if(previous.getDirection(0) == cur)
+                return greenTrack.get(current.getDirection(0));
+            else if (previous.getDirection(1) == cur)
+                return greenTrack.get(current.getDirection(1));
+
+            if(current.getCurrentDirection() > 0) // switch is on so OKAY to proceed
+                return greenTrack.get(0);
+
+            return ret;
         }
 
         /*adding getNext */
