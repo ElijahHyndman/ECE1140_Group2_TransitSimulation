@@ -26,6 +26,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="TrackConstructionClasses" exported="" />
-    <orderEntry type="module" module-name="GraphicUserInterfaces" />
+    <orderEntry type="module" module-name="SubModules.TrackModelModule" exported="" />
   </component>
 </module>

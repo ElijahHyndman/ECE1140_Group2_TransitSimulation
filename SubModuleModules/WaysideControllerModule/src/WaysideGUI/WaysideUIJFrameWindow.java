@@ -1,5 +1,4 @@
 package WaysideGUI;
-import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideController.GPIO;
@@ -21,7 +20,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
+public class WaysideUIJFrameWindow extends javax.swing.JFrame {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -41,7 +40,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
      */
 
     // Data Members to populate GUI with information about
-    private WaysideSystem system = new WaysideSystem();
+    private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController();
 
@@ -69,30 +68,6 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
-    }
-
-
-    @Override
-    public void latch(Object myObject) {
-        /** myObject must be of type WaysideSystem
-         */
-        WaysideSystem givenSystem;
-        try {
-            givenSystem = (WaysideSystem) myObject;
-        } catch (Exception e) {
-            return;
-        }
-        controllers = givenSystem.getControllersVector();
-    }
-
-    @Override
-    public void update() {
-        updateGUI(controllers);
-    }
-
-    @Override
-    public Object getJFrame() {
-        return this;
     }
 
 
@@ -130,6 +105,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -1006,12 +982,14 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         // Get Name of Node
         String selectedNodeName = (String) selectedNode.getUserObject();
         System.out.printf("Tree node: "+selectedNodeName+" is selected. ");
+
         // Verifying that selected Node is a Controller
         for (EmptyWaysideController ControllerObject: controllers) {
             // If node is a controller
             if (ControllerObject.getName() == selectedNodeName) {
                 /*
                     Assert: from this point on, a valid controller will always be selected.
+
                 controllerSelected =true;
                 thisController = ControllerObject;
                 System.out.println( " (Selected controller is now: "+ControllerObject.getName()+")" );
@@ -1065,6 +1043,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         // get the node from the path of the tree expansion event
         DefaultMutableTreeNode expanded = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
         Object nodeObject = expanded.getUserObject();
+
         // See if object is wayside controller
         if (nodeObject instanceof EmptyWaysideController) {
             // is wayside controller
