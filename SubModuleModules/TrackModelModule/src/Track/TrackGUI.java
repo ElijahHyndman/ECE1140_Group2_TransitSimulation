@@ -1,5 +1,6 @@
 package Track;
 
+import GUIInterface.AppGUIModule;
 import TrackConstruction.*;
 import javax.swing.Timer;
 
@@ -21,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
  * @author grhen
  */
 
-public class TrackGUI extends javax.swing.JFrame {
+public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
     //Adding Track Components
     Track trackList;

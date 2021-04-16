@@ -1,4 +1,5 @@
 package WaysideGUI;
+import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideController.GPIO;
@@ -20,7 +21,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame {
+public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -1207,5 +1208,24 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+
+    @Override
+    public void latch(Object myObject) {
+        try {
+            this.system = (WaysideSystem) myObject;
+        }catch (Exception e) {
+            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
+        }
+    }
+
+    @Override
+    public void update() {
+        updateGUI(this.controllers);
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
     // End of variables declaration
 }

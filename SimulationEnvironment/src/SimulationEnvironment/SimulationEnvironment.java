@@ -295,8 +295,6 @@ public class SimulationEnvironment extends Thread {
                     system.updateAllOutputsWaysideController();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
                 }
             }
         }
