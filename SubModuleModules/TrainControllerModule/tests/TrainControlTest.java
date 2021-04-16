@@ -27,7 +27,7 @@ public class TrainControlTest {
     @Test
     public void testSetKpKi(){
 
-        MainMotor motor = (MainMotor) control.getTrainMotor();
+        ActiveMotor motor = (ActiveMotor) control.getTrainMotor();
 
         control.setKpKi(5,.001);
         double Kp = motor.getKp();

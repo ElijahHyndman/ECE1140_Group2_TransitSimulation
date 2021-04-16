@@ -6,7 +6,7 @@ import TrainModel.Train;
 public class TrainControl {
 
     private final TrainMotor motor;
-    private final TrainMotor backupMotor;
+    //private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
 
@@ -39,8 +39,8 @@ public class TrainControl {
     public TrainControl(Train model){
 
         trainModel = model;
-        motor = new MainMotor();
-        backupMotor = new BackupMotor();
+        //state design pattern
+        motor = new ActiveMotor(new MainMotor(), new BackupMotor());
 
         beaconSet = false;
         controlMode = "Automatic";
@@ -273,11 +273,6 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
-        //TO DO: use and compare both train motor powers
-        double primaryPower;
-        double secondaryPower;
-
-        //for now, just uses main motor power
         power = (motor.getPower(velocityCmd, trainVelocity));
     }
 
@@ -294,8 +289,9 @@ public class TrainControl {
     }
 
     public void setBeacon(String currentBeacon){
-        beacon = currentBeacon;
-        if (!(beacon==null) && !beaconSet){
+        //currentBeacon
+        if (!(currentBeacon==null) && !beaconSet){
+            beacon = currentBeacon;
             beaconSet = true;
             int start = beacon.indexOf(" ");
             double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
@@ -313,7 +309,6 @@ public class TrainControl {
 
     public void setKpKi(double newKp, double newKi){
         motor.setKpKi(newKp, newKi);
-        backupMotor.setKpKi(newKp, newKi);
     }
 
     //Setting the train's nonVital Components
@@ -328,27 +323,6 @@ public class TrainControl {
             nonVitalComponents.setDoors(beacon);
         }
     }
-
-    /*
-    //Replicating inputs from the Train Model, used by TestingUI
-    public void newTrainInput(TrainModelInput currentInput){
-        setActualSpeed(currentInput.getActualSpeed());
-
-        if (getControlMode().equals("Automatic")){
-            setCommandedSpeed(currentInput.getCommandedVelocity());
-        }else{
-                setCommandedSpeed(manualVelocity);
-            }
-
-        setSpeedLimit(currentInput.getSpeedLimit());
-        beacon = currentInput.getBeacon();
-
-        //monitorDistance();
-        power = motor.getPower(velocityCmd, trainVelocity);
-    }
-
-     */
-
 
     /**
      * NEW METHODS FOR TRAIN MODEL
