@@ -1,9 +1,8 @@
-package WaysideController;
-
 import Track.Track;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
+import WaysideController.WaysideController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
