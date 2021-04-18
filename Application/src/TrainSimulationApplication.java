@@ -136,7 +136,7 @@ public class TrainSimulationApplication extends Thread {
         run.getSE().getTrackSystem().updateSwitches();
 
         // wait for train to spawn
-        while(run.getSE().getTrains().size() == 0) {}
+       /* while(run.getSE().getTrains().size() == 0) {}
         TrainUnit runningTrain = run.getSE().getTrains().get(0);
         DriverUI ctrlUI = run.getSE().spawnTrainControllerUI(runningTrain);
         trainGUI modelUI = run.getSE().spawnTrainModelGUI(runningTrain);
@@ -148,6 +148,6 @@ public class TrainSimulationApplication extends Thread {
             modelUI.updateDisplay();
             modelUI.update();
             trackUI.latch(run.getSE().getTrackSystem());
-        }
+        }*/
     }
 }

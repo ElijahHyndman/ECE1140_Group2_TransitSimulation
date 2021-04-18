@@ -8,6 +8,8 @@ import CTCOffice.CTCOffice;
 import SimulationEnvironment.SimulationEnvironment;
 import SimulationEnvironment.TrainUnit;
 import TrackConstruction.TrackElement;
+import TrainControlUI.DriverUI;
+import TrainModel.trainGUI;
 import WaysideController.WaysideSystem;
 import WorldClock.WorldClock;
 
@@ -517,13 +519,29 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
 
+
         Vector<TrainUnit> trains = DisplaySE.getTrains();
+        TrainUnit thisTrain = null;
+        try {
+            thisTrain = trains.get(row);
+        } catch(Exception e) {
+            System.out.printf("Error when accessing selected train row from TrainList in SE UI (trainslength=%d selectedTrainRow=%d)\n",trains.size(),row);
+            e.printStackTrace();
+        }
+
         if (column == spawnModelColumn) {
             //System.out.println("Spawning CTC Gui");
-            DisplaySE.spawnTrainModelGUI(trains.get(row));
+            //DisplaySE.spawnTrainModelGUI(trains.get(row));
+            trainGUI modelUI = new trainGUI(0);
+            modelUI.latch(thisTrain.getHull());
+            modelUI.setVisible(true);
+            new GUIWindowLauncher<trainGUI>().launchWindow(modelUI);
         }
         else if (column == spawnControllerColumn) {
-            DisplaySE.spawnTrainControllerUI(trains.get(row));
+            //DisplaySE.spawnTrainControllerUI(trains.get(row));
+            DriverUI controllerUI = new DriverUI();
+            controllerUI.latch(thisTrain.getController());
+            new GUIWindowLauncher<DriverUI>().launchWindow(controllerUI);
         }
     }
 
