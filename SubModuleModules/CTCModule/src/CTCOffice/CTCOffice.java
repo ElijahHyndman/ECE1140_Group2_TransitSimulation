@@ -4,8 +4,6 @@ package CTCOffice;//Haleigh DeFoor
 import java.util.*;
 import java.io.*;
 import java.time.*;
-
-import TrackConstruction.TrackElement;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
@@ -37,7 +35,7 @@ public class CTCOffice implements PhysicsUpdateListener
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
-    public CharSequence timeNow = "00:00:00";
+    public CharSequence timeNow;
     private LocalTime now;
     public Track trackObj;
     public SimulationEnvironment SEobj;
@@ -45,7 +43,7 @@ public class CTCOffice implements PhysicsUpdateListener
     public CTCOffice()
     {
         try {
-            waysides = new WaysideSystem(new Track().getBlocks(), "Green Line");
+            waysides = new WaysideSystem(trackObj.getBlocks());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,12 +53,9 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public CTCOffice(Track SEtrack, SimulationEnvironment SE)
     {
+        waysides = new WaysideSystem();
+=
         trackObj = SEtrack;
-        try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         SEobj = SE;
     }
 
@@ -82,11 +77,6 @@ public class CTCOffice implements PhysicsUpdateListener
     public void setTrack(Track SEt)
     {
         trackObj = SEt;
-        try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(), "Green Line");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public Object[] Dispatch(String dest, String tNum, String timeD)
@@ -94,8 +84,7 @@ public class CTCOffice implements PhysicsUpdateListener
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
-
-        //Vector<TrainUnit> trains = SEobj.getTrains();
+        Vector<TrainUnit> trains = SEobj.getTrains();
 
         if (tNum.equals("Train 1"))
             trainNum = 1;
@@ -118,7 +107,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else
-            SEobj.spawnRunningTrain(trackObj.getGreenLine().get(0),trackObj.getGreenLine().get(0));
+            SEobj.spawnRunningTrain(trackObj.getBlock(0),trackObj.getBlock(9));
 
         if (dest.equals("Station B")){
             blockNum = 10;
@@ -327,7 +316,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else
             occ = waysideR.getOccupancy(blockNum);*/
         try {
-            occ = waysides.getOccupancy(blockNum);//blockNum,lineCol));//blockNum, lineCol);
+            occ = waysides.getOccupancy(blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -339,7 +328,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         boolean switchstat=false;
         try {
-            switchstat = waysides.getSwitchStatus(blockNum);//findBlockObject(blockNum,lineCol));//blockNum, lineCol);
+            switchstat = waysides.getSwitchStatus(blockNum, lineCol);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -353,11 +342,7 @@ public class CTCOffice implements PhysicsUpdateListener
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            try {
-                waysides.openClose(blocks.get(i));//findBlockObject(blocks.get(i),lineCol));//blocks.get(i), lineCol);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            waysides.setOpen(blocks.get(i), lineCol);
         }
     }
 
@@ -368,11 +353,7 @@ public class CTCOffice implements PhysicsUpdateListener
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            try {
-                waysides.setClose(blocks.get(i));//findBlockObject(blocks.get(i),lineCol));//
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            waysides.setClose(blocks.get(i), lineCol);
         }
     }
 
@@ -392,39 +373,34 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public double[] calcRoute(int bn, String lc)
     {
-
-
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        // Always add yard to route
-        // TODO this won't be the case when we don't dispatch non-new train
-        routeArr[0] = 1;
         if(bn==73 && lc.equals("Green")){
-            for (int i=62; i<75; i++){
+            for (int i=63; i<75; i++){
                 routeArr[i] = 1;
             }
         }
         if (bn==65 && lc.equals("Green")){
-            for (int i=62; i<67; i++){
+            for (int i=63; i<67; i++){
                 routeArr[i] = 1;
             }
         }
         if (bn==77 && lc.equals("Green")){
-            for (int i=62; i<79; i++){
+            for (int i=63; i<79; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==88 && lc.equals("Green")){
-            for (int i=62; i<90; i++){
+            for (int i=63; i<90; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==96 && lc.equals("Green")){
-            for (int i=62; i<98; i++){
+            for (int i=63; i<98; i++){
                 routeArr[i] = 1;
             }
         }
         if(bn==123 && lc.equals("Green")){
-            for (int i=62; i<125; i++){
+            for (int i=63; i<125; i++){
                 routeArr[i] = 1;
             }
         }
@@ -488,24 +464,12 @@ public class CTCOffice implements PhysicsUpdateListener
         return dispArr;
     }
 
-    private TrackElement findBlockObject(int blockIndex, String fromLine) {
-        ArrayList<TrackElement> allBlocks = trackObj.getBlocks();
-        // Search for block in array list
-        for (TrackElement block : allBlocks ) {
-            if(block.getBlockNum() == blockIndex && block.getLine() == fromLine)
-                return block;
-        }
-        // Was not found in array list
-        return null;
-    }
-
-
-    public Vector<WaysideSystem> getWaysideSystems() {
-        Vector<WaysideSystem> ws = new Vector<WaysideSystem>();
-        ws.add(waysides);
-        return ws;
-    }
-    public SimulationEnvironment getSE() {
+    public SimulationEnvironment getSE()
+    {
         return SEobj;
     }
+
+
+
+
 }

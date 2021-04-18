@@ -16,9 +16,16 @@ import java.time.*;
  *
  * @author haleighdefoor
  */
-public class CTCJFrame extends javax.swing.JFrame {
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+//iteration 2
 
-    DisplayLine display;//= new DisplayLine();
+public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule{
+
+    DisplayLine display = new DisplayLine();
     DefaultTableModel model, model2;
 
     /**
@@ -26,9 +33,21 @@ public class CTCJFrame extends javax.swing.JFrame {
      */
     public CTCJFrame(DisplayLine ctc) {
         display = ctc;
-        //System.out.println("CTC constructor: " + ctc.hashCode());
-        initComponents(ctc);
+        initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+    }
+
+    @Override
+    public void update(){
+
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -37,9 +56,9 @@ public class CTCJFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    private void initComponents(CTCOffice ctc) {
+    private void initComponents() {
 
-        cTCOffice1 = ctc;//new CTCOffice();
+        cTCOffice1 = new CTCOffice();
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
@@ -211,7 +230,7 @@ public class CTCJFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Train:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormont", "Mt Lebanon", "Castle Shannon" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dormont", "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormant", "Mt Lebanon", "Castle Shannon" }));
 
         jLabel6.setText("Destination:");
 
@@ -324,7 +343,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         ));
         jScrollPane6.setViewportView(jTable3);
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(("/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/TransDisplay.png"))); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -476,7 +495,7 @@ public class CTCJFrame extends javax.swing.JFrame {
 
         jLabel21.setText("Switch Number:");
 
-        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/TransDisplay.png"));//"/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
+        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.13.36 PM.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -638,16 +657,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         double blockG = displist.get(blockNo).getGrade();
         int sLim = (int)Math.round(displist.get(blockNo).getSpeedLimit()*0.621371);
         double elev = displist.get(blockNo).getElevation()*3.28084;
-        /*String t1 = displist.get(blockNo).getT1();
-        String t2 = displist.get(blockNo).getT2();
-        String t3 = displist.get(blockNo).getT3();
-        String t4 = displist.get(blockNo).getT4();
-        String t5 = displist.get(blockNo).getT5();
-        String t6 = displist.get(blockNo).getT6();
-        String t7 = displist.get(blockNo).getT7();
-        String t8 = displist.get(blockNo).getT8();
-        String t9 = displist.get(blockNo).getT9();
-        String t10 = displist.get(blockNo).getT10();*/
+
         boolean status = displist.get(blockNo-1).getStatus();
 
         boolean totalocc = false;
@@ -669,7 +679,7 @@ public class CTCJFrame extends javax.swing.JFrame {
         }
 
 
-        if (block==0 || block>15)
+        if (block==0 || block>150)
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
         }
@@ -832,11 +842,10 @@ public class CTCJFrame extends javax.swing.JFrame {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        //DisplayLine dispatch = new DisplayLine(display.getTrack(),display.getSE());
-        DisplayLine dispatch = new DisplayLine();
-        dispatch.copy(display);
+        DisplayLine dispatch = new DisplayLine(display.getTrack(), display.getSE());
 
         speedAuthority = dispatch.Dispatch(destination, train, timeD);
+
         if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction"))
             line="Red";
         else
@@ -902,7 +911,7 @@ public class CTCJFrame extends javax.swing.JFrame {
             t10 = timeD;
         }
 
-        //dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
 
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
@@ -949,7 +958,7 @@ public class CTCJFrame extends javax.swing.JFrame {
     }
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:\
+        // TODO add your handling code here:
         int tp = display.CalcThroughput();
         display.setThroughput(tp);
 
@@ -969,19 +978,19 @@ public class CTCJFrame extends javax.swing.JFrame {
         }
         else if (filename.equals("GreenLine"))
         {
-            filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";//"/Users/haleighdefoor/schedule.csv";
+            //filename = "/Users/haleighdefoor/schedule.csv";
+            filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
+            //"/Users/haleighdefoor/schedule.csv";
         }
         else
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-        filename = filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
-        DisplayLine fileLoader = new DisplayLine(display.getTrack(),display.SEobj);
-        DisplayLine scheduledisplay;
-        scheduledisplay = fileLoader;
-        scheduledisplay.LoadSchedule(filename);
+        DisplayLine fileLoader = new DisplayLine();
+        display = fileLoader;
+        display.LoadSchedule(filename);
 
-        ArrayList<DisplayLine> displist = scheduledisplay.getDisps();
+        ArrayList<DisplayLine> displist = display.getDisps();
 
         model = (DefaultTableModel)jTable2.getModel();
 
@@ -1015,6 +1024,7 @@ public class CTCJFrame extends javax.swing.JFrame {
     }
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
     }
 
     /**
