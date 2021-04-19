@@ -16,6 +16,8 @@ public class WaysideSystem {
     private ArrayList<TrackElement> blocks;
     private ArrayList<TrackElement> outputBlocks; //every block that is an output, might be useful later
     private int numberOfControllers;
+    private int[] authorities;
+    private double[] speeds;
 
     //each track element has a wayside controller, this is an easy way to find each one!
     private HashMap<Integer, WaysideController> lut;
@@ -279,10 +281,20 @@ add output w/plc within a wayside controller
     /*
     broadcast to all the controllers!
      */
-    public boolean broadcastToControllers(double[] speeds, int[] authority) throws IOException {
+    public boolean broadcastToControllers(double[] newSpeeds, int[] newAuthorities) throws IOException {
         WaysideController temp;
 
         //RUN CHECKS TO MAKE SURE THE INPUTS ARE VALID HERE!
+
+        //collision safety check
+        for(int i=0;i < authorities.length;i++){
+            if(authorities[i] > 0 && newAuthorities[i] > 0){
+                newAuthorities[i] = 0;
+            }
+        }
+
+        authorities = newAuthorities;
+        speeds = newSpeeds;
 
         for(int i=0;i < speeds.length;i++){
             temp = lut.get(i);
@@ -290,9 +302,9 @@ add output w/plc within a wayside controller
         }
 
         temp = null;
-        for(int i=0;i < authority.length;i++){
+        for(int i=0;i < authorities.length;i++){
             temp = lut.get(i);
-            temp.setAuthority(i, authority[i]);
+            temp.setAuthority(i, authorities[i]);
         }
 
         return false;

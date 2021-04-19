@@ -97,6 +97,12 @@ public class WaysideController {
      */
     public void setSpeed(int blockNumber, double speeds) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
+        double speedLimit = (double) trackElement.getSpeedLimit();
+
+        if(speeds > speedLimit){
+            speeds = speedLimit;
+        }
+
         allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
