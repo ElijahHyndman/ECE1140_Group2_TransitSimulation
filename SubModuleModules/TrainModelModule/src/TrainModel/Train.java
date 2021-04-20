@@ -33,7 +33,6 @@ public class Train {
     int crewCount;
     int passengerCount; //aka ticket sales
 
-
     //Movement
     Boolean passengerBrake;
     Boolean emergencyBrake;
@@ -50,7 +49,7 @@ public class Train {
     double totalDistance; //meters
     double blockDistance;
     double blockGrade; //%
-    double speedLimit; //km/h  (1 km/hr = .2778 m/s)
+    double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
 
     //Fails
     boolean signalPickupFail;
@@ -101,8 +100,8 @@ public class Train {
     //setters
 
     public void setSpeed(double speed) {
-        if (speed > 19.44){
-            this.actualSpeed = 19.44;
+        if (speed > this.speedLimit){
+            this.actualSpeed = this.speedLimit;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         }
         else if(speed >= 0){
@@ -205,12 +204,12 @@ public class Train {
     }
 
 
-    public void setBlockGrade(double blockGrade) {
+    public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
     }
 
-    public void setSpeedLimit(double speedLimit) {
-        this.speedLimit = speedLimit;
+    public void setSpeedLimit(double kmPerHour) { //takes in km/h
+        this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
 
     public void setAuthority(int a) {
