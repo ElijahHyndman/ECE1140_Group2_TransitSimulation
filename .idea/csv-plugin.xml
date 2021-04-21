@@ -52,6 +52,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/CTCModule/src/CTCOffice/CTCOffice.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/CTCModule/src/CTCOffice/DisplayLine.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/CTCModule/src/CTCUI/CTCJFrame.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/TrackModelModule/src/Track/FourBlockCircle.csv">
           <value>
             <Attribute>
@@ -94,7 +115,77 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideControllerExtraTests.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideUseTesting.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideGUI/WaysideUIClass.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideGUI/WaysideUIJFrameWindow.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteWayside/RemoteWaysideServerTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteWayside/RemoteWaysideServiceTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteConnection.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteWaysideServer.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWayside/RemoteWayside.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWayside/RemoteWaysideServer.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWayside/RemoteWaysideService.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

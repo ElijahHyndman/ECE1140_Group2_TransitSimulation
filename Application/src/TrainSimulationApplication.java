@@ -1,5 +1,5 @@
-import CTCOffice.CTCOffice;
-import CTCUI.CTCJFrame;
+//import CTCOffice.CTCOffice;
+//import CTCUI.CTCJFrame;
 import GUIInterface.AppGUIModule;
 import SimulationEnvironment.*;
 import Track.*;
@@ -123,10 +123,11 @@ public class TrainSimulationApplication extends Thread {
 
         //run.getSE().getCTC().Dispatch("Dormont","new","00:08:00");
 
+        /*
         CTCJFrame ctcui = new CTCJFrame(run.getSE().getCTC());
         ctcui.setVisible(true);
         System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
-
+        */
         TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
         //yard.setCommandedSpeed(10.0);
         //yard.setAuthority(1);

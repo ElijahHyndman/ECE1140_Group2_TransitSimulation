@@ -235,10 +235,11 @@ class SimulationEnvironmentTest {
         Green Line Tests
      */
     @Test
-    void createGreenLine() {
+    void createGreenLine() throws IOException {
         SE = new SimulationEnvironment();
         SE.castGreenLine();
-        WaysideSystem ws = SE.getCTC().getWaysideSystems().get(0);
+        //WaysideSystem ws = SE.getCTC().getWaysideSystems().get(0);
+        WaysideSystem ws = new WaysideSystem();
         assertNotEquals(null,ws);
         assertNotEquals(null,ws.getController(0));
 

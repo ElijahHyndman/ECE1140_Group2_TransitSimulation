@@ -12,7 +12,7 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 
-public class WaysideController {
+public class WaysideController extends Thread {
 
     //overall system defaults
     final private int DEFAULT_SPEEDLIMIT = 50;
@@ -72,12 +72,22 @@ public class WaysideController {
         gpio = new GPIO(allBlocks, name);
     }
 
+    public void copy(WaysideController child) {
+        /** copy all values from this controller onto the new controller
+         */
+            child.name = this.name;
+            child.isActive = this.isActive;
+            child.isSoftware = this.isSoftware;
+            child.outputMap = this.outputMap;
+    }
+
     /*
     Getters and setters for the name
      */
-    public String getName(){ return name; }
+    // TODO tell harsh I had to change these
+    public String getControllerName(){ return name; }
     public String toString(){ return name; }
-    public void setName(String newName){ this.name = newName; }
+    public void setControllerName(String newName){ this.name = newName; }
 
     /*
     sets the speed for all blocks within the jurisdiction
@@ -134,8 +144,9 @@ public class WaysideController {
     /*
     gets the authority for all blocks within the jurisdiction
      */
-    public double[] getAuthority() {
-        double[] authority = new double[allBlocks.size()];
+    // TODO make this take ints instead of doubles
+    public int[] getAuthority() {
+        int[] authority = new int[allBlocks.size()];
 
         for(int i=0;i < allBlocks.size();i++){
             authority[i] = allBlocks.get(i).getAuthority();
@@ -269,6 +280,22 @@ public class WaysideController {
         return outputs[index][outputs[0].length-1];
     }
 
+    public void generateOutputSignals() {
+        boolean isTest = false;
+        // Update all known outputs
+        for(TrackElement block : allBlocks) {
+            try {
+                generateOutputSignal(block.getBlockNum(), isTest);
+            } catch(Exception e) {
+                // was not able to generate output signal for this block, move on
+            }
+        }
+    }
+
+    public void run() {
+
+    }
+
     //GUI **************************************************************************************************************
     /*
     Gets all the names for each of the following variables - inputValues, speed, authority, isActive for GUI
@@ -328,7 +355,8 @@ public class WaysideController {
         }
         hash.put(speedCategory, speedVector);
 
-        double[] authority = getAuthority();
+        // TODO changed this to int
+        int[] authority = getAuthority();
         String authorityCategory = "Authority";
         Vector<String> authorityVector = new Vector<>();
         for(int i=0;i < authority.length;i++){

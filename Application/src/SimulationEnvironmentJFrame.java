@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import CTCOffice.CTCOffice;
+//import CTCOffice.CTCOffice;
 import SimulationEnvironment.SimulationEnvironment;
 import SimulationEnvironment.TrainUnit;
 import TrackConstruction.TrackElement;

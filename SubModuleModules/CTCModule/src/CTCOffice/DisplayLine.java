@@ -25,6 +25,7 @@ public class DisplayLine extends CTCOffice
     boolean occupancy;
     boolean status;
 
+    /*
     public DisplayLine(Track SEtrack, SimulationEnvironment SE)
     {
         trackObj = SEtrack;
@@ -35,6 +36,7 @@ public class DisplayLine extends CTCOffice
         }
         SEobj = SE;
     }
+    */
 
     public void copy(DisplayLine given) {
         this.trackObj = given.getTrack();
