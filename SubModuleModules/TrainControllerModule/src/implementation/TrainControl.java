@@ -1,16 +1,14 @@
 package implementation;
 
 import TrainModel.Train;
-//import systemData.trackData;
 
 
 public class TrainControl {
 
     private final TrainMotor motor;
-    private final TrainMotor backupMotor;
+    //private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
-    //private trackData track;
 
     private double velocityCmd; //the train's ideal velocity, units m/s
     private double trainVelocity; //the actual velocity of the train, units m/s
@@ -41,8 +39,8 @@ public class TrainControl {
     public TrainControl(Train model){
 
         trainModel = model;
-        motor = new MainMotor();
-        backupMotor = new BackupMotor();
+        //state design pattern
+        motor = new ActiveMotor(new MainMotor(), new BackupMotor());
 
         beaconSet = false;
         controlMode = "Automatic";
@@ -64,8 +62,7 @@ public class TrainControl {
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        //track = new trackData("Blue");
-        nonVitalComponents = new NonVitalComponents();//track);
+        nonVitalComponents = new NonVitalComponents();
         sampleTime = 1;
         controlNonVital();
     }
@@ -122,6 +119,8 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
+               // TODO I could not determine how to resolve between this line and the one below it. Someone better than me, check this out and choose the correct one
+               // if (stoppingDistance <= breakingDist) {
                if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
@@ -257,6 +256,7 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
+        // TODO this was commented out, should it be commented out?
         actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
         distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
         //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
@@ -268,6 +268,13 @@ public class TrainControl {
 
         prevVelocity = trainVelocity;
         trainVelocity = speed;
+
+        distanceTraveled = trainVelocity * sampleTime;
+        totalDistanceTraveled += distanceTraveled;
+        if (beaconSet){
+            stoppingDistance = stoppingDistance - distanceTraveled;
+        }
+
         monitorDistance();
         getIdealAcceleration();
     }
@@ -310,14 +317,12 @@ public class TrainControl {
         }
     }
 
-
     public double getStoppingDistance(){
         return stoppingDistance;
     }
 
     public void setKpKi(double newKp, double newKi){
         motor.setKpKi(newKp, newKi);
-        backupMotor.setKpKi(newKp, newKi);
     }
 
     //Setting the train's nonVital Components
@@ -352,7 +357,6 @@ public class TrainControl {
     }
 
      */
-
 
     /**
      * NEW METHODS FOR TRAIN MODEL

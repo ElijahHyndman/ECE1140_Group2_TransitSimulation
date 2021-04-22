@@ -22,7 +22,8 @@ public class TrainIntegrationTest {
     public void setUp(){
         theTrain = new Train(5,4,0);
         control = new TrainControl(theTrain);
-        theTrain.setBeacon("Dormont: 200");
+        theTrain.setBeacon("Dormont: 350");
+        //theTrain.setBeacon("Dormont: 200");
     }
 
     @Test
