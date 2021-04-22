@@ -41,6 +41,9 @@ public class trainGUI extends javax.swing.JFrame {
         Train t1 = new Train(5, 2);
         trains.add(t1);
     }
+    public void giveTrain(Train t1) {
+        trains.add(t1);
+    }
     public void updateDisplay(){
         
         table1.setValueAt(trains.get(mainTrainIndex).displayAcceleration, 0, 1);
@@ -214,9 +217,9 @@ public class trainGUI extends javax.swing.JFrame {
         table1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Acceleration", null, "ft/s^2", "Train Model"},
-                {"Actual Speed", null, "ft/s", "Train Model"},
-                {"Commanded Speed", null, "ft/s", "Track Model"},
+                {"Acceleration", null, "mph/s^2", "Train Model"},
+                {"Actual Speed", null, "m/h", "Train Model"},
+                {"Commanded Speed", null, "m/h", "Track Model"},
                 {"Power", null, "HP", "Train Controller"},
                 {"Authority", null, "blocks", "Track Model"},
                 {"Mass", null, "kg", "Train Model"}
@@ -342,7 +345,7 @@ public class trainGUI extends javax.swing.JFrame {
                 .addGap(31, 31, 31))
         );
 
-        mainPanel.add(mainView, "main");
+        mainPanel.add(mainView, "TrainModel.main");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setText("Additional Information");
@@ -535,7 +538,7 @@ public class trainGUI extends javax.swing.JFrame {
         testFailure.setRowHeight(20);
         jScrollPane8.setViewportView(testFailure);
 
-        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/image.png"))); // NOI18N
+        //imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("image.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -784,7 +787,7 @@ public class trainGUI extends javax.swing.JFrame {
             trains.get(trainIndex).setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
         }
         if(testTable.getValueAt(3,3) != null && testTable.getValueAt(3,3) != ""){
-            trains.get(trainIndex).setBeacon(Integer.parseInt(testTable.getValueAt(3,3).toString()));
+            trains.get(trainIndex).setBeacon(testTable.getValueAt(3,3).toString());
         }
         if(testTable.getValueAt(4,3) != null && testTable.getValueAt(4,3) != ""){
             trains.get(trainIndex).setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));

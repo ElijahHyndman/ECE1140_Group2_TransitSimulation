@@ -18,6 +18,7 @@ public class Train {
         this.emergencyBrake = false;
         this.passengerBrake = false;
         this.serviceBrake = false;
+        this.sampleTime = 1; //default
         
         this.calculateMass();
     }
@@ -45,12 +46,13 @@ public class Train {
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
     int authority;
-    int beacon;
+    String beacon;
     int passengerCount; //aka ticket sales
     boolean cabinLights;
     boolean outerLights;
     boolean headlights;
     double actualSpeed;// m/s
+    double sampleTime;
     
     //display variable with customary units
     double displayActualSpeed;  //  ft/s
@@ -69,7 +71,7 @@ public class Train {
     public int getAuthority() {
         return authority;
     }
-    public int getBeacon() {
+    public String getBeacon() {
         return beacon;
     }
     public double getActualSpeed() {
@@ -100,8 +102,15 @@ public class Train {
         }
         calculateSpeed();
     }
+
+
+    //ADDED FOR TESTING
+    public double getPower(){
+        return power;
+    }
+
     public void calculateSpeed(){
-        int sampleTime = 1; //need to determine if this is constant
+        //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
         double newA;
@@ -132,6 +141,7 @@ public class Train {
             setSpeed(newV);
         }
         else{
+
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)/(2*sampleTime); // m/s + average of 2 accels / time
@@ -162,7 +172,7 @@ public class Train {
     public void setAuthority(int a) {
         this.authority = a;
     }
-    public void setBeacon(int beaconVal) {
+    public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {

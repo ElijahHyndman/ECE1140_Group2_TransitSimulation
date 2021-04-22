@@ -2,11 +2,8 @@ package implementation;
 
 import systemData.*;
 
-import java.time.LocalTime;
-
 public class NonVitalComponents {
 
-    private SystemTime theTime;
     private boolean cabinLights;
     private boolean headLights;
     private String station;
@@ -14,16 +11,12 @@ public class NonVitalComponents {
     private boolean rightDoors;
     private boolean leftDoors;
     private int cabinTemp;
-    private trackData track;
     private Advertisements adList;
     private boolean announcementProgress;
     private String theAnnouncement;
 
 
-    public NonVitalComponents(trackData theTrack){
-
-        theTime = new SystemTime();
-        track = theTrack;
+    public NonVitalComponents(){
 
         //Initialize non-vital components
         cabinLights = false;
@@ -36,8 +29,6 @@ public class NonVitalComponents {
         announcementProgress = false;
         theAnnouncement = null;
         adList = new Advertisements();
-
-
     }
 
     //=======ACCESSOR METHODS========
@@ -89,7 +80,7 @@ public class NonVitalComponents {
     //========MUTATOR METHODS==========
 
     public void setTemperature(){
-        if (theTime.getDate().getMonthValue() <= 3 || theTime.getDate().getMonthValue() >= 10){
+        if (java.time.LocalDate.now().getMonthValue() <= 3 || java.time.LocalDate.now().getMonthValue() >= 10){
             cabinTemp = 68;
         }else {
             cabinTemp = 66;
@@ -106,11 +97,13 @@ public class NonVitalComponents {
 
     public void setDoors(String currentBeacon){
         String doors = null;
+
         if (currentBeacon != null){
-            String stationName = currentBeacon.substring(0, currentBeacon.indexOf(" "));
-            trackData trackData = new trackData("Blue");
-            doors = trackData.getStationSide(stationName);
+            rightDoors = true;
+            leftDoors = false;
+
         }
+        /*
         if (doors != null){
             if (doors.equals("Left")){
                 leftDoors = true;
@@ -123,6 +116,8 @@ public class NonVitalComponents {
             rightDoors = false;
             leftDoors = false;
         }
+
+         */
     }
 
     public void setAnnouncement(double authority, String beacon){
@@ -150,7 +145,7 @@ public class NonVitalComponents {
 
     public void setCabinLights(){
 
-        if (theTime.getTime().getHour() >= 18 || theTime.getTime().getHour() < 7){
+        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             cabinLights = true;
         } else {
             cabinLights = false;
@@ -159,7 +154,7 @@ public class NonVitalComponents {
 
     public void setExternalLights(){
 
-        if (theTime.getTime().getHour() >= 18 || theTime.getTime().getHour() < 7){
+        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             externalLights = true;
         } else {
             externalLights = false;
