@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
 public class TestDriverUI {
 
     Train theTrain;
@@ -16,9 +15,13 @@ public class TestDriverUI {
 
     @Before
     public void setUp(){
-         theTrain = new Train(5, 4);
+          // This seems to be old values and old function calls
+         //theTrain = new Train(5, 4);
+         //control = new TrainControl(theTrain);
+         //theTrain.setBeacon("Dormont: 11200");
+         theTrain = new Train(5, 4,0);
          control = new TrainControl(theTrain);
-         theTrain.setBeacon("Dormont: 11200");
+         theTrain.setBeacon("Dormont: 200");
          theTrain.setAuthority(10);
          theTrain.setCommandedSpeed(10);
          theTrain.setSpeed(0);
@@ -56,7 +59,5 @@ public class TestDriverUI {
 
             ui.update();
         }
-
-    }
 
 }

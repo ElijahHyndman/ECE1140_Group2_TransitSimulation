@@ -7,7 +7,7 @@ class TrainTest {
 
     @Test
     void setDisplaySpeed() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setDisplaySpeed(1);
         assertEquals(0.44704005836555,t1.getActualSpeed() );
@@ -15,7 +15,7 @@ class TrainTest {
 
     @Test
     void calculateSpeed() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setPower(50);
         t1.calculateSpeed(1);
@@ -30,7 +30,7 @@ class TrainTest {
 
     @Test
     void calculateMass() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setPassengerCount(100);
         double mass = 37194 + 75*(102) ;
@@ -40,23 +40,33 @@ class TrainTest {
 
     @Test
     void setDisplayAccel() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setDisplayAccel(1);
         assertEquals(0.44704005836555,t1.getAccel() );
     }
     @Test
     void setPassengerBrake() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setPassengerBrake(true);
         assertEquals(true, t1.getPassengerBrake());
     }
     @Test
     void setEmergencyBrake() {
-        Train t1 = new Train(5, 2);
+        Train t1 = new Train(5, 2, 0);
 
         t1.setEmergencyBrake(true);
         assertEquals(true,t1.getEmergencyBrake() );
+    }
+    @Test
+    void changingAtStation() {
+        Train t1 = new Train(5, 2, 0);
+        t1.setPassengerCount(20);
+
+        t1.setPassengersBoarding(10);
+        int leaving = t1.disembark();
+
+        assertEquals(30-leaving,t1.getPassengerCount());
     }
 }

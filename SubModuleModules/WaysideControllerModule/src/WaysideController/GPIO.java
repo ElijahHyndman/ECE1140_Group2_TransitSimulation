@@ -34,6 +34,15 @@ public class GPIO {
         numberOfOutputs = outputValues.size();
     }
 
+    public void copy(GPIO target) {
+        /** copies values from a target GPIO object into this GPIO object
+         */
+        this.numberOfOutputs = target.numberOfOutputs;
+        this.controllerName = target.controllerName;
+        this.allBlocks = (ArrayList<TrackElement>) target.allBlocks.clone();
+        this.outputValues = (HashMap<TrackElement, Boolean>) target.outputValues.clone();
+    }
+
     public int getNumberOfBlocks() {
         return allBlocks.size();
     }
@@ -52,6 +61,9 @@ public class GPIO {
 //    }
 
     public boolean[] getAllInputValues(){
+        if (allBlocks == null) {
+            return new boolean[0];
+        }
         boolean[] inputs = new boolean[allBlocks.size()];
 
         for(int i=0;i < allBlocks.size();i++){

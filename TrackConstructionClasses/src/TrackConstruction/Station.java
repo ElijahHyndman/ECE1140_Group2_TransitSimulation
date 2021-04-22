@@ -6,6 +6,7 @@ public class Station extends TrackElement{
     String beacon;
     int throughput;  //passengers Leaving Train
     int ticketSales; //Ticket sales per station
+    String name;
     boolean occupied;
 
     public Station(){
@@ -36,6 +37,12 @@ public class Station extends TrackElement{
         Random rand = new Random();
         this.ticketSales = Math.abs(rand.nextInt()) % 80;
     }
+
+    public void setName(String nameTemp){
+        name = nameTemp;
+    }
+
+    public String getName() { return this.name;}
 
     /*set throughput*/
     @Override

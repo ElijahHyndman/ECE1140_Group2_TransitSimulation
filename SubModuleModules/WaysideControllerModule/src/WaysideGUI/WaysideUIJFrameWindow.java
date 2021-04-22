@@ -1,4 +1,5 @@
 package WaysideGUI;
+import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideController.GPIO;
@@ -20,7 +21,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame {
+public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -42,7 +43,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     // Data Members to populate GUI with information about
     private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
-    private static WaysideController thisController = new WaysideController();
+    private static WaysideController thisController = new WaysideController("Please Select a Controller");
 
     // Status tracking about GUI state
     private boolean controllerSelected = false;
@@ -250,7 +251,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
         updateTestingTables();
 
         // Generate and set header for Controller Advanced Menu
-        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getName());
+        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerName());
         ControllerMenuHeaderText += " - configured as %s".formatted((hardwareView) ? "Hardware" : "Software" );
         ControllerMenuHeader.setText(ControllerMenuHeaderText);
     }
@@ -263,7 +264,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
          * @after selection text on main menu refers to name of "thisController" member
          */
         String Label = "Current Selected Controller: ";
-        String cont = thisController.getName();
+        String cont = thisController.getControllerName();
 
         // Change of implementation changes header of selection
         SelectedControllerText.setText(Label + cont);
@@ -1007,7 +1008,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
             // is wayside controller
             thisController =(WaysideController) selectedNodeObject;
             controllerSelected =true;
-            System.out.println( " (Selected controller is now: "+thisController.getName()+")" );
+            System.out.println( " (Selected controller is now: "+thisController.getControllerName()+")" );
             updateControllerSelection();
             return;
         } else {
@@ -1207,5 +1208,24 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+
+    @Override
+    public void latch(Object myObject) {
+        try {
+            this.system = (WaysideSystem) myObject;
+        }catch (Exception e) {
+            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
+        }
+    }
+
+    @Override
+    public void update() {
+        updateGUI(this.controllers);
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
     // End of variables declaration
 }

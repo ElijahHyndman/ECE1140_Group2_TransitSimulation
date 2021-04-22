@@ -21,7 +21,8 @@ public class TrainControlTest {
 
     @Before
     public void setUp(){
-        control = new TrainControl(new Train(5, 10));
+        //control = new TrainControl(new Train(5, 10));
+        control = new TrainControl(new Train(5, 10,0));
     }
 
     @Test

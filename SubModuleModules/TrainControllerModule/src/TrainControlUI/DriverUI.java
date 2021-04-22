@@ -148,8 +148,11 @@ public class DriverUI implements ActionListener, AppGUIModule {
         message.setText(control.getSystemMessage());
         accelerationValue.setText(String.valueOf(format.format(control.getAcceleration()*.621371)));
         powerVal.setText(String.valueOf(format.format(control.getPower())));
-        gauge.setValue(control.getActualSpeed() * 2.23694);
-        gauge.repaint();
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
     }
 
     public void setUpWindow() {
