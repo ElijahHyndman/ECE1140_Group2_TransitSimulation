@@ -26,6 +26,19 @@ class TrackTest {
         cur = instance.getGreenLine().get(3);
         prev = instance.getGreenLine().get(2);
         System.out.println("This is Green " + instance.getNext(cur,prev));
+
+        instance.dispatchLine(1);
+        cur = instance.getRedLine().get(0);
+        prev = instance.getRedLine().get(0);
+        instance.getSwitches().get(0).setSwitchState(true);
+        instance.updateSwitches();
+        System.out.println("This is red " + instance.getNext(cur,prev));
+        instance.dispatchLine(0);
+        instance.getSwitches().get(10).setSwitchState(true);
+        instance.updateSwitches();
+        cur = instance.getGreenLine().get(0);
+        prev = instance.getGreenLine().get(0);
+        System.out.println("This is Green " + instance.getNext(cur,prev));
     }
 
 

@@ -22,6 +22,7 @@ import java.util.Scanner;
         int SIZE_LINE_A =0;
         int SIZE_LINE_B=0;
         double environmentalTemperature;
+        String DISPATCHLINE = "Red";
 
         //Creating Graphs for RED LINE and GREEN LINE
         ArrayList<TrackElement> redTrack;
@@ -369,12 +370,20 @@ import java.util.Scanner;
             return ret;
         }
 
+        /*dispatch line*/
+        public void dispatchLine(int a){
+            if(a == 0)
+                DISPATCHLINE = "Green";
+            else if(a == 1)
+                DISPATCHLINE = "Red";
+        }
+
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             TrackElement ret = null;
-            if(current.getLine().equals("Green"))
+            if(current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
                 ret = getNextGreen(current,previous);
-            else if(current.getLine().equals("Red"))
+            else if(current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
                 ret = getNextRed(current,previous);
 
             /*
