@@ -6,11 +6,28 @@ import TrackConstruction.TrackElement;
 import Track.TrackGUI;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrackTest {
+
+
+    @org.junit.jupiter.api.Test
+    void testgetNextRedGreen() {
+        System.out.println("getNextGreen");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        TrackElement cur = instance.getRedLine().get(3);
+        TrackElement prev = instance.getRedLine().get(2);
+        System.out.println("This is red " + instance.getNext(cur,prev));
+        cur = instance.getGreenLine().get(3);
+        prev = instance.getGreenLine().get(2);
+        System.out.println("This is Green " + instance.getNext(cur,prev));
+    }
+
 
     @org.junit.jupiter.api.Test
     void switch0Red() {
@@ -285,7 +302,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void importTrack() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         boolean expResult = true;
         boolean result = instance.importTrack(filepath);
@@ -295,7 +312,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getGreenLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         boolean expResult = true;
         instance.importTrack(filepath);
@@ -621,7 +638,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getRedLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getRedLine());
@@ -630,7 +647,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getBlock() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getBlock(0));
@@ -648,7 +665,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getBlockLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
        System.out.println(instance.getBlockLine(0, "Red"));
@@ -666,7 +683,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getTrackHeaterStatus() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
@@ -679,7 +696,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setEnvironmentalTemperature() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
@@ -692,7 +709,7 @@ class TrackTest {
     void getBeacon() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         for(int i = 0; i<=150; i++) {
@@ -705,7 +722,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getSwitches() {
         System.out.println("get Switches");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getSwitches());
@@ -716,7 +733,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setFailure() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setFailure(1,"Red",1);
@@ -754,7 +771,7 @@ class TrackTest {
         boolean expResult = false;
         boolean result = instance.validFile(filePath);
         assertEquals(expResult, result);
-        filePath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        filePath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         expResult = true;
         result = instance.validFile(filePath);
         assertEquals(expResult,result);
@@ -764,7 +781,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testDispatchYard(){
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -869,7 +886,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void updateTickets(){
         System.out.println("updateTickets");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         assertEquals(instance.updateTickets(),0);
@@ -890,7 +907,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setSwitch() {
         System.out.println("setSwitch");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -899,7 +916,7 @@ class TrackTest {
         testGUI.latch(instance);
 
 
-
+        /*
 
         //Testing for Green Line Switches
         instance.getSwitches().get(11).setSwitchState(false);
@@ -910,7 +927,7 @@ class TrackTest {
         instance.getSwitches().get(9).setSwitchState(false);
         instance.getSwitches().get(10).setSwitchState(false);
         instance.updateSwitches();
-        assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), 77);
+//        assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), 77);
         assertEquals(instance.getGreenLine().get(77).getCurrentDirection(), -2);
         assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), 86);
         assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), -2);
@@ -948,6 +965,8 @@ class TrackTest {
 
         System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
         System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
+        */
+
 
 
 
@@ -977,57 +996,117 @@ class TrackTest {
     }
 
 
+    @org.junit.jupiter.api.Test
+    void getStations() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        ArrayList<Station> test = instance.getStations();
+        for(int i = 0 ; i < test.size();i++)
+            System.out.println(test.get(i).getInfrastructure());
+    }
+
+    @org.junit.jupiter.api.Test
+    void testBeacons(){
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        for(int i=0;i<instance.getBeaconArray().size();i++)
+            System.out.println(instance.getBeaconArray().get(i).getBeacon());
+    }
+
+    @org.junit.jupiter.api.Test
+    void closeAndOpenTrack(){
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+
+        instance.getGreenLine().get(3).setFailureStatus(4);
+        System.out.println(instance.getGreenLine().get(3).getFailureStatus());
+        instance.getGreenLine().get(3).setFailureStatus(0);
+        System.out.println(instance.getGreenLine().get(3).getFailureStatus());
+
+    }
+
 
     @org.junit.jupiter.api.Test
     void blocksInSection() {
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
-        System.out.println("sectionA: " + instance.blocksInSection('A').toString());
-        System.out.println("sectionB: " + instance.blocksInSection('B').toString());
-        System.out.println("sectionC: " + instance.blocksInSection('C').toString());
-        System.out.println("sectionD: " + instance.blocksInSection('D').toString());
-        System.out.println("sectionE: " + instance.blocksInSection('E').toString());
-        System.out.println("sectionF: " + instance.blocksInSection('F').toString());
-        System.out.println("sectionG: " + instance.blocksInSection('G').toString());
-        System.out.println("sectionH: " + instance.blocksInSection('H').toString());
-        System.out.println("sectionI: " + instance.blocksInSection('I').toString());
-        System.out.println("sectionJ: " + instance.blocksInSection('J').toString());
-        System.out.println("sectionK: " + instance.blocksInSection('K').toString());
-        System.out.println("sectionL: " + instance.blocksInSection('L').toString());
-        System.out.println("sectionM: " + instance.blocksInSection('M').toString());
-        System.out.println("sectionN: " + instance.blocksInSection('N').toString());
-        System.out.println("sectionO: " + instance.blocksInSection('O').toString());
-        System.out.println("sectionP: " + instance.blocksInSection('P').toString());
-        System.out.println("sectionQ: " + instance.blocksInSection('Q').toString());
-        System.out.println("sectionR: " + instance.blocksInSection('R').toString());
-        System.out.println("sectionS: " + instance.blocksInSection('S').toString());
-        System.out.println("sectionT: " + instance.blocksInSection('T').toString());
-        System.out.println("sectionU: " + instance.blocksInSection('U').toString());
-        System.out.println("sectionV: " + instance.blocksInSection('V').toString());
-        System.out.println("sectionW: " + instance.blocksInSection('W').toString());
-        System.out.println("sectionX: " + instance.blocksInSection('X').toString());
-        System.out.println("sectionY: " + instance.blocksInSection('Y').toString());
-        System.out.println("sectionZ: " + instance.blocksInSection('Z').toString());
+        //Red Line
+        System.out.println("sectionA: " + instance.blocksInSection('A','R').toString());
+        System.out.println("sectionB: " + instance.blocksInSection('B','R').toString());
+        System.out.println("sectionC: " + instance.blocksInSection('C','R').toString());
+        System.out.println("sectionD: " + instance.blocksInSection('D','R').toString());
+        System.out.println("sectionE: " + instance.blocksInSection('E','R').toString());
+        System.out.println("sectionF: " + instance.blocksInSection('F','R').toString());
+        System.out.println("sectionG: " + instance.blocksInSection('G','R').toString());
+        System.out.println("sectionH: " + instance.blocksInSection('H','R').toString());
+        System.out.println("sectionI: " + instance.blocksInSection('I','R').toString());
+        System.out.println("sectionJ: " + instance.blocksInSection('J','R').toString());
+        System.out.println("sectionK: " + instance.blocksInSection('K','R').toString());
+        System.out.println("sectionL: " + instance.blocksInSection('L','R').toString());
+        System.out.println("sectionM: " + instance.blocksInSection('M','R').toString());
+        System.out.println("sectionN: " + instance.blocksInSection('N','R').toString());
+        System.out.println("sectionO: " + instance.blocksInSection('O','R').toString());
+        System.out.println("sectionP: " + instance.blocksInSection('P','R').toString());
+        System.out.println("sectionQ: " + instance.blocksInSection('Q','R').toString());
+        System.out.println("sectionR: " + instance.blocksInSection('R','R').toString());
+        System.out.println("sectionS: " + instance.blocksInSection('S','R').toString());
+        System.out.println("sectionT: " + instance.blocksInSection('T','R').toString());
+
+        //Green Line
+        System.out.println("sectionA: " + instance.blocksInSection('A','G').toString());
+        System.out.println("sectionB: " + instance.blocksInSection('B','G').toString());
+        System.out.println("sectionC: " + instance.blocksInSection('C','G').toString());
+        System.out.println("sectionD: " + instance.blocksInSection('D','G').toString());
+        System.out.println("sectionE: " + instance.blocksInSection('E','G').toString());
+        System.out.println("sectionF: " + instance.blocksInSection('F','G').toString());
+        System.out.println("sectionG: " + instance.blocksInSection('G','G').toString());
+        System.out.println("sectionH: " + instance.blocksInSection('H','G').toString());
+        System.out.println("sectionI: " + instance.blocksInSection('I','G').toString());
+        System.out.println("sectionJ: " + instance.blocksInSection('J','G').toString());
+        System.out.println("sectionK: " + instance.blocksInSection('K','G').toString());
+        System.out.println("sectionL: " + instance.blocksInSection('L','G').toString());
+        System.out.println("sectionM: " + instance.blocksInSection('M','G').toString());
+        System.out.println("sectionN: " + instance.blocksInSection('N','G').toString());
+        System.out.println("sectionO: " + instance.blocksInSection('O','G').toString());
+        System.out.println("sectionP: " + instance.blocksInSection('P','G').toString());
+        System.out.println("sectionQ: " + instance.blocksInSection('Q','G').toString());
+        System.out.println("sectionR: " + instance.blocksInSection('R','G').toString());
+        System.out.println("sectionS: " + instance.blocksInSection('S','G').toString());
+        System.out.println("sectionT: " + instance.blocksInSection('T','G').toString());
+        System.out.println("sectionU: " + instance.blocksInSection('U','G').toString());
+        System.out.println("sectionV: " + instance.blocksInSection('V','G').toString());
+        System.out.println("sectionW: " + instance.blocksInSection('W','G').toString());
+        System.out.println("sectionX: " + instance.blocksInSection('X','G').toString());
+        System.out.println("sectionY: " + instance.blocksInSection('Y','G').toString());
+        System.out.println("sectionZ: " + instance.blocksInSection('Z','G').toString());
 
     }
 
     @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
         //Instantiate UI
-/*
+
             TrackGUI testGUI = new TrackGUI(instance);
             testGUI.setVisible(true);
             testGUI.draw();
             testGUI.latch(instance);
-            instance.setFailure(2,"Green",1);
+         //   while(true){}
+          /*  instance.setFailure(2,"Green",1);
             testGUI.latch(instance);
             System.out.println(instance.getFailures());
             int i =0;

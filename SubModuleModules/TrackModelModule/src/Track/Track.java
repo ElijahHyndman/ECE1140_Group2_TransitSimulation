@@ -14,6 +14,7 @@ import java.util.Scanner;
         ArrayList<Station> stationsArrayList;
         ArrayList<Switch> switchesArrayList;
         ArrayList<TrackElement> failureArrayList;
+        ArrayList<TrackElement> beacons = new ArrayList<>();
 
 
         //Track Variables
@@ -103,15 +104,30 @@ import java.util.Scanner;
 
                     //Need to check to see if stations are here and if so need to set Beacon Value and calculate tickets
                     if(infrastructure.length()>7 && infrastructure.substring(0,7).equals("STATION")){
-                        Station Test = new Station(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
 
-                        stationsArrayList.add(Test);
-                        blockArrayList.add(Test);
+                        /*String[] name;
+                        int check =0;
+                        name = infrastructure.split(";");
+                        for(int i=0; i<stationsArrayList.size(); i++) {
+                            if(name[1].equals(stationsArrayList.get(i).getName())){
+                                check =1;
+                            }
+                        }*/
+                        //for duplicates of stations !!
+                       // if(check == 0) {
+                        Station Test = new Station(line, section, blockNum, length, grade, speedLimit, infrastructure, elevation, cumulativeElevation, setDirection, setBiDirectional);
 
-                        if(line.equals("Red"))
-                            redTrack.add(Test);
-                        else
-                            greenTrack.add(Test);
+                           /* if(name[1].length()>0)
+                                   Test.setName(name[1]);*/
+
+                            stationsArrayList.add(Test);
+                            blockArrayList.add(Test);
+
+                            if (line.equals("Red"))
+                                redTrack.add(Test);
+                            else
+                                greenTrack.add(Test);
+                      //  }
 
                     }
                     else if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
@@ -153,6 +169,7 @@ import java.util.Scanner;
                   switchesArrayList.get(i).setSwitchState(false); // 76 to 150
 
             updateSwitches();
+            setBeaconArray();
             return success;
         }
 
@@ -354,6 +371,13 @@ import java.util.Scanner;
 
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
+            TrackElement ret = null;
+            if(current.getLine().equals("Green"))
+                ret = getNextGreen(current,previous);
+            else if(current.getLine().equals("Red"))
+                ret = getNextRed(current,previous);
+
+            /*
             int cur = current.getBlockNum();
 
 
@@ -378,6 +402,8 @@ import java.util.Scanner;
                 return null;
             */
              //dealing with directionality
+
+            /*
             if(current.getCurrentDirection() > 0) // switch is on
                 ret = greenTrack.get(current.getCurrentDirection());
             else if(!current.getBiDirectional()) // one way track
@@ -416,7 +442,7 @@ import java.util.Scanner;
                 return null;
             }
 
-
+        */
         return ret;
         }
 
@@ -536,15 +562,35 @@ import java.util.Scanner;
 
 
         /*getting blocks in line*/
-        public ArrayList<Integer> blocksInSection(char section){
+        public ArrayList<Integer> blocksInSection(char section, char Line){
             ArrayList<Integer> blocks = new ArrayList<Integer>();
+
+            if(Line == 'G') {
             for(int i=1; i<greenTrack.size(); i++){
                 if(greenTrack.get(i).getSection() == section)
                     blocks.add(greenTrack.get(i).getBlockNum());
-            }
+            }}
+          if(Line == 'R'){
+              for(int i=1; i<redTrack.size(); i++){
+                  if(redTrack.get(i).getSection() == section)
+                      blocks.add(redTrack.get(i).getBlockNum());
+              }
+          }
+
             return blocks;
         }
 
+        /*getting beacons*/
+        public void setBeaconArray(){
+            for(int i =0; i< blockArrayList.size() ; i++){
+                if(blockArrayList.get(i).getBeacon() != null)
+                    beacons.add(blockArrayList.get(i));
+            }
+        }
+
+        public ArrayList<TrackElement> getBeaconArray(){
+            return beacons;
+        }
         /*May Need a Method for Occupy -- Here send out beacon (if station), and authority / command speed?? */
 
         /*To String Methods */
