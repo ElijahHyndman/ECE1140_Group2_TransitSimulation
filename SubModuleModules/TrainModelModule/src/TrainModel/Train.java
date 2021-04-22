@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package TrainModel;
-
+import java.util.Random;
 /**
  *
  * @author Devon
@@ -12,20 +12,21 @@ package TrainModel;
 public class Train {
 
     
-    public Train(int numCars, int numCrew) {
+    public Train(int numCars, int numCrew, int id) {
         this.numberOfCars = numCars;
         this.crewCount = numCrew;
         this.emergencyBrake = false;
         this.passengerBrake = false;
         this.serviceBrake = false;
-        
+        this.id = id;
         this.calculateMass();
+        this.sampleTime = 1;
     }
 
     int numberOfCars;
     double standardDecelLimit = 1.2 ; //  m/s^2
     double emergencyDecelLimit = 2.73; //  m/s^2
-
+    int id;
     //Mass info
     double mass; //total kg with passengers
     double trainMass = 37194/5; //kg of empty train
@@ -38,13 +39,18 @@ public class Train {
     Boolean emergencyBrake;
     Boolean serviceBrake;
     double commandedSpeed; //  m/s
-    double authority;
-    int beacon;
+    int authority;
+    String beacon;
     double power;// watts
     double accel;//  m/s^2
+    double maxServiceDecel = 1.2;
+    double maxEmergencyDecel = 2.73;
+    double maxAccel = 0.5;
     //TrackBlock myTrackBlock;
     double totalDistance; //meters
     double blockDistance;
+    double blockGrade; //%
+    double speedLimit; //km/h  (1 km/hr = .2778 m/s)
 
     //Fails
     boolean signalPickupFail;
@@ -62,6 +68,7 @@ public class Train {
     boolean outerLights;
     boolean headlights;
     double actualSpeed;// m/s
+    double sampleTime; //s
     
     //display variable with customary units
     double displayActualSpeed;  //  m/h
@@ -76,10 +83,10 @@ public class Train {
     public double getCommandedSpeed() {
         return commandedSpeed;
     }
-    public double getAuthority() {
+    public int getAuthority() {
         return authority;
     }
-    public int getBeacon() {
+    public String getBeacon() {
         return beacon;
     }
     public double getActualSpeed() {
@@ -87,11 +94,18 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
+    public double getPower() {
+        return power;
+    }
 
     //setters
 
     public void setSpeed(double speed) {
-        if(speed >= 0){
+        if (speed > 19.44){
+            this.actualSpeed = 19.44;
+            this.displayActualSpeed = this.actualSpeed * 2.236936;
+        }
+        else if(speed >= 0){
             this.actualSpeed = speed;  
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         } else {
@@ -103,6 +117,28 @@ public class Train {
     public void setDisplaySpeed(double speed) {
         this.displayActualSpeed = speed; 
         this.actualSpeed = this.displayActualSpeed / 2.236936;
+    }
+    public void setAccel(double acceleration) {
+        this.maxAccel = 23330 / this.mass;
+        if(acceleration > maxAccel){
+            this.accel = this.maxAccel;
+            this.displayAcceleration = this.maxAccel * 2.236936;
+        }else {
+            this.accel = acceleration;
+            this.displayAcceleration = this.accel * 2.236936;
+        }
+    }
+    public void setDisplayAccel(double acceleration) {
+        this.displayAcceleration = acceleration;
+        this.accel = this.displayAcceleration / 2.236936;
+    }
+    public void setCommandedSpeed(double commandedSpeed) {
+        this.commandedSpeed = commandedSpeed;
+        this.displayCommandedSpeed = this.commandedSpeed * 2.236936;
+    }
+    public void setDisplayCommandedSpeed(double commandedSpeed) {
+        this.displayCommandedSpeed = commandedSpeed;
+        this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
     public void setPower(double pow) {
         if(this.engineFail != true){
@@ -119,6 +155,8 @@ public class Train {
         
         //check for zero velocity & power command
 
+        totalDistance += this.actualSpeed*deltaTime;
+        blockDistance += this.actualSpeed*deltaTime;
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
@@ -145,13 +183,12 @@ public class Train {
         }
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
+            //F -= Math.sin(Math.atan(this.blockGrade/100)) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
-            newV = this.actualSpeed + (newA+this.accel)/(2*deltaTime); // m/s + average of 2 accels / time
+            newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels / time
             setSpeed(newV);
             setAccel(newA);
         }
-        totalDistance += this.actualSpeed*deltaTime;
-        blockDistance += this.actualSpeed*deltaTime;
     }
     public double getTotalDistance(){
         return totalDistance;
@@ -166,29 +203,24 @@ public class Train {
         this.mass = 75*(passengerCount+crewCount) + (37194/5 * numberOfCars);
         return this.mass;
     }
-    public void setAccel(double acceleration) {
-        this.accel = acceleration;
-        this.displayAcceleration = this.accel * 2.236936;
+
+
+    public void setBlockGrade(double blockGrade) {
+        this.blockGrade = blockGrade;
     }
-    public void setDisplayAccel(double acceleration) {
-        this.displayAcceleration = acceleration;
-        this.accel = this.displayAcceleration / 2.236936;
+
+    public void setSpeedLimit(double speedLimit) {
+        this.speedLimit = speedLimit;
     }
-    public void setCommandedSpeed(double commandedSpeed) {
-        this.commandedSpeed = commandedSpeed;
-        this.displayCommandedSpeed = this.commandedSpeed * 2.236936;
-    }
-    public void setDisplayCommandedSpeed(double commandedSpeed) {
-        this.displayCommandedSpeed = commandedSpeed;
-        this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
-    }
-    public void setAuthority(double a) {
+
+    public void setAuthority(int a) {
         this.authority = a;
     }
-    public void setBeacon(int beaconVal) {
+    public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
+        //this.maxEmergencyDecel = 127382 / this.mass;
         if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -197,6 +229,7 @@ public class Train {
         }
     }
     public void setEmergencyBrake(Boolean brake) {
+        //this.maxEmergencyDecel = 127382 / this.mass;
         if(this.brakeFail != true){
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -205,6 +238,7 @@ public class Train {
         }
     }
     public void setServiceBrake(Boolean brake) {
+        //this.maxServiceDecel = 55992 / this.mass;
         if(this.brakeFail != true){
             this.serviceBrake = brake;
             setAccel(-1 * this.standardDecelLimit);
@@ -242,10 +276,17 @@ public class Train {
     }
     public void setLeftDoors(boolean status){
         this.leftDoors = status;
+        if(this.leftDoors == true){
+            disembark();
+        }
     }
     public void setRightDoors(boolean status){
         this.rightDoors = status;
+        if(this.rightDoors == true){
+            disembark();
+        }
     }
+
     public void setPassengerCount(int count){
         this.passengerCount = count;
         calculateMass();
@@ -256,6 +297,7 @@ public class Train {
 
     public void updatePhysicalState(String currentTime, double deltaTime){
         calculateSpeed(deltaTime);
+        this.sampleTime = deltaTime;
     }
 
     
@@ -264,6 +306,12 @@ public class Train {
         this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
         this.displayAcceleration = this.accel * 3.2808399;
         
+    }
+    public void disembark(){
+        Random rand = new Random(); //instance of random class
+        int upperbound = (int) (.5 * this.passengerCount);
+        int random = rand.nextInt(upperbound);
+        setPassengerCount(this.passengerCount - random);
     }
 
     public boolean getEmergencyBrake() {

@@ -1,18 +1,20 @@
 package CTCOffice;//Haleigh DeFoor
 //CTC Office
-//Skeleton Code
-//import java.io.*;
 
 import java.util.*;
 import java.io.*;
 import java.time.*;
 
-public class CTCOffice
+import TrackConstruction.TrackBlock;
+import WaysideController.WaysideSystem;
+import SimulationEnvironment.*;
+import Track.Track;
+
+public class CTCOffice implements PhysicsUpdateListener
 {
     private int thruP;
-    private Object[] speedAuthority = new Object[3];
+    private Object[] speedAuthorityTime = new Object[3];
     private boolean status;
-    //private String fileName;
     private int blockNum;
     private String lineCol;
     ArrayList<DisplayLine> dispArr = new ArrayList<>();
@@ -29,13 +31,57 @@ public class CTCOffice
     private String t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
     private boolean occ;
     private double speed;
-    
+    private int authority;
+    public WaysideSystem waysides, waysideG, waysideR;
+    private double[] speedArrG = new double[150];
+    private double[] speedArrR = new double[150];
+    private double[] route = new double[150];
+    private int[] authArr = new int[150];
+    public CharSequence timeNow;
+    private LocalTime now;
+    public Track trackObj;
+    public SimulationEnvironment SEobj;
+
+    public CTCOffice()
+    {
+        //waysides = new WaysideSystem(trackObj.getBlocks());
+        SEobj = null;
+        trackObj = null;
+    }
+
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE) throws IOException {
+        waysides = new WaysideSystem();
+        trackObj = SEtrack;
+        SEobj = SE;
+    }
+
+    public WaysideSystem getWaysideSystem()
+    {
+        return waysides;
+    }
+
+    public void setWaysideSystem(WaysideSystem SEws)
+    {
+        waysides = SEws;
+    }
+
+    public Track getTrack()
+    {
+        return trackObj;
+    }
+
+    public void setTrack(Track SEt)
+    {
+        trackObj = SEt;
+    }
+
     public Object[] Dispatch(String dest, String tNum, String timeD)
     {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
-        //calculate speed and authority from destination for a specific train
-        
+        //speedAuthority[2] is dispatch time
+        Vector<TrainUnit> trains = SEobj.getTrains();
+
         if (tNum.equals("Train 1"))
             trainNum = 1;
         else if (tNum.equals("Train 2"))
@@ -57,8 +103,8 @@ public class CTCOffice
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else
-            trainNum = 1;
-        
+            SEobj.spawnRunningTrain(trackObj.getBlock(0),trackObj.getBlock(9));
+
         if (dest.equals("Station B")){
             blockNum = 10;
             lineCol = "Blue";}
@@ -131,59 +177,71 @@ public class CTCOffice
         else{
             blockNum = 0;
             lineCol = "Blue";}
-       
-       CharSequence timeChar = timeD;
-       timeDis = LocalTime.parse(timeChar);
-       
-       int h1 = timeDis.getHour();
-       int h2 = LocalTime.now().getHour();
-       int m1 = timeDis.getMinute();
-       int m2 = LocalTime.now().getMinute();
-       
-       
-       double temp = m1-m2;
-       temp = temp/60;
-       int hsub = h1-h2;
-       if (m1<m2)
-       {
-           hsub = hsub-1;
-       }
-       temp = temp+hsub;
-       
-       if(dest.equals("Station B"))
-           routeLength = 10*50;
-       else if(dest.equals("Station C"))
-           routeLength = 10*50;
-       else
-           routeLength = 0;
-       
-       speed = routeLength/1000/temp;
-       if (speed<30)
-       {
-            speed = 30;
+
+        CharSequence timeChar = timeD;
+        timeDis = LocalTime.parse(timeChar);
+        now = LocalTime.parse(timeNow);
+
+        int h1 = timeDis.getHour();
+        int h2 = now.getHour();
+        int m1 = timeDis.getMinute();
+        int m2 = now.getMinute();
+
+        double temp = m1-m2;
+        temp = temp/60;
+        int hsub = h1-h2;
+        if (m1<m2)
+        {
+            hsub = hsub-1;
+        }
+        temp = temp+hsub;
+
+        route = calcRoute(blockNum, lineCol);
+
+        routeLength = calcRouteLength(blockNum, lineCol);
+
+        speed = routeLength/1000/temp;
+
+        authority = calcAuthority(route);
+        authArr = createAuthArr(route, authority);
+
+        if (speed<5)
+        {
+            speed = 5;
             double timeTravel = 1/(speed*1000/routeLength/60);
             long mins = (long)timeTravel;
             timeDisp = timeDis.minusMinutes(mins);
-       }
-       else
-       {
-           timeDisp = LocalTime.now();
-       }
-               
-       if(LocalTime.now().isBefore(timeDis) && speed<50)    
-       {
-           speedAuthority[0] = speed*0.621371;
-           speedAuthority[1] = 10;
-           speedAuthority[2] = timeDisp;
-       }
-       else
-       {
-           speedAuthority[0] = 0;
-           speedAuthority[1] = 0;
-           speedAuthority[2] = 0;
-       }
+        }
+        else
+        {
+            timeDisp = now;
+        }
 
-       return speedAuthority;
+        if (lineCol.equals("Green"))
+            speedArrG = createSpeedArr(route, speed);
+        if (lineCol.equals("Red"))
+            speedArrR = createSpeedArr(route, speed);
+
+        if(LocalTime.now().isBefore(timeDis) && speed<50)
+        {
+            speedAuthorityTime[0] = speed*0.621371;
+            speedAuthorityTime[1] = authority;
+            speedAuthorityTime[2] = timeDisp;
+        }
+        else
+        {
+            speedAuthorityTime[0] = 0;
+            speedAuthorityTime[1] = 0;
+            speedAuthorityTime[2] = 0;
+        }
+
+        try {
+            waysides.broadcastToControllers(speedArrG, authArr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return speedAuthorityTime;
     }
 
     public void LoadSchedule(String filename)
@@ -221,7 +279,7 @@ public class CTCOffice
             t8 = input.next();
             t9 = input.next();
             t10 = input.next();
-            
+
             DisplayLine disp = new DisplayLine(blockNum, lineCol, sect, blockL, sLim, bGrade, elev, cElev, inf, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
             dispArr.add(disp);
             count++;
@@ -232,103 +290,182 @@ public class CTCOffice
         e.printStackTrace();
     }
     }
-    
-    public int CalcThroughput(int tix)
+
+    public int CalcThroughput()
     {
-        int hours = LocalTime.now().getHour();
-        int mins = LocalTime.now().getMinute();
+        trackObj = new Track();
+        int tix = trackObj.updateTickets();
+        now = LocalTime.parse(timeNow);
+        int hours = now.getHour();
+        int mins = now.getMinute();
         double totalT = mins/60;
         totalT = totalT+hours;
-        
+
         thruP = (int) Math.round(tix/totalT);
         return thruP;
     }
 
-    public void DisplayTransit()
+    public boolean CheckOcc(int blockNum, String lineCol)
     {
-        //displays transit system
-    }
-
-    public void DisplaySchedule()
-    {
-        //read input from files to create schedule display
-    }
-
-    public void DisplayStatus()
-    {
-        //read input from files to create status display
-    }
-
-    public void LoadData(String line, int blockNum)
-    {
-        //display a certain block's data from file
-        
-    }
-    
-    public boolean CheckOccupancy(String t1, String t2, String t3, String t4, String t5, String t6, String t7, String t8, String t9, String t10)
-    {
-        if (!t1.equals(null))
-        {
-            LocalTime nowT = LocalTime.now();
-            LocalTime t12 = LocalTime.parse(t1);
-            LocalTime t22 = LocalTime.parse(t2);
-            LocalTime t32 = LocalTime.parse(t3);
-            LocalTime t42 = LocalTime.parse(t4);
-            LocalTime t52 = LocalTime.parse(t5);
-            LocalTime t62 = LocalTime.parse(t6);
-            LocalTime t72 = LocalTime.parse(t7);
-            LocalTime t82 = LocalTime.parse(t8);
-            LocalTime t92 = LocalTime.parse(t9);
-            LocalTime t102 = LocalTime.parse(t10);
-
-            int val1 = nowT.compareTo(t12);
-            int val2 = nowT.compareTo(t22);
-            int val3 = nowT.compareTo(t32);
-            int val4 = nowT.compareTo(t42);
-            int val5 = nowT.compareTo(t52);
-            int val6 = nowT.compareTo(t62);
-            int val7 = nowT.compareTo(t72);
-            int val8 = nowT.compareTo(t82);
-            int val9 = nowT.compareTo(t92);
-            int val10 = nowT.compareTo(t102);
-
-            if(val1==0 || val2==0 || val3==0 || val4==0 || val5==0 || val6==0 || val7==0 || val8==0 || val9==0 || val10==0)
-                occ = true;
-            else
-                occ = false;
-        }
+       /*if (lineCol.equals("Green"))
+            occ = waysideG.getOccupancy(blockNum);
         else
-            occ = false;
-        
+            occ = waysideR.getOccupancy(blockNum);*/
+        try {
+            occ = waysides.getOccupancy(blockNum);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return occ;
     }
-    public boolean CheckStatus(String line, int blockNum)
-    {
-        //checks maintenance status of certain block number on a line
-        this.lineCol = line;
-        this.blockNum = blockNum;
 
-        return status;
+    public boolean CheckSwitch(int blockNum, String lineCol)
+    {
+        boolean switchstat=false;
+        try {
+            switchstat = waysides.getSwitchStatus(blockNum);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return switchstat;
     }
 
-    public int OpenTrack(int blockNum)
+    public void OpenTrack(int blockNum, String lineCol)
     {
-        //communicate the block number that dispatcher wants to open to wayside controller
-        this.blockNum = blockNum;
-        return blockNum;
+        char section = dispArr.get(blockNum).getSection();
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        int length = blocks.size();
+
+        for (int i=0; i<length; i++){
+            //waysides.setOpen(blocks.get(i), lineCol);
+        }
     }
 
-    public int CloseTrack(int blockNum)
+    public void CloseTrack(int blockNum, String lineCol)
     {
-        //communicate the block number that dispatcher wants to close to wayside controller
-        this.blockNum = blockNum;
-        return blockNum;
+        char section = dispArr.get(blockNum).getSection();
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        int length = blocks.size();
+
+        for (int i=0; i<length; i++){
+            //waysides.setClose(blocks.get(i), lineCol);
+        }
     }
-    
+
+    public int calcRouteLength(int bn, String lc)
+    {
+        int rl;
+        if(bn==10 && lc.equals("Blue"))
+            rl = 10*50;
+        else if(bn==15 && lc.equals("Blue"))
+            rl = 10*50;
+        else if(bn==73 && lc.equals("Green"))
+            rl = 50+200+400+700;
+        else
+            rl = 0;
+        return rl;
+    }
+
+    public double[] calcRoute(int bn, String lc)
+    {
+        double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        if(bn==73 && lc.equals("Green")){
+            for (int i=63; i<75; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if (bn==65 && lc.equals("Green")){
+            for (int i=63; i<67; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if (bn==77 && lc.equals("Green")){
+            for (int i=63; i<79; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==88 && lc.equals("Green")){
+            for (int i=63; i<90; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==96 && lc.equals("Green")){
+            for (int i=63; i<98; i++){
+                routeArr[i] = 1;
+            }
+        }
+        if(bn==123 && lc.equals("Green")){
+            for (int i=63; i<125; i++){
+                routeArr[i] = 1;
+            }
+        }
+
+        return routeArr;
+    }
+
+    public double[] createSpeedArr(double[] rA, double sp)
+    {
+        double[] sArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0; i<150; i++)
+        {
+            if(rA[i] != 0)
+                sArr[i] = sp;
+        }
+
+        return sArr;
+    }
+
+    public int calcAuthority(double[] routeArr)
+    {
+        int count=0;
+        for (int i=0; i<150; i++){
+            if(routeArr[i]!=0)
+                count++;
+        }
+        return count;
+    }
+
+    public int[] createAuthArr(double[] rA, int auth)
+    {
+        int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0; i<150; i++){
+            if (rA[i]!=0) {
+                /*for (int j = i; j < auth+i; j++) {
+                    aArr[j] = a;
+                    a--;
+                }
+                break;*/
+                aArr[i] = auth;
+            }
+        }
+
+        return aArr;
+    }
+
+    public int getTickets()
+    {
+        int tix = 0;
+        //tix = Track.updateTix();
+        return tix;
+    }
+
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
+    {
+        this.timeNow = currentTimeString;
+    }
+
     public ArrayList getDisps()
     {
         return dispArr;
     }
+
+    public SimulationEnvironment getSE()
+    {
+        return SEobj;
+    }
+
+
 
 
 }

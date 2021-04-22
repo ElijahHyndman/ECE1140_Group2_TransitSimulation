@@ -1,8 +1,8 @@
 package Track;
 
+import GUIInterface.AppGUIModule;
 import TrackConstruction.*;
 import javax.swing.Timer;
-import GUIInterface.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
  * @author grhen
  */
 
-public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
+public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
     //Adding Track Components
     Track trackList;
@@ -52,7 +52,7 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
     /**
      * update Tracklist -- method to be called by simulation environment
      */
-    @Override
+
     public void latch(Object myObject) {
 
         Track givenSystem = null;
@@ -64,9 +64,14 @@ public class TrackGUI extends javax.swing.JFrame  implements AppGUIModule {
 
         trackList = (Track) myObject;
     }
-    @Override
+
     public void update() {
     } //automatically updates no need to do this
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
 
     public void draw() {
 

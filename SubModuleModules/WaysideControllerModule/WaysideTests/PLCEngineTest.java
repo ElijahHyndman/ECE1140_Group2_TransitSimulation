@@ -1,4 +1,5 @@
 import WaysideController.PLCEngine;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,20 @@ class PLCEngineTest {
     public void testReader() throws IOException, URISyntaxException {
         PLCEngine engine = new PLCEngine();
 
-        List<String> testList = engine.readFile("testtoken");
+        List<String> testList = engine.readFileNew("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
+        for(int i = 0; i < testList.size(); i++){
+            System.out.println(testList.get(i));
+        }
+
+        System.out.println("Finished code.");
+    }
+
+    @Test
+    @DisplayName("Testing Read Helper Function New Version")
+    public void testReaderNew() throws IOException, URISyntaxException {
+        PLCEngine engine = new PLCEngine();
+
+        List<String> testList = engine.readFileNew("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
         for(int i = 0; i < testList.size(); i++){
             System.out.println(testList.get(i));
         }
@@ -35,9 +49,10 @@ class PLCEngineTest {
         PLCEngine engine = new PLCEngine();
 
         assertTrue(engine.verifyString("A"));
+        assertTrue(engine.verifyString("1"));
         assertFalse(engine.verifyString("ABC DEF"));
         assertFalse(engine.verifyString("ABC:DEF"));
-        assertFalse(engine.verifyString("ABC10231DEF"));
+        assertTrue(engine.verifyString("ABC10231DEF"));
         assertTrue(engine.verifyString("ABCDEF"));
     }
 
@@ -47,7 +62,7 @@ class PLCEngineTest {
         PLCEngine engine = new PLCEngine();
         PLCEngine engine2 = new PLCEngine();
 
-        engine.createTokens("testtoken");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
         Queue<String> que = engine.getVarQueue();
         Queue<PLCEngine.Token> tok = engine.getTokenQueue();
 
@@ -59,7 +74,7 @@ class PLCEngineTest {
             System.out.println(t.toString());
         }
 
-        engine2.createTokens("testtoken2");
+        engine2.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken2");
         Queue<String> que2 = engine2.getVarQueue();
         Queue<PLCEngine.Token> tok2 = engine2.getTokenQueue();
 
@@ -77,7 +92,7 @@ class PLCEngineTest {
     public void testOutput() throws IOException, URISyntaxException {
         PLCEngine engine = new PLCEngine();
 
-        engine.createTokens("testtoken");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
         Queue<String> que = engine.getVarQueue();
         Queue<PLCEngine.Token> tok = engine.getTokenQueue();
 
@@ -104,10 +119,10 @@ class PLCEngineTest {
     @DisplayName("Testing the output generation")
     public void testOutputNEW() throws IOException, URISyntaxException {
         PLCEngine engine = new PLCEngine();
-        engine.createTokens("testtoken2");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken2");
 
         PLCEngine engine2 = new PLCEngine();
-        engine2.createTokens("testtoken");
+        engine2.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
 
         Queue<String> que = engine2.getVarQueue();
         Queue<PLCEngine.Token> tok = engine2.getTokenQueue();
@@ -135,21 +150,20 @@ class PLCEngineTest {
         assertEquals(true, engine2.calculateOutputLogicNew(inputNames2, new boolean[]{true, true, true}));
     }
 
+    //THIS TEST IS SUPPOSE TO FAIL, THIS IS A DEPRECATED METHOD AND SYSTEM. TEST EXISTS TO SHOW FAILURES
     @Test
     @DisplayName("calculating the table")
     public void testOutputTable() throws IOException, URISyntaxException{
         PLCEngine engine = new PLCEngine();
 
-        engine.createTokens("testtoken2");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken2");
 
         List<String> inputNames = Arrays.asList("A", "B", "C", "D");
-        boolean[][] outputTable = engine.calculateOutputMap(inputNames);
-
-        for(int i=0;i < Math.pow(2,inputNames.size());i++){
-            for(int j=0;j < inputNames.size()+1;j++){
-                System.out.print(outputTable[i][j] + " ");
-            }
-            System.out.println();
+        try{
+            boolean[][] outputTable = engine.calculateOutputMap(inputNames);
+        }catch (IOException e){
+            assertEquals("Calculation Error: Token Corruption",e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -158,7 +172,7 @@ class PLCEngineTest {
     public void testOutputTableNew() throws IOException, URISyntaxException{
         PLCEngine engine = new PLCEngine();
 
-        engine.createTokens("testtoken2");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken2");
 
         List<String> inputNames = Arrays.asList("A", "B", "C", "D");
         boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
@@ -176,9 +190,27 @@ class PLCEngineTest {
     public void testOutputTableNewTwo() throws IOException, URISyntaxException{
         PLCEngine engine = new PLCEngine();
 
-        engine.createTokens("testtoken3");
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken3");
 
         List<String> inputNames = Arrays.asList("A", "C", "D");
+        boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
+
+        for(int i=0;i < Math.pow(2,inputNames.size());i++){
+            for(int j=0;j < inputNames.size()+1;j++){
+                System.out.print(outputTable[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    @Test
+    @DisplayName("calculating the table")
+    public void testOutputTableNewThree() throws IOException, URISyntaxException{
+        PLCEngine engine = new PLCEngine();
+
+        engine.createTokens("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
+
+        List<String> inputNames = Arrays.asList("A", "B", "C", "D");
         boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
 
         for(int i=0;i < Math.pow(2,inputNames.size());i++){

@@ -1,6 +1,6 @@
 package implementation;
 
-import systemData.*;
+//import systemData.*;
 
 public class NonVitalComponents {
 
@@ -11,15 +11,16 @@ public class NonVitalComponents {
     private boolean rightDoors;
     private boolean leftDoors;
     private int cabinTemp;
-    private trackData track;
-    private Advertisements adList;
+    //private trackData track;
+    //private Advertisements adList;
     private boolean announcementProgress;
     private String theAnnouncement;
 
 
-    public NonVitalComponents(trackData theTrack){
 
-        track = theTrack;
+    public NonVitalComponents(){//trackData theTrack){
+
+        //track = theTrack;
 
         //Initialize non-vital components
         cabinLights = false;
@@ -31,7 +32,7 @@ public class NonVitalComponents {
         station = null;
         announcementProgress = false;
         theAnnouncement = null;
-        adList = new Advertisements();
+        //adList = new Advertisements();
 
 
     }
@@ -78,7 +79,8 @@ public class NonVitalComponents {
     }
 
     public int getCurrentAdvertisement(){
-        return adList.playAd();
+        //return adList.playAd();
+        return 0;
     }
 
 
@@ -103,10 +105,12 @@ public class NonVitalComponents {
     public void setDoors(String currentBeacon){
         String doors = null;
         if (currentBeacon != null){
-            String stationName = currentBeacon.substring(0, currentBeacon.indexOf(" "));
-            trackData trackData = new trackData("Blue");
-            doors = trackData.getStationSide(stationName);
+            rightDoors = true;
+            leftDoors = false;
+
         }
+
+        /*
         if (doors != null){
             if (doors.equals("Left")){
                 leftDoors = true;
@@ -119,6 +123,8 @@ public class NonVitalComponents {
             rightDoors = false;
             leftDoors = false;
         }
+
+         */
     }
 
     public void setAnnouncement(double authority, String beacon){
