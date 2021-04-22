@@ -23,5 +23,6 @@ public class Advertisements {
                 currentAd = 0;
             }
         }
+
 }
 

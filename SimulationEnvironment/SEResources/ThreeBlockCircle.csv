@@ -1,0 +1,4 @@
+Line,Section,Block Number,Block Length (m),Block Grade (%),Speed Limit (Km/Hr),Infrastructure,,ELEVATION (M),CUMALTIVE ELEVATION (M),TOa,Tob,Toc,BIDIRECTIONAL,Beacon
+Circle,A,1,50,0,80,,,0,0,3,2,0,y,1
+Circle,B,2,50,0,80,,,0,0,1,3,0,y,1
+Circle,C,3,50,0,80,,,0,0,2,1,0,y,1

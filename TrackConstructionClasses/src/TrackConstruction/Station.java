@@ -8,7 +8,7 @@ public class Station extends TrackElement{
     int ticketSales; //Ticket sales per station
     boolean occupied;
 
-    Station(){
+    public Station(){
         this.occupied = false;
     }
 
@@ -27,10 +27,12 @@ public class Station extends TrackElement{
         this.commandedSpeed = 0;
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
+        this.currentDirection = -3;
+        this.type = "Station";
     }
 
     /*Set Ticket Sales */
-    void setTicketSales(){
+    public void setTicketSales(){
         Random rand = new Random();
         this.ticketSales = Math.abs(rand.nextInt()) % 80;
     }
@@ -42,9 +44,7 @@ public class Station extends TrackElement{
     }
 
     /*set Beacon*/
-    public void setBeacon(String station){
-        this.beacon = station;
-    }
+   // public void setBeacon(String station){this.beacon = station;}
 
     /*set Station*/
     void setStation(String station){
@@ -76,12 +76,8 @@ public class Station extends TrackElement{
     String getStation() { return this.station;}
 
     /*get Beacon*/
-    public String getBeacon() { return this.beacon;}
+   // public String getBeacon() { return this.beacon;}
 
-    /*get type of block*/
-    String getType(){
-        return "Station";
-    }
 
     @Override
     public String toString() {

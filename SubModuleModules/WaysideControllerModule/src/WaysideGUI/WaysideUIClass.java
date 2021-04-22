@@ -3,6 +3,7 @@ package WaysideGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 
+import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -33,17 +34,19 @@ public class WaysideUIClass extends Thread {
     WaysideSystem WS;
     WaysideUIJFrameWindow guiWindow;
 
-    public WaysideUIClass() {
+    public WaysideUIClass() throws IOException {
         WS = new WaysideSystem();
         guiWindow = new WaysideUIJFrameWindow(WS);
     }
 
-    public WaysideUIClass(WaysideSystem existingSystem) {
+    public WaysideUIClass(WaysideSystem existingSystem) throws IOException {
         WS = existingSystem;
         guiWindow = new WaysideUIJFrameWindow(existingSystem);
     }
 
     public void run() {
+        /** begins a new thread and continually updates the gui according to the new values of the controllers.
+         */
         if (WS == null) {
             return;
         }
@@ -51,14 +54,14 @@ public class WaysideUIClass extends Thread {
 
         while (true) {
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(300);
             } catch (Exception e) {
                 System.out.println("A problem occurred using the sleep function inside the WaysideUIClass");
             }
 
-            //System.out.println("Sampling wayside system");
             Vector<WaysideController> samples = (Vector<WaysideController>) WS.getControllersVector();
             guiWindow.updateGUI(samples);
+            //guiWindow.update();
         }
     }
 
