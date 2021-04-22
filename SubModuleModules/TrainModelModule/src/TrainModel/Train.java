@@ -33,7 +33,6 @@ public class Train {
     int crewCount;
     int passengerCount; //aka ticket sales
 
-
     //Movement
     Boolean passengerBrake;
     Boolean emergencyBrake;
@@ -50,7 +49,7 @@ public class Train {
     double totalDistance; //meters
     double blockDistance;
     double blockGrade; //%
-    double speedLimit; //km/h  (1 km/hr = .2778 m/s)
+    double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
 
     //Fails
     boolean signalPickupFail;
@@ -101,8 +100,8 @@ public class Train {
     //setters
 
     public void setSpeed(double speed) {
-        if (speed > 19.44){
-            this.actualSpeed = 19.44;
+        if (speed > this.speedLimit){
+            this.actualSpeed = this.speedLimit;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         }
         else if(speed >= 0){
@@ -183,9 +182,9 @@ public class Train {
         }
         else{
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
-            //F -= Math.sin(Math.atan(this.blockGrade/100)) * this.mass * 9.81;
+            F = F - (this.blockGrade/100) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
-            newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels / time
+            newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
             setAccel(newA);
         }
@@ -205,12 +204,12 @@ public class Train {
     }
 
 
-    public void setBlockGrade(double blockGrade) {
+    public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
     }
 
-    public void setSpeedLimit(double speedLimit) {
-        this.speedLimit = speedLimit;
+    public void setSpeedLimit(double kmPerHour) { //takes in km/h
+        this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
 
     public void setAuthority(int a) {
@@ -220,7 +219,7 @@ public class Train {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
-        //this.maxEmergencyDecel = 127382 / this.mass;
+
         if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -229,7 +228,7 @@ public class Train {
         }
     }
     public void setEmergencyBrake(Boolean brake) {
-        //this.maxEmergencyDecel = 127382 / this.mass;
+
         if(this.brakeFail != true){
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -238,7 +237,7 @@ public class Train {
         }
     }
     public void setServiceBrake(Boolean brake) {
-        //this.maxServiceDecel = 55992 / this.mass;
+
         if(this.brakeFail != true){
             this.serviceBrake = brake;
             setAccel(-1 * this.standardDecelLimit);
@@ -291,6 +290,9 @@ public class Train {
         this.passengerCount = count;
         calculateMass();
     }
+    public void setPassengersBoarding(int count){
+        setPassengerCount(this.passengerCount + count);
+    }
     public void setMass(double m){
         this.mass = m;
     }
@@ -307,11 +309,12 @@ public class Train {
         this.displayAcceleration = this.accel * 3.2808399;
         
     }
-    public void disembark(){
+    public int disembark(){
         Random rand = new Random(); //instance of random class
-        int upperbound = (int) (.5 * this.passengerCount);
+        int upperbound = (int) (.75 * this.passengerCount);
         int random = rand.nextInt(upperbound);
         setPassengerCount(this.passengerCount - random);
+        return random;
     }
 
     public boolean getEmergencyBrake() {
@@ -320,5 +323,9 @@ public class Train {
 
     public boolean getPassengerBrake() {
         return passengerBrake;
+    }
+
+    public int getPassengerCount() {
+        return this.passengerCount;
     }
 }
