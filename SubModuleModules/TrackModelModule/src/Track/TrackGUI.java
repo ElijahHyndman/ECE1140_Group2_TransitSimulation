@@ -503,13 +503,13 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jTable5.setModel(new javax.swing.table.DefaultTableModel(
                 new Object [][] {
-                        {null, null, null, null},
-                        {null, null, null, null},
-                        {null, null, null, null},
-                        {null, null, null, null}
+                        {null, null, null},
+                        {null, null, null},
+                        {null, null, null},
+                        {null, null,  null}
                 },
                 new String [] {
-                        "Line", "Block", "Station", "Beacon"
+                        "Line", "Block", "Beacon"
                 }
         ));
         jScrollPane7.setViewportView(jTable5);
@@ -973,6 +973,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
             ArrayList<Switch> switchesList = trackList.getSwitches();
             ArrayList<Station> stationList = trackList.getStations();
             ArrayList<TrackElement> blockList = trackList.getBlocks();
+            ArrayList<TrackElement> beaconsList = trackList.getBeaconArray();
 
             mainInputs.setRowCount(0);
             switches.setRowCount(0);
@@ -981,8 +982,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                 switches.addRow(new Object[] {switchesList.get(i).getLine(),switchesList.get(i).getBlockNum(), switchesList.get(i).getInfrastructure(),switchesList.get(i).getSwitchState()});
 
             }
-            for(int i=0; i<stationList.size(); i++) {
-                beacons.addRow(new Object[] {stationList.get(i).getLine(),stationList.get(i).getBlockNum(), stationList.get(i).getInfrastructure(),stationList.get(i).getBeacon()});
+            for(int i=0; i<beaconsList.size(); i++) {
+                beacons.addRow(new Object[] {beaconsList.get(i).getLine(),beaconsList.get(i).getBlockNum(), beaconsList.get(i).getBeacon()});
 
             }
             for(int i=0; i<blockList.size(); i++) {
