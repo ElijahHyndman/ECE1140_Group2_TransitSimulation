@@ -7,12 +7,13 @@ import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.*;
 
 import static java.lang.String.valueOf;
 
-public class WaysideController extends Thread {
+public class WaysideController implements Serializable {
 
     //overall system defaults
     final private int DEFAULT_SPEEDLIMIT = 50;
@@ -40,8 +41,21 @@ public class WaysideController extends Thread {
     private List<boolean[][]> outputTables;
 
     //not usable right now...
-    public WaysideController(){
-        name = "FAKE";
+//    public WaysideController(){
+//        name = "FAKE";
+//    }
+
+    public WaysideController(String name) {
+        this.isActive = DEFAULT_ISACTIVE;
+        this.isSoftware = DEFAULT_ISSOFTWARE;
+        this.speedLimit = DEFAULT_SPEEDLIMIT;
+        this.PLCScriptMap = new HashMap<>();
+        this.outputMap = new HashMap<>();
+        this.testInputs = new HashMap<>();
+        this.allBlocks = new ArrayList<TrackElement>();
+        this.name = name;
+
+        gpio = new GPIO(null, name);
     }
 
     public WaysideController(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String name){
@@ -72,21 +86,34 @@ public class WaysideController extends Thread {
         gpio = new GPIO(allBlocks, name);
     }
 
-    public void copy(WaysideController child) {
-        /** copy all values from this controller onto the new controller
+    public void copy(WaysideController target) {
+        /** copies values from a target WaysideController into this wayside controller
+         * @param target    WaysideController, the WaysideController we intend to copy
          */
-            child.name = this.name;
-            child.isActive = this.isActive;
-            child.isSoftware = this.isSoftware;
-            child.outputMap = this.outputMap;
+            this.name = target.name;
+            this.isActive = target.isActive;
+            this.isSoftware = target.isSoftware;
+            this.outputMap = (HashMap<TrackElement, boolean[][]>) target.outputMap.clone();
+            this.PLCScriptMap = (HashMap<TrackElement, List<String>>) target.PLCScriptMap.clone();
+            this.gpio.copy(target.gpio);
+            this.allBlocks = (ArrayList<TrackElement>) target.allBlocks.clone();
+            this.testInputs = (HashMap<TrackElement, boolean[]>) target.testInputs.clone();
     }
 
     /*
     Getters and setters for the name
      */
     // TODO tell harsh I had to change these
+    public void setName(String name) {this.name = name;}
     public String getControllerName(){ return name; }
-    public String toString(){ return name; }
+    public String toString(){
+        String profile = String.format("Wayside Controller: %s\n",name);
+        profile += String.format("isActive: %b\n",isActive);
+        profile += String.format("isSoftware: %b\n",isSoftware);
+        profile += String.format("outputMap: %s\n",outputMap);
+        profile += String.format("PLCScriptMap: %s\n",PLCScriptMap);
+        return profile;
+    }
     public void setControllerName(String newName){ this.name = newName; }
 
     /*

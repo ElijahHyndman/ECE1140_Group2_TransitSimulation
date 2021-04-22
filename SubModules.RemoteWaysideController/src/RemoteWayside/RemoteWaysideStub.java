@@ -14,4 +14,5 @@ public interface RemoteWaysideStub extends Remote {
     public String handshake(String fromClient) throws RemoteException;
     public WaysideController getController() throws RemoteException;
     public void castController(WaysideController ctrl) throws RemoteException;
+    public void spawnUI() throws RemoteException;
 }

@@ -17,7 +17,7 @@ class WaysideControllerTest {
 
     @BeforeEach
     public void setUp(){
-        WaysideController controller = new WaysideController();
+        WaysideController controller = new WaysideController("Testing Wayside Controller");
     }
 
     /*

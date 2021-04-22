@@ -43,7 +43,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     // Data Members to populate GUI with information about
     private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
-    private static WaysideController thisController = new WaysideController();
+    private static WaysideController thisController = new WaysideController("Please Select a Controller");
 
     // Status tracking about GUI state
     private boolean controllerSelected = false;
@@ -251,7 +251,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateTestingTables();
 
         // Generate and set header for Controller Advanced Menu
-        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getName());
+        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerName());
         ControllerMenuHeaderText += " - configured as %s".formatted((hardwareView) ? "Hardware" : "Software" );
         ControllerMenuHeader.setText(ControllerMenuHeaderText);
     }
@@ -264,7 +264,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          * @after selection text on main menu refers to name of "thisController" member
          */
         String Label = "Current Selected Controller: ";
-        String cont = thisController.getName();
+        String cont = thisController.getControllerName();
 
         // Change of implementation changes header of selection
         SelectedControllerText.setText(Label + cont);
@@ -1008,7 +1008,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
             // is wayside controller
             thisController =(WaysideController) selectedNodeObject;
             controllerSelected =true;
-            System.out.println( " (Selected controller is now: "+thisController.getName()+")" );
+            System.out.println( " (Selected controller is now: "+thisController.getControllerName()+")" );
             updateControllerSelection();
             return;
         } else {

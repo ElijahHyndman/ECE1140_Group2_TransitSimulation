@@ -1,10 +1,16 @@
 package RemoteWayside;
 
 import WaysideController.WaysideController;
+import WaysideController.WaysideSystem;
+import WaysideGUI.WaysideUIJFrameWindow;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
+import java.util.Vector;
+
 
 public class RemoteWaysideService implements RemoteWaysideStub {
     /** acts as a wrapper to the WaysideController whose methods can be invoked remotely using an RMI stub.
@@ -44,44 +50,119 @@ public class RemoteWaysideService implements RemoteWaysideStub {
     private WaysideController controller;
     /***********************************************************************************************************************/
 
+
     public RemoteWaysideService() {
         /** creates a new RemoteWaysideService and the WaysideController object which it shall wrap.
+         * @before no remoteWaysideService
+         * @after RemoteWaysideService exists, RemoteWaysideService has created an empty wayside controller for servicing
          */
         // Create WaysideController object
-        controller = new WaysideController();
+        controller = new WaysideController("Remote Wayside Controller");
+        controller.setName("Remote WaysideController");
     }
+
 
     @Override
     public String handshake(String fromClient) throws RemoteException {
         /** simple response method for testing that RMI connection from client to this RemoteWaysideService is valid
+         * @return String, original string from client with [from service] concatenated to the end to confirm that service is responding
          */
         String response = fromClient + "[from service]";
         return response;
     }
 
+
     @Override
     public WaysideController getController() throws RemoteException {
         /** returns the WaysideController object located on the remote machine.
          * @assert local member "controller" is never null
+         * @return WaysideController, the wayside controller object that the RemoteWaysideService is hosting
          */
         return controller;
     }
 
+
     @Override
     public void castController(WaysideController ctrl) throws RemoteException {
-        /** copies all information from a given controller ctrl onto the wayside controller on the remote machine.
+        /** turns this remote WaysideController into a copy of a given wayside controller.
+         * @param ctrl  WaysideController, the controller which we will create a carbon copy of into the remote WaysideController
+         * @before WaysideController hosted by RemoteService may be empty or filled with values
+         * @after WaysideController hosted by RemoteService has been overwritten to be a carbon copy of given WaysideController object (deep copy)
          */
-            String newName = ctrl.getControllerName();
-            controller.setControllerName(newName);
-            try {
-                controller.setAuthority(ctrl.getAuthority());
-            } catch (Exception e) {
+        if (ctrl == null) {
+            System.out.println("Ignoring attempt to cast Remote Wayside Controller using null controller.");
+            return;
+        }
+        System.out.println("Casting WaysideController operation:");
+        System.out.println("==original: " + controller);
+        controller.copy(ctrl);
+        System.out.println("==new: " + controller);
+    }
 
-            }
-            try {
-                controller.setSpeed(ctrl.getSpeed());
-            } catch (Exception e) {
 
+    public void spawnUI() throws RemoteException {
+        /** generates a User Interface Window on the hosting machine for the remote WaysideController.
+         * @before remote wayside controller is not null, may have values in it.
+         * @after a new WaysideController Jframe UI window has been spawned
+         * @after new JFrame window is running and updating on a new thread
+         */
+        System.out.println("Spawning WaysideController window.");
+
+        // Define Thread and its behavior
+        Thread one = new Thread() {
+            public void run() {
+                WaysideUIJFrameWindow ui = null;
+                try {
+                    ui = getSingleControllerUI(controller);
+                    ui.setVisible(true);
+                } catch (Exception e) {
+                    System.out.printf("Failure to spawn Wayside UI from RemoteWaysideService.\n===given wayside: %s\n===derived ui: %s\n",controller,ui);
+                }
+                while (true) {
+                    ui.updateGUI(singleWaysideVector(controller));
+                    System.out.println("updating");
+                }
             }
+        };
+        // Run Thread
+        one.start();
+    }
+
+
+    /*
+        Static Helper Functions
+     */
+
+
+    public static Vector<WaysideController> singleWaysideVector(WaysideController controller) {
+        /** creates a vector which contains just the given wayside controller.
+         */
+        Vector <WaysideController> ctrl = new Vector<WaysideController>();
+        ctrl.add(controller);
+        return ctrl;
+    }
+
+
+    public static WaysideUIJFrameWindow getSingleControllerUI(WaysideController controller) {
+        /** creates a jframe window that allows for a single WaysideController (instead of a full wayside system).
+         */
+        LinkedList<WaysideController> ctrl = new LinkedList<WaysideController>();
+        ctrl.add(controller);
+        WaysideSystem ws = null;
+        try {
+            ws = new WaysideSystem(ctrl);
+        } catch (IOException e) {
+            System.out.println("Failure to create Wayside System for wayside gui window.");
+            e.printStackTrace();
+        }
+        try {
+            WaysideUIJFrameWindow window = new WaysideUIJFrameWindow(ws);
+            System.out.println(window);
+            return window;
+        } catch (IOException e) {
+            System.out.println("Failure to generate new Wayside Controller JFrame Window.");
+            return null;
+        }
     }
 }
+

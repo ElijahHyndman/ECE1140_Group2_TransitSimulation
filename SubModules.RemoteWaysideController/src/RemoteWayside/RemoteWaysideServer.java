@@ -52,6 +52,7 @@ public class RemoteWaysideServer implements Runnable {
      * service  RemoteWaysideService, the local service object which we are hosting and whose RMI stub we are providing to the client.
      */
     private RemoteWaysideService service;
+    private String deliminator = "***************************************************";
 
     /** Network Members
      *
@@ -79,11 +80,13 @@ public class RemoteWaysideServer implements Runnable {
             System.setProperty("java.rmi.server.useLocalHostname","true");
             service = new RemoteWaysideService();
 
+            System.out.println(deliminator);
             // Retrieve registry
             registry = getRMIRegistry();
 
             // Export stub for client use
             makeStubAvailable(communicationPort);
+            System.out.println(deliminator);
         } catch (Exception e) {
             System.err.println("Failed to construct new RemoteWaysideServer");
             e.printStackTrace();
@@ -104,11 +107,14 @@ public class RemoteWaysideServer implements Runnable {
             System.setProperty("java.rmi.server.hostname",serverIP);
             service = new RemoteWaysideService();
 
+            System.out.println(deliminator);
+
             // Retrieve registry
             registry = getRMIRegistry();
 
             // Export stub for client use
             makeStubAvailable(communicationPort);
+            System.out.println(deliminator);
         } catch (Exception e) {
             System.err.println("Failed to create new RemoteWaysideService during RemoteWaysideServer construction");
             e.printStackTrace();

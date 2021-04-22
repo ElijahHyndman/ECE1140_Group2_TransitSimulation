@@ -1,11 +1,16 @@
 package RemoteConnection;
 
 import RemoteWayside.RemoteWaysideStub;
+import TrackConstruction.TrackBlock;
+import TrackConstruction.TrackElement;
+import WaysideController.WaysideController;
 
+import java.lang.reflect.Array;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public class RemoteConnection {
     /** handles the remote connection between the local and remote machines to retrieve a usable remote WaysideController.
@@ -70,11 +75,19 @@ public class RemoteConnection {
 
 
     public static void main(String[] args) {
+
+        WaysideController localController = new WaysideController(new ArrayList<TrackElement>(),"Local Controller");
+        RemoteWaysideStub remoteWaysideController = null;
         try {
-            RemoteWaysideStub remoteWaysideController = retrieveRemoteWaysideController("192.168.0.143",5099,"Service");
+            remoteWaysideController = retrieveRemoteWaysideController("192.168.0.111",5099,"Service");
             System.out.println(remoteWaysideController);
             System.out.println(remoteWaysideController.handshake("This is from Elijah"));
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            remoteWaysideController.spawnUI();
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
