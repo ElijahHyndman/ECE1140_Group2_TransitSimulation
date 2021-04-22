@@ -15,16 +15,16 @@ public class MainMotor implements TrainMotor {
 
         acceleration = 0;
         power = 0;
-        Kp = 3; // Default Kp
-        Ki = .001; // Default Ki
+        Kp = 10; // Default Kp
+        Ki = .1; // Default Ki
 
         PID = new PIDController(Kp, Ki, 0);
         PID.setOutputLimits(120);
     }
 
     public double getPower(double idealVelocity, double trainVelocity){
-        double setpoint = idealVelocity;
-        double actual = trainVelocity;
+        double setpoint =   idealVelocity;
+        double actual =  trainVelocity;
 
         if (idealVelocity == 0 && trainVelocity == 0){
             power = 0;

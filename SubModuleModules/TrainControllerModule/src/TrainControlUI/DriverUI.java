@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
 
+import GUIInterface.AppGUIModule;
 import implementation.*;
+import java.util.Vector;
 
 
 /** DriverUI is the central user interface allowing the DRIVER to
@@ -17,10 +19,10 @@ import implementation.*;
  * Author: Reagan Dowling
  * Date: 02/24/2021
  */
-public class DriverUI implements ActionListener{
+public class DriverUI implements ActionListener, AppGUIModule {
 
-    private final TrainControl control;
-    private final TestingUI testing;
+    private TrainControl control;
+    //private TestingUI testing;
 
     public JFrame main;
     public JLabel speedVal;
@@ -51,25 +53,26 @@ public class DriverUI implements ActionListener{
     public Timer timer;
     public Graphics graphics;
 
-    public DriverUI(TrainControl trainController) {
+    public DriverUI() {
         //The train control associated for this train/driver
-        control = trainController;
+        control = new TrainControl();
 
         main = new JFrame("Train X");
         main.setSize(1600, 900);
         main.setLayout(null);
         main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        //Create new testing UI
-        testing = new TestingUI(control);
-
-        //Create an engineer UI for the train
-        new EngineerUI(control.getTrainMotor());
-
-
         format = new DecimalFormat("#.##");
 
         setUpWindow();
+        setFrames();
+    }
+
+    public void setFrames(){
+        //The train control associated for this train/driver
+        //control = trainController
+
+        format = new DecimalFormat("#.##");
 
         //==Background panels for layout===
         JPanel panel = new JPanel();
@@ -102,44 +105,51 @@ public class DriverUI implements ActionListener{
         authPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         main.add(authPanel);
 
-
-
         center = new JPanel();
         center.setLayout(new GridLayout(1,2));
 
         gauge = new Gauge(0.0, 100.0, Gauge.SEMI_CIRCLE);
-        gauge.setBackground(Color.DARK_GRAY);
-        gauge.setForeground(Color.WHITE);
+        gauge.setBackground(Color.WHITE);
+        gauge.setForeground(Color.BLACK);
         gauge.setHighlight(Color.DARK_GRAY);
         gauge.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         center.add(gauge);
-        center.setBounds(450, 0, 400, 400);
+        center.setBounds(450, 100, 400, 300);
 
         main.add(center);
 
         main.setVisible(true);
+    }
 
-        //Timer to send train inputs
-        timer = new Timer(1000,this);
-        timer.setActionCommand("timer");
-        timer.setRepeats(true);
-        timer.start();
+    public void latch(Object myObject){
 
+        control = (TrainControl) myObject;
+        //Create new testing UI
+        //testing = new TestingUI(control);
 
-        while (main.isVisible()) {
+        //Create an engineer UI for the train
+        new EngineerUI(control.getTrainMotor());
 
-            time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
-            speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*.621371)));
-            comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*.621371)));
-            limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*.621371)));
-            beaconMessage.setText(control.getBeacon());
-            authVal.setText(String.valueOf(format.format((control.getAuthority())*3.281)));
-            brake.setText(String.valueOf((control.getSafeBreakingDistance())*3.281));
-            message.setText(control.getSystemMessage());
-            accelerationValue.setText(String.valueOf(format.format(control.getAcceleration()*.621371)));
-            powerVal.setText(String.valueOf(format.format(control.getPower())));
+    }
+
+    public void update(){
+        time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
+        speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*2.23694)));
+        comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*2.23694)));
+        limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*2.23694)));
+        beaconMessage.setText(control.getBeacon());
+        if (control.getStoppingDistance() == -1){
+            authVal.setText("");
+        }else{
+            authVal.setText(String.valueOf(format.format((control.getStoppingDistance()))));
         }
-
+        //authVal.setText(String.valueOf(format.format((control.getStoppingDistance()))));
+        brake.setText(String.valueOf((control.getSafeBreakingDistance())*3.281));
+        message.setText(control.getSystemMessage());
+        accelerationValue.setText(String.valueOf(format.format(control.getAcceleration()*.621371)));
+        powerVal.setText(String.valueOf(format.format(control.getPower())));
+        gauge.setValue(control.getActualSpeed() * 2.23694);
+        gauge.repaint();
     }
 
     public void setUpWindow() {
@@ -244,17 +254,6 @@ public class DriverUI implements ActionListener{
         distUnits.setBounds(955, 535, 50, 25);
         distUnits.setFont(new Font("Sans Serif", Font.PLAIN, 14));
         main.add(distUnits);
-
-        JLabel safeBrake = new JLabel("Safe Brake : ");
-        safeBrake.setBounds(760, 635, 150, 25);
-        safeBrake.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        //main.add(safeBrake);
-
-        JLabel brakeUnits = new JLabel("ft");
-        brakeUnits.setBounds(955, 635, 50, 25);
-        brakeUnits.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        //main.add(brakeUnits);
-
 
 
         //======BUTTONS=======
@@ -410,8 +409,6 @@ public class DriverUI implements ActionListener{
         alertError.setVisible(false);
         main.add(alertError);
 
-        //Panels for layout
-
     }
 
     @Override
@@ -471,9 +468,7 @@ public class DriverUI implements ActionListener{
             case "Non-Vital" ->
                     //Create new non vital comp. Ui using the trains non vital components
                     new NonVitalUI(control.getNonVitalComponents());
-            case "timer" -> {
-                testing.setTrainInputs();
-            }
+
             case "mode" -> {
                 control.switchMode();
                 if (control.getControlMode().equals("Automatic")){
@@ -492,11 +487,9 @@ public class DriverUI implements ActionListener{
         }
     }
 
-
-
+    
     public static void main(String args[]){
-        new DriverUI(new TrainControl());
-
+       // new DriverUI();
     }
 
 }
