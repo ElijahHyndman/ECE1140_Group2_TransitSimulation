@@ -20,10 +20,17 @@ public class SimulationEnvironment extends Thread {
     /** hosts the entirety of a Simulation World-- including all submodules-- for a train simulation project.
      * SimulationEnvironment also handles physics and world-time synchronization using a WorldClock, as well as hosting a server to
      * send copies of objects down to local machines for viewing and manipulating.
+     * TODO should the simulation environment be contained in a SimulationProject class, which tracks the admin's settings
+     * TODO the project will host the server instead of the simulation environment? it would make more sense. Then, the GUI would be for the project which can exist without an SE existing yet
+     *
+     * @assert physicsUpdates wi
+     * ll happen automatically and constinually so long as the WorldClock is running
+     * @assert TrainUnits will update the controller's fields pulled from the TrainModel only while the TrainUnit is running
      */
     /** World Management Variables
      */
     private WorldClock clk;
+    private CTCOffice ctc;
 
     /** World Object Variables
      */
@@ -156,6 +163,9 @@ public class SimulationEnvironment extends Thread {
 
     }
 
+    public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
+        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
+         *  on new thread=]]
 
     /*
         World Time Methods
