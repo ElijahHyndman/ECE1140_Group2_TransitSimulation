@@ -66,6 +66,41 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\SubModuleModules\TrackModelModule\src\Track\Test.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SubModuleModules\WaysideControllerModule\WaysideTests\WaysideControllerTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SubModuleModules\WaysideControllerModule\src\WaysideController\GPIO.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SubModuleModules\WaysideControllerModule\src\WaysideController\WaysideController.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\SubModuleModules\WaysideControllerModule\src\WaysideController\WaysideSystem.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

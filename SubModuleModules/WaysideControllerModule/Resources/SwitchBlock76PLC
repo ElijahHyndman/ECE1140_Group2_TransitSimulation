@@ -1,0 +1,5 @@
+LD 76
+NOT
+LD 77
+OR
+SET

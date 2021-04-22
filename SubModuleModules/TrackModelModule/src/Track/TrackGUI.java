@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author grhen
@@ -35,8 +36,9 @@ public class TrackGUI extends javax.swing.JFrame {
     /**
      * Creates new form TrackGUI
      */
-    public TrackGUI() {
+    public TrackGUI(Track trackL) {
         initComponents();
+        this.trackList = trackL;
     }
 
     /**
@@ -49,10 +51,25 @@ public class TrackGUI extends javax.swing.JFrame {
     /**
      * update Tracklist -- method to be called by simulation environment
      */
-    public void updateTrack(Track updatedTrack) {
-        trackList = updatedTrack;
+
+    public void latch(Object myObject) {
+
+        Track givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        trackList = (Track) myObject;
     }
 
+    public void update() {
+    } //automatically updates no need to do this
+
+    public void draw() {
+
+    } // for interface
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -284,7 +301,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
                 },
                 new String [] {
-                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit", "Elevation", "Cummulative Elevation"
+                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit MPH", "Elevation", "Cummulative Elevation"
                 }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -473,7 +490,7 @@ public class TrackGUI extends javax.swing.JFrame {
                         {null, null, null, null, null}
                 },
                 new String [] {
-                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed"
+                        "Line", "Block ", "Occupied", "Authority", "Commanded Speed MPH"
                 }
         ));
         jScrollPane6.setViewportView(jTable4);
@@ -800,7 +817,7 @@ public class TrackGUI extends javax.swing.JFrame {
             //Load in Temperature
             TemperaturePane.setText("Environmental Temperature:" + trackList.getEnvironmentalTemperature() + "\n Track Heater Status: " + trackList.getTrackHeaterStatus());
             //Load in the Track
-                refreshRedGreenTrack();
+               refreshRedGreenTrack();
 
 
         }
@@ -963,7 +980,7 @@ public class TrackGUI extends javax.swing.JFrame {
 
             }
             for(int i=0; i<blockList.size(); i++) {
-                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).getCommandedSpeed()});
+                mainInputs.addRow(new Object[] {blockList.get(i).getLine(), blockList.get(i).getBlockNum(),blockList.get(i).getOccupied(),blockList.get(i).getAuthority(),blockList.get(i).dispCommandedSpeed()});
 
             }
 
@@ -1087,8 +1104,8 @@ public class TrackGUI extends javax.swing.JFrame {
 
         //Parsing info into different areas to test functionality
         int bN=0;
-        double auth;
-        double speed;
+        int auth;
+        int speed;
         int passenger;
         int switches;
         double LenT;
@@ -1120,12 +1137,12 @@ public class TrackGUI extends javax.swing.JFrame {
                     trackList.setFailure(bN,lineT,3);
 
                 if(!authorityT.equals("Authority")) {
-                    auth = Double.parseDouble(authorityT);
+                    auth = Integer.parseInt(authorityT);
                     temp.setAuthority(auth);
                 }
 
                 if(!speedT.equals("Speed")) {
-                    speed = Double.parseDouble(speedT);
+                    speed = Integer.parseInt(speedT);
                     temp.setCommandedSpeed(speed);
                 }
 
@@ -1201,7 +1218,10 @@ public class TrackGUI extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 
-    public static void main(String args[]) {
+
+
+
+   public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -1229,10 +1249,12 @@ public class TrackGUI extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TrackGUI().setVisible(true);
+                new TrackGUI(null).setVisible(true);
             }
         });
     }
+
+
 
     // Variables declaration - do not modify
     private javax.swing.JTextField BlockNumTest;

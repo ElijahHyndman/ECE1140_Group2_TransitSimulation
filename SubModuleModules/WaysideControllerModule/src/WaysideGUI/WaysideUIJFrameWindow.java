@@ -1,9 +1,10 @@
 package WaysideGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
-import GUIInterface.*;
+import WaysideController.GPIO;
 
 import java.awt.CardLayout;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
@@ -19,7 +20,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
+public class WaysideUIJFrameWindow extends javax.swing.JFrame {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -38,9 +39,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
      * other jframe panels (Main menu, controller advanced menu, and so on)
      */
 
-
-        // Data Members to populate GUI with information about
-    private WaysideSystem system = new WaysideSystem();
+    // Data Members to populate GUI with information about
+    private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController();
 
@@ -52,44 +52,22 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private static boolean protectedUpdate = false;
 
 
-    public WaysideUIJFrameWindow() {
+    public WaysideUIJFrameWindow() throws IOException {
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) {
+    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) throws IOException {
         this.controllers = defaultControllers;
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(WaysideSystem existingSystem) {
+    public WaysideUIJFrameWindow(WaysideSystem existingSystem) throws IOException {
         this.controllers = existingSystem.getControllersVector();
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
-    }
-
-    /*
-        Functions for AppGUIModule interface
-     */
-
-    @Override
-    public void latch(Object myObject) {
-        /** given object myObject must be of type WaysideSystem
-         */
-        WaysideSystem givenSystem = null;
-        try {
-            givenSystem = (WaysideSystem) myObject;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        controllers = givenSystem.getControllersVector();
-    }
-
-    @Override
-    public void update() {
-        updateGUI(controllers);
     }
 
 
@@ -127,6 +105,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -316,7 +295,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
         // Fill Data Vector
         List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getInputValues();
+        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
 
         //List<String> InputNames = thisController.getAllNames();
         //List<Object> InputValues = thisController.getAllData();
@@ -345,8 +324,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         columnIdentifiers.add("Output Values");
 
         // Fill Data Vector
-        List<String> InputNames = thisController.getOutputNames();
-        boolean[] InputValues = thisController.getOutputValues();
+        GPIO gpio = thisController.getGPIO();
+        List<String> InputNames = gpio.getOutputNames();
+        Boolean[] InputValues = gpio.getOutputValues();
 
         for (int i=0; i<InputValues.length; i++) {
             Vector<Object> newrow = new Vector<Object>();
@@ -1135,7 +1115,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             // Update controller inputs with string
             try {
-                thisController.updateInputs(newInputValue, row);
+                thisController.updateTestInputs(newInputValue, row);
                 updateControllerSelection();
 
             } catch (Exception e) {
@@ -1177,7 +1157,11 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WaysideUIJFrameWindow().setVisible(true);
+                try {
+                    new WaysideUIJFrameWindow().setVisible(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -1223,6 +1207,5 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-
     // End of variables declaration
 }

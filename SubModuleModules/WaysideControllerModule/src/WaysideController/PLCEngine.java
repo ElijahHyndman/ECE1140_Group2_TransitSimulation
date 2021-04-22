@@ -9,6 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * @author Harsh Selokar
+ */
+
 public class PLCEngine {
     public enum Token {
         AND, OR, NOT, SET, LD, LDN, ANB, ORB
@@ -270,6 +274,7 @@ public class PLCEngine {
         outputTablese: boolean values of the output based on inputs of all inputs, creating a truth table of sorts
      */
     public boolean[][] calculateOutputMap(List<String> inputNames) throws IOException {
+        numberOfInputs = varQueue.toArray().length;
         int rows = (int) Math.pow(2,numberOfInputs);
         boolean[][] temp = new boolean[rows][numberOfInputs];
         boolean[][] outputTable = new boolean[rows][numberOfInputs+1];
@@ -305,6 +310,7 @@ public class PLCEngine {
         output tables: boolean values of the output based on inputs of all inputs, creating a truth table of sorts
      */
     public boolean[][] calculateOutputMapNew(List<String> inputNames) throws IOException {
+        numberOfInputs = inputNames.toArray().length;
         int rows = (int) Math.pow(2,numberOfInputs);
         boolean[][] temp = new boolean[rows][numberOfInputs];
         boolean[][] outputTable = new boolean[rows][numberOfInputs+1];
@@ -339,7 +345,7 @@ public class PLCEngine {
     Output - None
      */
     public void createTokens(String file) throws IOException, URISyntaxException {
-        List<String> data = readFile(file);
+        List<String> data = readFileNew(file);
         String[] loadStr;
         String var;
 
@@ -428,6 +434,28 @@ public class PLCEngine {
         return allData;
     }
 
+    public List<String> readFileNew(String url) throws IOException, URISyntaxException {
+        byte[] bytes;
+        String str;
+        List<String> allData;
+        Path path;
+
+        System.out.print("Reading - ");
+        System.out.println(url);
+        path = Paths.get(url);
+        bytes = Files.readAllBytes(path);
+        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+        for(int i=0;i < allData.size();i++){
+            if(allData.get(i).trim().isEmpty()){
+                allData.remove(i);
+            }
+        }
+
+        this.PLCString = allData;
+        return allData;
+    }
+
     public void updateFile(String file) throws IOException, URISyntaxException {
         byte[] bytes;
         String str;
@@ -460,7 +488,7 @@ public class PLCEngine {
         char[] chars = str.toCharArray();
 
         for(char c : chars) {
-            if(!Character.isLetter(c)){
+            if(!Character.isLetter(c) && !Character.isDigit(c)){
                 return false;
             }
         }

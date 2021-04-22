@@ -28,6 +28,7 @@ public class Station extends TrackElement{
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
         this.currentDirection = -3;
+        this.type = "Station";
     }
 
     /*Set Ticket Sales */
@@ -77,10 +78,6 @@ public class Station extends TrackElement{
     /*get Beacon*/
    // public String getBeacon() { return this.beacon;}
 
-    /*get type of block*/
-    String getType(){
-        return "Station";
-    }
 
     @Override
     public String toString() {
