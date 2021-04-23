@@ -213,6 +213,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteConnection/RemoteWaysideControllerTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteWayside/RemoteWaysideServerTest.java">
           <value>
             <Attribute>
@@ -228,6 +235,13 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteConnection.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteWaysideController.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

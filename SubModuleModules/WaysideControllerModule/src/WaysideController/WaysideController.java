@@ -86,6 +86,18 @@ public class WaysideController implements Serializable {
         gpio = new GPIO(allBlocks, name);
     }
 
+    public WaysideController() {
+        this.isActive = DEFAULT_ISACTIVE;
+        this.isSoftware = DEFAULT_ISSOFTWARE;
+        this.speedLimit = DEFAULT_SPEEDLIMIT;
+        this.PLCScriptMap = new HashMap<>();
+        this.outputMap = new HashMap<>();
+        this.testInputs = new HashMap<>();
+        this.allBlocks = new ArrayList<TrackElement>();
+        this.name = "Wayside Controller";
+        gpio = new GPIO(allBlocks, name);
+    }
+
     public void copy(WaysideController target) {
         /** copies values from a target WaysideController into this wayside controller
          * @param target    WaysideController, the WaysideController we intend to copy

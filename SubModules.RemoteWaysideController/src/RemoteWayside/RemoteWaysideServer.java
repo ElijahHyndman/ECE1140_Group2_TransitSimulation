@@ -20,6 +20,7 @@ import java.util.Arrays;
  *  your server will never be findable.
  *
  *  System Layout:
+ *  RemoteWaysideController (on Laptop) object that can be treated as if it were a local WaysideController, but instead manages a remote connection to a remote WaysideControllerService
  (this)RemoteWaysideServer     (on Pi) hosts the RemoteWaysideService and makes it available for the Client across a network.
  *  RemoteConnection    (on Laptop) manages the Client->Server connection for the client. If successful, provides the stub for remote objects
  *  RemoteWaysideStub   (created on Pi, used by Laptop) defines the methods which a Client may invoke remotely

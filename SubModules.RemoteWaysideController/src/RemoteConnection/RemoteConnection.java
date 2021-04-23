@@ -14,6 +14,21 @@ import java.util.ArrayList;
 
 
 /** handles the remote connection between the local and remote machines to retrieve a usable remote WaysideController.
+ *
+ *
+ *  System Layout:
+ *  RemoteWaysideController (on Laptop) object that can be treated as if it were a local WaysideController, but instead manages a remote connection to a remote WaysideControllerService
+ *  RemoteWaysideServer     (on Pi) hosts the RemoteWaysideService and makes it available for the Client across a network.
+ (this)RemoteConnection    (on Laptop) manages the Client->Server connection for the client. If successful, provides the stub for remote objects
+ *  RemoteWaysideStub   (created on Pi, used by Laptop) defines the methods which a Client may invoke remotely
+ *  RemoteWaysideService    (on Pi) implements the methods defined by the RemoteWaysideStub
+ *  RemoteTrackStub     (created on Laptop, used by Pi) defines the methods which a remote WaysideController may invoke remotely
+ *  RemoteTrack         (on Laptop) implements the methods defined by the RemoteTrackStub
+ *
+ *  Useful References:
+ *  RMIRegistry not started reference: https://stackoverflow.com/questions/1823305/rmi-connection-refused-with-localhost
+ *
+ * @author elijah
  */
 public class RemoteConnection {
     /***********************************************************************************************************************/
@@ -30,7 +45,7 @@ public class RemoteConnection {
     /***********************************************************************************************************************/
 
 
-    /** retrieves remote WaysideController stub from specified machine (IP address, TCP port) and returns it if it exists.
+    /** retrieves remote WaysideController stub [from specified machine (IP address, TCP port) and returns it if it exists.]
      */
     public static RemoteWaysideStub retrieveRemoteWaysideController(String serverIP, int communicationPort, String stubKey) throws Exception {
         Registry serverRMIRegistry;
