@@ -27,14 +27,14 @@ public class main {
         gui.setVisible(true);
         gui.newTrain();
         
-        MakeImage image = new MakeImage();
-        try{
+        //MakeImage image = new MakeImage();
+        //try{
             // TODO Elijah: had to change this to get it to work
             // original: image.make(distance, 0);
-            image.make(distance);
-        } catch(IOException e) {
-            System.out.println("error");
-        }
+            //image.make(distance);
+        //} catch(IOException e) {
+          //  System.out.println("error");
+        //}
 
 
         System.out.println("begining");
@@ -52,13 +52,13 @@ public class main {
             distance = (int) gui.trains.get(gui.mainTrainIndex).getActualSpeed();
             
             //image stuff
-            try{
+            //try{
                 // TODO Elijah: I had to change this to get it to work
                 //image.make(distance, 0);
-                image.make(distance);
-            } catch(IOException e) {
+                //image.make(distance);
+            //} catch(IOException e) {
 
-            }
+            //}
             
             //sleep
             try {
