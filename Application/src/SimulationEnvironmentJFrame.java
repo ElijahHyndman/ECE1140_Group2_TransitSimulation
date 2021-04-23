@@ -83,8 +83,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
         // Set the WaysideSystem table
         DefaultTableModel waysideTableModel = (DefaultTableModel) WaysideSystemSpawnTable.getModel();
-        Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
-        waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
+        //TODO Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
+        //TODO waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
         //TODO this is hard coded
         /*if(WSystems.size() != 0) {
             waysideTableModel.setRowCount(WSystems.size());
@@ -93,11 +93,12 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         }
         */
         //waysideTableModel.setRowCount(WSystems.size());
-        for(int index =0;index<WSystems.size(); index++) {
-            WaysideSystem ws = WSystems.get(index);
-            waysideTableModel.setValueAt(ws,index,0);
-            waysideTableModel.setValueAt("Spawn GUI", index,1);
-        }
+        // TODO
+//        for(int index =0;index<WSystems.size(); index++) {
+//            WaysideSystem ws = WSystems.get(index);
+//            waysideTableModel.setValueAt(ws,index,0);
+//            waysideTableModel.setValueAt("Spawn GUI", index,1);
+//        }
 
         // Set the TrainUnit table
         DefaultTableModel trainTableModel = (DefaultTableModel) TrainUnitSpawnTable.getModel();
@@ -488,7 +489,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
         if (column == spawnGUIColumn) {
             //System.out.println("Spawning CTC Gui");
-            DisplaySE.spawnCTCGUI(DisplaySE.getCTC());
+            //DisplaySE.spawnCTCGUI(DisplaySE.getCTC());
         }
     }
 
@@ -502,8 +503,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
         if (column == spawnWaysideColumn) {
             //System.out.println("Spawning CTC Gui");
-            Vector<WaysideSystem> WS = DisplaySE.getCTC().getWaysideSystems();
-            DisplaySE.spawnWaysideGUI(WS.get(row));
+            // TODO Vector<WaysideSystem> WS = DisplaySE.getCTC().getWaysideSystems();
+            // TODO DisplaySE.spawnWaysideGUI(WS.get(row));
         }
     }
 

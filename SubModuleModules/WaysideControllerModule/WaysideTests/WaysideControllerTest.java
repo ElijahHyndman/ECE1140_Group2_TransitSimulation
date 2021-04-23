@@ -118,7 +118,7 @@ class WaysideControllerTest {
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
 
-        controller.addOutput(0, "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SubModuleModules/WaysideControllerModule/Resources/testPLC1");
+        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
         controller.generateOutputSignal(0, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));
@@ -184,7 +184,7 @@ class WaysideControllerTest {
         GPIO gpio = controller.getGPIO();
         Switch newSwitch = new Switch();
 
-        controller.addOutput(0, "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SubModuleModules/WaysideControllerModule/Resources/testPLC1");
+        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
         controller.generateOutputSignal(0, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));

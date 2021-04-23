@@ -132,23 +132,25 @@ public class RemoteWaysideServer implements Runnable {
          */
         // Retrieve RMI Registry object from the port
         System.out.printf("Registry operation (port %d): ",communicationPort);
-        try {
+        try {                                                               // Try
             // If we can create registry...
             registry = LocateRegistry.createRegistry(communicationPort);
             System.out.println("(creation: success)");
-        } catch (ExportException exp){
+
+        } catch (ExportException exp) {                                     // Catch 1: Registry already exists
             // If we cannot create registry, but an RMI registry exists there...
             System.out.printf("(creation: failure) ");
             try {
                 registry = LocateRegistry.getRegistry(communicationPort);
-                System.out.println("retrieval: success)");
+                System.out.println("(retrieval: success)");
             } catch (Exception e) {
                 System.out.println("(retrieval: failure)");
                 e.printStackTrace();
                 return null;
             }
             System.out.println("RMI Registry successfully retrieved");
-        } catch (Exception e) {
+
+        } catch (Exception e) {                                         // Catch 2: general exceptions
             // Cannot create one and cann retrieve
             System.out.println("(total failure)");
             throw new Exception("RMI Registry cannot be created in communication port");

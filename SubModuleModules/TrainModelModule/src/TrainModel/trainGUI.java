@@ -796,7 +796,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
             trains.get(trainIndex).setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
         }
         if(testTable.getValueAt(3,3) != null && testTable.getValueAt(3,3) != ""){
-            trains.get(trainIndex).setBeacon((testTable.getValueAt(3,3).toString()));
+            trains.get(trainIndex).setBeacon(testTable.getValueAt(3,3).toString());
         }
         if(testTable.getValueAt(4,3) != null && testTable.getValueAt(4,3) != ""){
             trains.get(trainIndex).setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));
