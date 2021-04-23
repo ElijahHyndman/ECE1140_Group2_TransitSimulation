@@ -12,12 +12,13 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 
-/** acts as a wrapper to the WaysideController whose methods can be invoked remotely using an RMI stub.
- *  Implements the methods defined in RemoteWaysideStub interface. The methods defined in the interface are the only methods which the client shall have access to through the stub.
+/** wraps around a WaysideController on the remote device to provide a service without touching the internal code of the WaysideController class.
+ *  Implements the methods defined in RemoteWaysideStub interface. The methods defined in the interface are the only methods the client may use to interact with the remote controller.
  *
  *  Goal: Implement all behavior which the client will want to invoke across the network onto the WaysideController on the Raspberry Pi
  *
  *  System Layout:
+ *  RemoteWaysideController (on Laptop) object that can be treated as if it were a local WaysideController, but instead manages a remote connection to a remote WaysideControllerService
  *  RemoteWaysideServer     (on Pi) hosts the RemoteWaysideService and makes it available for the Client across a network.
  *  RemoteConnection    (on Laptop) manages the Client->Server connection for the client. If successful, provides the stub for remote objects
  *  RemoteWaysideStub   (created on Pi, used by Laptop) defines the methods which a Client may invoke remotely
@@ -47,6 +48,10 @@ public class RemoteWaysideService implements RemoteWaysideStub {
      * @member controller  WaysideController, the wayside controller which shall run on this machine and which this service shall act as a wrapper for.
      */
     private WaysideController controller;
+
+    /** Default Members
+     */
+    final private String SERVER_CONFIRMATION_STRING = "[from Service]";
     /***********************************************************************************************************************/
 
 
@@ -66,7 +71,7 @@ public class RemoteWaysideService implements RemoteWaysideStub {
      */
     @Override
     public String handshake(String fromClient) throws RemoteException {
-        String response = fromClient + "[from service]";
+        String response = fromClient + SERVER_CONFIRMATION_STRING;
         return response;
     }
 

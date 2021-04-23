@@ -4,6 +4,7 @@ import Track.TrackGUI;
 import TrainControlUI.DriverUI;
 import TrainModel.Train;
 import TrainModel.trainGUI;
+import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideGUI.WaysideUIJFrameWindow;
 import implementation.TrainControl;
@@ -11,6 +12,7 @@ import CTCUI.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -142,5 +144,24 @@ class GUIWindowLauncherTest {
         System.out.println("Spawning Wayside UI for one second");
         Runnable result = GUIWindowLauncher.launchWindow(ui);
         try {TimeUnit.SECONDS.sleep(1);} catch(Exception e) {}
+    }
+
+    // TODO Bug: somereason, waysidejframe is throwing a lot of errors when reinstating the scrollpane of the tree window
+    @Test
+    @DisplayName("launches WaysideSystem UI")
+    public void launchLongWaysideUIWindow() throws Exception {
+        WaysideUIJFrameWindow ui = new WaysideUIJFrameWindow();
+        // UI must be latched onto object
+
+        LinkedList<WaysideController> ctrls = new LinkedList<WaysideController>();
+        ctrls.add(new WaysideController("Controller 1"));
+        ctrls.add(new WaysideController("Controller 2"));
+        ctrls.add(new WaysideController("Controller 3"));
+        WaysideSystem testingWaysideSystem = new WaysideSystem(ctrls);
+
+        ui.latch(testingWaysideSystem);
+        System.out.println("Spawning Wayside UI for one second");
+        Runnable result = GUIWindowLauncher.launchWindowWithRate(ui,2);
+        while(true) {}
     }
 }

@@ -41,7 +41,7 @@ public class SimulationEnvironment extends Thread {
         /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
          */
         clk= new WorldClock();
-        //ctc= new DisplayLine(trackSystem,this);
+        ctc= new DisplayLine(trackSystem,this);
         this.start();
     }
 

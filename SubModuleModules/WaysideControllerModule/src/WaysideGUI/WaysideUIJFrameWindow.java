@@ -58,8 +58,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) throws IOException {
-        this.controllers = defaultControllers;
+    public WaysideUIJFrameWindow(Vector<WaysideController> existingListOfControllers) throws IOException {
+        this.controllers = existingListOfControllers;
         initComponents();
         updateControllerSelectText();
     }
@@ -69,6 +69,39 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
+    }
+
+    /*
+            Inheritance functions
+     */
+    @Override
+    public void latch(Object myObject) {
+        try {
+            this.system = (WaysideSystem) myObject;
+            this.controllers = system.getControllersVector();
+        }catch (Exception e) {
+            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
+        }
+    }
+
+    @Override
+    public void update() {
+        try {
+            updateGUI(this.controllers);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+    // End of variables declaration
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
     }
 
 
@@ -88,10 +121,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * @param controllerList: a vector of up-to-date waysideControllerObjects
          */
+        // Store Wayside Controllers locally
+        controllers = controllerList;
         try {
-
-            // Store Wayside Controllers locally
-            controllers = controllerList;
 
             try {
                 // Stash the state of Controller-Tree expansion so it can be restored, stash scroll height view
@@ -1225,33 +1257,4 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-
-    @Override
-    public void latch(Object myObject) {
-        try {
-            this.system = (WaysideSystem) myObject;
-        }catch (Exception e) {
-            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
-        }
-    }
-
-    @Override
-    public void update() {
-        try {
-            updateGUI(this.controllers);
-        } catch (Exception e) {
-
-        }
-    }
-
-    @Override
-    public Object getJFrame() {
-        return this;
-    }
-    // End of variables declaration
-
-    @Override
-    public void setVis(boolean visible) {
-        setVisible(visible);
-    }
 }
