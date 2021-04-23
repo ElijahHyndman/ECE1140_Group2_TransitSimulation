@@ -300,7 +300,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateTestingTables();
 
         // Generate and set header for Controller Advanced Menu
-        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerName());
+        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerAlias());
         ControllerMenuHeaderText += " - configured as %s".formatted((hardwareView) ? "Hardware" : "Software" );
         ControllerMenuHeader.setText(ControllerMenuHeaderText);
     }
@@ -313,7 +313,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          * @after selection text on main menu refers to name of "thisController" member
          */
         String Label = "Current Selected Controller: ";
-        String cont = thisController.getControllerName();
+        String cont = thisController.getControllerAlias();
 
         // Change of implementation changes header of selection
         SelectedControllerText.setText(Label + cont);
@@ -1057,7 +1057,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
             // is wayside controller
             thisController =(WaysideController) selectedNodeObject;
             controllerSelected =true;
-            System.out.println( " (Selected controller is now: "+thisController.getControllerName()+")" );
+            System.out.println( " (Selected controller is now: "+thisController.getControllerAlias()+")" );
             updateControllerSelection();
             return;
         } else {

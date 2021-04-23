@@ -1,13 +1,9 @@
-package RemoteWayside;
+package RemoteWaysideServer;
 
-import RemoteWayside.RemoteWaysideService;
-
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 
 /** handles all of the network setup to make a RemoteWaysideService available to the clients through stubs.
  *  Implements Runnable so RemoteWaysideServer can be launched on a new thread

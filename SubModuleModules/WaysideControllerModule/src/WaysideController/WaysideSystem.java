@@ -406,7 +406,7 @@ add output w/plc within a wayside controller
             String currName;
 
             for(int i=0;i < controllers.size();i++){
-                currName = controllers.get(i).getControllerName();
+                currName = controllers.get(i).getControllerAlias();
                 if(currName.equals(controllerName)){
                     nameIndex = i;
                 }

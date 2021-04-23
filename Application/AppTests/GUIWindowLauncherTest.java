@@ -1,6 +1,8 @@
 import CTCOffice.DisplayLine;
 import Track.Track;
 import Track.TrackGUI;
+import TrackConstruction.TrackBlock;
+import TrackConstruction.TrackElement;
 import TrainControlUI.DriverUI;
 import TrainModel.Train;
 import TrainModel.trainGUI;
@@ -12,6 +14,8 @@ import CTCUI.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
@@ -151,12 +155,22 @@ class GUIWindowLauncherTest {
     @DisplayName("launches WaysideSystem UI")
     public void launchLongWaysideUIWindow() throws Exception {
         WaysideUIJFrameWindow ui = new WaysideUIJFrameWindow();
-        // UI must be latched onto object
 
         LinkedList<WaysideController> ctrls = new LinkedList<WaysideController>();
-        ctrls.add(new WaysideController("Controller 1"));
-        ctrls.add(new WaysideController("Controller 2"));
-        ctrls.add(new WaysideController("Controller 3"));
+        // UI must be latched onto object
+        for (int controller=0; controller<3; controller++) {
+            ArrayList<TrackElement> jurisdiction = new ArrayList<TrackElement>();
+            for (int block = 0; block < 4; block++) {
+                TrackBlock fakeBlock = new TrackBlock();
+                fakeBlock.setOccupied(false);
+                fakeBlock.setCommandedSpeed(10.0);
+                fakeBlock.setAuthority(2);
+                fakeBlock.setSpeedLimit(25);
+                jurisdiction.add(fakeBlock);
+            }
+            WaysideController ctrl = new WaysideController(jurisdiction, String.format("Controller %d", controller+1));
+            ctrls.add(ctrl);
+        }
         WaysideSystem testingWaysideSystem = new WaysideSystem(ctrls);
 
         ui.latch(testingWaysideSystem);
