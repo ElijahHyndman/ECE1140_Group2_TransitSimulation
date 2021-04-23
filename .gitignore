@@ -1,0 +1,5 @@
+
+# Ignore my prototyping folders so they don't appear on the github
+SimulationEnvironmentPrototyping
+.DS_Store
+*/*.class
