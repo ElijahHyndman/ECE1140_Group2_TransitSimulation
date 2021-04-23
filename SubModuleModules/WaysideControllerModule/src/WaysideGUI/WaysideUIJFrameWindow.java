@@ -41,7 +41,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
      */
 
     // Data Members to populate GUI with information about
-    private WaysideSystem system;
+    private WaysideSystem system = new WaysideSystem();
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController("Please Select a Controller");
 
@@ -93,16 +93,24 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
             // Store Wayside Controllers locally
             controllers = controllerList;
 
-            // Stash the state of Controller-Tree expansion so it can be restored, stash scroll height view
-            String treeState = storeExpansionState(ControllerListTree);
-            JViewport scrollLevel = TreeScrollPane.getViewport();
+            try {
+                // Stash the state of Controller-Tree expansion so it can be restored, stash scroll height view
+                String treeState = storeExpansionState(ControllerListTree);
+                JViewport scrollLevel = TreeScrollPane.getViewport();
 
-            // Refresh nodes on Controller-Tree
-            repopulateControllerTree();
+                // Refresh nodes on Controller-Tree
+                repopulateControllerTree();
 
-            // Restore the tree expansion state
-            restoreExpansionState(ControllerListTree, treeState);
-            TreeScrollPane.setViewport(scrollLevel);
+                // Restore the tree expansion state
+                restoreExpansionState(ControllerListTree, treeState);
+                try {
+                    TreeScrollPane.setViewport(scrollLevel);
+                } catch (Exception e) {
+
+                }
+            } catch (Exception e) {
+                // ignore tree issues if they occur
+            }
 
             return true;
         } catch (Exception e) {
@@ -120,6 +128,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * source: https://www.algosome.com/articles/save-jtree-expand-state.html
          */
+        if(tree == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
 
         // Generate string of indexes that are expanded on tree
@@ -143,6 +154,12 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * source: https://www.algosome.com/articles/save-jtree-expand-state.html
          */
+        if(tree == null) {
+            return;
+        }
+        if(s.length() == 0) {
+            return;
+        }
         String[] indexes = s.split(",");
 
         // expand the row indexes named in string s
@@ -1220,7 +1237,11 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
     @Override
     public void update() {
-        updateGUI(this.controllers);
+        try {
+            updateGUI(this.controllers);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
@@ -1228,4 +1249,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         return this;
     }
     // End of variables declaration
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
 }

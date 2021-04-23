@@ -536,13 +536,13 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
             trainGUI modelUI = new trainGUI(0);
             modelUI.latch(thisTrain.getHull());
             modelUI.setVisible(true);
-            new GUIWindowLauncher<trainGUI>().launchWindow(modelUI);
+            try{GUIWindowLauncher.launchWindow(modelUI);} catch (Exception e) {}
         }
         else if (column == spawnControllerColumn) {
             //DisplaySE.spawnTrainControllerUI(trains.get(row));
             DriverUI controllerUI = new DriverUI();
             controllerUI.latch(thisTrain.getController());
-            new GUIWindowLauncher<DriverUI>().launchWindow(controllerUI);
+            try{GUIWindowLauncher.launchWindow(controllerUI);} catch (Exception e) {}
         }
     }
 

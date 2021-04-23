@@ -50,6 +50,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         return null;
     }
 
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
     public void draw(){
 
     }
