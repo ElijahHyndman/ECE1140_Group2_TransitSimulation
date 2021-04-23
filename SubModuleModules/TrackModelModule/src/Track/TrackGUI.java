@@ -307,7 +307,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 },
                 new String [] {
-                        "Block Number", "Line", "Section", "Direction (to)", "Current Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit MPH", "Elevation", "Cummulative Elevation"
+                        "Block Number", "Line", "Section", "Direction", "Infrastructure", "Occupied", "Status", "Length", "Grade", "SpeedLimit MPH", "Elevation", "Cummulative Elevation"
                 }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -837,7 +837,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         model.setRowCount(0);
         //Display Track Information
         for(int i=0; i<tempBlocks.size(); i++)
-            model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+            model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
     }
     /*refreshing screen */
     public void refreshRedGreenTrack() {
@@ -1142,6 +1142,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                     trackList.setFailure(bN,lineT,2);
                 else if (failStatusT.equals("3"))
                     trackList.setFailure(bN,lineT,3);
+                else if (failStatusT.equals("4"))
+                    trackList.setFailure(bN,lineT,4);
 
                 if(!authorityT.equals("Authority")) {
                     auth = Integer.parseInt(authorityT);
@@ -1205,7 +1207,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
             model = (DefaultTableModel)jTable1.getModel();
             model.setRowCount(0);
             for(int i=0; i<tempBlocks.size(); i++)
-                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(), tempBlocks.get(i).getCurrentDirection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
+                model.addRow(new Object[] {tempBlocks.get(i).getBlockNum(),tempBlocks.get(i).getLine(),tempBlocks.get(i).getSection(),tempBlocks.get(i).getDirectionString(),tempBlocks.get(i).getInfrastructure(), tempBlocks.get(i).getOccupied(), tempBlocks.get(i).getFailureStatus(), tempBlocks.get(i).getLength(), tempBlocks.get(i).getGrade(), tempBlocks.get(i).getSpeedLimit(), tempBlocks.get(i).getElevation(), tempBlocks.get(i).getCumulativeElevation() });
         }
     }
     public void refreshGreenTrack() {
