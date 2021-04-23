@@ -59,4 +59,14 @@ class TrainTest {
         t1.setEmergencyBrake(true);
         assertEquals(true,t1.getEmergencyBrake() );
     }
+    @Test
+    void changingAtStation() {
+        Train t1 = new Train(5, 2, 0);
+        t1.setPassengerCount(20);
+
+        t1.setPassengersBoarding(10);
+        int leaving = t1.disembark();
+
+        assertEquals(30-leaving,t1.getPassengerCount());
+    }
 }

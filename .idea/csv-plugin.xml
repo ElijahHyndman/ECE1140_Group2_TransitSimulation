@@ -115,6 +115,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/implementation/NonVitalComponents.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/TrainModelModule/src/TrainModel/Train.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideControllerExtraTests.java">
           <value>
             <Attribute>

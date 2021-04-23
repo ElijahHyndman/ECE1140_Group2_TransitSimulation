@@ -333,8 +333,14 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void OpenTrack(int blockNum, String lineCol)
     {
+        // Case: null or empty lineCol string provided
+        if (lineCol==null || lineCol.length() < 1) {
+            return;
+        }
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineColChar = lineCol.charAt(0);
+        // TODO Elijah: made a small fix here with the linecol character:)
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section, lineColChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
@@ -344,8 +350,14 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void CloseTrack(int blockNum, String lineCol)
     {
+        // Case: null or empty lineCol string provided
+        if (lineCol==null || lineCol.length() < 1) {
+            return;
+        }
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineColChar = lineCol.charAt(0);
+        // TODO Elijah: made a small fix here with the linecol character:)
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineColChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){

@@ -109,12 +109,12 @@ public class DriverUI implements ActionListener, AppGUIModule {
         center.setLayout(new GridLayout(1,2));
 
         gauge = new Gauge(0.0, 100.0, Gauge.SEMI_CIRCLE);
-        gauge.setBackground(Color.DARK_GRAY);
-        gauge.setForeground(Color.WHITE);
+        gauge.setBackground(Color.WHITE);
+        gauge.setForeground(Color.BLACK);
         gauge.setHighlight(Color.DARK_GRAY);
         gauge.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         center.add(gauge);
-        center.setBounds(450, 0, 400, 400);
+        center.setBounds(450, 100, 400, 300);
 
         main.add(center);
 

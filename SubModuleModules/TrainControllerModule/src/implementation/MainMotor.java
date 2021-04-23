@@ -23,8 +23,8 @@ public class MainMotor implements TrainMotor {
     }
 
     public double getPower(double idealVelocity, double trainVelocity){
-        double setpoint = idealVelocity;
-        double actual = trainVelocity;
+        double setpoint =   idealVelocity;
+        double actual =  trainVelocity;
 
         if (idealVelocity == 0 && trainVelocity == 0){
             power = 0;

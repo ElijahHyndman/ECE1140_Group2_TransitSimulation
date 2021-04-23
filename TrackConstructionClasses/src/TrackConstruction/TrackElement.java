@@ -80,6 +80,9 @@ public class TrackElement {
     /*setting length*/
     public void setLength(double length){ this.length = length;}
 
+    /*get Index */
+    public boolean getIndex(){ return false; }
+
     /*Setting SpeedLimit*/
     public void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}
 

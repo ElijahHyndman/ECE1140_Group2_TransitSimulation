@@ -1,6 +1,6 @@
 package SimulationEnvironment;
 
-import CTCOffice.CTCOffice;
+import CTCOffice.*;
 import CTCUI.CTCJFrame;
 import Track.*;
 import TrainControlUI.DriverUI;
@@ -253,7 +253,7 @@ class SimulationEnvironmentTest {
         SE.getTrackSystem().updateSwitches();
         yard.setAuthority(1);
         yard.setCommandedSpeed(10.0);
-        new CTCJFrame(SE.getCTC()).setVisible(true);
+        new CTCJFrame((DisplayLine)SE.getCTC()).setVisible(true);
 
         while(!(SE.getTrains().size() > 0)
 
