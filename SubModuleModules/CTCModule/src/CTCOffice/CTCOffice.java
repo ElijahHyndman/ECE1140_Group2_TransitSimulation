@@ -36,7 +36,7 @@ public class CTCOffice implements PhysicsUpdateListener
     private int[] authArr = new int[150];
     public CharSequence timeNow;
     private LocalTime now;
-    public Track trackObj;
+    public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
 
@@ -55,6 +55,9 @@ public class CTCOffice implements PhysicsUpdateListener
         WaysideSystem greenWS = null;
         WaysideSystem redWS = null;
 
+        if (trackSystem == null) {
+            return new ArrayList<WaysideSystem>();
+        }
         try {
             greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
         } catch (IOException e) {
