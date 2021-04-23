@@ -1,5 +1,4 @@
 package CTCOffice;//Haleigh DeFoor
-//CTC Office
 
 import java.util.*;
 import java.io.*;
