@@ -2,6 +2,9 @@ package RemoteWayside;
 
 import java.util.Scanner;
 
+/** simple Main class for hosting a server on a machine for testing purposes.
+ *  creates a RemoteWaysideService for hosting a remote WaysideController and makes it available in the machine's RMI Registry.
+ */
 public class Server {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);

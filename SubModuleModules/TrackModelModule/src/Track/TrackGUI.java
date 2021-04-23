@@ -73,6 +73,11 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         return this;
     }
 
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
     public void draw() {
 
     } // for interface
