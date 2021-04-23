@@ -440,6 +440,7 @@ public class PLCEngine {
         List<String> allData;
         Path path;
 
+        System.out.print("Reading - ");
         System.out.println(url);
         path = Paths.get(url);
         bytes = Files.readAllBytes(path);

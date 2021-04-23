@@ -1,16 +1,14 @@
 package implementation;
 
 import TrainModel.Train;
-import systemData.trackData;
 
 
 public class TrainControl {
 
     private final TrainMotor motor;
-    private final TrainMotor backupMotor;
+    //private final TrainMotor backupMotor;
     private final Train trainModel;
     private final NonVitalComponents nonVitalComponents;
-    private trackData track;
 
     private double velocityCmd; //the train's ideal velocity, units m/s
     private double trainVelocity; //the actual velocity of the train, units m/s
@@ -30,9 +28,8 @@ public class TrainControl {
     private boolean sBrake;
     private String alert;
     private double sampleTime;
-    private double stoppingDistance;
+    public double stoppingDistance;
     boolean beaconSet;
-    private double stopTraveled;
     private double route;
 
     public TrainControl(){
@@ -42,8 +39,8 @@ public class TrainControl {
     public TrainControl(Train model){
 
         trainModel = model;
-        motor = new MainMotor();
-        backupMotor = new BackupMotor();
+        //state design pattern
+        motor = new ActiveMotor(new MainMotor(), new BackupMotor());
 
         beaconSet = false;
         controlMode = "Automatic";
@@ -58,14 +55,14 @@ public class TrainControl {
         manualVelocity = 0;
         power = 0;
         acceleration = 0;
-        authority = 0;
+        authority = -2;
         totalDistanceTraveled = 0;
+        stoppingDistance = -1;
         speedLimit = 0;
         beacon = null;
         alert = null;
         shouldBrake = 0;
-        track = new trackData("Blue");
-        nonVitalComponents = new NonVitalComponents(track);
+        nonVitalComponents = new NonVitalComponents();
         sampleTime = 1;
         controlNonVital();
     }
@@ -122,6 +119,8 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
+               // TODO I could not determine how to resolve between this line and the one below it. Someone better than me, check this out and choose the correct one
+               // if (stoppingDistance <= breakingDist) {
                if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
@@ -257,11 +256,11 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
+        // TODO this was commented out, should it be commented out?
         actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
         distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
-
+        //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
         totalDistanceTraveled += distanceTraveled;
-
 
         if (beaconSet){
             stoppingDistance = stoppingDistance - distanceTraveled;
@@ -269,6 +268,13 @@ public class TrainControl {
 
         prevVelocity = trainVelocity;
         trainVelocity = speed;
+
+        distanceTraveled = trainVelocity * sampleTime;
+        totalDistanceTraveled += distanceTraveled;
+        if (beaconSet){
+            stoppingDistance = stoppingDistance - distanceTraveled;
+        }
+
         monitorDistance();
         getIdealAcceleration();
     }
@@ -292,25 +298,24 @@ public class TrainControl {
     public void setAuthority(int distBlock){
 
         authority = distBlock;
-        if (authority == 0 && beacon.equals("null")){
+        if (authority == 0 && beacon == null){
             useEmergencyBrake(true);
         }
     }
 
     public void setBeacon(String currentBeacon){
         beacon = currentBeacon;
-        if (!beacon.equals("null") && !beaconSet){
+        if (!(beacon==null) && !beaconSet){
             beaconSet = true;
             int start = beacon.indexOf(" ");
-            double stop = Integer.parseInt(beacon.substring(start+1, beacon.length()));
+            double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
+            System.out.println(stop);
             stoppingDistance = stop;
-            stopTraveled = 0;
-        }else if (beacon.equals("null")){
+        }else if (beacon == null && beaconSet == false){
             stoppingDistance = -1;
             beaconSet = false;
         }
     }
-
 
     public double getStoppingDistance(){
         return stoppingDistance;
@@ -318,7 +323,6 @@ public class TrainControl {
 
     public void setKpKi(double newKp, double newKi){
         motor.setKpKi(newKp, newKi);
-        backupMotor.setKpKi(newKp, newKi);
     }
 
     //Setting the train's nonVital Components
@@ -329,11 +333,12 @@ public class TrainControl {
         nonVitalComponents.setNextStation(beacon);
         nonVitalComponents.setAnnouncement(authority, beacon);
 
-        if (authority  == 1 && trainVelocity == 0){
+        if (beaconSet && trainVelocity == 0){
             nonVitalComponents.setDoors(beacon);
         }
     }
 
+    /*
     //Replicating inputs from the Train Model, used by TestingUI
     public void newTrainInput(TrainModelInput currentInput){
         setActualSpeed(currentInput.getActualSpeed());
@@ -351,6 +356,7 @@ public class TrainControl {
         power = motor.getPower(velocityCmd, trainVelocity);
     }
 
+     */
 
     /**
      * NEW METHODS FOR TRAIN MODEL
@@ -372,6 +378,7 @@ public class TrainControl {
         }else{
             setCommandedSpeed(manualVelocity);
         }
+        this.setSpeedLimit(60/3.6);
         this.setPower();
     }
 

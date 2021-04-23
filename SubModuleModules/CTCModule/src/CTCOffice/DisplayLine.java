@@ -25,6 +25,25 @@ public class DisplayLine extends CTCOffice
     boolean occupancy;
     boolean status;
 
+    /*
+    public DisplayLine(Track SEtrack, SimulationEnvironment SE)
+    {
+        trackObj = SEtrack;
+        try {
+            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SEobj = SE;
+    }
+    */
+
+    public void copy(DisplayLine given) {
+        this.trackObj = given.getTrack();
+        this.waysides = given.waysides;
+        this.SEobj = given.SEobj;
+    }
+
     public DisplayLine()
     {
         this.throughput = 0;

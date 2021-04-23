@@ -4,6 +4,8 @@ package CTCOffice;//Haleigh DeFoor
 import java.util.*;
 import java.io.*;
 import java.time.*;
+
+import TrackConstruction.TrackBlock;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
@@ -42,19 +44,13 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public CTCOffice()
     {
-        try {
-            waysides = new WaysideSystem(trackObj.getBlocks());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //waysides = new WaysideSystem(trackObj.getBlocks());
         SEobj = null;
         trackObj = null;
     }
 
-    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
-    {
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE) throws IOException {
         waysides = new WaysideSystem();
-=
         trackObj = SEtrack;
         SEobj = SE;
     }
@@ -316,7 +312,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else
             occ = waysideR.getOccupancy(blockNum);*/
         try {
-            occ = waysides.getOccupancy(blockNum, lineCol);
+            occ = waysides.getOccupancy(blockNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -328,7 +324,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         boolean switchstat=false;
         try {
-            switchstat = waysides.getSwitchStatus(blockNum, lineCol);
+            switchstat = waysides.getSwitchStatus(blockNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -337,23 +333,35 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void OpenTrack(int blockNum, String lineCol)
     {
+        // Case: null or empty lineCol string provided
+        if (lineCol==null || lineCol.length() < 1) {
+            return;
+        }
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineColChar = lineCol.charAt(0);
+        // TODO Elijah: made a small fix here with the linecol character:)
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section, lineColChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setOpen(blocks.get(i), lineCol);
+            //waysides.setOpen(blocks.get(i), lineCol);
         }
     }
 
     public void CloseTrack(int blockNum, String lineCol)
     {
+        // Case: null or empty lineCol string provided
+        if (lineCol==null || lineCol.length() < 1) {
+            return;
+        }
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineColChar = lineCol.charAt(0);
+        // TODO Elijah: made a small fix here with the linecol character:)
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineColChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setClose(blocks.get(i), lineCol);
+            //waysides.setClose(blocks.get(i), lineCol);
         }
     }
 

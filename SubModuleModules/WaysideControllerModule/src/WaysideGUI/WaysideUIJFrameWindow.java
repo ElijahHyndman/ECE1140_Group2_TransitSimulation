@@ -41,9 +41,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
      */
 
     // Data Members to populate GUI with information about
-    private WaysideSystem system = new WaysideSystem();
+    private WaysideSystem system;
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
-    private static WaysideController thisController = new WaysideController();
+    private static WaysideController thisController = new WaysideController("Please Select a Controller");
 
     // Status tracking about GUI state
     private boolean controllerSelected = false;
@@ -69,25 +69,6 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
-    }
-
-
-    @Override
-    public void latch(Object myObject) {
-        /** myObject must be of type WaysideSystem
-         */
-        WaysideSystem givenSystem;
-        try {
-            givenSystem = (WaysideSystem) myObject;
-        } catch (Exception e) {
-            return;
-        }
-        controllers = givenSystem.getControllersVector();
-    }
-
-    @Override
-    public void update() {
-        updateGUI(controllers);
     }
 
 
@@ -125,6 +106,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -269,7 +251,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateTestingTables();
 
         // Generate and set header for Controller Advanced Menu
-        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getName());
+        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerName());
         ControllerMenuHeaderText += " - configured as %s".formatted((hardwareView) ? "Hardware" : "Software" );
         ControllerMenuHeader.setText(ControllerMenuHeaderText);
     }
@@ -282,7 +264,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          * @after selection text on main menu refers to name of "thisController" member
          */
         String Label = "Current Selected Controller: ";
-        String cont = thisController.getName();
+        String cont = thisController.getControllerName();
 
         // Change of implementation changes header of selection
         SelectedControllerText.setText(Label + cont);
@@ -314,7 +296,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
         // Fill Data Vector
         List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getGPIO().getInputValues();
+        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
 
         //List<String> InputNames = thisController.getAllNames();
         //List<Object> InputValues = thisController.getAllData();
@@ -1001,12 +983,14 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         // Get Name of Node
         String selectedNodeName = (String) selectedNode.getUserObject();
         System.out.printf("Tree node: "+selectedNodeName+" is selected. ");
+
         // Verifying that selected Node is a Controller
         for (EmptyWaysideController ControllerObject: controllers) {
             // If node is a controller
             if (ControllerObject.getName() == selectedNodeName) {
                 /*
                     Assert: from this point on, a valid controller will always be selected.
+
                 controllerSelected =true;
                 thisController = ControllerObject;
                 System.out.println( " (Selected controller is now: "+ControllerObject.getName()+")" );
@@ -1024,7 +1008,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
             // is wayside controller
             thisController =(WaysideController) selectedNodeObject;
             controllerSelected =true;
-            System.out.println( " (Selected controller is now: "+thisController.getName()+")" );
+            System.out.println( " (Selected controller is now: "+thisController.getControllerName()+")" );
             updateControllerSelection();
             return;
         } else {
@@ -1060,6 +1044,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         // get the node from the path of the tree expansion event
         DefaultMutableTreeNode expanded = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
         Object nodeObject = expanded.getUserObject();
+
         // See if object is wayside controller
         if (nodeObject instanceof EmptyWaysideController) {
             // is wayside controller
@@ -1223,5 +1208,24 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+
+    @Override
+    public void latch(Object myObject) {
+        try {
+            this.system = (WaysideSystem) myObject;
+        }catch (Exception e) {
+            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
+        }
+    }
+
+    @Override
+    public void update() {
+        updateGUI(this.controllers);
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
     // End of variables declaration
 }

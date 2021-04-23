@@ -10,7 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="junit-platform-engine-1.4.2-sources" level="project" />
-    <orderEntry type="module" module-name="SubModules.CTCModule" />
     <orderEntry type="module" module-name="SubModules.TrackModelModule" />
     <orderEntry type="module" module-name="SubModules.TrainControllerModule" />
     <orderEntry type="module" module-name="SubModules.TrainModelModule" />
@@ -18,5 +17,6 @@
     <orderEntry type="module" module-name="WorldClock" />
     <orderEntry type="module" module-name="TrackConstructionClasses" />
     <orderEntry type="module" module-name="GraphicUserInterfaces" />
+    <orderEntry type="module" module-name="SubModules.CTCModule" />
   </component>
 </module>

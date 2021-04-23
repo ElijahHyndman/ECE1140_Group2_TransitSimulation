@@ -7,6 +7,7 @@ package CTCUI;/*
 import java.util.*;
 
 import CTCOffice.*;
+import GUIInterface.AppGUIModule;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +24,7 @@ import java.time.*;
  */
 //iteration 2
 
-public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule{
+public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     DisplayLine display = new DisplayLine();
     DefaultTableModel model, model2;
@@ -42,6 +43,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule{
     @Override
     public void update(){
 
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
     }
 
     public void draw(){
