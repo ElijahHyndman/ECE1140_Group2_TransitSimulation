@@ -29,7 +29,7 @@ public class TestDriverUI {
     }
 
     @Test
-    public void testSetup() throws InterruptedException{
+    public void testSetup() throws InterruptedException {
 
         DriverUI ui = new DriverUI();
         ui.latch(control);
@@ -46,18 +46,19 @@ public class TestDriverUI {
 
         //int i = 0;
         boolean stop = false;
-        while(!stop){
+        while (!stop) {
             TimeUnit.SECONDS.sleep(1);
             control.updateCommandOutputs("test time", 1);
             double power = control.getPower();
             assertThat(theTrain.getPower(), is(power));
-            if (theTrain.getActualSpeed() == 0){
-               // stop = true;
+            if (theTrain.getActualSpeed() == 0) {
+                // stop = true;
             }
             System.out.println(control.getActualSpeed());
-           //initialTrainVelocity = control.getActualSpeed();
+            //initialTrainVelocity = control.getActualSpeed();
 
             ui.update();
         }
+    }
 
 }

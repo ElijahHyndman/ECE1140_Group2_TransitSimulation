@@ -24,16 +24,13 @@ public class Train {
     }
     //Known info. will be set
     double mass; //total kg with passengers
-    double trainMass = 37194; //kg of empty train
+    // TODO Elijah: I wasn't sure whether I should keep the /5 or not
+    double trainMass = 37194/5; //kg of empty train
     int crewCount;
     int numberOfCars;
     double standardDecelLimit = 1.2 ; //  m/s^2
     double emergencyDecelLimit = 2.73; //  m/s^2
     int id;
-    //Mass info
-    double mass; //total kg with passengers
-    double trainMass = 37194/5; //kg of empty train
-    int crewCount;
     int passengerCount; //aka ticket sales
 
     //Movement
@@ -61,18 +58,9 @@ public class Train {
     boolean leftDoors; //close=0, open=1
     boolean rightDoors;
     int cabinTemp;// F
-    double power;// watts
     String nextStop;
-    double accel;//  m/s^2
     int advertisements;
     String announcements;
-    Boolean passengerBrake;
-    Boolean emergencyBrake;
-    Boolean serviceBrake;
-    double commandedSpeed; //  m/s
-    int authority;
-    String beacon;
-    int passengerCount; //aka ticket sales
     boolean cabinLights;
     boolean outerLights;
     boolean headlights;
@@ -104,9 +92,6 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
-    public double getPower() {
-        return power;
-    }
 
     //setters
 
@@ -156,7 +141,8 @@ public class Train {
         }else{
             this.power = 0;
         }
-        calculateSpeed();
+        //TODO Elijah: I had to comment this bad boy out because it has no access to the deltaTime parameter. I'll leave that to you to figure out!
+        // calculateSpeed();
     }
 
 
@@ -165,7 +151,8 @@ public class Train {
         return power;
     }
 
-    public void calculateSpeed(){
+    // TODO Elijah: I added the delta time parameter? I thought it was already here but when resolving it must have disappeared
+    public void calculateSpeed(double deltaTime){
         //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
@@ -222,22 +209,23 @@ public class Train {
         this.mass = this.trainMass + 75*(passengerCount+crewCount);
         return this.mass;
     }
-    public void setAccel(double acceleration) {
-        this.accel = acceleration;
-        this.displayAcceleration = this.accel * 3.28084;
-    }
-    public void setDisplayAccel(double acceleration) {
-        this.displayAcceleration = acceleration;
-        this.accel = this.displayAcceleration / 3.28084;
-    }
-    public void setCommandedSpeed(double commandedSpeed) {
-        this.commandedSpeed = commandedSpeed;
-        this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
-    }
-    public void setDisplayCommandedSpeed(double commandedSpeed) {
-        this.displayCommandedSpeed = commandedSpeed;
-        this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
-    }
+    // TODO Elijah: These were duplicates of the ones above. I wasn't sure which ones to keep so please choose for me!
+//    public void setAccel(double acceleration) {
+//        this.accel = acceleration;
+//        this.displayAcceleration = this.accel * 3.28084;
+//    }
+//    public void setDisplayAccel(double acceleration) {
+//        this.displayAcceleration = acceleration;
+//        this.accel = this.displayAcceleration / 3.28084;
+//    }
+//    public void setCommandedSpeed(double commandedSpeed) {
+//        this.commandedSpeed = commandedSpeed;
+//        this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
+//    }
+//    public void setDisplayCommandedSpeed(double commandedSpeed) {
+//        this.displayCommandedSpeed = commandedSpeed;
+//        this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
+//    }
 
 
     public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
@@ -323,6 +311,9 @@ public class Train {
     public void setPassengerCount(int count){
         this.passengerCount = count;
         recalc();
+    }
+    public void recalc() {
+        // TODO Elijah: It was complainging about recalc() not being defined on line 313 in setPassengerCount(). I'll leave it to you for filling in the body!
     }
     public void setPassengersBoarding(int count){
         setPassengerCount(this.passengerCount + count);

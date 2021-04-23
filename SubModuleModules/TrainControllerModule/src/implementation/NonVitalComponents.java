@@ -2,6 +2,8 @@ package implementation;
 
 //import systemData.*;
 
+import systemData.Advertisements;
+
 public class NonVitalComponents {
 
     private boolean cabinLights;

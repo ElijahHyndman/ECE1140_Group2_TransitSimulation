@@ -34,7 +34,6 @@ public class SimulationEnvironment extends Thread {
 
     /** World Object Variables
      */
-    private DisplayLine ctc;
     private Track trackSystem = new Track();
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
@@ -165,7 +164,8 @@ public class SimulationEnvironment extends Thread {
 
     public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
         /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-         *  on new thread=]]
+         *  on new thread=]*/
+    }
 
     /*
         World Time Methods
@@ -311,7 +311,7 @@ public class SimulationEnvironment extends Thread {
     public void startTime() {clk.start();}
     public void setClockSpeed(double speed) {clk.setRatio(speed);}
     public void setClockResolution(double res) {clk.setResolution(res);}
-    public DisplayLine getCTC() {return ctc;}
+    public CTCOffice getCTC() {return ctc;}
     public Track getTrackSystem() {return trackSystem;}
     public Vector<TrainUnit> getTrains() {return trains;}
 }
