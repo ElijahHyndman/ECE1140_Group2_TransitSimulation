@@ -65,11 +65,7 @@ public class DisplayLine extends CTCOffice
     public DisplayLine(Track SEtrack, SimulationEnvironment SE)
     {
         trackObj = SEtrack;
-        try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        waysides = GenerateWaysideSystems(trackObj);
         SEobj = SE;
     }
 
