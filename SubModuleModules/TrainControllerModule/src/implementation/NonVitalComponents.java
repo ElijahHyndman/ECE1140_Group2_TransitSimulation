@@ -1,6 +1,8 @@
 package implementation;
 
-import systemData.*;
+//import systemData.*;
+
+import systemData.Advertisements;
 
 public class NonVitalComponents {
 
@@ -16,7 +18,10 @@ public class NonVitalComponents {
     private String theAnnouncement;
 
 
-    public NonVitalComponents(){
+
+    public NonVitalComponents(){//trackData theTrack){
+
+        //track = theTrack;
 
         //Initialize non-vital components
         cabinLights = false;
@@ -73,7 +78,8 @@ public class NonVitalComponents {
     }
 
     public int getCurrentAdvertisement(){
-        return adList.playAd();
+        //return adList.playAd();
+        return 0;
     }
 
 

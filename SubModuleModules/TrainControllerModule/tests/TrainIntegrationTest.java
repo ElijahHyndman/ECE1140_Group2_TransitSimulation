@@ -20,9 +20,10 @@ public class TrainIntegrationTest {
 
     @Before
     public void setUp(){
-        theTrain = new Train(5,4);
+        theTrain = new Train(5,4,0);
         control = new TrainControl(theTrain);
         theTrain.setBeacon("Dormont: 350");
+        //theTrain.setBeacon("Dormont: 200");
     }
 
     @Test
@@ -167,8 +168,8 @@ public class TrainIntegrationTest {
 
         //first set controller values
         theTrain.setAuthority(150000);
-        theTrain.setSpeed(8);
-        theTrain.setCommandedSpeed(8);
+        theTrain.setSpeed(0);
+        theTrain.setCommandedSpeed(6);
 
        // theTrain.setCommandedSpeed(10);
         System.out.println("-----start over-----");

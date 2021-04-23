@@ -2,6 +2,10 @@ package CTCOffice;//Haleigh DeFoor
 //CTCOffice.CTCOffice.DisplayLine
 //iteration 2
 
+import SimulationEnvironment.SimulationEnvironment;
+import Track.Track;
+import WaysideController.WaysideSystem;
+
 import java.io.*;
 import java.util.*;
 
@@ -21,6 +25,25 @@ public class DisplayLine extends CTCOffice
     boolean occupancy;
     boolean status;
 
+    /*
+    public DisplayLine(Track SEtrack, SimulationEnvironment SE)
+    {
+        trackObj = SEtrack;
+        try {
+            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SEobj = SE;
+    }
+    */
+
+    public void copy(DisplayLine given) {
+        this.trackObj = given.getTrack();
+        this.waysides = given.waysides;
+        this.SEobj = given.SEobj;
+    }
+
     public DisplayLine()
     {
         this.throughput = 0;
@@ -38,7 +61,19 @@ public class DisplayLine extends CTCOffice
         this.occupancy = false;
         this.status = true;
     }
-    
+
+    public DisplayLine(Track SEtrack, SimulationEnvironment SE)
+    {
+        trackObj = SEtrack;
+        try {
+            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SEobj = SE;
+    }
+
+
     public DisplayLine(int bn, String lc, char s, int l, int sl, double g, double e, double ce, String i, String t1t, String t2t, String t3t, String t4t, String t5t, String t6t, String t7t, String t8t, String t9t, String t10t)
     {
         this.throughput = 0;

@@ -6,6 +6,7 @@ public class Station extends TrackElement{
     String beacon;
     int throughput;  //passengers Leaving Train
     int ticketSales; //Ticket sales per station
+    String name;
     boolean occupied;
 
     public Station(){
@@ -28,6 +29,7 @@ public class Station extends TrackElement{
         this.directionArray = setDirection;
         this.biDirecitional = bidirectional.charAt(0);
         this.currentDirection = -3;
+        this.type = "Station";
     }
 
     /*Set Ticket Sales */
@@ -35,6 +37,12 @@ public class Station extends TrackElement{
         Random rand = new Random();
         this.ticketSales = Math.abs(rand.nextInt()) % 80;
     }
+
+    public void setName(String nameTemp){
+        name = nameTemp;
+    }
+
+    public String getName() { return this.name;}
 
     /*set throughput*/
     @Override
@@ -77,10 +85,6 @@ public class Station extends TrackElement{
     /*get Beacon*/
    // public String getBeacon() { return this.beacon;}
 
-    /*get type of block*/
-    String getType(){
-        return "Station";
-    }
 
     @Override
     public String toString() {
