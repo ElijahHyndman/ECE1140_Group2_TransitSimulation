@@ -5,7 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/Application/Application.iml" filepath="$PROJECT_DIR$/Application/Application.iml" />
       <module fileurl="file://$PROJECT_DIR$/GraphicUserInterfaces/GraphicUserInterfaces.iml" filepath="$PROJECT_DIR$/GraphicUserInterfaces/GraphicUserInterfaces.iml" />
       <module fileurl="file://$PROJECT_DIR$/SimulationEnvironment/SimulationEnvironment.iml" filepath="$PROJECT_DIR$/SimulationEnvironment/SimulationEnvironment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SimulationEnvironmentPrototyping/SimulationEnvironmentPrototyping.iml" filepath="$PROJECT_DIR$/SimulationEnvironmentPrototyping/SimulationEnvironmentPrototyping.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/CTCModule/SubModules.CTCModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SubModules.RemoteWaysideController/SubModules.RemoteWaysideController.iml" filepath="$PROJECT_DIR$/SubModules.RemoteWaysideController/SubModules.RemoteWaysideController.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrackModelModule/SubModules.TrackModelModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrackModelModule/SubModules.TrackModelModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainControllerModule/SubModules.TrainControllerModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" filepath="$PROJECT_DIR$/SubModuleModules/TrainModelModule/SubModules.TrainModelModule.iml" />

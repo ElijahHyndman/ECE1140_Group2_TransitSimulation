@@ -20,19 +20,18 @@ public class Train {
         this.serviceBrake = false;
         this.id = id;
         this.calculateMass();
-        this.sampleTime = 1;
+        this.sampleTime = 1; //default
     }
-
+    //Known info. will be set
+    double mass; //total kg with passengers
+    // TODO Elijah: I wasn't sure whether I should keep the /5 or not
+    double trainMass = 37194/5; //kg of empty train
+    int crewCount;
     int numberOfCars;
     double standardDecelLimit = 1.2 ; //  m/s^2
     double emergencyDecelLimit = 2.73; //  m/s^2
     int id;
-    //Mass info
-    double mass; //total kg with passengers
-    double trainMass = 37194/5; //kg of empty train
-    int crewCount;
     int passengerCount; //aka ticket sales
-
 
     //Movement
     Boolean passengerBrake;
@@ -43,23 +42,25 @@ public class Train {
     String beacon;
     double power;// watts
     double accel;//  m/s^2
+    double maxServiceDecel = 1.2;
+    double maxEmergencyDecel = 2.73;
+    double maxAccel = 0.5;
     //TrackBlock myTrackBlock;
     double totalDistance; //meters
     double blockDistance;
     double blockGrade; //%
-    double speedLimit; //km/h  (1 km/hr = .2778 m/s)
+    double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
+
     //Fails
     boolean signalPickupFail;
     boolean engineFail;
     boolean brakeFail;
-
-    //Non-vitals
     boolean leftDoors; //close=0, open=1
     boolean rightDoors;
     int cabinTemp;// F
+    String nextStop;
     int advertisements;
     String announcements;
-    String nextStop;
     boolean cabinLights;
     boolean outerLights;
     boolean headlights;
@@ -67,12 +68,13 @@ public class Train {
     double sampleTime; //s
     
     //display variable with customary units
-    double displayActualSpeed;  //  m/h
-    double displayCommandedSpeed; //  m/h
-    double displayAcceleration; //  mph/s
+    double displayActualSpeed;  //  ft/s
+    double displayCommandedSpeed; //  ft/s
+    double displayAcceleration; //  ft/s^2
 
 
     //getters
+
     public int  getNumberOfCars() {
         return numberOfCars;
     }
@@ -90,30 +92,32 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
-    public double getPower() {
-        return power;
-    }
 
     //setters
 
+
     public void setSpeed(double speed) {
-        if(speed >= 0){
-            this.actualSpeed = speed;  
+        if (speed > this.speedLimit){
+            this.actualSpeed = this.speedLimit;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
+        }
+        else if(speed >= 0){
+            this.actualSpeed = speed;  
+            this.displayActualSpeed = this.actualSpeed * 3.28084;
         } else {
             this.actualSpeed = 0;
             this.displayActualSpeed = 0;
         }
-
     }
     public void setDisplaySpeed(double speed) {
         this.displayActualSpeed = speed; 
-        this.actualSpeed = this.displayActualSpeed / 2.236936;
+        this.actualSpeed = this.displayActualSpeed / 3.28084;
     }
     public void setAccel(double acceleration) {
-        if(acceleration > 0.5){
-            this.accel = .5;
-            this.displayAcceleration = .5 * 2.236936;
+        this.maxAccel = 23330 / this.mass;
+        if(acceleration > maxAccel){
+            this.accel = this.maxAccel;
+            this.displayAcceleration = this.maxAccel * 2.236936;
         }else {
             this.accel = acceleration;
             this.displayAcceleration = this.accel * 2.236936;
@@ -137,21 +141,33 @@ public class Train {
         }else{
             this.power = 0;
         }
+        //TODO Elijah: I had to comment this bad boy out because it has no access to the deltaTime parameter. I'll leave that to you to figure out!
+        // calculateSpeed();
     }
-    public void calculateSpeed(double deltaTime){
 
+
+    //ADDED FOR TESTING
+    public double getPower(){
+        return power;
+    }
+
+    // TODO Elijah: I added the delta time parameter? I thought it was already here but when resolving it must have disappeared
+    public void calculateSpeed(double deltaTime){
+        //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
         double newA;
         
         //check for zero velocity & power command
 
+        totalDistance += this.actualSpeed*deltaTime;
+        blockDistance += this.actualSpeed*deltaTime;
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
             
         if((this.emergencyBrake == true)||this.passengerBrake == true){
-            newV = this.actualSpeed - (this.emergencyDecelLimit*deltaTime);
+            newV = this.actualSpeed - (this.emergencyDecelLimit*sampleTime); 
             newA = -1 * this.emergencyDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -161,7 +177,7 @@ public class Train {
             setSpeed(newV);
         }
         else if(this.serviceBrake == true){
-            newV = this.actualSpeed - (this.standardDecelLimit*deltaTime);
+            newV = this.actualSpeed - (this.standardDecelLimit*sampleTime);
             newA = -1 * this.standardDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -171,14 +187,14 @@ public class Train {
             setSpeed(newV);
         }
         else{
+
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
+            F = F - (this.blockGrade/100) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
-            newV = this.actualSpeed + (newA+this.accel)/(2*deltaTime); // m/s + average of 2 accels / time
+            newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
             setAccel(newA);
         }
-        totalDistance += this.actualSpeed*deltaTime;
-        blockDistance += this.actualSpeed*deltaTime;
     }
     public double getTotalDistance(){
         return totalDistance;
@@ -190,17 +206,34 @@ public class Train {
         blockDistance = distance;
     }
     public double calculateMass(){
-        this.mass = 75*(passengerCount+crewCount) + (37194/5 * numberOfCars);
+        this.mass = this.trainMass + 75*(passengerCount+crewCount);
         return this.mass;
     }
+    // TODO Elijah: These were duplicates of the ones above. I wasn't sure which ones to keep so please choose for me!
+//    public void setAccel(double acceleration) {
+//        this.accel = acceleration;
+//        this.displayAcceleration = this.accel * 3.28084;
+//    }
+//    public void setDisplayAccel(double acceleration) {
+//        this.displayAcceleration = acceleration;
+//        this.accel = this.displayAcceleration / 3.28084;
+//    }
+//    public void setCommandedSpeed(double commandedSpeed) {
+//        this.commandedSpeed = commandedSpeed;
+//        this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
+//    }
+//    public void setDisplayCommandedSpeed(double commandedSpeed) {
+//        this.displayCommandedSpeed = commandedSpeed;
+//        this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
+//    }
 
 
-    public void setBlockGrade(double blockGrade) {
+    public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
     }
 
-    public void setSpeedLimit(double speedLimit) {
-        this.speedLimit = speedLimit;
+    public void setSpeedLimit(double kmPerHour) { //takes in km/h
+        this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
 
     public void setAuthority(int a) {
@@ -210,14 +243,14 @@ public class Train {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
+
         if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
-        }else{
-            this.passengerBrake = false;
-        }
+        }            
     }
     public void setEmergencyBrake(Boolean brake) {
+
         if(this.brakeFail != true){
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
@@ -226,6 +259,7 @@ public class Train {
         }
     }
     public void setServiceBrake(Boolean brake) {
+
         if(this.brakeFail != true){
             this.serviceBrake = brake;
             setAccel(-1 * this.standardDecelLimit);
@@ -276,17 +310,25 @@ public class Train {
 
     public void setPassengerCount(int count){
         this.passengerCount = count;
-        calculateMass();
+        recalc();
+    }
+    public void recalc() {
+        // TODO Elijah: It was complainging about recalc() not being defined on line 313 in setPassengerCount(). I'll leave it to you for filling in the body!
+    }
+    public void setPassengersBoarding(int count){
+        setPassengerCount(this.passengerCount + count);
     }
     public void setMass(double m){
         this.mass = m;
     }
 
+//     public void recalc(){
+//         calculateMass();
+//         calculateSpeed();
     public void updatePhysicalState(String currentTime, double deltaTime){
         calculateSpeed(deltaTime);
         this.sampleTime = deltaTime;
     }
-
     
     public void convert(){
         this.displayActualSpeed = this.actualSpeed * 3.28084;
@@ -294,11 +336,12 @@ public class Train {
         this.displayAcceleration = this.accel * 3.2808399;
         
     }
-    public void disembark(){
+    public int disembark(){
         Random rand = new Random(); //instance of random class
-        int upperbound = (int) (.5 * this.passengerCount);
+        int upperbound = (int) (.75 * this.passengerCount);
         int random = rand.nextInt(upperbound);
         setPassengerCount(this.passengerCount - random);
+        return random;
     }
 
     public boolean getEmergencyBrake() {
@@ -307,5 +350,9 @@ public class Train {
 
     public boolean getPassengerBrake() {
         return passengerBrake;
+    }
+
+    public int getPassengerCount() {
+        return this.passengerCount;
     }
 }

@@ -25,4 +25,6 @@ public interface AppGUIModule<T> {
      * @before the gui window may not show the most up to date data from localObject
      * @after the gui window has been redrawn, showing the most up to date data from localObject
      */
+
+    public Object getJFrame();
 }

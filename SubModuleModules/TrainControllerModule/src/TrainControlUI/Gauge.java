@@ -237,7 +237,7 @@ public class Gauge extends JComponent
         pointer = new Line2D.Double(xMid-radius+2*TICK_LENGTH,yMid,xMid,yMid);
         at=AffineTransform.getRotateInstance(Math.toRadians(value/max*degrees),
                 xMid, yMid);
-        g2.setColor(Color.WHITE);
+        g2.setColor(Color.BLACK);
         g2.draw(at.createTransformedShape(pointer));
         g2.fill(pivot);
     }
