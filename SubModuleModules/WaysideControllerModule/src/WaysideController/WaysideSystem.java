@@ -218,7 +218,7 @@ public class WaysideSystem {
     public ArrayList<TrackElement> getBlocks(){
         return blocks;
     }
-
+    public String getLine() {return currentLine;}
     /*
     Function -
         Reads the console and uses that data to perform actions on the entire system
