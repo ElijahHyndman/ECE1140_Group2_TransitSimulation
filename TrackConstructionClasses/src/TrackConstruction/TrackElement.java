@@ -64,7 +64,7 @@ public class TrackElement {
     public void setBlockNum(int blockNum){this.blockNum = blockNum;}
 
     /*Setting Line */
-     public void setLine(String line){this.line = line;}
+    public void setLine(String line){this.line = line;}
 
     /*set Beacon*/
     public void setBeacon(String beacon){
@@ -79,6 +79,9 @@ public class TrackElement {
 
     /*setting length*/
     public void setLength(double length){ this.length = length;}
+
+    /*get Index */
+    public boolean getIndex(){ return false; }
 
     /*Setting SpeedLimit*/
     public void setSpeedLimit(int speedLimit){this.speedLimit = speedLimit;}

@@ -28,7 +28,7 @@ public class TrainControl {
     private boolean sBrake;
     private String alert;
     private double sampleTime;
-    private double stoppingDistance;
+    public double stoppingDistance;
     boolean beaconSet;
     private double route;
 
@@ -119,7 +119,9 @@ public class TrainControl {
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
             if (beaconSet){
-               if (stoppingDistance <= breakingDist) {
+               // TODO I could not determine how to resolve between this line and the one below it. Someone better than me, check this out and choose the correct one
+               // if (stoppingDistance <= breakingDist) {
+               if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
                     if (getControlMode().equals("Automatic")) {
                         useServiceBrake(true);
                     } else {
@@ -254,7 +256,15 @@ public class TrainControl {
         double distanceTraveled;
         double actualAcceleration;
         //1 s sample time
-        //actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
+        // TODO this was commented out, should it be commented out?
+        actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
+        distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
+        //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
+        totalDistanceTraveled += distanceTraveled;
+
+        if (beaconSet){
+            stoppingDistance = stoppingDistance - distanceTraveled;
+        }
 
         prevVelocity = trainVelocity;
         trainVelocity = speed;
@@ -273,6 +283,11 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
+        //TO DO: use and compare both train motor powers
+        double primaryPower;
+        double secondaryPower;
+
+        //for now, just uses main motor power
         power = (motor.getPower(velocityCmd, trainVelocity));
     }
 
@@ -289,19 +304,18 @@ public class TrainControl {
     }
 
     public void setBeacon(String currentBeacon){
-        //currentBeacon
-        if (!(currentBeacon==null) && !beaconSet){
-            beacon = currentBeacon;
+        beacon = currentBeacon;
+        if (!(beacon==null) && !beaconSet){
             beaconSet = true;
             int start = beacon.indexOf(" ");
             double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
+            System.out.println(stop);
             stoppingDistance = stop;
-        }else if (beacon == null){
+        }else if (beacon == null && beaconSet == false){
             stoppingDistance = -1;
             beaconSet = false;
         }
     }
-
 
     public double getStoppingDistance(){
         return stoppingDistance;
@@ -324,6 +338,26 @@ public class TrainControl {
         }
     }
 
+    /*
+    //Replicating inputs from the Train Model, used by TestingUI
+    public void newTrainInput(TrainModelInput currentInput){
+        setActualSpeed(currentInput.getActualSpeed());
+
+        if (getControlMode().equals("Automatic")){
+            setCommandedSpeed(currentInput.getCommandedVelocity());
+        }else{
+                setCommandedSpeed(manualVelocity);
+            }
+
+        setSpeedLimit(currentInput.getSpeedLimit());
+        beacon = currentInput.getBeacon();
+
+        //monitorDistance();
+        power = motor.getPower(velocityCmd, trainVelocity);
+    }
+
+     */
+
     /**
      * NEW METHODS FOR TRAIN MODEL
      **/
@@ -344,7 +378,7 @@ public class TrainControl {
         }else{
             setCommandedSpeed(manualVelocity);
         }
-        setSpeedLimit(60/3.6);
+        this.setSpeedLimit(60/3.6);
         this.setPower();
     }
 

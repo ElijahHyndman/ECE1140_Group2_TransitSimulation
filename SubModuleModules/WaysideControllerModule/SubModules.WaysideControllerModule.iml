@@ -27,5 +27,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="TrackConstructionClasses" exported="" />
     <orderEntry type="module" module-name="SubModules.TrackModelModule" exported="" />
+    <orderEntry type="module" module-name="GraphicUserInterfaces" />
   </component>
 </module>

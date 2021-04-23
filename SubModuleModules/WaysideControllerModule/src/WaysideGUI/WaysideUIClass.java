@@ -45,6 +45,8 @@ public class WaysideUIClass extends Thread {
     }
 
     public void run() {
+        /** begins a new thread and continually updates the gui according to the new values of the controllers.
+         */
         if (WS == null) {
             return;
         }
@@ -52,14 +54,14 @@ public class WaysideUIClass extends Thread {
 
         while (true) {
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(300);
             } catch (Exception e) {
                 System.out.println("A problem occurred using the sleep function inside the WaysideUIClass");
             }
 
-            //System.out.println("Sampling wayside system");
             Vector<WaysideController> samples = (Vector<WaysideController>) WS.getControllersVector();
             guiWindow.updateGUI(samples);
+            //guiWindow.update();
         }
     }
 

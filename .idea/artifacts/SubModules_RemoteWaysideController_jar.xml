@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SubModules.RemoteWaysideController:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SubModules_RemoteWaysideController_jar</output-path>
+    <root id="archive" name="SubModules.RemoteWaysideController.jar">
+      <element id="module-output" name="SubModules.RemoteWaysideController" />
+      <element id="module-output" name="SubModules.WaysideControllerModule" />
+      <element id="module-output" name="TrackConstructionClasses" />
+      <element id="module-output" name="SubModules.TrackModelModule" />
+      <element id="module-output" name="GraphicUserInterfaces" />
+    </root>
+  </artifact>
+</component>

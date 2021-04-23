@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,9 +18,12 @@ class WaysideControllerExtraTests {
     @Test
     @DisplayName("More tests to show how everything works internally")
     public void testControllerCreation() throws IOException, URISyntaxException {
+        // Reading from terminal
+        Scanner in = new Scanner(System.in);
+
         WaysideController controller;
 
-        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 2-3)",-3,0.5, new int[]{0,0,0},"n");
+        Switch trackSwitch = new Switch("Green", 'A', 0, 100.0, -3.0, 55, "SWITCH (0-1; 0-2)",-3,0.5, new int[]{0,0,0},"n");
         TrackBlock block1 = new TrackBlock();
 
         int[] blockNumbers = new int[]{0, 1};
@@ -47,7 +51,7 @@ class WaysideControllerExtraTests {
 
         controller = new WaysideController(trackElements, "Controller 1");
 
-        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken4");
+        controller.addOutput(0, "Resources/testtoken4");
         controller.generateOutputSignal(0, false);
         System.out.println("Original : " + trackSwitch.getSwitchState());
 
