@@ -86,7 +86,8 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     }
     
     public void updateTestDisplay(){
-        
+        if (trainIndex >= trains.size())
+            return;
         testTable.setValueAt(trains.get(trainIndex).displayAcceleration, 0, 1);
         testTable.setValueAt(trains.get(trainIndex).displayActualSpeed, 1, 1);
         testTable.setValueAt(trains.get(trainIndex).authority, 2, 1);
@@ -795,7 +796,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
             trains.get(trainIndex).setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
         }
         if(testTable.getValueAt(3,3) != null && testTable.getValueAt(3,3) != ""){
-            trains.get(trainIndex).setBeacon((testTable.getValueAt(3,3).toString()));
+            trains.get(trainIndex).setBeacon(testTable.getValueAt(3,3).toString());
         }
         if(testTable.getValueAt(4,3) != null && testTable.getValueAt(4,3) != ""){
             trains.get(trainIndex).setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));
@@ -965,6 +966,17 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     @Override
     public void update() {
         updateDisplay();
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
+    }
+
+    public void run() {
+        while(true) {
+            update();
+        }
     }
     // End of variables declaration//GEN-END:variables
 }

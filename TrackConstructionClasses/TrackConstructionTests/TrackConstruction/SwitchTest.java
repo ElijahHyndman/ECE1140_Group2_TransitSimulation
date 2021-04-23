@@ -2,10 +2,6 @@ package TrackConstruction;
 
 import org.junit.Test;
 
-import javax.sound.midi.Track;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class SwitchTest {
 
     @Test
