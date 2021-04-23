@@ -335,7 +335,12 @@ add output w/plc within a wayside controller
     sets if a track should be CLOSED! failure status is currently used.
      */
     public void setClose(int blockNumber) throws IOException {
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(4);
+        int blockIsClosed = 4;
+        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(blockIsClosed);
+    }
+    public void setOpen(int blockNumber) throws IOException {
+        int blockIsOpen = 0;
+        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(blockIsOpen);
     }
 
     /*
@@ -474,4 +479,5 @@ add output w/plc within a wayside controller
             System.out.println("failed when running");
         }
     }
+
 }

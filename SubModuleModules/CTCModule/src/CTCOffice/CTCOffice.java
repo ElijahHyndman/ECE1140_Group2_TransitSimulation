@@ -76,7 +76,6 @@ public class CTCOffice implements PhysicsUpdateListener
     public CTCOffice(Track SEtrack, SimulationEnvironment SE)
     {
         waysides = GenerateWaysideSystems(SEtrack);
-=
         trackObj = SEtrack;
         SEobj = SE;
     }
@@ -262,7 +261,9 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         try {
-            waysides.broadcastToControllers(speedArrG, authArr);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -431,7 +432,9 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         try {
-            waysides.broadcastToControllers(speedArrG, authArr);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -523,7 +526,9 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         boolean switchstat=false;
         try {
-            switchstat = waysides.getSwitchStatus(blockNum, lineCol);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            switchstat = waysides.get(0).getSwitchStatus(blockNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -533,22 +538,38 @@ public class CTCOffice implements PhysicsUpdateListener
     public void OpenTrack(int blockNum, String lineCol)
     {
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setOpen(blocks.get(i), lineCol);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                waysides.get(0).setOpen(blocks.get(i));
+            } catch (IOException e) {
+                System.out.println("Failed to set open for block");
+                e.printStackTrace();
+            }
         }
     }
 
     public void CloseTrack(int blockNum, String lineCol)
     {
         char section = dispArr.get(blockNum).getSection();
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section);
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            waysides.setClose(blocks.get(i), lineCol);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                waysides.get(0).setClose(blocks.get(i));
+            } catch (IOException e) {
+                System.out.println("Failed to set closed for block");
+                e.printStackTrace();
+            }
         }
     }
 
