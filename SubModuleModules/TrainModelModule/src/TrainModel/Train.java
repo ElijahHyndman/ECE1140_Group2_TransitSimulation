@@ -287,6 +287,9 @@ public class Train {
     }
 
     public void setPassengerCount(int count){
+        if(count<=0){
+            this.passengerCount = 0;
+        }
         this.passengerCount = count;
         calculateMass();
     }
@@ -322,6 +325,16 @@ public class Train {
 
     public boolean getPassengerBrake() {
         return passengerBrake;
+    }
+
+    boolean getSignalPickupFailure(){
+        return this.signalPickupFail;
+    }
+    boolean getEngineFailure(){
+        return this.engineFail;
+    }
+    boolean getBrakeFailure(){
+        return this.brakeFail;
     }
 
     public int getPassengerCount() {

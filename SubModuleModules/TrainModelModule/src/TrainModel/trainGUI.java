@@ -28,7 +28,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     int namesIndex = 2;
     int trainIndex = 0;
 
-    
     /**
      * Creates new form trainGUI
      */
@@ -46,10 +45,12 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public void newTrain() {
         Train t1 = new Train(5, 2, 0);
         trains.add(t1);
+        this.mainTrain = trains.get(0);
     }
     public void giveTrain(Train t1) {
         trains.add(t1);
     }
+
     public void updateDisplay(){
         
         table1.setValueAt(mainTrain.displayAcceleration, 0, 1);
@@ -442,8 +443,8 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         testTable.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         testTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Acceleration", null, "ft/s^2", null},
-                {"Actual Speed", null, "ft/s", null},
+                {"Acceleration", null, "mph/s", null},
+                {"Actual Speed", null, "mph", null},
                 {"Authority", null, "blocks", null},
                 {"Beacon", null, "-", null},
                 {"Commanded Speed", null, "ft/s", null},

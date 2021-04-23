@@ -47,7 +47,7 @@ public class main {
                 //gui.trains.get(i).updatePhysicalState("",1);
             }
             gui.updateDisplay();
-
+            gui.mainTrain = gui.trains.get(0);
             //Elijah: Had to cast to into to be acceptable
             distance = (int) gui.trains.get(gui.mainTrainIndex).getActualSpeed();
             
