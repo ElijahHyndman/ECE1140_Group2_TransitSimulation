@@ -37,6 +37,7 @@ public class PLCInput {
     }
 
     /** being equal is considered as having the same variable name in a PLC script.
+     *  Overriding the .equals() function allows us to use an empty, proxy PLCInput generated from a script to reference a real, given PLCInput which we can define later
      * @param o
      * @return
      */

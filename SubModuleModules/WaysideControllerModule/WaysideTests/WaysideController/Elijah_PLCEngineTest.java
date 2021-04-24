@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,54 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Elijah_PLCEngineTest {
     PLCEngine engine;
+
+    /*
+        Uploading Tests
+     */
+
+    @Test
+    @DisplayName("PLCEngine vets PLC scripts and denies PLCScript without SET")
+    public void PLCwithoutSET() {
+        engine = new PLCEngine();
+        // PLC Script that doesn't end with "SET"
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("AND");
+                add("LD variable2");
+                add("AND");
+            }
+        };
+        assertThrows(Exception.class, () -> engine.uploadPLC(PLCScript));
+    }
+
+    @Test
+    @DisplayName("PLCEngine vets PLC scripts and denies PLCScript without SET")
+    public void PLCwithIncorrectSET() throws Exception {
+        engine = new PLCEngine();
+        // PLC Script that doesn't end with "SET"
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("AND");
+                add("LD variable2");
+                add("SET");
+                add("AND");
+            }
+        };
+        assertThrows(Exception.class, () -> engine.uploadPLC(PLCScript));
+    }
+
+    @Test
+    @DisplayName("PLCEngine vets PLC scripts and denies PLCScript without SET")
+    public void PLCwithTooFewLines() throws Exception {
+        engine = new PLCEngine();
+        // PLC Script that doesn't end with "SET"
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("SET");
+            }
+        };
+        assertThrows(Exception.class, () -> engine.uploadPLC(PLCScript));
+    }
 
     /*
         Helper Function Tests
@@ -370,5 +419,34 @@ class Elijah_PLCEngineTest {
         boolean result = engine.evaluateLogic(variables);
         System.out.println("ANB operation logic output (long): " + result);
         assertEquals((input1 && input2 && input3 && input4) || input5, result);
+    }
+
+    /*
+        Overloading Tests
+     */
+
+    // Made an overloading class of PLCInput so we can use whatever we want as an input operation for a PLC script
+    // I will use this for the next few tests
+    // In practice, we will want to use this same overloading technique to allow us to define different sources of boolean inputs for the PLC engine (a track's occupancy, or elsewise)
+    private class CustomPLCInput extends PLCInput {
+        String variableName;
+        boolean value = false;
+        public CustomPLCInput(String varName, boolean value) {
+            variableName = varName;
+            this.value = value;
+        }
+        public boolean evaluate() {
+            // 50/50 chance of being greater than zero
+            boolean randBool = (new Random().nextInt() > 0);
+            value = randBool;
+            System.out.printf("My name is (%s) and I have been evaluated!! My value is now %b\n",variableName, value);
+            return value;
+        }
+    }
+
+    @Test
+    @DisplayName("Overloading inputs are evaluated directly within PLC code")
+    public void overloadedClassesCanBeUsed() {
+
     }
 }

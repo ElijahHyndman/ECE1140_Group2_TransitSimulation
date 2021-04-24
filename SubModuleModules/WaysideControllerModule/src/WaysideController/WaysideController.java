@@ -205,7 +205,11 @@ public class WaysideController implements Serializable {
         TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
         List<String> fileTokens = engine.stringTokensFromFile(PLCFile);
-        engine.uploadPLC(fileTokens);
+        try {
+            engine.uploadPLC(fileTokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         PLCScriptMap.put(trackElement, engine.getPLCStringList());
         outputMap.put(trackElement, engine.generateLogicTable(getAllInputNames()));
@@ -224,7 +228,11 @@ public class WaysideController implements Serializable {
         TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
         List<String> fileTokens = engine.stringTokensFromFile(PLCFile);
-        engine.uploadPLC(fileTokens);
+        try {
+            engine.uploadPLC(fileTokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         PLCScriptMap.replace(trackElement, engine.getPLCStringList());
         outputMap.replace(trackElement, engine.generateLogicTable(getInputNames()));

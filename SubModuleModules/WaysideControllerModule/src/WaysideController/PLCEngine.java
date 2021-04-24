@@ -11,6 +11,7 @@ import java.util.*;
 /** engine for compiling a structured PLC script and evaluating the PLC logic given a set of inputs.
  * One PLC engine will correspond to only one PLC script.
  * @author Harsh Selokar
+ * @author elijah
  */
 public class PLCEngine {
     /***********************************************************************************************************************/
@@ -18,7 +19,8 @@ public class PLCEngine {
         AND, OR, NOT, SET, LD, LDN, ANB, ORB
     }
     //constants
-    int DEFAULT_OUTPUTS = 1;
+    private final int DEFAULT_OUTPUTS = 1;
+    private final int MINIMUM_LINES_IN_VALID_PLC_SCRIPT = 2;
     /** Members
      * @member PLCLines     Queue<PLCLine> list of all of the lines from the PLC text file, kept in order, stored in queue for logic evaluating
      * @member PLCList      List<String> list of all of the lines from PLC text file (stored as String instead of PLCLine objects)
@@ -33,10 +35,11 @@ public class PLCEngine {
     public PLCEngine() {
         super();
     }
-    public PLCEngine(String pathToPLCFile) throws IOException, URISyntaxException {
+    public PLCEngine(String pathToPLCFile) throws Exception {
         uploadPLC(pathToPLCFile);
     }
 
+    // Get and Set
     public List<String> getPLCStringList() { return PLCList; }
     public String getPLCString() {
         String PLC = "";
@@ -47,6 +50,7 @@ public class PLCEngine {
         return PLC;
     }
 
+
     /*
         Token Creation
      */
@@ -55,22 +59,31 @@ public class PLCEngine {
     /** loads a list of PLC commands (Strings) into engine as new executable logic.
      *
      * generates Enum token list from given String token list
-     * @param data, List<String> list of PLC commands as Strings
+     * @param PLCCommands, List<String> list of PLC commands as Strings ex: <"LD A","LD B","SET">
      * @throws IOException unidentified command token in PLC file or invalid variable referenced
      * @throws URISyntaxException
+     *
+     * @before local PLC in PLCEngine may or may not exist
+     * @after if new PLC has no errors, old local PLC has been overwritten by new PLC
+     * @after empty proxy PLCinputs generated and ready to refer to new PLCInputs for logic calculations
+     * @after PLCInput objects must be given for each proxy PLCInput defined in PLC list "PLCCommands" before calling .evaulateLogic()
      */
-    public void uploadPLC(List<String> data) throws IOException, URISyntaxException {
-        // List<String> data = readFileNew(file);
+    public void uploadPLC(List<String> PLCCommands) throws Exception {
+        // List<String> PLCCommands = readFileNew(file);
         String[] loadStr;
         String var;
 
-        for(int i = 0;i < data.size();i++){
+        // Store PLC lines in temporary variable in case it is invalid
+        Queue<PLCLine> tempLines = new LinkedList<PLCLine>();
+
+        // Tokenize the PLCLines
+        for(int i = 0;i < PLCCommands.size();i++){
 
             /*
             LDN Command
             */
-            if(data.get(i).startsWith("LDN")) {
-                loadStr = data.get(i).split(" ");
+            if(PLCCommands.get(i).startsWith("LDN")) {
+                loadStr = PLCCommands.get(i).split(" ");
                 var = loadStr[1]; //variables created by the user
 
                 //checks to see if string is good
@@ -78,16 +91,14 @@ public class PLCEngine {
                     System.out.print(var);
                     throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
                 }
-                //tokenQueue.add(Token.LDN);
-                //varQueue.add(var);
-                PLCLines.add( new PLCLine(Token.LDN,new PLCInput(var)) );
+                tempLines.add( new PLCLine(Token.LDN,new PLCInput(var)) );
                 numberOfInputs++;
 
             /*
             LD Command
             */
-            }else if(data.get(i).startsWith("LD")) {
-                loadStr = data.get(i).split(" ");
+            }else if(PLCCommands.get(i).startsWith("LD")) {
+                loadStr = PLCCommands.get(i).split(" ");
                 var = loadStr[1]; //variables created by the user
 
                 //checks to see if string is good
@@ -95,60 +106,70 @@ public class PLCEngine {
                     System.out.print(var);
                     throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
                 }
-
-                //tokenQueue.add(Token.LD);
-                //varQueue.add(var);
-                PLCLines.add( new PLCLine(Token.LD,new PLCInput(var)) );
+                tempLines.add( new PLCLine(Token.LD,new PLCInput(var)) );
                 numberOfInputs++;
 
             /*
             Logic Command
+            Do not take variable names as parameters (use null)
             */
             } else {
-                switch(data.get(i)) {
+                switch(PLCCommands.get(i)) {
                     case "SET" :
                         //tokenQueue.add(Token.SET);
-                        PLCLines.add( new PLCLine(Token.SET,null) );
+                        tempLines.add( new PLCLine(Token.SET,null) );
                         break;
                     case "ANB" :
                         //tokenQueue.add(Token.ANB);
-                        PLCLines.add( new PLCLine(Token.ANB,null) );
+                        tempLines.add( new PLCLine(Token.ANB,null) );
                         break;
                     case "AND" :
                         //tokenQueue.add(Token.AND);
-                        PLCLines.add( new PLCLine(Token.AND,null) );
+                        tempLines.add( new PLCLine(Token.AND,null) );
                         break;
                     case "ORB" :
                         //tokenQueue.add(Token.ORB);
-                        PLCLines.add( new PLCLine(Token.ORB,null) );
+                        tempLines.add( new PLCLine(Token.ORB,null) );
                         break;
                     case "OR" :
                         //tokenQueue.add(Token.OR);
-                        PLCLines.add( new PLCLine(Token.OR,null) );
+                        tempLines.add( new PLCLine(Token.OR,null) );
                         break;
                     case "NOT" :
                         //tokenQueue.add(Token.NOT);
-                        PLCLines.add( new PLCLine(Token.NOT,null) );
+                        tempLines.add( new PLCLine(Token.NOT,null) );
                         break;
                     default :
-                        //System.out.print(data.get(i));
+                        //System.out.print(PLCCommands.get(i));
                         throw new IOException("Compiler Failure: Commands do not exists or are misspelled...");
                 }
             }
         }
-        // Store the list for later reference
-        this.PLCList = data;
+
+        if (tempLines.size() < MINIMUM_LINES_IN_VALID_PLC_SCRIPT)
+            throw new Exception(String.format("Attempting to load PLC script that does not meet the minimum number of lines for a valid PLC script (minimum number of lines = %d)",MINIMUM_LINES_IN_VALID_PLC_SCRIPT));
+        if ( tempLines.peek().operation != Token.SET )
+            throw new Exception(String.format("Attempted to load PLC script that does not end with \"SET\". All PLC scripts must end with the command \"SET\""));
+
+
+        // Store temporary list of commands if it passes tests
+        this.PLCLines = tempLines;
+        // Store the String version for later reference
+        this.PLCList = PLCCommands;
     }
 
 
-    /** uploads PLC script into engine from specified PLC file.
+    /** takes the lines from a file, tokenizes it, and stores it locally as executeable PLC code
      *
      *  generates Enum token list from PLC commands in PLC file
      * @param PLCFilePath
      * @throws IOException
      * @throws URISyntaxException
+     *
+     * @before local PLC may or may not exist
+     * @after (if file is accessible and valid PLC format) file PLC has overwritten previous local PLC. new file PLC is executable with evaluateLogic()
      */
-    public void uploadPLC(String PLCFilePath) throws IOException, URISyntaxException {
+    public void uploadPLC(String PLCFilePath) throws Exception {
         List<String> PLCCommands = stringTokensFromFile(PLCFilePath);
         uploadPLC(PLCCommands);
 
@@ -157,7 +178,8 @@ public class PLCEngine {
     }
 
 
-    /**
+    /** opens a file and turns each line into a list of Strings.
+     *  Useful for PLC input from file, as the uploadPLC(List<String>) takes a list of strings as its input
      * @param url
      * @return
      * @throws IOException
@@ -186,15 +208,19 @@ public class PLCEngine {
     }
 
 
+
     /*
         Logic Calculation
      */
 
+
     /** evaluates the output of the current PLC script based on a given list of current inputs.
      *
-     * @param in
+     * @param in, The list of PLCInput variables which will be used as boolean input to evaluate PLC logic (there MUST be a PLCInput with a .variableName() for each variable referenced in the PLCScript stored locally "PLCLines")
      * @return
      * @throws IOException
+     *
+     * @before PLCLines member is not null
      */
     public boolean evaluateLogic(List<PLCInput> in) throws Exception {
         boolean output = false;
@@ -203,6 +229,7 @@ public class PLCEngine {
         int tokenQueueSize;
 
         // Local calculation queues
+        // PLC Lines come from locally stored PLC script in PLCLines member
         Stack<Boolean> evaluationStack = new Stack<>();
         Queue<PLCLine> source = new LinkedList<>(PLCLines);
 
@@ -210,6 +237,9 @@ public class PLCEngine {
         PLCLine thisPLCLine;
         PLCInput varReference;
         PLCInput var;
+
+        if(PLCLines.size() < MINIMUM_LINES_IN_VALID_PLC_SCRIPT)
+            throw new Exception(String.format("Tried to evaluate logic for a PLC script that does not meet the minimum valid number of PLC commands (minimum lines to be valid = %d)",MINIMUM_LINES_IN_VALID_PLC_SCRIPT));
 
         /* uses a stack to evaluate the logic of the PLC. PLC commands operate on themselves, the command result of the one before, or both so a queue will be used.
          * output: (Goal) the final value result
@@ -237,7 +267,7 @@ public class PLCEngine {
             if(thisPLCLine.operation == Token.LD){ //needs catches in case the code isn't compiling correctly...
                 varReference = thisPLCLine.variable;
                 var = variableReferenceBy(varReference,in);
-                logic = var.evaluate();
+                try { logic = var.evaluate(); } catch (Exception failureToEvaulateInput) { failureToEvaulateInput.printStackTrace(); throw new Exception(String.format("Failure to evaluate PLCInput variable (%s) during LD operation.\nVariable Name: (%S)\n",thisPLCLine,var.variableName()));}
                 evaluationStack.push(logic);
             /***LDN operation */
             }else if(thisPLCLine.operation == Token.LDN){
@@ -429,7 +459,7 @@ public class PLCEngine {
         return true;
     }
 
-    /** helper class for organizing PLC operations
+    /** represents one line of a PLC script (helper class for organizing PLC operations.)
      */
     private class PLCLine {
         public PLCInput variable = null;

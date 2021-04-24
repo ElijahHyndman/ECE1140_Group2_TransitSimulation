@@ -178,7 +178,7 @@ class PLCEngineTest {
 
     @Test
     @DisplayName("Elijah Test")
-    public void singleCalculation() throws IOException, URISyntaxException {
+    public void singleCalculation() throws Exception {
         engine = new PLCEngine();
         // Writing PLC Script in editor
         ArrayList<String> PLCScript = new ArrayList<String>() {
@@ -216,7 +216,7 @@ class PLCEngineTest {
 
     @Test
     @DisplayName("calculating the table")
-    public void testOutputTableNew() throws IOException, URISyntaxException{
+    public void testOutputTableNew() throws Exception {
         PLCEngine engine = new PLCEngine();
 
         List<String> fileTokens = engine.stringTokensFromFile(PLC2Path);
@@ -235,7 +235,7 @@ class PLCEngineTest {
 
     @Test
     @DisplayName("calculating the table")
-    public void testOutputTableNewTwo() throws IOException, URISyntaxException{
+    public void testOutputTableNewTwo() throws Exception {
         PLCEngine engine = new PLCEngine();
 
         List<String> fileTokens = engine.stringTokensFromFile(PLC3Path);
@@ -254,7 +254,7 @@ class PLCEngineTest {
 
     @Test
     @DisplayName("calculating the table")
-    public void testOutputTableNewThree() throws IOException, URISyntaxException{
+    public void testOutputTableNewThree() throws Exception {
         PLCEngine engine = new PLCEngine();
         List<String> fileTokens = engine.stringTokensFromFile(PLC3Path);
         engine.uploadPLC(fileTokens);
