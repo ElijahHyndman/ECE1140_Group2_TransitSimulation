@@ -1,4 +1,5 @@
 import WaysideController.PLCEngine;
+import WaysideController.PLCInput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,6 +103,7 @@ class PLCEngineTest {
      */
 
 
+    /*
     @Test
     @DisplayName("Testing the output generation")
     public void testOutput() throws IOException, URISyntaxException {
@@ -130,6 +132,7 @@ class PLCEngineTest {
         Exception exception = assertThrows(IOException.class, () -> engine.calculateOutputLogic(inputNames3, new boolean[]{true, false, true}));
         assertEquals("Generate Error: Bad Input Names...", exception.getMessage());
     }
+    */
 
     @Test
     @DisplayName("Testing the output generation")
@@ -156,11 +159,11 @@ class PLCEngineTest {
         System.out.println();
 
         List<String> inputNames = Arrays.asList("A", "B", "C", "D");
-        assertEquals(false, engine.calculateOutputLogicNew(inputNames, new boolean[]{false, false, false, false}));
+        assertEquals(false, engine.evaluateLogic(inputNames, new boolean[]{false, false, false, false}));
 
         System.out.println();
 
-        assertEquals(true, engine.calculateOutputLogicNew(inputNames, new boolean[]{true, false, true, true}));
+        assertEquals(true, engine.evaluateLogic(inputNames, new boolean[]{true, false, true, true}));
 
         System.out.println();
 
@@ -184,10 +187,11 @@ class PLCEngineTest {
         List<String> inputNames = Arrays.asList("A");
         boolean[] inputValues = {false};
         boolean output = false;
-        output = engine.calculateOutputLogicNew(inputNames,inputValues);
+        output = engine.evaluateLogic(inputNames,inputValues);
         System.out.println(output);
     }
 
+    /*
     //THIS TEST IS SUPPOSE TO FAIL, THIS IS A DEPRECATED METHOD AND SYSTEM. TEST EXISTS TO SHOW FAILURES
     @Test
     @DisplayName("calculating the table")
@@ -203,6 +207,7 @@ class PLCEngineTest {
             e.printStackTrace();
         }
     }
+    */
 
     @Test
     @DisplayName("calculating the table")
@@ -213,7 +218,7 @@ class PLCEngineTest {
         engine.uploadPLC(fileTokens);
 
         List<String> inputNames = Arrays.asList("A", "B", "C", "D");
-        boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
+        boolean[][] outputTable = engine.generateLogicTable(inputNames);
 
         for(int i=0;i < Math.pow(2,inputNames.size());i++){
             for(int j=0;j < inputNames.size()+1;j++){
@@ -232,7 +237,7 @@ class PLCEngineTest {
         engine.uploadPLC(fileTokens);
 
         List<String> inputNames = Arrays.asList("A", "C", "D");
-        boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
+        boolean[][] outputTable = engine.generateLogicTable(inputNames);
 
         for(int i=0;i < Math.pow(2,inputNames.size());i++){
             for(int j=0;j < inputNames.size()+1;j++){
@@ -250,7 +255,7 @@ class PLCEngineTest {
         engine.uploadPLC(fileTokens);
 
         List<String> inputNames = Arrays.asList("A", "B", "C", "D");
-        boolean[][] outputTable = engine.calculateOutputMapNew(inputNames);
+        boolean[][] outputTable = engine.generateLogicTable(inputNames);
 
         for(int i=0;i < Math.pow(2,inputNames.size());i++){
             for(int j=0;j < inputNames.size()+1;j++){

@@ -178,6 +178,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/Elijah_PLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideControllerExtraTests.java">
           <value>
             <Attribute>
@@ -207,6 +214,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/PLCEngine.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/PLCInput.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

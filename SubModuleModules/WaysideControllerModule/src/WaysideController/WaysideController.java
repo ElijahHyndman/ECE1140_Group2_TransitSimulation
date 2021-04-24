@@ -208,7 +208,7 @@ public class WaysideController implements Serializable {
         engine.uploadPLC(fileTokens);
 
         PLCScriptMap.put(trackElement, engine.getPLCStringList());
-        outputMap.put(trackElement, engine.calculateOutputMapNew(getAllInputNames()));
+        outputMap.put(trackElement, engine.generateLogicTable(getAllInputNames()));
         addTestInput(trackElement);
 
         gpio.addOutput(trackElement, false);
@@ -227,7 +227,7 @@ public class WaysideController implements Serializable {
         engine.uploadPLC(fileTokens);
 
         PLCScriptMap.replace(trackElement, engine.getPLCStringList());
-        outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
+        outputMap.replace(trackElement, engine.generateLogicTable(getInputNames()));
 
         bool = generateOutputSignal(trackElement.getBlockNum(), false);
         gpio.updateOutput(trackElement, bool);
