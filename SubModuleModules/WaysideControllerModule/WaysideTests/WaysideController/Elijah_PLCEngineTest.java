@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -542,5 +543,119 @@ class Elijah_PLCEngineTest {
         engine.definePLCInputSource(var2);
         boolean output = engine.evaluateLogic();
         System.out.printf("Output using remembered inputsources: %b\n",output);
+    }
+
+    @Test
+    @DisplayName("Timing Characteristics [10 PLC engines]")
+    public void timingCharacteristics1 () throws Exception {
+        // Tests the timing characteristics of evaluateLogic for n PLCEngines
+        int n = 10;
+        int nanosecondsPerSecond = 1000000000;
+        Vector<PLCEngine> engines = new Vector<PLCEngine>();
+
+        ArrayList<String> genericPLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+
+        long startTime = System.nanoTime();
+        for (int i=0; i<n; i++) {
+            PLCEngine newEngine = new PLCEngine();
+            newEngine.uploadPLC(genericPLCScript);
+            // Each PLCEngine gets 2 unique PLCInput objects each
+            newEngine.definePLCInputSource( new PLCInput("var1", true) );
+            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            engines.add(newEngine);
+        }
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Upload time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+
+
+        startTime = System.nanoTime();
+        for (PLCEngine engine : engines) {
+            engine.evaluateLogic();
+        }
+        elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Calculation time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+    }
+
+    @Test
+    @DisplayName("Timing Characteristics [100 PLC engines]")
+    public void timingCharacteristics2 () throws Exception {
+        // Tests the timing characteristics of evaluateLogic for n PLCEngines
+        int n = 100;
+        int nanosecondsPerSecond = 1000000000;
+        Vector<PLCEngine> engines = new Vector<PLCEngine>();
+
+        ArrayList<String> genericPLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+
+        long startTime = System.nanoTime();
+        for (int i=0; i<n; i++) {
+            PLCEngine newEngine = new PLCEngine();
+            newEngine.uploadPLC(genericPLCScript);
+            // Each PLCEngine gets 2 unique PLCInput objects each
+            newEngine.definePLCInputSource( new PLCInput("var1", true) );
+            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            engines.add(newEngine);
+        }
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Upload time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+
+
+        startTime = System.nanoTime();
+        for (PLCEngine engine : engines) {
+            engine.evaluateLogic();
+        }
+        elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Calculation time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+    }
+
+    @Test
+    @DisplayName("Timing Characteristics [1000 PLC engines]")
+    public void timingCharacteristics3 () throws Exception {
+        // Tests the timing characteristics of evaluateLogic for n PLCEngines
+        int n = 1000;
+        int nanosecondsPerSecond = 1000000000;
+        Vector<PLCEngine> engines = new Vector<PLCEngine>();
+
+        ArrayList<String> genericPLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+
+        long startTime = System.nanoTime();
+        for (int i=0; i<n; i++) {
+            PLCEngine newEngine = new PLCEngine();
+            newEngine.uploadPLC(genericPLCScript);
+            // Each PLCEngine gets 2 unique PLCInput objects each
+            newEngine.definePLCInputSource( new PLCInput("var1", true) );
+            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            engines.add(newEngine);
+        }
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Upload time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+
+
+        startTime = System.nanoTime();
+        for (PLCEngine engine : engines) {
+            engine.evaluateLogic();
+        }
+        elapsedTime = System.nanoTime() - startTime;
+        System.out.printf("Calculation time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
     }
 }

@@ -429,8 +429,8 @@ public class PLCEngine {
             if (!thisReferenceHasSourceDefined)
                 throw new Exception(String.format("No Input Source has been defined to PLCEngine using .definedPLCInputSource(PLCInputObject) for variable reference in PLC Script: %s\n",line.variable.variableName()));
             // Debug
-            if (thisReferenceHasSourceDefined)
-                System.out.printf("Variable reference (%s) has a defined input source \n",line.variable);
+//            if (thisReferenceHasSourceDefined)
+//                System.out.printf("Variable reference (%s) has a defined input source \n",line.variable);
         }
         return true;
     }
