@@ -522,7 +522,7 @@ import java.util.Scanner;
             boolean contains = false;
             int location = -1;
 
-            if(Failure >= 0 && Failure <= 3) {
+            if(Failure >= 0 && Failure <= 4) {
                 //to check if block is line A
                 if(line.equals("Red") && blockNum <= SIZE_LINE_A) {
                     redTrack.get(blockNum).setFailureStatus(Failure);

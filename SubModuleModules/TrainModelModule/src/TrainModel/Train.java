@@ -24,7 +24,6 @@ public class Train {
     }
     //Known info. will be set
     double mass; //total kg with passengers
-    // TODO Elijah: I wasn't sure whether I should keep the /5 or not
     double trainMass = 37194/5; //kg of empty train
     int crewCount;
     int numberOfCars;
@@ -103,7 +102,7 @@ public class Train {
         }
         else if(speed >= 0){
             this.actualSpeed = speed;  
-            this.displayActualSpeed = this.actualSpeed * 3.28084;
+            this.displayActualSpeed = this.actualSpeed * 2.236936;
         } else {
             this.actualSpeed = 0;
             this.displayActualSpeed = 0;
@@ -111,7 +110,7 @@ public class Train {
     }
     public void setDisplaySpeed(double speed) {
         this.displayActualSpeed = speed; 
-        this.actualSpeed = this.displayActualSpeed / 3.28084;
+        this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setAccel(double acceleration) {
         this.maxAccel = 23330 / this.mass;
@@ -141,8 +140,6 @@ public class Train {
         }else{
             this.power = 0;
         }
-        //TODO Elijah: I had to comment this bad boy out because it has no access to the deltaTime parameter. I'll leave that to you to figure out!
-        // calculateSpeed();
     }
 
 
@@ -151,7 +148,6 @@ public class Train {
         return power;
     }
 
-    // TODO Elijah: I added the delta time parameter? I thought it was already here but when resolving it must have disappeared
     public void calculateSpeed(double deltaTime){
         //int sampleTime = 1; //need to determine if this is constant
         double F;
@@ -205,28 +201,10 @@ public class Train {
     public void setBlockDistance(double distance){
         blockDistance = distance;
     }
-    public double calculateMass(){
-        this.mass = this.trainMass + 75*(passengerCount+crewCount);
+    public double calculateMass() {
+        this.mass = this.trainMass*this.numberOfCars + 75 * (passengerCount + crewCount);
         return this.mass;
     }
-    // TODO Elijah: These were duplicates of the ones above. I wasn't sure which ones to keep so please choose for me!
-//    public void setAccel(double acceleration) {
-//        this.accel = acceleration;
-//        this.displayAcceleration = this.accel * 3.28084;
-//    }
-//    public void setDisplayAccel(double acceleration) {
-//        this.displayAcceleration = acceleration;
-//        this.accel = this.displayAcceleration / 3.28084;
-//    }
-//    public void setCommandedSpeed(double commandedSpeed) {
-//        this.commandedSpeed = commandedSpeed;
-//        this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
-//    }
-//    public void setDisplayCommandedSpeed(double commandedSpeed) {
-//        this.displayCommandedSpeed = commandedSpeed;
-//        this.commandedSpeed = this.displayCommandedSpeed / 3.28084;
-//    }
-
 
     public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
@@ -309,11 +287,11 @@ public class Train {
     }
 
     public void setPassengerCount(int count){
+        if(count<=0){
+            this.passengerCount = 0;
+        }
         this.passengerCount = count;
-        recalc();
-    }
-    public void recalc() {
-        // TODO Elijah: It was complainging about recalc() not being defined on line 313 in setPassengerCount(). I'll leave it to you for filling in the body!
+        calculateMass();
     }
     public void setPassengersBoarding(int count){
         setPassengerCount(this.passengerCount + count);
@@ -322,9 +300,6 @@ public class Train {
         this.mass = m;
     }
 
-//     public void recalc(){
-//         calculateMass();
-//         calculateSpeed();
     public void updatePhysicalState(String currentTime, double deltaTime){
         calculateSpeed(deltaTime);
         this.sampleTime = deltaTime;
@@ -350,6 +325,16 @@ public class Train {
 
     public boolean getPassengerBrake() {
         return passengerBrake;
+    }
+
+    boolean getSignalPickupFailure(){
+        return this.signalPickupFail;
+    }
+    boolean getEngineFailure(){
+        return this.engineFail;
+    }
+    boolean getBrakeFailure(){
+        return this.brakeFail;
     }
 
     public int getPassengerCount() {

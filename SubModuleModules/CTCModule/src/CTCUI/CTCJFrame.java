@@ -36,6 +36,29 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     public CTCJFrame() {
         initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+    }
+
+    @Override
+    public void update(){
+
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

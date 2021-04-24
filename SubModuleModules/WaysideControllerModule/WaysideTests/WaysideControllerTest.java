@@ -14,10 +14,11 @@ import java.util.ArrayList;
 
 
 class WaysideControllerTest {
+    WaysideController controller;
 
     @BeforeEach
     public void setUp(){
-        WaysideController controller = new WaysideController("Testing Wayside Controller");
+        controller = new WaysideController("Testing Wayside Controller");
     }
 
     /*
@@ -26,7 +27,9 @@ class WaysideControllerTest {
     @Test
     @DisplayName("New Controller Creation w/ TrackElements and Track Blocks")
     public void testControllerCreation() throws IOException, URISyntaxException {
-        WaysideController controller;
+        /*
+            Generate fake track blocks
+         */
         Switch trackSwitch = new Switch();
         TrackBlock block1 = new TrackBlock();
         TrackBlock block3 = new TrackBlock();
@@ -34,31 +37,27 @@ class WaysideControllerTest {
         int[] blockNumbers = new int[]{0, 1, 2, 3};
         boolean[] occupiedElements = new boolean[]{false, true, false, false};
         boolean[] occupiedBlocks = new boolean[]{true, false, false};
-
         //add the track elements
         ArrayList<TrackElement> trackElements = new ArrayList<>();
         trackElements.add(trackSwitch);
         trackElements.add(block1);
         trackElements.add(block2);
         trackElements.add(block3);
-
         //add the track blocks
         ArrayList<TrackBlock> trackBlocks = new ArrayList<>();
         trackBlocks.add(block1);
         trackBlocks.add(block2);
         trackBlocks.add(block3);
-
         //set the block numbers
         for(int i=0;i < blockNumbers.length;i++){
             trackElements.get(i).setBlockNum(blockNumbers[i]);
         }
-
         //set some blocks as occupied
         for(int i=0;i < trackElements.size();i++){
             trackElements.get(i).setOccupied(occupiedElements[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
@@ -113,12 +112,12 @@ class WaysideControllerTest {
             trackElements.get(i).setAuthority(authority[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
 
-        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
+        controller.addOutput(0, "Resources/testtoken");
         controller.generateOutputSignal(0, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));
@@ -178,13 +177,13 @@ class WaysideControllerTest {
             trackElements.get(i).setAuthority(authority[i]);
         }
 
-        controller = new WaysideController(trackElements, trackBlocks, "Controller 1");
+        controller = new WaysideController(trackElements, "Controller 1");
 
         //testing GPIO functionality
         GPIO gpio = controller.getGPIO();
         Switch newSwitch = new Switch();
 
-        controller.addOutput(0, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\testtoken");
+        controller.addOutput(0, "Resources/testtoken");
         controller.generateOutputSignal(0, false);
 
         Assertions.assertEquals(false, gpio.getOutput(0));

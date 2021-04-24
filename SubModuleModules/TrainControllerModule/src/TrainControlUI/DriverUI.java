@@ -155,6 +155,11 @@ public class DriverUI implements ActionListener, AppGUIModule {
         return this;
     }
 
+    @Override
+    public void setVis(boolean visible) {
+        return;
+    }
+
     public void setUpWindow() {
 
         //=====STATIC LABELS======
