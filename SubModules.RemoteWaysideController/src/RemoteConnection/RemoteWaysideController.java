@@ -26,11 +26,9 @@ public class RemoteWaysideController extends WaysideController {
      */
     private RemoteWaysideStub remoteCtrl = null;
     private WaysideController localProxyController = new WaysideController("Proxy");
-
     /** Members
      */
     private String name = "Default";
-
     /** Default Members
      */
     final private String REMOTE_WAYSIDE_STUB_BINDING_KEY = "Service";

@@ -2,36 +2,30 @@ package WaysideController;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-/**
+/** engine for compiling a structured PLC script and evaluating the PLC logic given a set of inputs.
  * @author Harsh Selokar
  */
-
 public class PLCEngine {
+    /***********************************************************************************************************************/
     public enum Token {
         AND, OR, NOT, SET, LD, LDN, ANB, ORB
     }
-
     //constants
     int DEFAULT_OUTPUTS = 1;
-
     //construction variables
-    private boolean[] outputs;
-
-    //use these for now
     private Queue<Token> tokenQueue;
     private Queue<String> varQueue;
     private int numberOfInputs;
-    private List<String> PLCString;
+    private List<String> PLCList;
+    /***********************************************************************************************************************/
 
     public PLCEngine() {
-        this.outputs = new boolean[DEFAULT_OUTPUTS];
         this.tokenQueue = new LinkedList<>();
         this.varQueue = new LinkedList<>();
         this.numberOfInputs = numberOfInputs;
@@ -45,16 +39,140 @@ public class PLCEngine {
         return tokenQueue;
     }
 
-    public List<String> getPLCString() { return PLCString; }
+    public List<String> getPLCStringList() { return PLCList; }
+
+
 
     /*
-    Function -
-        Generators an output using logic (DEPRECATED)
-    Input -
-        inputNames: A list of string whose index correspond to specific index of the inputs
-        inputs: A arr of boolean which store the input at a given time
-    Output -
-        output: boolean values of the output based on inputs
+        Token Creation
+     */
+
+
+    /** loads a list of PLC commands (Strings) into engine as new executable logic.
+     *
+     * @param data, List<String> list of PLC commands as Strings
+     * @throws IOException unidentified command token in PLC file or invalid variable referenced
+     * @throws URISyntaxException
+     */
+    public void uploadPLC(List<String> data) throws IOException, URISyntaxException {
+        // List<String> data = readFileNew(file);
+        String[] loadStr;
+        String var;
+
+        for(int i = 0;i < data.size();i++){
+            /*
+            LDN Command
+            */
+            if(data.get(i).startsWith("LDN")) {
+                loadStr = data.get(i).split(" ");
+                var = loadStr[1]; //variables created by the user
+
+                //checks to see if string is good
+                if (!stringIsCharactersAndNumbers(var)) {
+                    System.out.print(var);
+                    throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
+                }
+                tokenQueue.add(Token.LDN);
+                varQueue.add(var);
+                numberOfInputs++;
+            /*
+            LD Command
+            */
+            }else if(data.get(i).startsWith("LD")) {
+                loadStr = data.get(i).split(" ");
+                var = loadStr[1]; //variables created by the user
+
+                //checks to see if string is good
+                if (!stringIsCharactersAndNumbers(var)) {
+                    System.out.print(var);
+                    throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
+                }
+
+                tokenQueue.add(Token.LD);
+                varQueue.add(var);
+                numberOfInputs++;
+            /*
+            Logic Command
+            */
+            } else {
+                switch(data.get(i)) {
+                    case "SET" :
+                        tokenQueue.add(Token.SET);
+                        break;
+                    case "ANB" :
+                        tokenQueue.add(Token.ANB);
+                        break;
+                    case "AND" :
+                        tokenQueue.add(Token.AND);
+                        break;
+                    case "ORB" :
+                        tokenQueue.add(Token.ORB);
+                        break;
+                    case "OR" :
+                        tokenQueue.add(Token.OR);
+                        break;
+                    case "NOT" :
+                        tokenQueue.add(Token.NOT);
+                        break;
+                    default :
+                        System.out.print(data.get(i));
+                        throw new IOException("Compiler Failure: Commands do not exists or are misspelled...");
+                }
+            }
+        }
+    }
+
+
+    /** uploads PLC script into engine from specified PLC file.
+     * @param PLCFilePath
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public void uploadPLC(String PLCFilePath) throws IOException, URISyntaxException {
+        List<String> PLCCommands = stringTokensFromFile(PLCFilePath);
+        uploadPLC(PLCCommands);
+    }
+
+
+    /**
+     * @param url
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public List<String> stringTokensFromFile(String url) throws IOException, URISyntaxException {
+        byte[] bytes;
+        String str;
+        List<String> allData;
+        Path path;
+
+        System.out.print("Reading - ");
+        System.out.println(url);
+        path = Paths.get(url);
+        bytes = Files.readAllBytes(path);
+        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+        for(int i=0;i < allData.size();i++){
+            if(allData.get(i).trim().isEmpty()){
+                allData.remove(i);
+            }
+        }
+
+        this.PLCList = allData;
+        return allData;
+    }
+
+
+    /*
+        Logic Calculation
+     */
+
+
+    /** generates an output using logic (DEPRECATED)
+     *
+     * @param inputNames List<String>
+     * @pararm inputs, boolean[] list of current values for boolean inputs
+     * @return boolean output value after logic calculation
      */
     public boolean calculateOutputLogic(List<String> inputNames, boolean[] inputs) throws IOException {
         Stack<String> stack = new Stack<>();
@@ -70,15 +188,21 @@ public class PLCEngine {
             throw new IOException("Generate Error: Bad Token Queue...");
         }
 
+        /*
+            First Token
+         */
         //first token MUST be a load so there is some input
         tok.remove().toString();
         stack.push(var.remove());
         pos = inputNames.indexOf(stack.pop());
         if(pos == -1){
-            throw new IOException("Generate Error: Bad Input Names...");
+            throw new IOException("Generate Error: First command token in PLC file must be a LD token. First token is (%s)".formatted());
         }
         output = inputs[pos];
 
+        /*
+            Rest of Tokens
+         */
         sizeTok = tok.size();
         for(int i = 0; i < sizeTok;i++){
             temp = tok.remove();
@@ -115,66 +239,11 @@ public class PLCEngine {
         return output;
     }
 
-    /*
-    Function -
-        Generators an output using logic. The inputs are assumed to be in order from left to right.(DEPRECATED)
-    Input -
-        inputs: A arr of boolean which store the input at a given time
-    Output -
-        output: boolean values of the output based on inputs
-     */
-    public boolean calculateOutputLogic(boolean[] inputs) throws IOException {
-        Stack<Token> stack = new Stack<>();
-        Queue<Token> tok = new LinkedList<>(tokenQueue);
-        Token temp;
-        boolean output;
-        int pos = 0;
-        int sizeTok;
-        int sizeStack;
 
-        //first token MUST be a load so there is some input
-        stack.push(tok.remove());
-        output = inputs[pos];
-
-        sizeTok = tok.size();
-        for(int i = 0; i < sizeTok;i++){
-            temp = tok.remove();
-            if(temp == Token.LD){
-                stack.push(temp);
-            }else if(temp == Token.AND){
-                sizeStack = stack.size();
-                for(int j = 0;j < sizeStack;j++)  {
-                    stack.pop();
-                    output = output & inputs[pos];
-                    pos++;
-                }
-            }else if(temp == Token.OR){
-                sizeStack = stack.size();
-                for(int j = 0;j < sizeStack;j++)  {
-                    stack.pop();
-                    output = output | inputs[pos];
-                    pos++;
-                }
-            }else if(temp == Token.NOT){
-                output = !output;
-            }else if(temp == Token.SET){
-                break;
-            }else{
-                throw new IOException("Calculation Error: Token Corruption");
-            }
-        }
-
-        return output;
-    }
-
-    /*
-    Function -
-        Generators an output using logic but optimized and offers more functions than V.1
-    Input -
-        inputNames: A list of string whose index correspond to specific index of the inputs
-        inputs: A arr of boolean which store the input at a given time
-    Output -
-        output: boolean values of the output based on inputs
+    /** generates an output using logic but optimized and offers more functions than V.1
+     * @param inputNames
+     * @param inputs
+     * @param
      */
     public boolean calculateOutputLogicNew(List<String> inputNames, boolean[] inputs) throws IOException {
         Stack<Boolean> stackBoolean = new Stack<>();
@@ -265,13 +334,11 @@ public class PLCEngine {
         return output;
     }
 
-    /*
-    Function -
-        Generators an output of all truths (DEPRECATED)
-    Input -
-        inputNames: A list of string whose index correspond to specific index of the inputs
-    Output -
-        outputTablese: boolean values of the output based on inputs of all inputs, creating a truth table of sorts
+    /**
+     *
+     * @param inputNames
+     * @return
+     * @throws IOException
      */
     public boolean[][] calculateOutputMap(List<String> inputNames) throws IOException {
         numberOfInputs = varQueue.toArray().length;
@@ -301,13 +368,11 @@ public class PLCEngine {
         return outputTable;
     }
 
-    /*
-    Function -
-        Generators an output of all truths with optimized generator
-    Input -
-        inputNames: A list of string whose index correspond to specific index of the inputs
-    Output -
-        output tables: boolean values of the output based on inputs of all inputs, creating a truth table of sorts
+    /** generates an output of all truths with optimized generator
+     *
+     * @param inputNames
+     * @return
+     * @throws IOException
      */
     public boolean[][] calculateOutputMapNew(List<String> inputNames) throws IOException {
         numberOfInputs = inputNames.toArray().length;
@@ -337,175 +402,13 @@ public class PLCEngine {
         return outputTable;
     }
 
-    /*
-    Function -
-        Initializes the tokens for the queues and objectifizes the PLC script.
-    Input -
-        file: name of the file that is being searched for, stored in txt in same folder as WaysideController.PLCEngine
-    Output - None
-     */
-    public void createTokens(String file) throws IOException, URISyntaxException {
-        List<String> data = readFileNew(file);
-        String[] loadStr;
-        String var;
 
-        for(int i = 0;i < data.size();i++){
-            if(data.get(i).startsWith("LDN")) {
-                loadStr = data.get(i).split(" ");
-                var = loadStr[1]; //variables created by the user
-
-                //checks to see if string is good
-                if (!verifyString(var)) {
-                    System.out.print(var);
-                    throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
-                }
-
-                tokenQueue.add(Token.LDN);
-                varQueue.add(var);
-                numberOfInputs++;
-            }else if(data.get(i).startsWith("LD")) {
-                loadStr = data.get(i).split(" ");
-                var = loadStr[1]; //variables created by the user
-
-                //checks to see if string is good
-                if (!verifyString(var)) {
-                    System.out.print(var);
-                    throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
-                }
-
-                tokenQueue.add(Token.LD);
-                varQueue.add(var);
-                numberOfInputs++;
-            } else {
-                    switch(data.get(i)) {
-                        case "SET" :
-                            tokenQueue.add(Token.SET);
-                            break;
-                        case "ANB" :
-                            tokenQueue.add(Token.ANB);
-                            break;
-                        case "AND" :
-                            tokenQueue.add(Token.AND);
-                            break;
-                        case "ORB" :
-                            tokenQueue.add(Token.ORB);
-                            break;
-                        case "OR" :
-                            tokenQueue.add(Token.OR);
-                            break;
-                        case "NOT" :
-                            tokenQueue.add(Token.NOT);
-                            break;
-                        default :
-                            System.out.print(data.get(i));
-                            throw new IOException("Compiler Failure: Commands do not exists or are misspelled...");
-                    }
-                }
-        }
-    }
-
-
-    /*
-    Function -
-        Finds the file and writes all data into a List, file cannot have spaces at the end.
-    Input -
-        file: name of the file that is being searched for, stored in txt in same folder as WaysideController.PLCEngine
-    Output -
-        allData: all data in the file in order, in a list form
-     */
-    public List<String> readFile(String file) throws IOException, URISyntaxException {
-        byte[] bytes;
-        String str;
-        List<String> allData;
-
-        URL url = getClass().getResource(file);
-        System.out.println(url.toURI().toString());
-        Path path = Paths.get(url.toURI());
-        bytes = Files.readAllBytes(path);
-        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
-
-        for(int i=0;i < allData.size();i++){
-            if(allData.get(i).trim().isEmpty()){
-                allData.remove(i);
-            }
-        }
-
-        this.PLCString = allData;
-        return allData;
-    }
-
-    public List<String> readFileNew(String url) throws IOException, URISyntaxException {
-        byte[] bytes;
-        String str;
-        List<String> allData;
-        Path path;
-
-        System.out.print("Reading - ");
-        System.out.println(url);
-        path = Paths.get(url);
-        bytes = Files.readAllBytes(path);
-        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
-
-        for(int i=0;i < allData.size();i++){
-            if(allData.get(i).trim().isEmpty()){
-                allData.remove(i);
-            }
-        }
-
-        this.PLCString = allData;
-        return allData;
-    }
-
-    public void updateFile(String file) throws IOException, URISyntaxException {
-        byte[] bytes;
-        String str;
-        List<String> allData;
-
-        URL url = getClass().getResource(file);
-        System.out.println(url.toURI().toString());
-        Path path = Paths.get(url.toURI());
-        bytes = Files.readAllBytes(path);
-        allData = Files.readAllLines(path, StandardCharsets.UTF_8);
-
-        for(int i=0;i < allData.size();i++){
-            if(allData.get(i).trim().isEmpty()){
-                allData.remove(i);
-            }
-        }
-
-        this.PLCString = allData;
-    }
-
-    /*
-    Function -
-        Checks if string is just letters
-    Input -
-        str: str that is being tested
-    Output -
-        bool: if the data is good, send true
-     */
-    public boolean verifyString(String str){
-        char[] chars = str.toCharArray();
-
-        for(char c : chars) {
-            if(!Character.isLetter(c) && !Character.isDigit(c)){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /*
-    Function -
-        checks if the Token Queue is generally valid
-    Input -
-        s: this is the variable Queue
-        q: this is the token Queue
-        inputNames: names of inputs options
-        inputs: inputs
-    Output -
-        bool: if the data is good and checks tests, true otherwise false
+    /** checks if the Token Queue is generally valid
+     * @param s, Queue<String> queue of PLC variables
+     * @param q, Queue<String> queue of tokens
+     * @param inputNames, List<String> names of inputs options
+     * @param inputs, boolean[] list of boolean input values
+     * @return bool if the data is good and checks tests, true otherwise false
      */
     public boolean checkTokenQueue(Queue<String> s, Queue<Token> q, List<String> inputNames, boolean[] inputs){
         Queue<String> temp = new LinkedList<>(s);
@@ -532,6 +435,26 @@ public class PLCEngine {
             return false;
         }
 
+        return true;
+    }
+
+
+    /*
+        Other Functions
+     */
+
+    /** checks if string is just letters
+     * @param str, String string that will be tested
+     * @return bool whether string contains only Letters/Digits, true otherwise false
+     */
+    public boolean stringIsCharactersAndNumbers(String str){
+        char[] chars = str.toCharArray();
+
+        for(char c : chars) {
+            if(!Character.isLetter(c) && !Character.isDigit(c)){
+                return false;
+            }
+        }
         return true;
     }
 }
