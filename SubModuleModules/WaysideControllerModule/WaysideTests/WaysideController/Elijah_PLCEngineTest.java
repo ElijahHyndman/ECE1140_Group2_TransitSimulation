@@ -435,6 +435,9 @@ class Elijah_PLCEngineTest {
             this.variableName = varName;
             this.value = value;
         }
+
+        /** evaluation rule for this custom PLCInput is a random source of boolean
+         */
         public boolean evaluate() {
             // 50/50 chance of being greater than zero
             boolean randBool = (new Random().nextInt() > 0);
@@ -657,5 +660,77 @@ class Elijah_PLCEngineTest {
         }
         elapsedTime = System.nanoTime() - startTime;
         System.out.printf("Calculation time (%d): %fsec\n", engines.size(), (double)elapsedTime / nanosecondsPerSecond);
+    }
+
+
+    /*
+        Output Targeting Tests
+     */
+
+
+    @Test
+    @DisplayName("PLCEngine outputs can be defined and successfully targeted")
+    public void outputDefinition() throws Exception {
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("AND");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        engine.registerPLCInputSource(new CustomPLCInputSource("var1",true));
+        engine.registerPLCInputSource(new CustomPLCInputSource("var2",true));
+        PLCOutput targetOutput = new PLCOutput("Test Target Output");
+        engine.registerPLCOutputTarget(targetOutput);
+        boolean outputResult = engine.evaluateLogic();
+        assertEquals(outputResult,targetOutput.value);
+    }
+
+    /*
+        Custom class for defining output behavior
+     */
+    private class CustomPLCOutput extends PLCOutput {
+        private String switchOrientation = "Primary";
+        public CustomPLCOutput(String variableName) {
+            this.variableName = variableName;
+        }
+
+        /** simulating an output rule who uses PLC output to drive a track switch's orientation
+         */
+        @Override
+        public void applyOutputRule(boolean value) {
+            this.value = value;
+            if (value)
+                switchOrientation = "Primary";
+            else
+                switchOrientation = "Secondary";
+            System.out.printf("Applying custom output rule for boolean (%b) = ",value);
+            System.out.printf("Switch Orientation: %s\n",switchOrientation);
+        }
+    }
+
+    @Test
+    @DisplayName("PLCEngine outputs can be overriden for custom behavior")
+    public void outputDefinition2() throws Exception {
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        engine.registerPLCInputSource(new CustomPLCInputSource("var1",true));
+        engine.registerPLCInputSource(new CustomPLCInputSource("var2",true));
+        // Using custom PLC output behavior defined above
+        CustomPLCOutput targetOutput = new CustomPLCOutput("Test Target Output");
+        engine.registerPLCOutputTarget(targetOutput);
+        boolean outputResult = engine.evaluateLogic();
+        assertEquals(outputResult,targetOutput.value);
     }
 }

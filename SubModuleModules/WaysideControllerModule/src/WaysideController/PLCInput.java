@@ -7,9 +7,11 @@ package WaysideController;
  * @author elijah
  */
 public class PLCInput {
-
+    /** Default Members
+     */
     private final boolean DEFAULT_INITIAL_VALUE = false;
-
+    /** Members
+     */
     protected String variableName = "NA";
     protected boolean value = DEFAULT_INITIAL_VALUE;
 
@@ -39,7 +41,7 @@ public class PLCInput {
         return variableName;
     }
 
-    /** this is the meat and potatoes of the PLCInput class.
+    /** this is the meat and potatoes of the PLCInput class. Overriding of this function should apply some sort of boolean-resulting evaluation rule
      * PLCInput is meant to be overridden so you can define your own custom input sources for the the boolean inputs, whenever you extend PLCInput you will use evaulate() to define how a boolean input is generated for a specific source.
      * For instance, for the TrackOccupation input as a PLCInput, I would define TrackObject.isOccupied==true to return a true boolean whenever I evaluate a TrackOccupation as input to a PLC script
      *

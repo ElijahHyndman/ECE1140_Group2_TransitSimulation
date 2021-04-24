@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-/** engine for compiling a structured PLC script and evaluating the PLC logic given a set of inputs.
+/** engine for compiling a structured PLC script of boolean operations using generic, evaluateable boolean input sources PLCInput.
  * One PLC engine will correspond to only one PLC script.
+ * One output will be generated per PLCEngine.
+ * PLCEngine operates independent of the source of boolean inputs. Deriving boolean input sources from unique source (such as for the boolean derivation from a TrackElement's occupancy)
  * @author Harsh Selokar
  * @author elijah
  */
@@ -21,16 +23,22 @@ public class PLCEngine {
 
     /** Default Members
      */
-    private final int DEFAULT_OUTPUTS = 1;
-    private final int MINIMUM_LINES_IN_VALID_PLC_SCRIPT = 2;
+    private static final int DEFAULT_OUTPUTS = 1;
+    private static final int MINIMUM_LINES_IN_VALID_PLC_SCRIPT = 2;
     /** Members
      * @member PLCLines     Queue<PLCLine> list of all of the lines from the PLC text file, kept in order, stored in queue for logic evaluating
      * @member PLCList      List<String> PLCLines as String instead of PLCLine objects
      * @member filePath     String, path to the current file uploaded to this PLCEngine
      */
+    // PLC Script
     private Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
     private List<String> PLCList = new LinkedList<String>();
+
+    // Input Sources
     private List<PLCInput> PLCInputSources = new LinkedList<PLCInput>();
+
+    // Output Source
+    private PLCOutput outputTarget = null;
 
     private int numberOfInputs;
     private String filePath = "";
@@ -218,15 +226,16 @@ public class PLCEngine {
      */
 
 
-    /** evaluates the boolean calculation defined by local PLCScript member (PLCLines) using a given set of input statuses (in, collection of PLCInput objects).
+    /** evaluates the boolean calculation defined by given PLCScript (Queue of PLCLines, in order of execution) using a given set of input statuses (in, collection of PLCInput objects).
      *
+     * @param PLCScript, Queue<PLCLine> queue of PLCLine objects in their order of execution (order matters.) Can be defined and created and passed as ArrayList<PLCLine> so long as order is correct
      * @param in, The list of PLCInput variables which will be used as boolean input to evaluate PLC logic (there MUST be a PLCInput with a .variableName() for each variable referenced in the PLCScript stored locally "PLCLines")
-     * @return
-     * @throws IOException
+     * @return boolean, the result of evaluation PLCScript logic using provided "in"
+     * @throws IOException a variable name referenced in PLCScript (i.e. "LD aVariableName") does not correspond to any PLCInput variable names in "in" (i.e. in has a "new PLCInput(variableName="aVariableName",value=initialValueOfObject)")
      *
-     * @before PLCLines member is not null
+     * @after .evaluate() has been called on every PLCInput in "in" if they are referenced in PLCScript
      */
-    public boolean evaluateLogic(List<PLCInput> in) throws Exception {
+    public static boolean evaluateLogic(Queue<PLCLine> PLCScript, List<PLCInput> in) throws Exception {
         boolean output = false;
         int stackSize;
         boolean logic;
@@ -235,14 +244,14 @@ public class PLCEngine {
         // Local calculation queues
         // PLC Lines come from locally stored PLC script in PLCLines member
         Stack<Boolean> evaluationStack = new Stack<>();
-        Queue<PLCLine> source = new LinkedList<>(PLCLines);
+        Queue<PLCLine> source = new LinkedList<>(PLCScript);//new LinkedList<>(PLCLines);
 
         // Temporary variables
         PLCLine thisPLCLine;
         PLCInput varReference;
         PLCInput var;
 
-        if(PLCLines.size() < MINIMUM_LINES_IN_VALID_PLC_SCRIPT)
+        if(PLCScript.size() < MINIMUM_LINES_IN_VALID_PLC_SCRIPT)
             throw new Exception(String.format("Tried to evaluate logic for a PLC script that does not meet the minimum valid number of PLC commands (minimum lines to be valid = %d)",MINIMUM_LINES_IN_VALID_PLC_SCRIPT));
 
         /* uses a stack to evaluate the logic of the PLC. PLC commands operate on themselves, the command result of the one before, or both so a queue will be used.
@@ -338,10 +347,23 @@ public class PLCEngine {
         return output;
     }
 
+    /** calculate boolean logic using locally stored PLC Script (provided using .uploadPLCScript()) and provided input statuses (in)
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    public boolean evaluateLogic(List<PLCInput> in) throws Exception {
+        boolean calculatedOutput = evaluateLogic(PLCLines, in);
+        return calculatedOutput;
+    }
 
-    /** generic form of evaluateLogic(inputStatuses), where local inputsource definitions are used instead of being provided.
+
+    /** generic form of evaluateLogic(inputStatuses), using locally stored member PLCLines as PLCScript (set using .uploadPLCScript()) and locally stored member PLCInputSources (set using .registerPLCInputSource) to perform calculation
      * every single variable reference in locally stored PLC script must have a corresponding inputsource definition set using .definePLCInputSource(PLCInputObjectThatHasSameNameAsPLCVariableReference)
      * uses evaluateLogic(inputs) to calculate values, passes locally defined input sources
+     *
+     * This is the function intended for use in WaysideController
      *
      * @return boolean, output of local PLCScript calculation (member PLCLines) using registered input sources (PLCInputs registered with .registerPLCInputSource())
      */
@@ -350,7 +372,15 @@ public class PLCEngine {
         if (!allPLCInputSourcesDefined()) {
             throw new Exception("Called generic evaluateLogic() before all variable references in PLCScript have been given a corresponding input source using PLCEngine.definePLCInputSource()\nEnsure that all input sources have been defined.");
         }
-        return evaluateLogic(PLCInputSources);
+        boolean calculatedOutputResult = evaluateLogic(PLCInputSources);
+        if (outputTarget != null)
+            try {
+                outputTarget.applyOutputRule(calculatedOutputResult);
+            } catch (Exception outputApplicationFailed) {
+                outputApplicationFailed.printStackTrace();
+                throw new Exception(String.format("Failure occurred when trying to apply output rule to PLCOutput object (%S) after evaluated PLCEngine logic for PLCEngine (%S)\n",outputTarget,this));
+            }
+        return calculatedOutputResult;
     }
 
 
@@ -409,6 +439,18 @@ public class PLCEngine {
      */
     public void registerPLCInputSource(PLCInput inputSource) {
         PLCInputSources.add(inputSource);
+    }
+
+    /** defines an output target object to whom an output rule will automatically be applied when .evaluateLogic() is called.
+     *  custom behavior for applying outputRule can be defined by extending and overriding the PLCOutput class and its .applyOutputRule(boolean) function
+     *
+     * @param target, PLCOutput the nw target output for this PLCEngine's script (the one whom is referred to by the final "SET" command)
+     * @before a target output for this PLCEngine may or may not be defined
+     * @after the old target for this PLCEngine has been overwritten by the new, provided target
+     * @after .applyOutputLogic will be called on target everytime generic .evaluateLogic() function is called on PLCEngine
+     */
+    public void registerPLCOutputTarget(PLCOutput target) {
+        this.outputTarget = target;
     }
 
 
