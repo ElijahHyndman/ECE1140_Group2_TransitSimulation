@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import PLCInput.OccupationPLCInput;
+
 class OccupationPLCInputTest {
     // Engine for us with testing
     PLCEngine engine;

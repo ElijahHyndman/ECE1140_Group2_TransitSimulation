@@ -11,23 +11,23 @@ public class OccupationPLCInput extends PLCInput {
 
     /** Default Members
      */
-    private final PLCInput.OccupationPLCInput.OccRule DEFAULT_EVALUATION_RULE = PLCInput.OccupationPLCInput.OccRule.TrueWhenOccupied;
+    private final OccupationPLCInput.OccRule DEFAULT_EVALUATION_RULE = OccRule.TrueWhenOccupied;
     /** Members
      * @member target, TrackElement the TrackElement object which this PLCInput will check the occupation of to generate its boolean input value
      * @member evaluationRule, the rule that determines whether an occupation of "true" evaluates to a logical high (true) or logical low (false)
      */
     protected TrackElement target = null;
-    protected PLCInput.OccupationPLCInput.OccRule evaluationRule = DEFAULT_EVALUATION_RULE;
+    protected OccupationPLCInput.OccRule evaluationRule = DEFAULT_EVALUATION_RULE;
 
     public OccupationPLCInput(String varName, TrackElement targetBlock) {
         this.variableName = varName;
         this.target = targetBlock;
     }
-    public OccupationPLCInput(String varName, TrackElement targetBlock, PLCInput.OccupationPLCInput.OccRule evaluationRule) {
+    public OccupationPLCInput(String varName, TrackElement targetBlock, OccupationPLCInput.OccRule evaluationRule) {
         this.variableName = varName;
         this.target = targetBlock;
     }
-    public void setNewRule(PLCInput.OccupationPLCInput.OccRule rule) {
+    public void setNewRule(OccupationPLCInput.OccRule rule) {
         this.evaluationRule = rule;
     }
     @Override
