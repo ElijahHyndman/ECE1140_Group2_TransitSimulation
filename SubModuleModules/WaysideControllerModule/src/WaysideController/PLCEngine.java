@@ -19,32 +19,33 @@ public class PLCEngine {
     }
     //constants
     int DEFAULT_OUTPUTS = 1;
-    //construction variables
-    private Queue<Token> tokenQueue;
-    private Queue<String> varQueue;
-
+    /** Members
+     * @member PLCLines     Queue<PLCLine> list of all of the lines from the PLC text file, kept in order, stored in queue for logic evaluating
+     * @member PLCList      List<String> list of all of the lines from PLC text file (stored as String instead of PLCLine objects)
+     * @member filePath     String, path to the current file uploaded to this PLCEngine
+     */
     private Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
     private int numberOfInputs;
     private List<String> PLCList;
+    private String filePath = "";
     /***********************************************************************************************************************/
-    private List<PLCInput> inputs;
 
     public PLCEngine() {
-        this.tokenQueue = new LinkedList<>();
-        this.varQueue = new LinkedList<>();
-        this.numberOfInputs = numberOfInputs;
+        super();
     }
-
-    public Queue<String> getVarQueue(){
-        return varQueue;
-    }
-
-    public Queue<Token> getTokenQueue(){
-        return tokenQueue;
+    public PLCEngine(String pathToPLCFile) throws IOException, URISyntaxException {
+        uploadPLC(pathToPLCFile);
     }
 
     public List<String> getPLCStringList() { return PLCList; }
-
+    public String getPLCString() {
+        String PLC = "";
+        for (String line : PLCList) {
+            // Each PLC command should be put on a new line
+            PLC += line + "\n";
+        }
+        return PLC;
+    }
 
     /*
         Token Creation
@@ -77,8 +78,8 @@ public class PLCEngine {
                     System.out.print(var);
                     throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
                 }
-                tokenQueue.add(Token.LDN);
-                varQueue.add(var);
+                //tokenQueue.add(Token.LDN);
+                //varQueue.add(var);
                 PLCLines.add( new PLCLine(Token.LDN,new PLCInput(var)) );
                 numberOfInputs++;
 
@@ -95,8 +96,8 @@ public class PLCEngine {
                     throw new IOException("Compiler Failure: Variables must only use letters with no spaces...");
                 }
 
-                tokenQueue.add(Token.LD);
-                varQueue.add(var);
+                //tokenQueue.add(Token.LD);
+                //varQueue.add(var);
                 PLCLines.add( new PLCLine(Token.LD,new PLCInput(var)) );
                 numberOfInputs++;
 
@@ -106,31 +107,31 @@ public class PLCEngine {
             } else {
                 switch(data.get(i)) {
                     case "SET" :
-                        tokenQueue.add(Token.SET);
+                        //tokenQueue.add(Token.SET);
                         PLCLines.add( new PLCLine(Token.SET,null) );
                         break;
                     case "ANB" :
-                        tokenQueue.add(Token.ANB);
+                        //tokenQueue.add(Token.ANB);
                         PLCLines.add( new PLCLine(Token.ANB,null) );
                         break;
                     case "AND" :
-                        tokenQueue.add(Token.AND);
+                        //tokenQueue.add(Token.AND);
                         PLCLines.add( new PLCLine(Token.AND,null) );
                         break;
                     case "ORB" :
-                        tokenQueue.add(Token.ORB);
+                        //tokenQueue.add(Token.ORB);
                         PLCLines.add( new PLCLine(Token.ORB,null) );
                         break;
                     case "OR" :
-                        tokenQueue.add(Token.OR);
+                        //tokenQueue.add(Token.OR);
                         PLCLines.add( new PLCLine(Token.OR,null) );
                         break;
                     case "NOT" :
-                        tokenQueue.add(Token.NOT);
+                        //tokenQueue.add(Token.NOT);
                         PLCLines.add( new PLCLine(Token.NOT,null) );
                         break;
                     default :
-                        System.out.print(data.get(i));
+                        //System.out.print(data.get(i));
                         throw new IOException("Compiler Failure: Commands do not exists or are misspelled...");
                 }
             }
@@ -150,6 +151,9 @@ public class PLCEngine {
     public void uploadPLC(String PLCFilePath) throws IOException, URISyntaxException {
         List<String> PLCCommands = stringTokensFromFile(PLCFilePath);
         uploadPLC(PLCCommands);
+
+        // Store file path for later
+        this.filePath = PLCFilePath;
     }
 
 
@@ -192,32 +196,37 @@ public class PLCEngine {
      * @return
      * @throws IOException
      */
-    public boolean evaluateLogicGeneric(List<PLCInput> in) throws Exception {
-        /* uses a stack to evaluate the logic of the PLC. PLC commands operate on themselves, the command result of the one before, or both so a queue will be used.
-        * output: (Goal) the final value result
-        * logic: the value we get after evaluating this line of the PLC script
-        *
-        * evaulationStack: the queue datastructure we use to load and unload values to track the progress of the calculation (will be empty by end)
-        * source: a copy of the PLC Line queue that allows us to pop without affecting the class member (determines our next operation)
-        */
+    public boolean evaluateLogic(List<PLCInput> in) throws Exception {
         boolean output = false;
         int stackSize;
         boolean logic;
+        int tokenQueueSize;
 
+        // Local calculation queues
         Stack<Boolean> evaluationStack = new Stack<>();
         Queue<PLCLine> source = new LinkedList<>(PLCLines);
-        int tokenQueueSize;
+
+        // Temporary variables
         PLCLine thisPLCLine;
         PLCInput varReference;
         PLCInput var;
 
-        /*
-        if(checkTokenQueue(var, token, inputNames, inputs)){
-            throw new IOException("Generate Error: Bad Token Queue...");
-        }
-        */
+        /* uses a stack to evaluate the logic of the PLC. PLC commands operate on themselves, the command result of the one before, or both so a queue will be used.
+         * output: (Goal) the final value result
+         * logic: the value we get after evaluating this line of the PLC script
+         *
+         * evaulationStack: the queue datastructure we use to load and unload values to track the progress of the calculation (will be empty by end)
+         * source: a copy of the PLC Line queue that allows us to pop without affecting the class member (determines our next operation)
+         */
 
         //first token MUST be a load so there is some input
+        if(source.peek().operation != Token.LD) {
+            String error = String.format("PLC Logic Error: The first line of the PLC script must be a LD to have boolean variables to work with.\n");
+            error+=String.format("The operation PLC is detected as ENUM: %s\n",source.peek().operation);
+            error+=String.format("The first line of PLC detected as: %s\n",source.peek());
+            throw new Exception(error);
+        }
+
         tokenQueueSize = source.size();
         for(int i = 0; i < tokenQueueSize; i++){
             // Get next operation
@@ -295,6 +304,7 @@ public class PLCEngine {
         return output;
     }
 
+
     /** gets the actual PLCInput referenced by a proxy PLCInput from a given list of PLCInput variables.
      *
      * takes advantage of the .equals() operation within .indexOf() List operation. reference is a proxy that shares the same name as a desired input "Var".
@@ -328,99 +338,6 @@ public class PLCEngine {
         return actualVariable;
     }
 
-    /** generates an output using logic but optimized and offers more functions than V.1
-     * @param inputNames
-     * @param inputs
-     * @param
-     */
-    public boolean evaluateLogic(List<String> inputNames, boolean[] inputs) throws IOException {
-        Stack<Boolean> stackBoolean = new Stack<>();
-        Queue<String> var = new LinkedList<>(varQueue);
-        Queue<Token> token = new LinkedList<>(tokenQueue);
-        Token temp;
-
-        boolean logicOutput;
-        boolean loadedBoolean;
-        boolean output = false;
-        int tokenQueueSize;
-        int stackSize;
-        int pos;
-        String varName;
-
-        if(checkTokenQueue(var, token, inputNames, inputs)){
-            throw new IOException("Generate Error: Bad Token Queue...");
-        }
-
-        //first token MUST be a load so there is some input
-        tokenQueueSize = token.size();
-        for(int i = 0; i < tokenQueueSize; i++){
-            temp = token.remove();
-            //System.out.println(temp.toString());
-            if(temp == Token.LD){ //needs catches in case the code isn't compiling correctly...
-                varName = var.remove();
-                pos = inputNames.indexOf(varName);
-                loadedBoolean = inputs[pos];
-                stackBoolean.push(loadedBoolean);
-            }else if(temp == Token.LDN){
-                varName = var.remove();
-                pos = inputNames.indexOf(varName);
-                loadedBoolean = !inputs[pos];
-                stackBoolean.push(loadedBoolean);
-            }else if(temp == Token.ANB){
-                logicOutput = stackBoolean.pop() & stackBoolean.pop();
-                stackBoolean.push(logicOutput);
-            }else if(temp == Token.AND){
-                stackSize = stackBoolean.size();
-                if(stackSize < 2) {
-                    throw new IOException("Generate Error: Trying to AND 1 member...");
-                }
-
-                logicOutput = stackBoolean.pop() & stackBoolean.pop();
-
-                if(stackSize > 2){
-                    for(int j=0;j < stackSize-2;j++){
-                        logicOutput = logicOutput & stackBoolean.pop();
-                    }
-                }
-
-                //System.out.println(logicOutput);
-                stackBoolean.push(logicOutput);
-            }else if(temp == Token.ORB){
-                logicOutput = stackBoolean.pop() | stackBoolean.pop();
-                //System.out.println(logicOutput);
-                stackBoolean.push(logicOutput);
-            }else if(temp == Token.OR){
-                stackSize = stackBoolean.size();
-                if(stackSize < 2) {
-                    throw new IOException("Generate Error: Trying to OR 1 member...");
-                }
-
-                logicOutput = stackBoolean.pop() | stackBoolean.pop();
-
-                if(stackSize > 2){
-                    for(int j=0;j < stackSize-2;j++){
-                        logicOutput = logicOutput | stackBoolean.pop();
-                    }
-                }
-
-                //System.out.println(logicOutput);
-                stackBoolean.push(logicOutput);
-            }else if(temp == Token.NOT){
-                logicOutput = !stackBoolean.pop();
-                //System.out.println(logicOutput);
-                stackBoolean.push(logicOutput);
-            }else if (temp == Token.SET){
-                if(stackBoolean.size() ==  1){
-                    output = stackBoolean.pop();
-                    break;
-                }else{
-                    throw new IOException("Generate Error: Stack not completely empty, make sure PLC script leads to 1 output.");
-                }
-            }
-        }
-
-        return output;
-    }
 
     /** generates an output of all truths with optimized generator
      *
@@ -450,7 +367,7 @@ public class PLCEngine {
             for(int j=0;j < numberOfInputs;j++){
                 outputTable[i][j] = temp[i][j];
             }
-            outputTable[i][numberOfInputs] = evaluateLogic(inputNames, temp[i]);
+            //outputTable[i][numberOfInputs] = evaluateLogic(inputNames, temp[i]);
         }
 
         return outputTable;
@@ -520,6 +437,9 @@ public class PLCEngine {
         public PLCLine(Token operation, PLCInput inputVariable) {
             this.operation = operation;
             this.variable = inputVariable;
+        }
+        public String toString() {
+            return String.format("%s %s", operation, variable);
         }
     }
 }

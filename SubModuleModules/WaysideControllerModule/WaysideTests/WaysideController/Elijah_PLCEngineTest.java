@@ -104,9 +104,34 @@ class Elijah_PLCEngineTest {
         assertThrows( Exception.class, () -> PLCEngine.variableReferenceBy(proxy,variables));
     }
 
+    @Test
+    @DisplayName("Handles incorrect first line of PLC (i.e. not a LD command) [Not detected until trying to output logic]")
+    public void incorrectPLCFormat() throws Exception {
+        boolean input1 =false, input2 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("AND");
+                add("LD variable2");
+                add("AND");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable",input1));
+                add(new PLCInput("variable2",input2));
+            }
+        };
+        assertThrows(Exception.class, () -> engine.evaluateLogic(variables));
+    }
+
+
     /*
         Logic Tests
      */
+
 
     @Test
     @DisplayName("Using evaluateLogicGeneric does not throw error (manually providing input list)")
@@ -124,7 +149,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable",false));
             }
         };
-        System.out.println(engine.evaluateLogicGeneric(variables));
+        System.out.println(engine.evaluateLogic(variables));
     }
 
     @Test
@@ -148,7 +173,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable2",input2));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("AND operation logic output: " + result);
         assertEquals((input1 && input2) , result );
     }
@@ -183,9 +208,10 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable5", input5));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("AND operation logic output (long): " + result);
         assertEquals((input1 && input2 && input3 && input4 && input5), result);
+        System.out.println(engine.getPLCString());
     }
 
     @Test
@@ -206,7 +232,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable",input1));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("NOT operation logic output: " + result);
         assertEquals( !(input1) , result );
     }
@@ -232,7 +258,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable2",input2));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("OR operation logic output: " + result);
         assertEquals( (input1 || input2) , result );
     }
@@ -267,7 +293,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable5", input5));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("AND operation logic output (long): " + result);
         assertEquals((input1 || input2 || input3 || input4 || input5), result);
     }
@@ -304,7 +330,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable5", input5));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("ANB operation logic output (long): " + result);
         assertEquals(input5, result);
     }
@@ -341,7 +367,7 @@ class Elijah_PLCEngineTest {
                 add(new PLCInput("variable5", input5));
             }
         };
-        boolean result = engine.evaluateLogicGeneric(variables);
+        boolean result = engine.evaluateLogic(variables);
         System.out.println("ANB operation logic output (long): " + result);
         assertEquals((input1 && input2 && input3 && input4) || input5, result);
     }
