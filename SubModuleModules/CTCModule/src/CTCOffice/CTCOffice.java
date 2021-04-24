@@ -40,6 +40,10 @@ public class CTCOffice implements PhysicsUpdateListener
     public Track trackObj;
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
+    public PriorityQueue<double[]> speedsR =new PriorityQueue<double[]>();
+    public PriorityQueue<double[]> speedsG =new PriorityQueue<double[]>();
+    public PriorityQueue<int[]> authorities = new PriorityQueue<int[]>();
+    public PriorityQueue<LocalTime> times = new PriorityQueue<LocalTime>();
 
     public CTCOffice()
     {
@@ -246,7 +250,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
         if (lineCol.equals("Green"))
             speedArrG = createSpeedArr(route, speed);
-        if (lineCol.equals("Red"))
+        else if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
 
         if(LocalTime.now().isBefore(timeDis) && speed<50)
@@ -262,13 +266,43 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        try {
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+
+        /*try {
             waysides.broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void ClearQueues(){
+        for (int i= 0; i<times.size(); i++){
+            times.remove();
+        }
+        for (int i = 0; i<speedsR.size(); i++){
+            speedsR.remove();
+        }
+        for (int i = 0; i<speedsG.size(); i++){
+            speedsG.remove();
+        }
+        for (int i = 0; i<authorities.size(); i++){
+            authorities.remove();
+        }
     }
 
     public Object[] AutoDispatch(String dest, String tNum, String timeD)
@@ -431,13 +465,41 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        try {
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+
+        /*try {
             waysides.broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void BroadcastingArrays(){
+        now = LocalTime.parse(timeNow);
+        for (int i = 0; i<times.size(); i++){
+            if(now.equals(times)){
+                waysides.broadcastToControllers(speedsR, authorities);
+                waysides.broadcastToControllers(speedsG, authorities);
+                times.remove();
+                speedsR.remove();
+                speedsG.remove();
+                authorities.remove();
+            }
+        }
     }
 
     public void LoadSchedule(String filename)

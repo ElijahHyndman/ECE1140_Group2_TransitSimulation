@@ -1005,6 +1005,69 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         {
             model.addRow(new Object[] {displist.get(i).getLine(),displist.get(i).getSection(),displist.get(i).getBlockNumber(), displist.get(i).getInfrastructure(),displist.get(i).getT1(),displist.get(i).getT2(),displist.get(i).getT3(),displist.get(i).getT4(),displist.get(i).getT5(),displist.get(i).getT6(),displist.get(i).getT7(),displist.get(i).getT8(),displist.get(i).getT9(),displist.get(i).getT10()});
         }
+
+        for (int i = 0; i<displist.size(); i++){
+            if (displist.get(i).getT1()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 1";
+                String time = displist.get(i).getT1();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT2()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 2";
+                String time = displist.get(i).getT2();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT3()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 3";
+                String time = displist.get(i).getT3();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT4()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 4";
+                String time = displist.get(i).getT4();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT5()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 5";
+                String time = displist.get(i).getT5();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT6()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 6";
+                String time = displist.get(i).getT6();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT7()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 7";
+                String time = displist.get(i).getT7();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT8()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 8";
+                String time = displist.get(i).getT8();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT9()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 9";
+                String time = displist.get(i).getT9();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+            if (displist.get(i).getT10()!=null){
+                String dest = displist.get(i).getInfrastructure();
+                String trainNum = "Train 10";
+                String time = displist.get(i).getT10();
+                display.AutoDispatch(dest, trainNum, time);
+            }
+        }
     }
 
     private void jButton8MouseClicked(java.awt.event.MouseEvent evt) {
