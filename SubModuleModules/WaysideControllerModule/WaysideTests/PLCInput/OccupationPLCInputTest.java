@@ -12,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import PLCInput.OccupationPLCInput;
 
+/**
+ * @author elijah
+ */
 class OccupationPLCInputTest {
     // Engine for us with testing
     PLCEngine engine;
@@ -19,7 +22,7 @@ class OccupationPLCInputTest {
     ArrayList<String> genericPLCScript = new ArrayList<>() {
         {
             add("LD occ1");
-            add("LD occ1");
+            add("LD occ2");
             add("AND");
             add("SET");
 
@@ -39,16 +42,124 @@ class OccupationPLCInputTest {
         target2 = new TrackBlock();
         target1.setOccupied(false);
         target2.setOccupied(false);
+        target1.setAuthority(1);
+        target1.setCommandedSpeed(20);
+        target1.setSpeedLimit(10);
+        target1.setBlockNum(1);
+        target2.setAuthority(1);
+        target2.setCommandedSpeed(20);
+        target2.setSpeedLimit(10);
+        target2.setBlockNum(2);
     }
 
     @Test
-    @DisplayName("Default constructors work and occupations are used by PLC engine for evaluating")
+    @DisplayName("Default settings work")
     public void test() throws Exception {
         OccupationPLCInput occ1 = new OccupationPLCInput("occ1",target1);
         OccupationPLCInput occ2 = new OccupationPLCInput("occ2",target2);
         engine.registerInputSource(occ1);
         engine.registerInputSource(occ2);
 
+        // False False
         assertEquals(false, engine.evaluateLogic());
+
+        target1.setOccupied(true);
+
+        // True False
+        assertEquals(false, engine.evaluateLogic());
+
+        target2.setOccupied(true);
+
+        // True True
+        assertEquals(true,engine.evaluateLogic());
+
+        target1.setOccupied(false);
+
+        //  Fale true
+        assertEquals(false, engine.evaluateLogic());
+    }
+
+    @Test
+    @DisplayName("Setting a different rule works")
+    public void test2() throws Exception {
+        OccupationPLCInput occ1 = new OccupationPLCInput("occ1",target1);
+        OccupationPLCInput occ2 = new OccupationPLCInput("occ2",target2);
+        engine.registerInputSource(occ1);
+        engine.registerInputSource(occ2);
+
+        // False False
+        assertEquals(false, engine.evaluateLogic());
+        target1.setOccupied(true);
+        // True False
+        assertEquals(false, engine.evaluateLogic());
+        target2.setOccupied(true);
+        // True True
+        assertEquals(true,engine.evaluateLogic());
+        target1.setOccupied(false);
+        //  False true
+        assertEquals(false, engine.evaluateLogic());
+
+        /*
+            Change the rule for occ1
+         */
+        occ1.setNewRule(OccupationPLCInput.OccRule.FalseWhenOccupied);
+        target1.setOccupied(false);
+        target2.setOccupied(false);
+
+        // !(False) False
+        assertEquals(false,engine.evaluateLogic());
+        target2.setOccupied(true);
+        // !(False) True
+        assertEquals(true,engine.evaluateLogic());
+        target1.setOccupied(true);
+        // !(True) True
+        assertEquals(false,engine.evaluateLogic());
+        target2.setOccupied(false);
+        // !(True) False
+        assertEquals(false, engine.evaluateLogic());
+
+        /*
+            Change the rule for occ2
+         */
+        occ2.setNewRule(OccupationPLCInput.OccRule.FalseWhenOccupied);
+        target1.setOccupied(false);
+        target2.setOccupied(false);
+
+        // !(False) !(False)
+        assertEquals(true,engine.evaluateLogic());
+        target2.setOccupied(true);
+        // !(False) !(True)
+        assertEquals(false,engine.evaluateLogic());
+        target1.setOccupied(true);
+        // !(True) !(True)
+        assertEquals(false,engine.evaluateLogic());
+        target2.setOccupied(false);
+        // !(True) !(False)
+        assertEquals(false, engine.evaluateLogic());
+
+    }
+
+    @Test
+    @DisplayName("Establishing rule in constructor works")
+    public void test3 () throws Exception {
+        OccupationPLCInput occ1 = new OccupationPLCInput("occ1",target1, OccupationPLCInput.OccRule.TrueWhenOccupied);
+        OccupationPLCInput occ2 = new OccupationPLCInput("occ2",target2, OccupationPLCInput.OccRule.FalseWhenOccupied);
+        engine.registerInputSource(occ1);
+        engine.registerInputSource(occ2);
+
+        target1.setOccupied(false);
+        target2.setOccupied(false);
+
+        // False !(False)
+        assertEquals(false,engine.evaluateLogic());
+        target2.setOccupied(true);
+        // False !(True)
+        assertEquals(false,engine.evaluateLogic());
+        target1.setOccupied(true);
+        // True !(True)
+        assertEquals(false,engine.evaluateLogic());
+        target2.setOccupied(false);
+        // True !(False)
+        assertEquals(true, engine.evaluateLogic());
     }
 }

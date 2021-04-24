@@ -26,6 +26,7 @@ public class OccupationPLCInput extends PLCInput {
     public OccupationPLCInput(String varName, TrackElement targetBlock, OccupationPLCInput.OccRule evaluationRule) {
         this.variableName = varName;
         this.target = targetBlock;
+        this.evaluationRule = evaluationRule;
     }
     public void setNewRule(OccupationPLCInput.OccRule rule) {
         this.evaluationRule = rule;
@@ -41,7 +42,7 @@ public class OccupationPLCInput extends PLCInput {
             targetIsOccupied = target.getOccupied();
         } catch (Exception failureToReadOccupation) {
             failureToReadOccupation.printStackTrace();
-            throw new Exception(String.format("Failure to read occupation of TrackElement (%s) when evaluating rule for PLC Input\n",target));
+            throw new Exception(String.format("Failure to read occupation of TrackElement (%s) when evaluating rule for PLC Input\n",target.getBlockNum()));
         }
         /*
             Evaluate Rule
