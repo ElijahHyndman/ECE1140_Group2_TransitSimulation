@@ -1,4 +1,4 @@
-package RemoteWayside;
+package RemoteWaysideServer;
 
 import WaysideController.WaysideController;
 

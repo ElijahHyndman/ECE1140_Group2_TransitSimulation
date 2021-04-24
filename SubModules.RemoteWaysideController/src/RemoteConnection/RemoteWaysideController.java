@@ -1,6 +1,6 @@
 package RemoteConnection;
 
-import RemoteWayside.RemoteWaysideStub;
+import RemoteWaysideServer.RemoteWaysideStub;
 import WaysideController.WaysideController;
 
 /** object that allows us to use a WaysideController object running on a separate device (using a RemoteWaysideServer) as if it werre running locally on this machine.
@@ -26,11 +26,9 @@ public class RemoteWaysideController extends WaysideController {
      */
     private RemoteWaysideStub remoteCtrl = null;
     private WaysideController localProxyController = new WaysideController("Proxy");
-
     /** Members
      */
     private String name = "Default";
-
     /** Default Members
      */
     final private String REMOTE_WAYSIDE_STUB_BINDING_KEY = "Service";

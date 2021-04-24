@@ -3,7 +3,6 @@ package WaysideController;
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
 import TrackConstruction.Switch;
-import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
@@ -13,131 +12,104 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 
+/** module class that compiles PLC boolean logic and applies it to the track system.
+ * @author Harsh
+ * @editor Elijah
+ */
 public class WaysideController implements Serializable {
-
-    //overall system defaults
-    final private int DEFAULT_SPEEDLIMIT = 50;
+    /***********************************************************************************************************************/
+    /** Default Members
+     */
     final private boolean DEFAULT_ISACTIVE = true;
     final private boolean DEFAULT_ISSOFTWARE = true;
 
-    //controller information and statuses
-    String name;
-    GPIO gpio;
-    boolean isActive;
-    boolean isSoftware;
-    int speedLimit;
+    /** Controller Information Members
+     *
+     * @member controllerIndex, the global index of this controller (given based on order of creation)
+     * @member controllerName, a deterministic name for this controller given its index
+     * @member contorllerAlias, a user-defined name for the controller if desired
+     * @member isSoftware, boolean of whether this WaysideController is a software (WaysideController) or hardware (RemoteWaysideController) instance
+     */
+    private int controllerIndex = ++NUM_CONTROLLERS;
+    private String controllerName = String.format("Controller %d",controllerIndex);
+    private String controllerAlias = null;
+    private GPIO gpio;
+    private boolean isActive = DEFAULT_ISACTIVE;
+    private boolean isSoftware = DEFAULT_ISSOFTWARE;
 
-    //input/output related data
-    HashMap<TrackElement, boolean[][]> outputMap; //overall output map
-    HashMap<TrackElement, List<String>> PLCScriptMap; //PLC saver output map
-    //ArrayList<TrackBlock> blocks; //jurisdiction
-    ArrayList<TrackElement> allBlocks; //jurisdiction
+    /** Boolean Logic Members
+     */
+    private HashMap<TrackElement, boolean[][]> outputMap = new HashMap<TrackElement, boolean[][]>(); //overall output map
+    private HashMap<TrackElement, List<String>> PLCScriptMap = new HashMap<TrackElement, List<String>>(); //PLC saver output map
+    private ArrayList<TrackElement> jurisdiction = new ArrayList<TrackElement>(); //jurisdiction
 
-    //testInputs/testOutputs
-    HashMap<TrackElement, boolean[]> testInputs; //some test inputs!
-    HashMap<TrackElement, Boolean> testOutputs; //overall output map
+    /** Test GUI Members
+     */
+    private HashMap<TrackElement, boolean[]> testInputs = new HashMap<TrackElement, boolean[]>(); //some test inputs!
+    private HashMap<TrackElement, Boolean> testOutputs = new HashMap<TrackElement, Boolean>(); //overall output map
+    private List<boolean[][]> testTables = new ArrayList<boolean[][]>();
+    private List<boolean[][]> outputTables = new ArrayList<boolean[][]>();
 
-    private List<boolean[][]> testTables;
-    private List<boolean[][]> outputTables;
+    /** Global Members
+     */
+    private static int NUM_CONTROLLERS = 0;
+    /***********************************************************************************************************************/
 
-    //not usable right now...
-//    public WaysideController(){
-//        name = "FAKE";
-//    }
+    /*
+        Constructors
+     */
 
-    public WaysideController(String name) {
-        this.isActive = DEFAULT_ISACTIVE;
-        this.isSoftware = DEFAULT_ISSOFTWARE;
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.PLCScriptMap = new HashMap<>();
-        this.outputMap = new HashMap<>();
-        this.testInputs = new HashMap<>();
-        this.allBlocks = new ArrayList<TrackElement>();
-        this.name = name;
-
-        gpio = new GPIO(null, name);
+    // Default constructor is necessary for RemoteWaysideController inheritance
+    protected WaysideController() {
+        this.controllerAlias = null;
+        gpio = new GPIO(jurisdiction, controllerAlias);
     }
 
-    public WaysideController(ArrayList<TrackElement> allBlocks, ArrayList<TrackBlock> blocks, String name){
-        this.isActive = DEFAULT_ISACTIVE;
-        this.isSoftware = DEFAULT_ISSOFTWARE;
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.PLCScriptMap = new HashMap<>();
-        this.outputMap = new HashMap<>();
-        this.testInputs = new HashMap<>();
-        //this.blocks = blocks;
-        this.allBlocks = allBlocks;
-        this.name = name;
-
-        gpio = new GPIO(allBlocks, name);
+    public WaysideController(String controllerAlias) {
+        this.controllerAlias = controllerAlias;
+        gpio = new GPIO(null, controllerAlias);
     }
 
-    public WaysideController(ArrayList<TrackElement> allBlocks, String name){
-        this.isActive = DEFAULT_ISACTIVE;
-        this.isSoftware = DEFAULT_ISSOFTWARE;
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.PLCScriptMap = new HashMap<>();
-        this.outputMap = new HashMap<>();
-        this.testInputs = new HashMap<>();
-        //this.blocks = blocks;
-        this.allBlocks = allBlocks;
-        this.name = name;
-
-        gpio = new GPIO(allBlocks, name);
+    public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias){
+        this.jurisdiction = jurisdiction;
+        this.controllerAlias = controllerAlias;
+        gpio = new GPIO(jurisdiction, controllerAlias);
     }
 
-    public WaysideController() {
-        this.isActive = DEFAULT_ISACTIVE;
-        this.isSoftware = DEFAULT_ISSOFTWARE;
-        this.speedLimit = DEFAULT_SPEEDLIMIT;
-        this.PLCScriptMap = new HashMap<>();
-        this.outputMap = new HashMap<>();
-        this.testInputs = new HashMap<>();
-        this.allBlocks = new ArrayList<TrackElement>();
-        this.name = "Wayside Controller";
-        gpio = new GPIO(allBlocks, name);
-    }
-
+    /** copies values from a target WaysideController into this wayside controller
+     * @param target    WaysideController, the WaysideController we intend to copy
+     */
     public void copy(WaysideController target) {
-        /** copies values from a target WaysideController into this wayside controller
-         * @param target    WaysideController, the WaysideController we intend to copy
-         */
-            this.name = target.name;
+            this.controllerAlias = target.controllerAlias;
             this.isActive = target.isActive;
             this.isSoftware = target.isSoftware;
             this.outputMap = (HashMap<TrackElement, boolean[][]>) target.outputMap.clone();
             this.PLCScriptMap = (HashMap<TrackElement, List<String>>) target.PLCScriptMap.clone();
             this.gpio.copy(target.gpio);
-            this.allBlocks = (ArrayList<TrackElement>) target.allBlocks.clone();
+            this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
             this.testInputs = (HashMap<TrackElement, boolean[]>) target.testInputs.clone();
     }
 
-    /*
-    Getters and setters for the name
-     */
-    // TODO tell harsh I had to change these
-    public void setName(String name) {this.name = name;}
-    public String getControllerName(){ return name; }
-    public String toString(){
-        String profile = String.format("Wayside Controller: %s\n",name);
-        profile += String.format("isActive: %b\n",isActive);
-        profile += String.format("isSoftware: %b\n",isSoftware);
-        profile += String.format("outputMap: %s\n",outputMap);
-        profile += String.format("PLCScriptMap: %s\n",PLCScriptMap);
-        return profile;
-    }
-    public void setControllerName(String newName){ this.name = newName; }
 
     /*
-    sets the speed for all blocks within the jurisdiction
+        Methods for CTC
+     */
+
+    /** sets the commandedSpeed for the blocks under this jurisdiction.
+     *
+     * @param speeds, an array of commanded speeds where each element corresponds to the commanded speed for an intended block in the jurisdiction
+     * @throws IOException, length of speeds array does not match the length of jurisdiction
      */
     public void setSpeed(double[] speeds) throws IOException {
-        if(speeds.length != allBlocks.size()){
-            throw new IOException("Controller Error: There are too many/too few input speed values...");
+        if(speeds.length != jurisdiction.size()){
+            throw new IOException(String.format("setSpeed() error in controller: tried to apply commandedSpeed array (length %d) to controller array (length %d.)", speeds.length,jurisdiction.size()));
         }
-
-        for(int i=0;i < allBlocks.size();i++){
-            allBlocks.get(i).setCommandedSpeed(speeds[i]);
+        if(speeds.length == 0) {
+            System.out.println("Tried to apply setSpeed() to wayside controller using empty speed array");
+            return;
+        }
+        for(int i = 0; i < jurisdiction.size(); i++){
+            jurisdiction.get(i).setCommandedSpeed(speeds[i]);
         }
     }
 
@@ -152,17 +124,17 @@ public class WaysideController implements Serializable {
             speeds = speedLimit;
         }
 
-        allBlocks.get(allBlocks.indexOf(trackElement)).setCommandedSpeed(speeds);
+        jurisdiction.get(jurisdiction.indexOf(trackElement)).setCommandedSpeed(speeds);
     }
 
     /*
     gets the speed for all blocks within the jurisdiction
      */
     public double[] getSpeed() {
-        double[] speeds = new double[allBlocks.size()];
+        double[] speeds = new double[jurisdiction.size()];
 
-        for(int i=0;i < allBlocks.size();i++){
-            speeds[i] = allBlocks.get(i).getCommandedSpeed();
+        for(int i = 0; i < jurisdiction.size(); i++){
+            speeds[i] = jurisdiction.get(i).getCommandedSpeed();
         }
 
         return speeds;
@@ -172,18 +144,18 @@ public class WaysideController implements Serializable {
     sets the authority for all blocks within the jurisdiction
      */
     public void setAuthority(int[] authorities) throws IOException {
-        if(authorities.length != allBlocks.size()){
+        if(authorities.length != jurisdiction.size()){
             throw new IOException("Controller Error: There are too many/too few input authories values...");
         }
 
-        for(int i=0;i < allBlocks.size();i++){
-            allBlocks.get(i).setAuthority(authorities[i]);
+        for(int i = 0; i < jurisdiction.size(); i++){
+            jurisdiction.get(i).setAuthority(authorities[i]);
         }
     }
 
     public void setAuthority(int blockNumber, int authority) throws IOException {
         TrackElement trackElement = getBlockElement(blockNumber);
-        allBlocks.get(allBlocks.indexOf(trackElement)).setAuthority(authority);
+        jurisdiction.get(jurisdiction.indexOf(trackElement)).setAuthority(authority);
     }
 
     /*
@@ -191,10 +163,10 @@ public class WaysideController implements Serializable {
      */
     // TODO make this take ints instead of doubles
     public int[] getAuthority() {
-        int[] authority = new int[allBlocks.size()];
+        int[] authority = new int[jurisdiction.size()];
 
-        for(int i=0;i < allBlocks.size();i++){
-            authority[i] = allBlocks.get(i).getAuthority();
+        for(int i = 0; i < jurisdiction.size(); i++){
+            authority[i] = jurisdiction.get(i).getAuthority();
         }
 
         return authority;
@@ -232,10 +204,17 @@ public class WaysideController implements Serializable {
         boolean bool;
         TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
-        engine.createTokens(PLCFile);
+        //List<String> fileTokens = engine.stringTokensFromFile(PLCFile);
+        // TODO
+        List<String> fileTokens = null;
+        try {
+            engine.uploadPLC(fileTokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        PLCScriptMap.put(trackElement, engine.getPLCString());
-        outputMap.put(trackElement, engine.calculateOutputMapNew(getAllInputNames()));
+        PLCScriptMap.put(trackElement, engine.getPLCStringList());
+        outputMap.put(trackElement, engine.generateLogicTable(getAllInputNames()));
         addTestInput(trackElement);
 
         gpio.addOutput(trackElement, false);
@@ -250,10 +229,17 @@ public class WaysideController implements Serializable {
         boolean bool;
         TrackElement trackElement = getBlockElement(blockNumber);
         PLCEngine engine = new PLCEngine();
-        engine.createTokens(PLCFile);
+        //List<String> fileTokens = engine.stringTokensFromFile(PLCFile);
+        // TODO
+        List<String> fileTokens = null;
+        try {
+            engine.uploadPLC(fileTokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        PLCScriptMap.replace(trackElement, engine.getPLCString());
-        outputMap.replace(trackElement, engine.calculateOutputMapNew(getInputNames()));
+        PLCScriptMap.replace(trackElement, engine.getPLCStringList());
+        outputMap.replace(trackElement, engine.generateLogicTable(getInputNames()));
 
         bool = generateOutputSignal(trackElement.getBlockNum(), false);
         gpio.updateOutput(trackElement, bool);
@@ -328,7 +314,7 @@ public class WaysideController implements Serializable {
     public void generateOutputSignals() {
         boolean isTest = false;
         // Update all known outputs
-        for(TrackElement block : allBlocks) {
+        for(TrackElement block : jurisdiction) {
             try {
                 generateOutputSignal(block.getBlockNum(), isTest);
             } catch(Exception e) {
@@ -341,18 +327,21 @@ public class WaysideController implements Serializable {
 
     }
 
-    //GUI **************************************************************************************************************
     /*
-    Gets all the names for each of the following variables - inputValues, speed, authority, isActive for GUI
+        GUI Functions
+     */
+
+    /**
+     * @return
      */
     public List<String> getAllNames() throws IOException {
         List<String> temp = new LinkedList<>();
 
         temp.addAll(getInputNames());
-        for(int i=0;i < allBlocks.size();i++){
+        for(int i = 0; i < jurisdiction.size(); i++){
             temp.add("speed " + i + " : ");
         }
-        for(int i=0;i < allBlocks.size();i++){
+        for(int i = 0; i < jurisdiction.size(); i++){
             temp.add("authority " + i + " : ");
         }
         temp.add("isActive");
@@ -360,6 +349,10 @@ public class WaysideController implements Serializable {
         return temp;
     }
 
+    /**
+     * @return
+     * @throws IOException
+     */
     public List<Object> getAllData() throws IOException {
         List<Object> temp = new LinkedList<>();
 
@@ -371,10 +364,33 @@ public class WaysideController implements Serializable {
         return temp;
     }
 
+    /** generates a String-Hashmap tree representation of this controller for use in the GUI.
+     *  The tree is two layers deep after the controller name.
+     *  Usage:
+     *  Given a return Hashmap entry of:
+     *  Hashmap = [<"Title 1" , <"Node 1: a value","Node 2: a value","Node 3: a value"> <"Title 2" , <"Node 22: a value","Node 23: a value","Node 28: a value">>]
+     *  The resulting tree will be:
+     *  ControllerName
+     *  |_Title 1
+     *      |_Node 1: a value
+     *      |_Node 2: a value
+     *      |_Node 3: a value
+ *      |_Title 2
+     *      |_Node 22: a value
+     *      |_Node 23: a value
+     *      |_Node 28: a value
+     *
+     *   Where the String key determines the title of a collapsible section in the Wayside Controller
+     *   and each String-element in the string vector becomes an entry under the collapsible title
+     *
+     * @return HashMap<String,Vector<String>>, hashmap representation of <Title String, String-List-Under_Title>
+     */
     public HashMap<String, Vector<String>> generateDescriptionNodes() {
         HashMap<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
 
-        //inputs - input signals
+        /*
+            Inputs
+         */
         String inputCategory = "Input Signals";
         Vector<String> inputVector = new Vector<>();
         boolean[] inputValues = gpio.getAllInputValues();
@@ -383,7 +399,9 @@ public class WaysideController implements Serializable {
         }
         hash.put(inputCategory, inputVector);
 
-        //outputs - output signals, speed, authority, active
+        /*
+            Outputs
+         */
         String outputCategory = "Output Signals";
         Vector<String> outputVector = new Vector<>();
         Boolean[] outputValues = gpio.getOutputValues();
@@ -392,6 +410,9 @@ public class WaysideController implements Serializable {
         }
         hash.put(outputCategory, outputVector);
 
+        /*
+            Speed
+         */
         String speedCategory = "Speed";
         Vector<String> speedVector = new Vector<>();
         double[] speed = getSpeed();
@@ -400,7 +421,9 @@ public class WaysideController implements Serializable {
         }
         hash.put(speedCategory, speedVector);
 
-        // TODO changed this to int
+        /*
+            Authority
+         */
         int[] authority = getAuthority();
         String authorityCategory = "Authority";
         Vector<String> authorityVector = new Vector<>();
@@ -417,14 +440,13 @@ public class WaysideController implements Serializable {
         return hash;
     }
 
-    //Testing **********************************************************************************************************
     /*
-    add,get,set TestInputs
+        Testing Methods
      */
     public void addTestInput(TrackElement trackElement){
         boolean[] totalInputs = new boolean[gpio.getNumberOfBlocks()];
 
-        for(int i=0;i < allBlocks.size();i++){
+        for(int i = 0; i < jurisdiction.size(); i++){
             totalInputs[i] = false;
         }
 
@@ -452,64 +474,61 @@ public class WaysideController implements Serializable {
                 break;
             }
         }
-
-//        for(int i=0;i < outputTables.size();i++){
-//            updateOutputSignal(outputTableDevices.get(i));
-//        }
-
         return true;
     }
 
-    //GPIO *************************************************************************************************************
-    /*
-    Gets the GPIO//GPIO functions!
-     */
+
     public GPIO getGPIO(){
         return gpio;
     }
-
-    //Helper Functions *************************************************************************************************
-    /*
-    helper function - gets all the inputs of the blocks
-     */
+    public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
+    public void setControllerName(String newName){ this.controllerAlias = newName; }
     public List<String> getInputNames(){
         List<String> inputNames = new LinkedList<>();
 
-        for(int i=0;i < allBlocks.size();i++){
-            inputNames.add(valueOf(allBlocks.get(i).getBlockNum()));
+        for(int i = 0; i < jurisdiction.size(); i++){
+            inputNames.add(valueOf(jurisdiction.get(i).getBlockNum()));
         }
 
         return inputNames;
     }
-
-    /*
-    helper function - gets all the inputs of the blocks
-     */
     public List<String> getAllInputNames(){
         List<String> inputNames = new LinkedList<>();
 
-        for(int i=0;i < allBlocks.size();i++){
-            inputNames.add(valueOf(allBlocks.get(i).getBlockNum()));
+        for(int i = 0; i < jurisdiction.size(); i++){
+            inputNames.add(valueOf(jurisdiction.get(i).getBlockNum()));
         }
 
         return inputNames;
     }
-
-    /*
-    helper function - finds the specific block element from the block number
-     */
+    public String getControllerAlias(){ return controllerAlias; }
     public TrackElement getBlockElement(int blockNumber) throws IOException {
-        for(int i = 0; i < allBlocks.size(); i++){
-            if(blockNumber == allBlocks.get(i).getBlockNum()){
-                return allBlocks.get(i);
+        for(int i = 0; i < jurisdiction.size(); i++){
+            if(blockNumber == jurisdiction.get(i).getBlockNum()){
+                return jurisdiction.get(i);
             }
         }
 
-        throw new IOException("Controller Error: No block with that number in controller - " + name +  " " + Integer.toString(blockNumber));
+        throw new IOException("Controller Error: No block with that number in controller - " + controllerAlias +  " " + Integer.toString(blockNumber));
     }
-
     public TrackElement getTrackElement(TrackElement trackElement) {
         // TODO implement
         return new TrackElement();
+    }
+
+    /*
+        String Representation
+     */
+    public String toString(){
+        return controllerName;
+    }
+    public String toMedString() {
+        String profile = String.format("Wayside Controller: %s\n", controllerName);
+        profile += String.format("Alias: %s\n",controllerAlias);
+        profile += String.format("isActive: %b\n",isActive);
+        profile += String.format("isSoftware: %b\n",isSoftware);
+        profile += String.format("outputMap: %s\n",outputMap);
+        profile += String.format("PLCScriptMap: %s\n",PLCScriptMap);
+        return profile;
     }
 }

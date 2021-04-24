@@ -87,7 +87,7 @@ class SimulationEnvironmentTest {
         }
         try {
             // Give jurisdiction to controller
-            SE.getCTC().getWaysideSystem().addWaysideController(blockNumbers);
+            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,7 +122,8 @@ class SimulationEnvironmentTest {
         }
         try {
             // Give jurisdiction to controller
-            SE.getCTC().getWaysideSystem().addWaysideController(blockNumbers);
+            // first wayside is green
+            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
         } catch (IOException e) {
             e.printStackTrace();
         }

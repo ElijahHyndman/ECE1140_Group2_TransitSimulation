@@ -1,13 +1,11 @@
-package RemoteWayside;
+package RemoteWaysideServer;
 
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideGUI.WaysideUIJFrameWindow;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -62,7 +60,7 @@ public class RemoteWaysideService implements RemoteWaysideStub {
     public RemoteWaysideService() {
         // Create WaysideController object
         controller = new WaysideController("Remote Wayside Controller");
-        controller.setName("Remote WaysideController");
+        controller.setControllerName("Remote WaysideController");
     }
 
 
