@@ -1,5 +1,8 @@
 package WaysideController;
 
+import PLCInput.PLCInput;
+import PLCOutput.PLCOutput;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -437,7 +440,7 @@ public class PLCEngine {
      * @before .evaluateLogic() does not know what $VARNAME in PLC script refers to
      * @after if inputSource variable name is $VARNAME, then .evaluateLogic will use inputSource.evaluate() to generate boolean inputs
      */
-    public void registerPLCInputSource(PLCInput inputSource) {
+    public void registerInputSource(PLCInput inputSource) {
         PLCInputSources.add(inputSource);
     }
 
@@ -449,7 +452,7 @@ public class PLCEngine {
      * @after the old target for this PLCEngine has been overwritten by the new, provided target
      * @after .applyOutputLogic will be called on target everytime generic .evaluateLogic() function is called on PLCEngine
      */
-    public void registerPLCOutputTarget(PLCOutput target) {
+    public void registerTarget(PLCOutput target) {
         this.outputTarget = target;
     }
 

@@ -285,7 +285,7 @@ public class CTCOffice implements PhysicsUpdateListener
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         BroadcastingArrays();
 
@@ -486,7 +486,7 @@ public class CTCOffice implements PhysicsUpdateListener
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
         BroadcastingArrays();
 
         return speedAuthorityTime;
@@ -496,8 +496,9 @@ public class CTCOffice implements PhysicsUpdateListener
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times)){
-                waysides.broadcastToControllers(speedsR, authorities);
-                waysides.broadcastToControllers(speedsG, authorities);
+                // TODO make these viable
+                //waysides.get(0).broadcastToControllers(speedsR, authorities);
+                //waysides.get(0).broadcastToControllers(speedsG, authorities);
                 times.remove(i);
                 speedsR.remove(i);
                 speedsG.remove(i);

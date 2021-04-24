@@ -1,4 +1,4 @@
-package WaysideController;
+package PLCOutput;
 
 /**
  * @author elijah
@@ -22,6 +22,12 @@ public class PLCOutput {
         this.variableName = variableName;
     }
 
+    public boolean value() {
+        return value;
+    }
+    public String variableName() {
+        return variableName;
+    }
     /** operation to invoke an output rule based on a PLC output evaluation.
      * The generic form of PLCoutput.applyOutput will just system.out.println that output has been set, but the intended usage is for PLCOutput to be extended and overriden to implement unique behaviors for output rule application
      *

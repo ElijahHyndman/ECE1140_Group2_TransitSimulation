@@ -1,4 +1,4 @@
-package WaysideController;
+package PLCInput;
 
 /** allows PLCEngines to refer to generic inputs which can be specified elsewhere.
  *  This class is intended to be extended and overriden to define custom behavior for PLC input sources.
@@ -47,7 +47,7 @@ public class PLCInput {
      *
      * @return
      */
-    public boolean evaluate() {
+    public boolean evaluate() throws Exception {
         return value;
     }
 

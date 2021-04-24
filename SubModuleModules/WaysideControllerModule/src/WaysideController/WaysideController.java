@@ -12,7 +12,7 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 
-/** module class that compiles PLC boolean logic and applies it to the track system.
+/** module class that uses boolean logic to dictate Track System controls. 
  * @author Harsh
  * @editor Elijah
  */
