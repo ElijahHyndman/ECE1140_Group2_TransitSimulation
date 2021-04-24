@@ -218,7 +218,7 @@ public class PLCEngine {
      */
 
 
-    /** evaluates the output of the current PLC script based on a given list of current inputs.
+    /** evaluates the boolean calculation defined by local PLCScript member (PLCLines) using a given set of input statuses (in, collection of PLCInput objects).
      *
      * @param in, The list of PLCInput variables which will be used as boolean input to evaluate PLC logic (there MUST be a PLCInput with a .variableName() for each variable referenced in the PLCScript stored locally "PLCLines")
      * @return
@@ -343,7 +343,7 @@ public class PLCEngine {
      * every single variable reference in locally stored PLC script must have a corresponding inputsource definition set using .definePLCInputSource(PLCInputObjectThatHasSameNameAsPLCVariableReference)
      * uses evaluateLogic(inputs) to calculate values, passes locally defined input sources
      *
-     * @return
+     * @return boolean, output of local PLCScript calculation (member PLCLines) using registered input sources (PLCInputs registered with .registerPLCInputSource())
      */
     public boolean evaluateLogic() throws Exception {
         // All input sources must be defined
@@ -388,8 +388,10 @@ public class PLCEngine {
         return outputTable;
     }
 
+
     /** defines a possible input source (PLCInput) for PLCScripts to reference when uploaded to this PLCEngine.
      *  the name of PLCInput variableName member must match the variable names referenced in PLCScript
+     *  A PLCInputSource is allowed to be registered and not actually referenced by PLCScript. Registering an InputSource just adds it to the pool of searchable inputs
      *  i.e. if PLC references a variable such as:
      *  "
      *  LD aVariableName
@@ -405,10 +407,17 @@ public class PLCEngine {
      * @before .evaluateLogic() does not know what $VARNAME in PLC script refers to
      * @after if inputSource variable name is $VARNAME, then .evaluateLogic will use inputSource.evaluate() to generate boolean inputs
      */
-    public void definePLCInputSource(PLCInput inputSource) {
+    public void registerPLCInputSource(PLCInput inputSource) {
         PLCInputSources.add(inputSource);
     }
 
+
+    /** checks that every variable reference in local PLCScript (PLCLines member) has a corresponding PLCInput (variable reference and PLCInput.variableName matches.)
+     *  must be true before we can call generic .evaluateLogic() [ if we don't, then PLC script references variable that does not have a source definition]
+     *
+     * @return boolean, whether every PLC reference has a corresponding PLCInput registered locally with .registerPLCInputSource, true otherwise false
+     * @throws Exception atleast one variable name referenced in PLC script does not have a corresponding PLCInput definition whose PLCInput.variableName matches reference
+     */
     public boolean allPLCInputSourcesDefined() throws Exception {
         boolean thisReferenceHasSourceDefined = false;
 

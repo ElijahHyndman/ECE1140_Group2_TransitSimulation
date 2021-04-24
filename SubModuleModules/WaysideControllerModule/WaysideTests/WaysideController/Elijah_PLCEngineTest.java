@@ -492,8 +492,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new PLCInput("var1",true);
         PLCInput var2 = new PLCInput("var2",true);
-        engine.definePLCInputSource(var1);
-        engine.definePLCInputSource(var2);
+        engine.registerPLCInputSource(var1);
+        engine.registerPLCInputSource(var2);
 
         boolean engineIdentifiesThatPLCReferencesHaveDefinitions = engine.allPLCInputSourcesDefined();
         System.out.printf("Engine has stored input source definitions: %b\n",engineIdentifiesThatPLCReferencesHaveDefinitions);
@@ -517,8 +517,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new PLCInput("var1",true);
         PLCInput var2 = new PLCInput("var2",true);
-        engine.definePLCInputSource(var1);
-        engine.definePLCInputSource(var2);
+        engine.registerPLCInputSource(var1);
+        engine.registerPLCInputSource(var2);
 
         // var3 reference does not have defined input source, engine should throw error
         assertThrows(Exception.class, () -> engine.allPLCInputSourcesDefined());
@@ -539,8 +539,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new CustomPLCInputSource("var1",true);
         PLCInput var2 = new CustomPLCInputSource("var2",true);
-        engine.definePLCInputSource(var1);
-        engine.definePLCInputSource(var2);
+        engine.registerPLCInputSource(var1);
+        engine.registerPLCInputSource(var2);
         boolean output = engine.evaluateLogic();
         System.out.printf("Output using remembered inputsources: %b\n",output);
     }
@@ -567,8 +567,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.definePLCInputSource( new PLCInput("var1", true) );
-            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
+            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
@@ -605,8 +605,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.definePLCInputSource( new PLCInput("var1", true) );
-            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
+            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
@@ -643,8 +643,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.definePLCInputSource( new PLCInput("var1", true) );
-            newEngine.definePLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
+            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
