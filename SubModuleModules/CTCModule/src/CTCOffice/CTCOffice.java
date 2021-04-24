@@ -39,6 +39,10 @@ public class CTCOffice implements PhysicsUpdateListener
     public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
+    public ArrayList<double[]> speedsR =new ArrayList<double[]>();
+    public ArrayList<double[]> speedsG =new ArrayList<double[]>();
+    public ArrayList<int[]> authorities = new ArrayList<int[]>();
+    public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 
     public CTCOffice()
     {
@@ -247,7 +251,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
         if (lineCol.equals("Green"))
             speedArrG = createSpeedArr(route, speed);
-        if (lineCol.equals("Red"))
+        else if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
 
         if(LocalTime.now().isBefore(timeDis) && speed<50)
@@ -263,15 +267,44 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void ClearQueues(){
+        for (int i= 0; i<times.size(); i++){
+            times.remove(i);
+        }
+        for (int i = 0; i<speedsR.size(); i++){
+            speedsR.remove(i);
+        }
+        for (int i = 0; i<speedsG.size(); i++){
+            speedsG.remove(i);
+        }
+        for (int i = 0; i<authorities.size(); i++){
+            authorities.remove(i);
+        }
     }
 
     public Object[] AutoDispatch(String dest, String tNum, String timeD)
@@ -434,15 +467,43 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void BroadcastingArrays(){
+        now = LocalTime.parse(timeNow);
+        for (int i = 0; i<times.size(); i++){
+            if(now.equals(times)){
+                waysides.broadcastToControllers(speedsR, authorities);
+                waysides.broadcastToControllers(speedsG, authorities);
+                times.remove(i);
+                speedsR.remove(i);
+                speedsG.remove(i);
+                authorities.remove(i);
+            }
+        }
     }
 
     public void LoadSchedule(String filename)
