@@ -40,10 +40,10 @@ public class CTCOffice implements PhysicsUpdateListener
     public Track trackObj;
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
-    public PriorityQueue<double[]> speedsR =new PriorityQueue<double[]>();
-    public PriorityQueue<double[]> speedsG =new PriorityQueue<double[]>();
-    public PriorityQueue<int[]> authorities = new PriorityQueue<int[]>();
-    public PriorityQueue<LocalTime> times = new PriorityQueue<LocalTime>();
+    public ArrayList<double[]> speedsR =new ArrayList<double[]>();
+    public ArrayList<double[]> speedsG =new ArrayList<double[]>();
+    public ArrayList<int[]> authorities = new ArrayList<int[]>();
+    public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 
     public CTCOffice()
     {
@@ -272,7 +272,7 @@ public class CTCOffice implements PhysicsUpdateListener
             times.add(timeDisp);
             authorities.add(authArr);
         }
-        else if (lineCol.equals("Green")){
+        else if (lineCol.equals("Red")){
             speedsG.add(speedArrG);
             speedsR.add(speedArrR);
             times.add(timeDisp);
@@ -292,16 +292,16 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void ClearQueues(){
         for (int i= 0; i<times.size(); i++){
-            times.remove();
+            times.remove(i);
         }
         for (int i = 0; i<speedsR.size(); i++){
-            speedsR.remove();
+            speedsR.remove(i);
         }
         for (int i = 0; i<speedsG.size(); i++){
-            speedsG.remove();
+            speedsG.remove(i);
         }
         for (int i = 0; i<authorities.size(); i++){
-            authorities.remove();
+            authorities.remove(i);
         }
     }
 
@@ -471,7 +471,7 @@ public class CTCOffice implements PhysicsUpdateListener
             times.add(timeDisp);
             authorities.add(authArr);
         }
-        else if (lineCol.equals("Green")){
+        else if (lineCol.equals("Red")){
             speedsG.add(speedArrG);
             speedsR.add(speedArrR);
             times.add(timeDisp);
@@ -494,10 +494,10 @@ public class CTCOffice implements PhysicsUpdateListener
             if(now.equals(times)){
                 waysides.broadcastToControllers(speedsR, authorities);
                 waysides.broadcastToControllers(speedsG, authorities);
-                times.remove();
-                speedsR.remove();
-                speedsG.remove();
-                authorities.remove();
+                times.remove(i);
+                speedsR.remove(i);
+                speedsG.remove(i);
+                authorities.remove(i);
             }
         }
     }
