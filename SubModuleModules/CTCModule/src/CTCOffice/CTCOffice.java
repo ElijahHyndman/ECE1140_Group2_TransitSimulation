@@ -39,6 +39,10 @@ public class CTCOffice implements PhysicsUpdateListener
     public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
+    public ArrayList<double[]> speedsR =new ArrayList<double[]>();
+    public ArrayList<double[]> speedsG =new ArrayList<double[]>();
+    public ArrayList<int[]> authorities = new ArrayList<int[]>();
+    public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 
     public CTCOffice()
     {
@@ -247,7 +251,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
         if (lineCol.equals("Green"))
             speedArrG = createSpeedArr(route, speed);
-        if (lineCol.equals("Red"))
+        else if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
 
         if(LocalTime.now().isBefore(timeDis) && speed<50)
@@ -263,15 +267,44 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void ClearQueues(){
+        for (int i= 0; i<times.size(); i++){
+            times.remove(i);
+        }
+        for (int i = 0; i<speedsR.size(); i++){
+            speedsR.remove(i);
+        }
+        for (int i = 0; i<speedsG.size(); i++){
+            speedsG.remove(i);
+        }
+        for (int i = 0; i<authorities.size(); i++){
+            authorities.remove(i);
+        }
     }
 
     public Object[] AutoDispatch(String dest, String tNum, String timeD)
@@ -434,15 +467,43 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void BroadcastingArrays(){
+        now = LocalTime.parse(timeNow);
+        for (int i = 0; i<times.size(); i++){
+            if(now.equals(times)){
+                waysides.broadcastToControllers(speedsR, authorities);
+                waysides.broadcastToControllers(speedsG, authorities);
+                times.remove(i);
+                speedsR.remove(i);
+                speedsG.remove(i);
+                authorities.remove(i);
+            }
+        }
     }
 
     public void LoadSchedule(String filename)
@@ -1116,6 +1177,11 @@ public class CTCOffice implements PhysicsUpdateListener
         if(bn==73 && lc.equals("Green")){ //Dormont
             if (positions[tnum-1]>=73 && positions[tnum-1]<105)
             {
+                //for(int i=95; i<105; i++)
+                //{
+                //    routeArr[i] = 1;
+                //}
+                //for (int i=76; i<85; i++)
                 for(int i=61; i<105; i++)
                 {
                     routeArr[i] = 1;
@@ -1124,6 +1190,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 105;
             }
             else {
+                //for (int i = 64; i < 73; i++) {
                 for (int i = 61; i < 73; i++) {
                     routeArr[i] = 1;
                 }
@@ -1134,6 +1201,11 @@ public class CTCOffice implements PhysicsUpdateListener
         if (bn==77 && lc.equals("Green")){ //Mt Lebanon
             if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
             {
+                //for (int i=95; i<100; i++)
+                //{
+                //    routeArr[i] = 1;
+                //}
+                //for(int i=84; i>=76; i--)
                 for (int i=61; i<100; i++)
                 {
                     routeArr[i] = 1;
@@ -1141,6 +1213,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 routeArr[78] = 2;
             }
             else {
+                //for (int i = 72; i < 77; i++) {
                 for (int i = 61; i < 77; i++) {
                     routeArr[i] = 1;
                 }
@@ -1149,6 +1222,7 @@ public class CTCOffice implements PhysicsUpdateListener
             positions[tnum-1] = 77;
         }
         if(bn==88 && lc.equals("Green")){//Poplar
+            //for (int i=76; i<88; i++){
             for (int i=61; i<88; i++){
                 routeArr[i] = 1;
             }
@@ -1156,6 +1230,7 @@ public class CTCOffice implements PhysicsUpdateListener
             positions[tnum-1] = 88;
         }
         if(bn==96 && lc.equals("Green")){//Castle Shannon
+            //for (int i=87; i<96; i++){
             for (int i=61; i<96; i++){
                 routeArr[i] = 1;
             }
@@ -1164,6 +1239,7 @@ public class CTCOffice implements PhysicsUpdateListener
         }
         if(bn==57 && lc.equals("Green")){//Overbrook
             if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
+                //for (int i = 47; i<57; i++)
                 for (int i = 0; i<57; i++)
                 {
                     routeArr[i] = 1;
@@ -1176,6 +1252,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 57;
             }
             else{
+                //for (int i = 113; i < 123; i++) {
                 for (int i = 61; i < 123; i++) {
                     routeArr[i] = 1;
                 }
@@ -1186,6 +1263,7 @@ public class CTCOffice implements PhysicsUpdateListener
         if(bn==48 && lc.equals("Green"))//Inglewood
         {
             if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
+                //for (int i=38; i<48; i++)
                 for (int i=0; i<48; i++)
                 {
                     routeArr[i] = 1;
@@ -1198,6 +1276,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 48;
             }
             else{
+                //for (int i=122; i<132; i++)
                 for (int i=61; i<132; i++)
                 {
                     routeArr[i] = 1;
@@ -1209,6 +1288,10 @@ public class CTCOffice implements PhysicsUpdateListener
         if(bn==39 && lc.equals("Green"))//Central
         {
             if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
+               // for (int i=30; i<39; i++)
+               // {
+               //     routeArr[i] = 1;
+               // }
                 for (int i=0; i<39; i++)
                 {
                     routeArr[i] = 1;
@@ -1220,6 +1303,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 39;
             }
             else{
+                //for (int i=131; i<141; i++)
                 for (int i=61; i<141; i++)
                 {
                     routeArr[i] = 1;
@@ -1229,6 +1313,10 @@ public class CTCOffice implements PhysicsUpdateListener
             }
         }
         if(bn==31 && lc.equals("Green")){//South Bank
+            //for (int i = 21; i<31; i++)
+            //{
+            //    routeArr[i] = 1;
+            //}
             for (int i = 0; i<31; i++)
             {
                 routeArr[i] = 1;
@@ -1242,6 +1330,14 @@ public class CTCOffice implements PhysicsUpdateListener
         if(bn==22 && lc.equals("Green")){//Whited
             if (positions[tnum-1]<22)
             {
+           //     for (int i = 15; i<22; i++)
+           //     {
+           //         routeArr[i] = 1;
+           //     }
+           //     routeArr[19] = 2;
+           // }
+           // else{
+           //     for (int i = 140; i <150; i++)
                 for (int i = 0; i<28; i++)
                 {
                     routeArr[i] = 1;
@@ -1267,6 +1363,10 @@ public class CTCOffice implements PhysicsUpdateListener
         if (bn==16 && lc.equals("Green")){ //Station
             if (positions[tnum-1]<16)
             {
+                //for (int i=1; i>=0; i--){
+                //    routeArr[i] = 1;
+               // }
+                //for (int i = 12; i<16; i++){
                 for (int i=61; i<150; i++){
                     routeArr[i] = 1;
                 }
@@ -1276,6 +1376,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 routeArr[13] = 2;
             }
             else{
+                //for (int i = 21; i>=15; i--)
                 for (int i = 61; i<150; i++)
                 {
                     routeArr[i] = 1;
@@ -1289,6 +1390,15 @@ public class CTCOffice implements PhysicsUpdateListener
             positions[tnum-1] = 16;
         }
         if (bn==9 && lc.equals("Green")){//Edgebrook
+        //    for (int i = 15; i>=8; i--)
+        //    {
+        //        routeArr[i] = 1;
+        //    }
+        //    routeArr[10] = 2;
+        //    positions[tnum-1] = 9;
+        //}
+        //if (bn==2 && lc.equals("Green")) {//Pioneer
+        //    for (int i = 8; i>=1; i--){
             for (int i = 8; i<28; i++)
             {
                 routeArr[i] = 1;
