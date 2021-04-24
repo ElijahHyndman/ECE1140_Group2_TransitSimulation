@@ -3,8 +3,6 @@ package WaysideController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -428,11 +426,12 @@ class Elijah_PLCEngineTest {
     // Made an overloading class of PLCInput so we can use whatever we want as an input operation for a PLC script
     // I will use this for the next few tests
     // In practice, we will want to use this same overloading technique to allow us to define different sources of boolean inputs for the PLC engine (a track's occupancy, or elsewise)
-    private class CustomPLCInput extends PLCInput {
-        String variableName;
-        boolean value = false;
-        public CustomPLCInput(String varName, boolean value) {
-            variableName = varName;
+    private class CustomPLCInputSource extends PLCInput {
+        // Lesson learned: do NOT redefine variableName and value variables in child classes
+        //String variableName;
+        //boolean value = false;
+        public CustomPLCInputSource(String varName, boolean value) {
+            this.variableName = varName;
             this.value = value;
         }
         public boolean evaluate() {
@@ -445,8 +444,31 @@ class Elijah_PLCEngineTest {
     }
 
     @Test
-    @DisplayName("Overloading inputs are evaluated directly within PLC code")
-    public void overloadedClassesCanBeUsed() {
+    @DisplayName("Overloading Inputs can be used with their own defined behavior")
+    public void overloadedClassesCanBeUsed() throws Exception {
+        engine = new PLCEngine();
+        boolean input1 = false;
+        boolean input2 = true;
+        CustomPLCInputSource var1 = new CustomPLCInputSource("var1",input1);
+        CustomPLCInputSource var2 = new CustomPLCInputSource("var2",input2);
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> inputState = new ArrayList<PLCInput>() {
+            {
+                add(var1);
+                add(var2);
+            }
+        };
 
+        boolean result = engine.evaluateLogic(inputState);
+        assertEquals((input1 || input2), result);
+        System.out.printf("Operation Yielded: %b\n",result);
     }
 }

@@ -148,7 +148,7 @@ public class PLCEngine {
 
         if (tempLines.size() < MINIMUM_LINES_IN_VALID_PLC_SCRIPT)
             throw new Exception(String.format("Attempting to load PLC script that does not meet the minimum number of lines for a valid PLC script (minimum number of lines = %d)",MINIMUM_LINES_IN_VALID_PLC_SCRIPT));
-        if ( tempLines.peek().operation != Token.SET )
+        if ( !tempLines.contains(new PLCLine(Token.SET, null)) )
             throw new Exception(String.format("Attempted to load PLC script that does not end with \"SET\". All PLC scripts must end with the command \"SET\""));
 
 
@@ -273,7 +273,7 @@ public class PLCEngine {
             }else if(thisPLCLine.operation == Token.LDN){
                 varReference = thisPLCLine.variable;
                 var = variableReferenceBy(varReference,in);
-                logic = !var.evaluate();
+                try { logic = !var.evaluate(); } catch (Exception failureToEvaulateInput) { failureToEvaulateInput.printStackTrace(); throw new Exception(String.format("Failure to evaluate PLCInput variable (%s) during LDN operation.\nVariable Name: (%S)\n",thisPLCLine,var.variableName()));}
                 evaluationStack.push(logic);
             /***ANB operation */
             }else if(thisPLCLine.operation == Token.ANB){
@@ -354,8 +354,13 @@ public class PLCEngine {
             throw new Exception(String.format("Attempted to search reference between PLC refereence and corresponding variable using empty, provided list\nReference: \"%s\"\nList:%s",reference,variables));
         }
         PLCInput actualVariable = null;
+        int indexOfReferencedVariable = variables.indexOf(reference);
+        if (indexOfReferencedVariable == -1) {
+            // Variable referenced by proxy was not found amongst the variables list
+            throw new Exception(String.format("Searched provided input list for variable named (%s) but failed to find it.\nEnsure that .equals() was defined if overloading PLCInput class",reference.variableName()));
+        }
         try {
-            actualVariable = variables.get( variables.indexOf(reference) );
+            actualVariable = variables.get( indexOfReferencedVariable );
         } catch (java.lang.IndexOutOfBoundsException variableReferencedByPLCWasNotInTheList) {
             // In the case that it is not found
             System.out.println("Attempted to search reference between PLC reference and corresponding variable but the variable was not found");
@@ -470,6 +475,13 @@ public class PLCEngine {
         }
         public String toString() {
             return String.format("%s %s", operation, variable);
+        }
+        @Override
+        public boolean equals(Object o) {
+            if(!(o instanceof PLCLine))
+                return false;
+            PLCLine other = (PLCLine) o;
+            return (other.operation == this.operation && other.variable == this.variable);
         }
     }
 }
