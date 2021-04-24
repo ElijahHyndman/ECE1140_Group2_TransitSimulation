@@ -103,6 +103,7 @@ class Elijah_PLCEngineTest {
     /*
         Logic Tests
      */
+
     @Test
     @DisplayName("Using evaluateLogicGeneric does not throw error (manually providing input list)")
     public void evaluateLogicDoesntThrowError() throws Exception {
@@ -120,5 +121,150 @@ class Elijah_PLCEngineTest {
             }
         };
         System.out.println(engine.evaluateLogicGeneric(variables));
+    }
+
+    @Test
+    @DisplayName("Logic test: AND")
+    public void logicTestAND() throws Exception {
+        boolean input1 = true;
+        boolean input2 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("AND");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable",input1));
+                add(new PLCInput("variable2",input2));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("AND operation logic output: " + result);
+        assertEquals((input1 && input2) , result );
+    }
+
+    @Test
+    @DisplayName("Logic test: AND (long)")
+    public void logicTestAND2() throws Exception {
+        boolean input1 = true;
+        boolean input2 = true;
+        boolean input3 = true;
+        boolean input4 = true;
+        boolean input5 = true;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("LD variable3");
+                add("LD variable4");
+                add("LD variable5");
+                add("AND");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable", input1));
+                add(new PLCInput("variable2", input2));
+                add(new PLCInput("variable3", input3));
+                add(new PLCInput("variable4", input4));
+                add(new PLCInput("variable5", input5));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("AND operation logic output (long): " + result);
+        assertEquals((input1 && input2 && input3 && input4 && input5), result);
+    }
+
+    @Test
+    @DisplayName("Logic test: NOT")
+    public void logicTestNOT() throws Exception {
+        boolean input1 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("NOT");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable",input1));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("NOT operation logic output: " + result);
+        assertEquals( !(input1) , result );
+    }
+
+    @Test
+    @DisplayName("Logic test: OR")
+    public void logicTestOR() throws Exception {
+        boolean input1 = true;
+        boolean input2 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable",input1));
+                add(new PLCInput("variable2",input2));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("OR operation logic output: " + result);
+        assertEquals( (input1 || input2) , result );
+    }
+
+    @Test
+    @DisplayName("Logic test: OR (long)")
+    public void logicTestOR2() throws Exception {
+        boolean input1 = true;
+        boolean input2 = false;
+        boolean input3 = false;
+        boolean input4 = false;
+        boolean input5 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("LD variable3");
+                add("LD variable4");
+                add("LD variable5");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable", input1));
+                add(new PLCInput("variable2", input2));
+                add(new PLCInput("variable3", input3));
+                add(new PLCInput("variable4", input4));
+                add(new PLCInput("variable5", input5));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("AND operation logic output (long): " + result);
+        assertEquals((input1 || input2 || input3 || input4 || input5), result);
     }
 }
