@@ -18,17 +18,21 @@ public class PLCEngine {
     public enum Token {
         AND, OR, NOT, SET, LD, LDN, ANB, ORB
     }
-    //constants
+
+    /** Default Members
+     */
     private final int DEFAULT_OUTPUTS = 1;
     private final int MINIMUM_LINES_IN_VALID_PLC_SCRIPT = 2;
     /** Members
      * @member PLCLines     Queue<PLCLine> list of all of the lines from the PLC text file, kept in order, stored in queue for logic evaluating
-     * @member PLCList      List<String> list of all of the lines from PLC text file (stored as String instead of PLCLine objects)
+     * @member PLCList      List<String> PLCLines as String instead of PLCLine objects
      * @member filePath     String, path to the current file uploaded to this PLCEngine
      */
     private Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
+    private List<String> PLCList = new LinkedList<String>();
+    private List<PLCInput> PLCInputSources = new LinkedList<PLCInput>();
+
     private int numberOfInputs;
-    private List<String> PLCList;
     private String filePath = "";
     /***********************************************************************************************************************/
 
@@ -52,7 +56,7 @@ public class PLCEngine {
 
 
     /*
-        Token Creation
+        PLC Uploading
      */
 
 
@@ -185,7 +189,7 @@ public class PLCEngine {
      * @throws IOException
      * @throws URISyntaxException
      */
-    public List<String> stringTokensFromFile(String url) throws IOException, URISyntaxException {
+    private List<String> stringTokensFromFile(String url) throws IOException, URISyntaxException {
         byte[] bytes;
         String str;
         List<String> allData;
@@ -335,6 +339,108 @@ public class PLCEngine {
     }
 
 
+    /** generic form of evaluateLogic(inputStatuses), where local inputsource definitions are used instead of being provided.
+     * every single variable reference in locally stored PLC script must have a corresponding inputsource definition set using .definePLCInputSource(PLCInputObjectThatHasSameNameAsPLCVariableReference)
+     * uses evaluateLogic(inputs) to calculate values, passes locally defined input sources
+     *
+     * @return
+     */
+    public boolean evaluateLogic() throws Exception {
+        // All input sources must be defined
+        if (!allPLCInputSourcesDefined()) {
+            throw new Exception("Called generic evaluateLogic() before all variable references in PLCScript have been given a corresponding input source using PLCEngine.definePLCInputSource()\nEnsure that all input sources have been defined.");
+        }
+        return evaluateLogic(PLCInputSources);
+    }
+
+
+    /** generates an output of all truths with optimized generator
+     *
+     * @param inputNames
+     * @return
+     * @throws IOException
+     */
+    public boolean[][] generateLogicTable(List<String> inputNames) throws IOException {
+        numberOfInputs = inputNames.toArray().length;
+        int rows = (int) Math.pow(2,numberOfInputs);
+        boolean[][] temp = new boolean[rows][numberOfInputs];
+        boolean[][] outputTable = new boolean[rows][numberOfInputs+1];
+
+        for(int i=0;i < rows;i++){
+            for(int j=numberOfInputs-1;j >= 0;j--){
+                if((i/(int) Math.pow(2, j))%2 == 0){
+                    temp[i][numberOfInputs-j-1] = false;
+                }else if((i/(int) Math.pow(2, j))%2 == 1){
+                    temp[i][numberOfInputs-j-1] = true;
+                }else{
+                    throw new IOException("Generate Error: You messed up bad...");
+                }
+            }
+        }
+
+        for(int i=0;i < rows;i++){
+            for(int j=0;j < numberOfInputs;j++){
+                outputTable[i][j] = temp[i][j];
+            }
+            //outputTable[i][numberOfInputs] = evaluateLogic(inputNames, temp[i]);
+        }
+
+        return outputTable;
+    }
+
+    /** defines a possible input source (PLCInput) for PLCScripts to reference when uploaded to this PLCEngine.
+     *  the name of PLCInput variableName member must match the variable names referenced in PLCScript
+     *  i.e. if PLC references a variable such as:
+     *  "
+     *  LD aVariableName
+     *  "
+     *  then the PLC Engine must have an input source defined:
+     *  "
+     *  PLCInput actualVariable = new PLCInput("aVariableName", value=TheLogicalValueOfInputSource)
+     *  PLCEngine.definePLCInputSource( actualVariable  )
+     *  "
+     *  before we can use the parameterless .evaluateLogic() function on PLCengine
+     *
+     * @param inputSource, PLCInput a PLCInput or object that extends PLCInput; inputSource.variableName will match variable(s) written in PLCScript
+     * @before .evaluateLogic() does not know what $VARNAME in PLC script refers to
+     * @after if inputSource variable name is $VARNAME, then .evaluateLogic will use inputSource.evaluate() to generate boolean inputs
+     */
+    public void definePLCInputSource(PLCInput inputSource) {
+        PLCInputSources.add(inputSource);
+    }
+
+    public boolean allPLCInputSourcesDefined() throws Exception {
+        boolean thisReferenceHasSourceDefined = false;
+
+        // Look through PLCLines for all variables, make sure each one has a local definition
+        PLCLine line;
+        for (Object o : PLCLines.toArray()) {
+            // Had to .toArray to check all lines, but need to cast objects back to PLCLines :(
+            if (! (o instanceof PLCLine))
+                throw new Exception("Grave error when checking lines of PLC Script for local variable definitions. This exception should never be thrown.");
+            line = (PLCLine) o;
+            thisReferenceHasSourceDefined = PLCInputSources.contains(line.variable);
+
+            // A PLC line that has a null variable name is a logic command (AND, OR, ANB, etc etc) so no variable definition is needed
+            // Skip this line
+            if (line.variable == null)
+                continue;
+
+            if (!thisReferenceHasSourceDefined)
+                throw new Exception(String.format("No Input Source has been defined to PLCEngine using .definedPLCInputSource(PLCInputObject) for variable reference in PLC Script: %s\n",line.variable.variableName()));
+            // Debug
+            if (thisReferenceHasSourceDefined)
+                System.out.printf("Variable reference (%s) has a defined input source \n",line.variable);
+        }
+        return true;
+    }
+
+
+
+    /*
+        Helper Functions
+     */
+
     /** gets the actual PLCInput referenced by a proxy PLCInput from a given list of PLCInput variables.
      *
      * takes advantage of the .equals() operation within .indexOf() List operation. reference is a proxy that shares the same name as a desired input "Var".
@@ -371,41 +477,6 @@ public class PLCEngine {
             throw new java.lang.IndexOutOfBoundsException("Attempted to search reference between PLC reference and corresponding variable but the variable was not found");
         }
         return actualVariable;
-    }
-
-
-    /** generates an output of all truths with optimized generator
-     *
-     * @param inputNames
-     * @return
-     * @throws IOException
-     */
-    public boolean[][] generateLogicTable(List<String> inputNames) throws IOException {
-        numberOfInputs = inputNames.toArray().length;
-        int rows = (int) Math.pow(2,numberOfInputs);
-        boolean[][] temp = new boolean[rows][numberOfInputs];
-        boolean[][] outputTable = new boolean[rows][numberOfInputs+1];
-
-        for(int i=0;i < rows;i++){
-            for(int j=numberOfInputs-1;j >= 0;j--){
-                if((i/(int) Math.pow(2, j))%2 == 0){
-                    temp[i][numberOfInputs-j-1] = false;
-                }else if((i/(int) Math.pow(2, j))%2 == 1){
-                    temp[i][numberOfInputs-j-1] = true;
-                }else{
-                    throw new IOException("Generate Error: You messed up bad...");
-                }
-            }
-        }
-
-        for(int i=0;i < rows;i++){
-            for(int j=0;j < numberOfInputs;j++){
-                outputTable[i][j] = temp[i][j];
-            }
-            //outputTable[i][numberOfInputs] = evaluateLogic(inputNames, temp[i]);
-        }
-
-        return outputTable;
     }
 
 

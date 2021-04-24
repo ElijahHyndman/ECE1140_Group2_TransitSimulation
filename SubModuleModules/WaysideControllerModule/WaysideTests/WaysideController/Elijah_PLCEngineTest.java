@@ -129,7 +129,7 @@ class Elijah_PLCEngineTest {
             }
         };
         // variableReferenceBy will throw error if referenced variable was not found in the list of inputs
-        assertThrows( java.lang.IndexOutOfBoundsException.class , () -> {PLCEngine.variableReferenceBy(proxy,variables);} );
+        assertThrows( Exception.class , () -> {PLCEngine.variableReferenceBy(proxy,variables);} );
     }
 
     @Test
@@ -470,5 +470,77 @@ class Elijah_PLCEngineTest {
         boolean result = engine.evaluateLogic(inputState);
         assertEquals((input1 || input2), result);
         System.out.printf("Operation Yielded: %b\n",result);
+    }
+
+    /*
+        PLC input source defining Tests
+     */
+
+    @Test
+    @DisplayName("PLC Engine can remember input source definitions when defined explicitly")
+    public void sourceDefinition() throws Exception {
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        PLCInput var1 = new PLCInput("var1",true);
+        PLCInput var2 = new PLCInput("var2",true);
+        engine.definePLCInputSource(var1);
+        engine.definePLCInputSource(var2);
+
+        boolean engineIdentifiesThatPLCReferencesHaveDefinitions = engine.allPLCInputSourcesDefined();
+        System.out.printf("Engine has stored input source definitions: %b\n",engineIdentifiesThatPLCReferencesHaveDefinitions);
+        assertEquals(true, engineIdentifiesThatPLCReferencesHaveDefinitions);
+    }
+
+    @Test
+    @DisplayName("PLC engine throws descriptive error whenever a variable is referenced in PLC script without definition")
+    public void sourceDefinition2() throws Exception {
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                // We will purposefully reference var3 without defining var3 input source
+                add("LD var 3");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        PLCInput var1 = new PLCInput("var1",true);
+        PLCInput var2 = new PLCInput("var2",true);
+        engine.definePLCInputSource(var1);
+        engine.definePLCInputSource(var2);
+
+        // var3 reference does not have defined input source, engine should throw error
+        assertThrows(Exception.class, () -> engine.allPLCInputSourcesDefined());
+    }
+
+    @Test
+    @DisplayName("PLC engine successfully remembers source definitions when called to calculate")
+    public void sourceDefinitions3() throws Exception {
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>(){
+            {
+                add("LD var1");
+                add("LD var2");
+                add("OR");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        PLCInput var1 = new CustomPLCInputSource("var1",true);
+        PLCInput var2 = new CustomPLCInputSource("var2",true);
+        engine.definePLCInputSource(var1);
+        engine.definePLCInputSource(var2);
+        boolean output = engine.evaluateLogic();
+        System.out.printf("Output using remembered inputsources: %b\n",output);
     }
 }
