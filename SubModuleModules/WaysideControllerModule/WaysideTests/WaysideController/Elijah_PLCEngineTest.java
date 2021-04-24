@@ -9,6 +9,10 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * @author elijah
+ */
 class Elijah_PLCEngineTest {
     PLCEngine engine;
 
@@ -266,5 +270,79 @@ class Elijah_PLCEngineTest {
         boolean result = engine.evaluateLogicGeneric(variables);
         System.out.println("AND operation logic output (long): " + result);
         assertEquals((input1 || input2 || input3 || input4 || input5), result);
+    }
+
+    @Test
+    @DisplayName("Logic test: ANB (long)")
+    public void logicTestANB() throws Exception {
+        // ANB only ands the last two entries, while AND ands every single entry above
+        boolean input1 = true;
+        boolean input2 = true;
+        boolean input3 = true;
+        boolean input4 = true;
+        boolean input5 = true;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("LD variable3");
+                add("LD variable4");
+                add("AND");  // Have to or them to clear the stack, can't leave them un-operated
+                add("LD variable5");
+                add("ANB");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable", input1));
+                add(new PLCInput("variable2", input2));
+                add(new PLCInput("variable3", input3));
+                add(new PLCInput("variable4", input4));
+                add(new PLCInput("variable5", input5));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("ANB operation logic output (long): " + result);
+        assertEquals(input5, result);
+    }
+
+    @Test
+    @DisplayName("Logic test: ANB (long)")
+    public void logicTestORB() throws Exception {
+        // ANB only ands the last two entries, while AND ands every single entry above
+        boolean input1 = true;
+        boolean input2 = true;
+        boolean input3 = true;
+        boolean input4 = false;
+        boolean input5 = false;
+        engine = new PLCEngine();
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD variable");
+                add("LD variable2");
+                add("LD variable3");
+                add("LD variable4");
+                add("AND");  // Have to or them to clear the stack, can't leave them un-operated
+                add("LD variable5");
+                add("ORB");
+                add("SET");
+            }
+        };
+        engine.uploadPLC(PLCScript);
+        ArrayList<PLCInput> variables = new ArrayList<PLCInput>() {
+            {
+                add(new PLCInput("variable", input1));
+                add(new PLCInput("variable2", input2));
+                add(new PLCInput("variable3", input3));
+                add(new PLCInput("variable4", input4));
+                add(new PLCInput("variable5", input5));
+            }
+        };
+        boolean result = engine.evaluateLogicGeneric(variables);
+        System.out.println("ANB operation logic output (long): " + result);
+        assertEquals((input1 && input2 && input3 && input4) || input5, result);
     }
 }
