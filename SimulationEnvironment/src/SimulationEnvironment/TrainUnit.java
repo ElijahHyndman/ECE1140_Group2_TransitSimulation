@@ -81,6 +81,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private final int DEFAULT_NUM_CARS = 3;
     private final int DEFAULT_NUM_TRAIN_CREW = 10;
 
+    private static final String STATION_KEY = "Station";
+
     /**
      * Class Members
      * @member control TrainControl, controller sub-module that shall be attached to this TrainUnit
@@ -89,21 +91,31 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      *          @further a Train Unit might be set on a track block, train yard, station, or track switch
      * @member lastOccupied TrackElement, the TrackElement which the train last occupied, in case this is useful to know
      */
+    /*
+        Train Info
+     */
     private String name = "NoName";
     private int trainID;
-
-    // Route length will be integer of meters
-
+    /*
+        Train Components
+     */
     private TrainControl control;
     private Train hull;
+    /*
+        Train Location
+     */
     private TrackElement occupies;
     private TrackElement lastOccupied;
     private Track trackLayout;
-
     private double blockLength;
-
+    /*
+        Train Control
+     */
     volatile private double COMMANDED_SPEED=-1.0;
     volatile private int COMMANDED_AUTHORITY=-1;
+    // Station controls
+    private double timeAtStation = 0;
+    private boolean oncePerStationFlag = false;
 
     /** Threading Members
      */
@@ -191,8 +203,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         trainEventLogger.info(String.format("Train Unit (%S) Constructed", name));
     }
 
+
     /*
-            User defined Methods
+            Process methods
      */
 
     private void whileTraversingBlock(TrackElement thisBlock) {
@@ -215,7 +228,48 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
          * @before nothing
          * @after train has transitioned from one block to another, whatever in this function has also executed
          */
+        // Once per entering station block, set the oncePerStation flag
+        if (!(occupies == null)) {
+            if(STATION_KEY.equals(occupies.getType())) {
+                oncePerStationFlag = true;
+            }
+        }
     }
+
+
+
+    /** function that is called everytime a physics update occurs and the train is stopped and on a station block
+     *
+     */
+    private void whileAtStation(double deltaTime) {
+        // Accumulate time that has passed at this station
+        timeAtStation += deltaTime;
+        if (oncePerStationFlag) {
+            int peopleDeparting = hull.disembark();
+        }
+    }
+
+    /** function that is called everytime a physics update occurs and the train velocity is zero.
+     *
+     * expected frequency of calls = 10 times per second (while train is stopped)
+     */
+    private void whileStopped(double deltaTime) {
+
+        // If on a valid block
+        if (!(occupies ==null)) {
+            String blockInfrastructure = "failure";
+            try {
+                blockInfrastructure = occupies.getType();
+            } catch (Exception e) {
+
+            }
+            if(blockInfrastructure == STATION_KEY) {
+                whileAtStation(deltaTime);
+            }
+        }
+    }
+
+
 
     /*
             Methods for operation
@@ -289,9 +343,17 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
         /** updates physics of the TrainModel and TrainController, called on a regular basis externally by the World's
          * physics WorldClock.
+         *
+         * happens at regular intervals and ONLY when the world clock is running (physics are happening.)
+         * expected frequency: about 10 times per real second
          */
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
+
+        // Update Controller's physics
+        if (!controllerDisconnected)
+            control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
+
 
         trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
                 name,this.hashCode(),
@@ -300,9 +362,10 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 currentTimeString)
         );
 
-        // Update Controller's physics
-        if (!controllerDisconnected)
-            control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
+        if (hull.getActualSpeed() == 0 ) {
+            whileStopped(deltaTime_inSeconds);
+        }
+
         updateFlag = true;
     }
 
