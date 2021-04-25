@@ -473,7 +473,7 @@ add output w/plc within a wayside controller
     public static void main(String[] args) throws IOException, URISyntaxException {
         String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
         Track instance = new Track();
-        instance.importTrack(filepath);
+        //instance.importTrack(filepath);
 
         //WaysideSystem testSystem = new WaysideSystem(instance.getGreenLine(), "Green line");
         WaysideSystem testSystem = null;
