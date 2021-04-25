@@ -2,7 +2,6 @@ package WaysideGUI;
 import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
-import WaysideController.GPIO;
 
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
      */
 
     // Data Members to populate GUI with information about
-    private WaysideSystem system;
+    private WaysideSystem system = new WaysideSystem();
     private Vector<WaysideController> controllers = new Vector<WaysideController>();
     private static WaysideController thisController = new WaysideController("Please Select a Controller");
 
@@ -58,8 +57,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(Vector<WaysideController> defaultControllers) throws IOException {
-        this.controllers = defaultControllers;
+    public WaysideUIJFrameWindow(Vector<WaysideController> existingListOfControllers) throws IOException {
+        this.controllers = existingListOfControllers;
         initComponents();
         updateControllerSelectText();
     }
@@ -69,6 +68,39 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
+    }
+
+    /*
+            Inheritance functions
+     */
+    @Override
+    public void latch(Object myObject) {
+        try {
+            this.system = (WaysideSystem) myObject;
+            this.controllers = system.getControllersVector();
+        }catch (Exception e) {
+            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
+        }
+    }
+
+    @Override
+    public void update() {
+        try {
+            updateGUI(this.controllers);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+    // End of variables declaration
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
     }
 
 
@@ -88,21 +120,28 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * @param controllerList: a vector of up-to-date waysideControllerObjects
          */
+        // Store Wayside Controllers locally
+        controllers = controllerList;
         try {
 
-            // Store Wayside Controllers locally
-            controllers = controllerList;
+            try {
+                // Stash the state of Controller-Tree expansion so it can be restored, stash scroll height view
+                String treeState = storeExpansionState(ControllerListTree);
+                JViewport scrollLevel = TreeScrollPane.getViewport();
 
-            // Stash the state of Controller-Tree expansion so it can be restored, stash scroll height view
-            String treeState = storeExpansionState(ControllerListTree);
-            JViewport scrollLevel = TreeScrollPane.getViewport();
+                // Refresh nodes on Controller-Tree
+                repopulateControllerTree();
 
-            // Refresh nodes on Controller-Tree
-            repopulateControllerTree();
+                // Restore the tree expansion state
+                restoreExpansionState(ControllerListTree, treeState);
+                try {
+                    TreeScrollPane.setViewport(scrollLevel);
+                } catch (Exception e) {
 
-            // Restore the tree expansion state
-            restoreExpansionState(ControllerListTree, treeState);
-            TreeScrollPane.setViewport(scrollLevel);
+                }
+            } catch (Exception e) {
+                // ignore tree issues if they occur
+            }
 
             return true;
         } catch (Exception e) {
@@ -120,6 +159,9 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * source: https://www.algosome.com/articles/save-jtree-expand-state.html
          */
+        if(tree == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
 
         // Generate string of indexes that are expanded on tree
@@ -143,6 +185,12 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          *
          * source: https://www.algosome.com/articles/save-jtree-expand-state.html
          */
+        if(tree == null) {
+            return;
+        }
+        if(s.length() == 0) {
+            return;
+        }
         String[] indexes = s.split(",");
 
         // expand the row indexes named in string s
@@ -251,7 +299,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         updateTestingTables();
 
         // Generate and set header for Controller Advanced Menu
-        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerName());
+        String ControllerMenuHeaderText = "Controller Menu - %s".formatted(thisController.getControllerAlias());
         ControllerMenuHeaderText += " - configured as %s".formatted((hardwareView) ? "Hardware" : "Software" );
         ControllerMenuHeader.setText(ControllerMenuHeaderText);
     }
@@ -264,7 +312,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
          * @after selection text on main menu refers to name of "thisController" member
          */
         String Label = "Current Selected Controller: ";
-        String cont = thisController.getControllerName();
+        String cont = thisController.getControllerAlias();
 
         // Change of implementation changes header of selection
         SelectedControllerText.setText(Label + cont);
@@ -283,63 +331,67 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     }
 
     public static DefaultTableModel buildInputTableModel() {
-        /**
-         * creates table model for the input table.
-         * @before the table in the Advanced menu does not reflect the current wayside controller status
-         */
-
-        Vector<String> columnIdentifiers = new Vector<String>();
-        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
-
-        columnIdentifiers.add("Input Names");
-        columnIdentifiers.add("Input Values");
-
-        // Fill Data Vector
-        List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
-
-        //List<String> InputNames = thisController.getAllNames();
-        //List<Object> InputValues = thisController.getAllData();
-
-        for (int i=0; i<InputNames.size(); i++) {
-            Vector<Object> newrow = new Vector<Object>();
-            //newrow.add("value name #%d".formatted(i));
-            //newrow.add("value value #%d".formatted(i));
-            newrow.add(InputNames.get(i));
-            newrow.add(InputValues[i]);//InputValues.get(i).toString());
-            dataVector.add(newrow);
-        }
-
-        return new DefaultTableModel(dataVector, columnIdentifiers);
+//        /**
+//         * creates table model for the input table.
+//         * @before the table in the Advanced menu does not reflect the current wayside controller status
+//         */
+//
+//        Vector<String> columnIdentifiers = new Vector<String>();
+//        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
+//
+//        columnIdentifiers.add("Input Names");
+//        columnIdentifiers.add("Input Values");
+//
+//        // Fill Data Vector
+//        List<String> InputNames = thisController.getInputNames();
+//        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
+//
+//        //List<String> InputNames = thisController.getAllNames();
+//        //List<Object> InputValues = thisController.getAllData();
+//
+//        for (int i=0; i<InputNames.size(); i++) {
+//            Vector<Object> newrow = new Vector<Object>();
+//            //newrow.add("value name #%d".formatted(i));
+//            //newrow.add("value value #%d".formatted(i));
+//            newrow.add(InputNames.get(i));
+//            newrow.add(InputValues[i]);//InputValues.get(i).toString());
+//            dataVector.add(newrow);
+//        }
+//
+//        return new DefaultTableModel(dataVector, columnIdentifiers);
+        // TODO
+        return new DefaultTableModel();
     }
 
     public static DefaultTableModel buildOutputTableModel() {
-        /**
-         * creates table model for the output table.
-         */
-
-        Vector<String> columnIdentifiers = new Vector<String>();
-        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
-
-        columnIdentifiers.add("Output Names");
-        columnIdentifiers.add("Output Values");
-
-        // Fill Data Vector
-        GPIO gpio = thisController.getGPIO();
-        List<String> InputNames = gpio.getOutputNames();
-        Boolean[] InputValues = gpio.getOutputValues();
-
-        for (int i=0; i<InputValues.length; i++) {
-            Vector<Object> newrow = new Vector<Object>();
-            //newrow.add("value name #%d".formatted(i));
-            //newrow.add("value value #%d".formatted(i));
-            newrow.add(InputNames.get(i));
-            newrow.add(InputValues[i]);
-            dataVector.add(newrow);
-        }
-
-
-        return new DefaultTableModel(dataVector, columnIdentifiers);
+//        /**
+//         * creates table model for the output table.
+//         */
+//
+//        Vector<String> columnIdentifiers = new Vector<String>();
+//        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
+//
+//        columnIdentifiers.add("Output Names");
+//        columnIdentifiers.add("Output Values");
+//
+//        // Fill Data Vector
+//        GPIO gpio = thisController.getGPIO();
+//        List<String> InputNames = gpio.getOutputNames();
+//        Boolean[] InputValues = gpio.getOutputValues();
+//
+//        for (int i=0; i<InputValues.length; i++) {
+//            Vector<Object> newrow = new Vector<Object>();
+//            //newrow.add("value name #%d".formatted(i));
+//            //newrow.add("value value #%d".formatted(i));
+//            newrow.add(InputNames.get(i));
+//            newrow.add(InputValues[i]);
+//            dataVector.add(newrow);
+//        }
+//
+//
+//        return new DefaultTableModel(dataVector, columnIdentifiers);
+        // TODO
+        return new DefaultTableModel();
     }
     public void handleHardwareTransition() {
         /**
@@ -1008,7 +1060,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
             // is wayside controller
             thisController =(WaysideController) selectedNodeObject;
             controllerSelected =true;
-            System.out.println( " (Selected controller is now: "+thisController.getControllerName()+")" );
+            System.out.println( " (Selected controller is now: "+thisController.getControllerAlias()+")" );
             updateControllerSelection();
             return;
         } else {
@@ -1116,7 +1168,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             // Update controller inputs with string
             try {
-                thisController.updateTestInputs(newInputValue, row);
+                //TODO
+                //thisController.updateTestInputs(newInputValue, row);
                 updateControllerSelection();
 
             } catch (Exception e) {
@@ -1208,24 +1261,4 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-
-    @Override
-    public void latch(Object myObject) {
-        try {
-            this.system = (WaysideSystem) myObject;
-        }catch (Exception e) {
-            System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
-        }
-    }
-
-    @Override
-    public void update() {
-        updateGUI(this.controllers);
-    }
-
-    @Override
-    public Object getJFrame() {
-        return this;
-    }
-    // End of variables declaration
 }
