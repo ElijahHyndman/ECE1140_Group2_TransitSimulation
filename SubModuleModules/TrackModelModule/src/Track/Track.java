@@ -381,10 +381,12 @@ import java.util.Scanner;
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             TrackElement ret = null;
-            if(current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
-                ret = getNextGreen(current,previous);
-            else if(current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
-                ret = getNextRed(current,previous);
+            if(current != null) {
+                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
+                    ret = getNextGreen(current, previous);
+                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
+                    ret = getNextRed(current, previous);
+            }
 
             /*
             int cur = current.getBlockNum();

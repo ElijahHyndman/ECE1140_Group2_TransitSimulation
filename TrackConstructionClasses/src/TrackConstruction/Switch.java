@@ -112,7 +112,9 @@ public class Switch extends TrackElement{
     public void setOccupied(boolean occupied) {this.occupied = occupied;}
 
     /*get Siwtch State()*/
-    public String getSwitchState() {return this.switchState;}
+    public String getSwitchState() {
+        int ind = (INDEX) ? 1 : 0;
+        return this.switches[ind];}
 
     /*get Occupied*/
     @Override
