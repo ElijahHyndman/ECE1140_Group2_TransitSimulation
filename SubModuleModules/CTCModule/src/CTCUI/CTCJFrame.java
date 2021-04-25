@@ -1196,5 +1196,25 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextPane jTextPane2;
+
+    @Override
+    public void latch(Object myObject) {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+
+    }
     // End of variables declaration
 }

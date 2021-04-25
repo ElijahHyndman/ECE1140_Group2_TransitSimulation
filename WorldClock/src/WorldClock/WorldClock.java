@@ -4,8 +4,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.Date;
 import java.util.Vector;
 
-import SimulationEnvironment.*;
-
 public class WorldClock extends Thread {
     /**
      * Class for handling synchronization of Simulation-World time events (physics updates, etc).
