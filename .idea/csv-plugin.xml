@@ -73,6 +73,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SimulationEnvironment/SETests/TrainUnitTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SimulationEnvironment/src/SimulationEnvironment/SimulationEnvironment.java">
           <value>
             <Attribute>
@@ -151,6 +158,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/TrainControllerModule/src/implementation/NonVitalComponents.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/implementation/TrainControl.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -389,6 +403,13 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteWayside/RemoteWaysideService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/WorldClock/WorldClockTesting/WorldClockTest.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

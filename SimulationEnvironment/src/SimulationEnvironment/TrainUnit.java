@@ -108,11 +108,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     private TrackElement lastOccupied;
     private Track trackLayout;
     private double blockLength;
+    private String currentTime="XX:XX:XX";
+    private boolean interactingWithWorld = false;
     /*
         Train Control
      */
     volatile private double COMMANDED_SPEED=-1.0;
     volatile private int COMMANDED_AUTHORITY=-1;
+    volatile private double SPEED_LIMIT=-1.0;
     // Station controls
     private double timeAtStation = 0;
     private boolean oncePerStationFlag = false;
@@ -204,9 +207,11 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     }
 
 
+
     /*
             Process methods
      */
+
 
 
     /** put any code you want to execute while traversing a TrackElement in this function.
@@ -227,7 +232,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
   * expectedCallFrequency: only once when we leave a block and enter a new one
   *
   * @param NewBlock TrackElement, the block we are entering, if you need to use it in this function
-  * @param OldBlock TrackElement, the block we are leaving, if you need to use it in this function
+  * @param oldBlock TrackElement, the block we are leaving, if you need to use it in this function
   * @before nothing
   * @after train has transitioned from one block to another, whatever in this function has also executed
   */
@@ -239,6 +244,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 oncePerStationFlag = true;
                 // Convert occupies to Station type
                 occupies = (Station) occupies;
+                trainEventLogger.severe(String.format("%s has entered station block (%s) at time (%s)",this.toString(),occupies.getInfrastructure(),currentTime));
             }
         }
     }
@@ -258,6 +264,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             ((Station) occupies).exitTrain(peopleDeparting);
             int peopleBoarding = ((Station) occupies).boardTrain();
             hull.setPassengersBoarding(peopleBoarding);
+            trainEventLogger.severe(String.format("Passengers have departed and boarded %s, Departed=%d Boarded=%d Population=%d at time (%s)",this,peopleDeparting,peopleBoarding,hull.getPassengerCount(),currentTime));
             oncePerStationFlag = false;
         }
     }
@@ -286,13 +293,16 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
 
     /*
-            Methods for operation
+            Placement on Track Methods
      */
+
 
 
     /** places this Train Unit onto a specific TrackElement.
      *  handles the block occupation signal for the block which it is entering.
      *  does NOT handle the block occuption signal for the block which we were previously on.
+     *
+     *  Used for movement along the track system (block to block movement is considered periodically placing on a new block)
      *
      * @param location TrackElement, the track element which the train shall inhabit.
      *          @more location shall be a TrackBlock, Train Yard, Station, or Switch
@@ -331,6 +341,12 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
 
 
+    /*
+            Movement Methods
+     */
+
+
+
     /** handles transition from current TrackElement to next TrackElement (finds next track and places us on it.)
      *
      * @before Train may or may not be on a TrackElement
@@ -338,7 +354,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      * @after Train has remembered and stored the TrackElement which it was just on
      * @after the TrackElement Train used to be on's occupation has been unset
      */
-    public boolean transition(TrackElement location) {
+    public boolean executeBlockTransition(TrackElement location) {
         try {
             // Remember last TrackElement occupation
             lastOccupied = occupies;
@@ -365,9 +381,18 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      *
      * happens at regular intervals and ONLY when the world clock is running (physics are happening.)
      * expected frequency: about 10 times per real second
+     *
+     * update flag allows user to monitor whenever physics updates happen. If the user sets flag to false, then flag=true indicates update has happened
      */
     @Override
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+        // Do nothing until train is interacting with outside world (i.e. run() is running)
+        if (!interactingWithWorld)
+            return;
+
+        // Update time string HH:mm:ss
+        this.currentTime = currentTimeString;
+
         // Update Hull's physics
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
 
@@ -375,7 +400,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         if (!controllerDisconnected)
             control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
 
-
+        // Update physics to logger (very frequent)
         trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
                 name,this.hashCode(),
                 deltaTime_inSeconds,
@@ -383,11 +408,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 currentTimeString)
         );
 
+        // Check if stopped
         if (hull.getActualSpeed() == 0 ) {
             whileStopped(deltaTime_inSeconds);
         }
 
         updateFlag = true;
+
+        System.out.printf("vel=%f dist=%f\n",hull.getActualSpeed(),hull.getBlockDistance());
     }
 
 
@@ -407,7 +435,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public void run() {
         //System.out.println("Train has started running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has started running",name,this.hashCode()));
+        // Run the world-interaction for train
         running=true;
+        interactingWithWorld = true;
         while(running) {
             // Speed and Authority are checked, regardless of being on a track
             // Speed and authority handed to TrainModel
@@ -428,6 +458,51 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         //System.out.println("Train has stopped running");
         trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running",name,this.hashCode()));
     }
+
+
+    /** monitors the distance traveled along a block.
+     *  When TrainUnit's distance exceeds the Block's length, handles the transition to the next block.
+     *  Called during run() processes.
+     *
+     * @before TrainUnit may have exceeded the length of the block since last PhysicsUpdate
+     * @after If TrainUnit has not exceeded the length of the block, do nothing
+     * @after If TrainUnit has exceeded the length of the block, get the next block connected to TrackElement and
+     *  place train on it, starting at the appropriate distance. If next block does not exist, derail train and fail
+     * @after Sets blockExceededFlag to true, if user wants to track when the train exceeds its current block
+     */
+    public void handleBlockTransitions() {
+        double currentDistanceOnBlock = hull.getBlockDistance();
+        // TODO System.out.printf("%f > %f vel=%f\n",currentDistanceOnBlock,blockLength,hull.getActualSpeed());
+        // If we have exceeded length of current block
+        if (currentDistanceOnBlock > blockLength) {
+            System.out.println("Block exceeded flag set");
+            blockExceededFlag = true;
+            // Find how far we are onto the next block (since physicsUpdates are spontaneous)
+            double overshoot = currentDistanceOnBlock - blockLength;
+            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+
+            TrackElement nextBlock =null;
+            // Next track block has to be retrieved from Track object
+            if(trackLayout != null) {
+                // Uses current block and last occupied block to determine appropriate next block
+                if(simpleTrackTest) {
+                    //nextBlock = trackLayout.getNextSimple(occupies, lastOccupied);
+                } else {
+                    nextBlock = trackLayout.getNext(occupies,lastOccupied);
+                }
+                // Place Train onto next block
+                executeBlockTransition(nextBlock);
+                // Account for possible overshoot
+                hull.setBlockDistance(overshoot);
+                trainEventLogger.info(String.format("Train (%s : %s) has transitioned to block (%s%c%d : %s)",
+                        name,this.hashCode(),
+                        occupies.getLine(),occupies.getSection(),occupies.getBlockNum(),occupies.hashCode()));
+                trainEventLogger.finer(String.format("TrainUnit (%s : %s) has been fast fowarded on block (%s) to account for overshoot of %.2f meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+            }
+
+        }
+    }
+
 
     public void halt() {
         /** halts a train from running, exits the thread.
@@ -452,6 +527,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         return 0.0;
     }
 
+
     public void retrieveSpeedAuthority() {
         /** Quick Method for gathering Speed,Authority from TrackElement, displays in one log
          */
@@ -462,6 +538,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
         trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%d,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
     }
+
 
     private void retrieveAuthorityFromTrack() {
         /** gets the authority from the track the TrainUnit occupies and passes it to TrainModel and only the TrainModel.
@@ -479,7 +556,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Pull Commanded Authority from Track
         COMMANDED_AUTHORITY = occupies.getAuthority();
         // Give Authority to Hull
-        hull.setAuthority((int) COMMANDED_AUTHORITY);
+        hull.setAuthority(COMMANDED_AUTHORITY);
         // Control will pull these values during run() function
     }
 
@@ -498,53 +575,14 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         }
         // Pull Commanded Speed from Track
         COMMANDED_SPEED = occupies.getCommandedSpeed();
+        // Pull speed limit from Track
+        SPEED_LIMIT=occupies.getSpeedLimit();
         // Give Speed to Hull
         hull.setCommandedSpeed(COMMANDED_SPEED);
-        // Control will pull these values during run() function
+        hull.setSpeedLimit(SPEED_LIMIT);
+        // Control will pull these values from Train Model during updatePhysics() function
     }
 
-    public void handleBlockTransitions() {
-        /** monitors the distance traveled along a block.
-         *  When TrainUnit's distance exceeds the Block's length, handles the transition to the next block.
-         *  Called during run() processes.
-         *
-         * @before TrainUnit may have exceeded the length of the block since last PhysicsUpdate
-         * @after If TrainUnit has not exceeded the length of the block, do nothing
-         * @after If TrainUnit has exceeded the length of the block, get the next block connected to TrackElement and
-         *  place train on it, starting at the appropriate distance. If next block does not exist, derail train and fail
-         * @after Sets blockExceededFlag to true, if user wants to track when the train exceeds its current block
-         */
-
-        double currentDistanceOnBlock = hull.getBlockDistance();
-
-        // If we have exceeded length of current block
-        if (currentDistanceOnBlock > blockLength) {
-            blockExceededFlag = true;
-            // Find how far we are onto the next block (since physicsUpdates are spontaneous)
-            double overshoot = currentDistanceOnBlock - blockLength;
-            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
-
-            TrackElement nextBlock =null;
-            // Next track block has to be retrieved from Track object
-            if(trackLayout != null) {
-                // Uses current block and last occupied block to determine appropriate next block
-                if(simpleTrackTest) {
-                    //nextBlock = trackLayout.getNextSimple(occupies, lastOccupied);
-                } else {
-                    nextBlock = trackLayout.getNext(occupies,lastOccupied);
-                }
-                // Place Train onto next block
-                transition(nextBlock);
-                // Account for possible overshoot
-                hull.setBlockDistance(overshoot);
-                trainEventLogger.info(String.format("Train (%s : %s) has transitioned to block (%s%c%d : %s)",
-                        name,this.hashCode(),
-                        occupies.getLine(),occupies.getSection(),occupies.getBlockNum(),occupies.hashCode()));
-                trainEventLogger.finer(String.format("TrainUnit (%s : %s) has been fast fowarded on block (%s) to account for overshoot of %.2f meters",name,this.hashCode(),occupies.hashCode(),overshoot));
-            }
-
-        }
-    }
 
     public void configureForSimpleBlockLayout() {
         simpleTrackTest = true;

@@ -135,6 +135,7 @@ public class Train {
         this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
     public void setPower(double pow) {
+        System.out.printf("Model: %f engineFail=%b\n",pow,engineFail);
         if(this.engineFail != true){
             this.power = pow;
         }else{
@@ -183,14 +184,15 @@ public class Train {
             setSpeed(newV);
         }
         else{
-
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
-            F = F - (this.blockGrade/100) * this.mass * 9.81;
+            //F = F - (this.blockGrade/100) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
             setAccel(newA);
+            System.out.printf("Model update: speed=%f pow=%f newV=%f blockGrade=%f ebrake=%b pBreak=%b\n",actualSpeed,power,newV,blockGrade,emergencyBrake,passengerBrake);
         }
+
     }
     public double getTotalDistance(){
         return totalDistance;
