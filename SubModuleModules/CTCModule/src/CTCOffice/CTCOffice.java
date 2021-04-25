@@ -1567,7 +1567,4 @@ public class CTCOffice implements PhysicsUpdateListener
         return SEobj;
     }
 
-
-
-
 }
