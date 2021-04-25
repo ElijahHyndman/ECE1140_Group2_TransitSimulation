@@ -693,7 +693,7 @@ class TrainUnitTest {
         trn = new TrainUnit("Overtraveling TrainUnit");
         trn.blockExceededFlag = false;
         // World Physics set-up
-        WorldClock physicsClk = new WorldClock(1.0,10.0);
+        WorldClock physicsClk = new WorldClock(1.0,1.0);
         physicsClk.addListener(trn);
         // Block Set-up
         TrackBlock shortBlock = new TrackBlock();

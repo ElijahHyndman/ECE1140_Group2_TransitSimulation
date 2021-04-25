@@ -414,8 +414,6 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         }
 
         updateFlag = true;
-
-        System.out.printf("vel=%f dist=%f\n",hull.getActualSpeed(),hull.getBlockDistance());
     }
 
 
@@ -475,11 +473,10 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // TODO System.out.printf("%f > %f vel=%f\n",currentDistanceOnBlock,blockLength,hull.getActualSpeed());
         // If we have exceeded length of current block
         if (currentDistanceOnBlock > blockLength) {
-            System.out.println("Block exceeded flag set");
             blockExceededFlag = true;
             // Find how far we are onto the next block (since physicsUpdates are spontaneous)
             double overshoot = currentDistanceOnBlock - blockLength;
-            trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
+            //trainEventLogger.fine(String.format("TrainUnit (%s : %s) has exceeded TrackElement (%s) by (%f) meters",name,this.hashCode(),occupies.hashCode(),overshoot));
 
             TrackElement nextBlock =null;
             // Next track block has to be retrieved from Track object
@@ -579,7 +576,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         SPEED_LIMIT=occupies.getSpeedLimit();
         // Give Speed to Hull
         hull.setCommandedSpeed(COMMANDED_SPEED);
-        hull.setSpeedLimit(SPEED_LIMIT);
+        //hull.setSpeedLimit(SPEED_LIMIT);
         // Control will pull these values from Train Model during updatePhysics() function
     }
 
