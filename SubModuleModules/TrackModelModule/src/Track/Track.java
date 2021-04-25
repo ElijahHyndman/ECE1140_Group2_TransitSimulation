@@ -2,12 +2,13 @@ package Track;
 
 
 import TrackConstruction.*;
+import WorldClock.PhysicsUpdateListener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-    public class Track {
+    public class Track implements PhysicsUpdateListener {
 
         //Members in Class
         ArrayList<TrackElement> blockArrayList;
@@ -22,6 +23,7 @@ import java.util.Scanner;
         int SIZE_LINE_A=0;
         int SIZE_LINE_B=0;
         double environmentalTemperature;
+        double totalTime;
         String DISPATCHLINE = "Red";
 
         //Creating Graphs for RED LINE and GREEN LINE
@@ -381,10 +383,12 @@ import java.util.Scanner;
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             TrackElement ret = null;
-            if(current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
-                ret = getNextGreen(current,previous);
-            else if(current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
-                ret = getNextRed(current,previous);
+            if(current != null) {
+                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
+                    ret = getNextGreen(current, previous);
+                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
+                    ret = getNextRed(current, previous);
+            }
 
             /*
             int cur = current.getBlockNum();
@@ -494,6 +498,14 @@ import java.util.Scanner;
 
             return ticketTotal;
         }
+
+        public void increaseTickets(){
+            //updating all ticketSales
+            for(int i=0; i<stationsArrayList.size();i++)
+                stationsArrayList.get(i).setTicketSales();
+
+        }
+
 
         /*Set Environmental Temperature*/
         public void setEnvironmentalTemperature(double a){
@@ -609,8 +621,12 @@ import java.util.Scanner;
         }
 
 
-
-
+        @Override
+        public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+            totalTime += deltaTime_inSeconds;
+            if((int)totalTime%15 == 0)
+                updateTickets();
+        }
     }
 
 

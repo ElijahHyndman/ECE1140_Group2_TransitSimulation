@@ -1046,6 +1046,17 @@ class TrackTest {
 
     }
 
+    @org.junit.jupiter.api.Test
+    void testDisplaySwitch() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.getSwitches().get(2).setSwitchState(true);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+        instance.getSwitches().get(2).setSwitchState(false);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+    }
 
     @org.junit.jupiter.api.Test
     void blocksInSection() {
