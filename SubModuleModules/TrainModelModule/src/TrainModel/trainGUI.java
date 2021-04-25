@@ -113,7 +113,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         testFailure.setValueAt(trains.get(trainIndex).engineFail, 2, 1);
         
         try {
-            BufferedImage bufImg=ImageIO.read(new File("./src/images/image.png"));
+            BufferedImage bufImg=ImageIO.read(new File("image.png"));
             imageLabel.setIcon(new ImageIcon(bufImg));
             //jlabel.repaint();
             //works even without repaint
