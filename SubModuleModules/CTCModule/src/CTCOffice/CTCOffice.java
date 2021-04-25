@@ -6,6 +6,7 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
+import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice //implements PhysicsUpdateListener
 {
@@ -806,6 +807,26 @@ public class CTCOffice //implements PhysicsUpdateListener
         return rl;
     }
 
+    /*GIH6 adding back to yard*/
+    public int[] backToYard(int bn){
+        int[] newGreenLine = greenPath;
+        int flag=0;
+        for(int i = 0; i < 176; i++){
+            if(newGreenLine[i] != bn) {
+                newGreenLine[i] = 0;
+            }
+            if(newGreenLine[i] == bn)
+                break;
+
+        }
+
+        int[] RouteAr = new int[150];
+        for(int i=0; i < 176; i++)
+            if(newGreenLine[i]!=0)
+                RouteAr[newGreenLine[i]-1] = 1;
+        return RouteAr;
+    }
+
     public int calcAutoRouteLength(int bn, String lc, int tnum)
     {
         int rl;
@@ -936,7 +957,7 @@ public class CTCOffice //implements PhysicsUpdateListener
     {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-        if (bn==65 && lc.equals("Green")){ //Glenbury
+        if (bn==65 && lc.equals("Green")){ // Yard - Glenbury
             if (positions[tnum-1]>=65 && positions[tnum-1]<114)
             {
                 for(int i=104; i<114; i++)
@@ -954,7 +975,7 @@ public class CTCOffice //implements PhysicsUpdateListener
                 positions[tnum-1] = 65;
             }
         }
-        if(bn==73 && lc.equals("Green")){ //Dormont
+        if(bn==73 && lc.equals("Green")){ //GLEN - Dormont
             if (positions[tnum-1]>=73 && positions[tnum-1]<105)
             {
                 for(int i=95; i<105; i++)
@@ -1592,8 +1613,8 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = 0;
-        //tix = Track.updateTix();
+        int tix;
+        tix = Track.updateTix();
         return tix;
     }
 
@@ -1622,7 +1643,13 @@ public class CTCOffice //implements PhysicsUpdateListener
         return SEobj;
     }
 
-
-
+    /*getting throuput */
+    public int getThroughput(){
+        return this.thruP;
+    }
+    /*setting throughput*/
+    public void setThroughput(int test){
+        thruP = test;
+    }
 
 }
