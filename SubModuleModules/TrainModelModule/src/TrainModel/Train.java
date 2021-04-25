@@ -213,6 +213,9 @@ public class Train {
     public void setSpeedLimit(double kmPerHour) { //takes in km/h
         this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
+    public double getSpeedLimit(){
+        return this.speedLimit;
+    }
 
     public void setAuthority(int a) {
         this.authority = a;
@@ -301,15 +304,16 @@ public class Train {
     }
 
     public void updatePhysicalState(String currentTime, double deltaTime){
-        calculateSpeed(deltaTime);
+
         this.sampleTime = deltaTime;
+        calculateSpeed(deltaTime);
     }
     
     public void convert(){
         this.displayActualSpeed = this.actualSpeed * 3.28084;
         this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
         this.displayAcceleration = this.accel * 3.2808399;
-        
+
     }
     public int disembark(){
         Random rand = new Random(); //instance of random class
