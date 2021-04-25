@@ -96,8 +96,8 @@ public class Train {
 
 
     public void setSpeed(double speed) {
-        if (speed > this.speedLimit){
-            this.actualSpeed = this.speedLimit;
+        if (speed > 19.44){
+            this.actualSpeed = 19.44;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         }
         else if(speed >= 0){
@@ -186,6 +186,9 @@ public class Train {
 
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             F = F - (this.blockGrade/100) * this.mass * 9.81;
+            if(F < 0){
+                F = 0;
+            }
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
