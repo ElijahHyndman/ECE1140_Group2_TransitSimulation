@@ -6,7 +6,6 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
-import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice implements PhysicsUpdateListener
 {
@@ -35,9 +34,9 @@ public class CTCOffice implements PhysicsUpdateListener
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
-    public CharSequence timeNow;
+    public CharSequence timeNow = "07:09"; //TODO
     private LocalTime now;
-    public Track trackObj = new Track();
+    public Track trackObj;
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
     public ArrayList<double[]> speedsR =new ArrayList<double[]>();
@@ -50,8 +49,9 @@ public class CTCOffice implements PhysicsUpdateListener
 
         waysides = GenerateWaysideSystems(trackObj);
 
-        SEobj = null;
-        trackObj = null;
+        SEobj = new SimulationEnvironment();
+        trackObj = new Track();
+        trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
     }
 
     public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem)
@@ -64,20 +64,14 @@ public class CTCOffice implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
         try {
-            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
-            throw new Exception("To do");
+            greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
-            throw new Exception("To do");
+            redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -286,15 +280,18 @@ public class CTCOffice implements PhysicsUpdateListener
             times.add(timeDisp);
             authorities.add(authArr);
         }
+
+        //TODO -- NEED TO UNCOMMENT
+        /*
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        BroadcastingArrays();
+        //BroadcastingArrays();
 
         return speedAuthorityTime;
     }
@@ -347,75 +344,6 @@ public class CTCOffice implements PhysicsUpdateListener
         if (dest.equals("Station B")){
             blockNum = 10;
             lineCol = "Blue";}
-        else if (dest.equals("Station C")){
-            blockNum = 15;
-            lineCol = "Blue";}
-        else if (dest.equals("Shadyside")){
-            blockNum = 7;
-            lineCol = "Red";}
-        else if (dest.equals("Herron Ave")){
-            blockNum = 16;
-            lineCol = "Red";}
-        else if (dest.equals("Swissville")){
-            blockNum = 21;
-            lineCol = "Red";}
-        else if (dest.equals("Penn Station")){
-            blockNum = 25;
-            lineCol = "Red";}
-        else if (dest.equals("Steel Plaza")){
-            blockNum = 35;
-            lineCol = "Red";}
-        else if (dest.equals("First Ave")){
-            blockNum = 45;
-            lineCol = "Red";}
-        else if (dest.equals("Station Square")){
-            blockNum = 48;
-            lineCol = "Red";}
-        else if (dest.equals("South Hills Junction")){
-            blockNum = 60;
-            lineCol = "Red";}
-        else if(dest.equals("Pioneer")){
-            blockNum = 2;
-            lineCol = "Green";}
-        else if(dest.equals("Edgebrook")){
-            blockNum = 9;
-            lineCol = "Green";}
-        else if(dest.equals("Station")){
-            blockNum = 16;
-            lineCol = "Green";}
-        else if(dest.equals("Whited")){
-            blockNum = 22;
-            lineCol = "Green";}
-        else if(dest.equals("South Bank")){
-            blockNum = 31;
-            lineCol = "Green";}
-        else if(dest.equals("Central")){
-            blockNum = 39;
-            lineCol = "Green";}
-        else if(dest.equals("Inglewood")){
-            blockNum = 48;
-            lineCol = "Green";}
-        else if(dest.equals("Overbrook")){
-            blockNum = 57;
-            lineCol = "Green";}
-        else if(dest.equals("Glenbury")){
-            blockNum = 65;
-            lineCol = "Green";}
-        else if(dest.equals("Dormont")){
-            blockNum = 73;
-            lineCol = "Green";}
-        else if(dest.equals("Mt Lebanon")){
-            blockNum = 77;
-            lineCol = "Green";}
-        else if(dest.equals("Poplar")){
-            blockNum = 88;
-            lineCol = "Green";}
-        else if(dest.equals("Castle Shannon")){
-            blockNum = 96;
-            lineCol = "Green";}
-        else{
-            blockNum = 0;
-            lineCol = "Green";}
 
         CharSequence timeChar = timeD;
         timeDis = LocalTime.parse(timeChar);
@@ -494,25 +422,25 @@ public class CTCOffice implements PhysicsUpdateListener
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BroadcastingArrays();
+        //BroadcastingArrays();
 
         return speedAuthorityTime;
     }
 
+    /*
     public void BroadcastingArrays(){
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times)){
-                // TODO make these viable
-                //waysides.get(0).broadcastToControllers(speedsR, authorities);
-                //waysides.get(0).broadcastToControllers(speedsG, authorities);
+                waysides.broadcastToControllers(speedsR, authorities);
+                waysides.broadcastToControllers(speedsG, authorities);
                 times.remove(i);
                 speedsR.remove(i);
                 speedsG.remove(i);
                 authorities.remove(i);
             }
         }
-    }
+    }*/
 
     public void LoadSchedule(String filename)
     {try{
@@ -1568,6 +1496,16 @@ public class CTCOffice implements PhysicsUpdateListener
     public ArrayList getDisps()
     {
         return dispArr;
+    }
+
+    public DisplayLine getDisplayLine(int index)
+    {
+        return dispArr.get(index);
+    }
+
+    /*adding display line to the CTC office displayline arraylist */
+    public void addDisp(DisplayLine disp){
+        dispArr.add(disp);
     }
 
     public SimulationEnvironment getSE()

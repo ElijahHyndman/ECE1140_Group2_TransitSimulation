@@ -8,6 +8,9 @@ import java.util.*;
 
 import CTCOffice.*;
 import GUIInterface.AppGUIModule;
+import Track.Track;
+//import TrackModelModule.*;
+
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -26,16 +29,48 @@ import java.time.*;
 
 public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
-    DisplayLine display = new DisplayLine();
+    //display is the CTC Office
+    CTCOffice display = new CTCOffice();
+    Track givenSystem = new Track();
     DefaultTableModel model, model2;
     boolean mode = false;
 
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame() {
+    public CTCJFrame(CTCOffice ctc) {
+        display = ctc;
         initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+        givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update(){
+
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,7 +117,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jLabel18 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton1  = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -166,7 +201,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane3)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                .addGap(0, 259, Short.MAX_VALUE)
+                                                .addGap(0, 149, Short.MAX_VALUE)
                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,7 +243,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(41, 41, 41))
         );
 
-        jTabbedPane3.addTab("Automatic", jPanel4);
+        jTabbedPane3.addTab("Scheduling", jPanel4);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "New", "Train 1", "Train 2", "Train 3", "Train 4", "Train 5", "Train 6", "Train 7", "Train 8", "Train 9", "Train 10" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -746,7 +781,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         boolean status = displist.get(blockNo).getStatus();
 
-        if (block==0 || (block>150 && lineColor.equals("Green")) || (block>76 && lineColor.equals("Red")))
+        if (block==0 || block>150)
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
         }
@@ -846,9 +881,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        DisplayLine dispatch = new DisplayLine();
+        //DisplayLine dispatch = new DisplayLine(display.getTrack(), display.getSE());
 
-        speedAuthority = dispatch.Dispatch(destination, train, timeD);
+        speedAuthority = display.Dispatch(destination, train, timeD);
 
         if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction"))
             line="Red";
@@ -915,7 +950,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             t10 = timeD;
         }
 
-        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        //CONFUSED WHAT DOES THIS DO??
+        DisplayLine dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        //add dispatch to CTC office
 
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
@@ -967,10 +1004,10 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        int tp = display.CalcThroughput();
-        display.setThroughput(tp);
+    //    int tp = display.CalcThroughput();
+     //   display.setThroughput(tp);
 
-        jTextField1.setText(String.valueOf(display.getThroughput()));
+     //   jTextField1.setText(String.valueOf(display.getThroughput()));
     }
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {
@@ -986,13 +1023,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         }
         else if (filename.equals("GreenLine"))
         {
-            filename = "/Users/haleighdefoor/schedule.csv";
+            filename = "C:\\Users\\grhen\\OneDrive\\Documents\\testSchedule.csv";
+
+            //filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
+            //"/Users/haleighdefoor/schedule.csv";
         }
         else
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-        DisplayLine fileLoader = new DisplayLine();
+         CTCOffice fileLoader = new CTCOffice();
         display = fileLoader;
         display.LoadSchedule(filename);
 
@@ -1134,7 +1174,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame().setVisible(true);
+                new CTCJFrame(new CTCOffice()).setVisible(true);
             }
         });
     }
