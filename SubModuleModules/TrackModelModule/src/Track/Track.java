@@ -625,7 +625,7 @@ import java.util.Scanner;
         public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
             totalTime += deltaTime_inSeconds;
             if((int)totalTime%15 == 0)
-                updateTickets();
+                increaseTickets();
         }
     }
 
