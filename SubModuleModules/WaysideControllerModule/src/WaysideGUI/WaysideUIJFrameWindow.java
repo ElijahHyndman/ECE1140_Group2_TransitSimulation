@@ -2,7 +2,6 @@ package WaysideGUI;
 import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
-import WaysideController.GPIO;
 
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -332,63 +331,67 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     }
 
     public static DefaultTableModel buildInputTableModel() {
-        /**
-         * creates table model for the input table.
-         * @before the table in the Advanced menu does not reflect the current wayside controller status
-         */
-
-        Vector<String> columnIdentifiers = new Vector<String>();
-        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
-
-        columnIdentifiers.add("Input Names");
-        columnIdentifiers.add("Input Values");
-
-        // Fill Data Vector
-        List<String> InputNames = thisController.getInputNames();
-        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
-
-        //List<String> InputNames = thisController.getAllNames();
-        //List<Object> InputValues = thisController.getAllData();
-
-        for (int i=0; i<InputNames.size(); i++) {
-            Vector<Object> newrow = new Vector<Object>();
-            //newrow.add("value name #%d".formatted(i));
-            //newrow.add("value value #%d".formatted(i));
-            newrow.add(InputNames.get(i));
-            newrow.add(InputValues[i]);//InputValues.get(i).toString());
-            dataVector.add(newrow);
-        }
-
-        return new DefaultTableModel(dataVector, columnIdentifiers);
+//        /**
+//         * creates table model for the input table.
+//         * @before the table in the Advanced menu does not reflect the current wayside controller status
+//         */
+//
+//        Vector<String> columnIdentifiers = new Vector<String>();
+//        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
+//
+//        columnIdentifiers.add("Input Names");
+//        columnIdentifiers.add("Input Values");
+//
+//        // Fill Data Vector
+//        List<String> InputNames = thisController.getInputNames();
+//        boolean[] InputValues = thisController.getGPIO().getAllInputValues();
+//
+//        //List<String> InputNames = thisController.getAllNames();
+//        //List<Object> InputValues = thisController.getAllData();
+//
+//        for (int i=0; i<InputNames.size(); i++) {
+//            Vector<Object> newrow = new Vector<Object>();
+//            //newrow.add("value name #%d".formatted(i));
+//            //newrow.add("value value #%d".formatted(i));
+//            newrow.add(InputNames.get(i));
+//            newrow.add(InputValues[i]);//InputValues.get(i).toString());
+//            dataVector.add(newrow);
+//        }
+//
+//        return new DefaultTableModel(dataVector, columnIdentifiers);
+        // TODO
+        return new DefaultTableModel();
     }
 
     public static DefaultTableModel buildOutputTableModel() {
-        /**
-         * creates table model for the output table.
-         */
-
-        Vector<String> columnIdentifiers = new Vector<String>();
-        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
-
-        columnIdentifiers.add("Output Names");
-        columnIdentifiers.add("Output Values");
-
-        // Fill Data Vector
-        GPIO gpio = thisController.getGPIO();
-        List<String> InputNames = gpio.getOutputNames();
-        Boolean[] InputValues = gpio.getOutputValues();
-
-        for (int i=0; i<InputValues.length; i++) {
-            Vector<Object> newrow = new Vector<Object>();
-            //newrow.add("value name #%d".formatted(i));
-            //newrow.add("value value #%d".formatted(i));
-            newrow.add(InputNames.get(i));
-            newrow.add(InputValues[i]);
-            dataVector.add(newrow);
-        }
-
-
-        return new DefaultTableModel(dataVector, columnIdentifiers);
+//        /**
+//         * creates table model for the output table.
+//         */
+//
+//        Vector<String> columnIdentifiers = new Vector<String>();
+//        Vector< Vector<Object>> dataVector = new Vector< Vector<Object>>();
+//
+//        columnIdentifiers.add("Output Names");
+//        columnIdentifiers.add("Output Values");
+//
+//        // Fill Data Vector
+//        GPIO gpio = thisController.getGPIO();
+//        List<String> InputNames = gpio.getOutputNames();
+//        Boolean[] InputValues = gpio.getOutputValues();
+//
+//        for (int i=0; i<InputValues.length; i++) {
+//            Vector<Object> newrow = new Vector<Object>();
+//            //newrow.add("value name #%d".formatted(i));
+//            //newrow.add("value value #%d".formatted(i));
+//            newrow.add(InputNames.get(i));
+//            newrow.add(InputValues[i]);
+//            dataVector.add(newrow);
+//        }
+//
+//
+//        return new DefaultTableModel(dataVector, columnIdentifiers);
+        // TODO
+        return new DefaultTableModel();
     }
     public void handleHardwareTransition() {
         /**
@@ -1165,7 +1168,8 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
 
             // Update controller inputs with string
             try {
-                thisController.updateTestInputs(newInputValue, row);
+                //TODO
+                //thisController.updateTestInputs(newInputValue, row);
                 updateControllerSelection();
 
             } catch (Exception e) {

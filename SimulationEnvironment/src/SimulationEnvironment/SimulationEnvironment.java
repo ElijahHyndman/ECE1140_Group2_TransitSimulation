@@ -273,7 +273,8 @@ public class SimulationEnvironment extends Thread {
         return newUI;
     }
     public CTCJFrame spawnCTCGUI(DisplayLine ctc) {
-        return new CTCJFrame(ctc);
+        //TODO return new CTCJFrame(ctc);
+        return null;
     }
 
     public WaysideUIJFrameWindow spawnWaysideGUI (WaysideSystem ws) {
