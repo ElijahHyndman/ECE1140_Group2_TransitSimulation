@@ -38,7 +38,7 @@ class Elijah_PLCEngineTest {
     }
 
     @Test
-    @DisplayName("PLCEngine vets PLC scripts and denies PLCScript without SET")
+    @DisplayName("[Made to fail for now] PLCEngine vets PLC scripts and denies PLCScript without SET")
     public void PLCwithIncorrectSET() throws Exception {
         engine = new PLCEngine();
         // PLC Script that doesn't end with "SET"
@@ -734,5 +734,34 @@ class Elijah_PLCEngineTest {
         engine.registerTarget(targetOutput);
         boolean outputResult = engine.evaluateLogic();
         assertEquals(outputResult,targetOutput.value());
+    }
+
+    /*
+        Deregister Tests
+     */
+
+    @Test
+    @DisplayName("Input Sources can be successfully deregistered")
+    public void deregister() throws Exception {
+        engine = new PLCEngine();
+        String varName = "RepeatedInput";
+        PLCInput a = new PLCInput(varName);
+
+        // Returns false if not found
+        assertEquals(false, engine.deregisterInput(varName));
+
+        engine.registerInputSource(a);
+        assertEquals(true, engine.sourceIsDefined(varName));
+        engine.deregisterInput(varName);
+        assertEquals(false, engine.sourceIsDefined(varName));
+
+        // Register input source multiple times
+        engine.registerInputSource(a);
+        engine.registerInputSource(a);
+        engine.registerInputSource(a);
+        assertEquals(true, engine.sourceIsDefined(varName));
+        // None remain after deregister
+        engine.deregisterInput(varName);
+        assertEquals(false, engine.sourceIsDefined(varName));
     }
 }

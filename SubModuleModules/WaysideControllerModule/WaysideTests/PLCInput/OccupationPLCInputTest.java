@@ -29,6 +29,9 @@ class OccupationPLCInputTest {
         }
     };
 
+    boolean def = true;
+    boolean sec = false;
+
     TrackBlock target1;
     TrackBlock target2;
 

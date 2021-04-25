@@ -33,7 +33,7 @@ public class PLCOutput {
      *
      * @param value
      */
-    public void applyOutputRule(boolean value) {
+    public void applyOutputRule(boolean value) throws Exception {
         this.value = value;
         System.out.printf("My name is Output Variable \"%s\" and I have been set to %b!\n",this.variableName,this.value);
     }

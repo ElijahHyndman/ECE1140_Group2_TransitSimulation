@@ -5,10 +5,12 @@ import TrackConstruction.TrackElement;
 /** PLCInput type that monitors the occupation status of a TrackElement for use as a PLCInput.
  */
 public class OccupationPLCInput extends PLCInput {
+    /***********************************************************************************************************************/
+    /** Enum
+     */
     public static enum OccRule {
         TrueWhenOccupied, FalseWhenOccupied
     }
-
     /** Default Members
      */
     private final OccupationPLCInput.OccRule DEFAULT_EVALUATION_RULE = OccRule.TrueWhenOccupied;
@@ -18,6 +20,7 @@ public class OccupationPLCInput extends PLCInput {
      */
     protected TrackElement target = null;
     protected OccupationPLCInput.OccRule evaluationRule = DEFAULT_EVALUATION_RULE;
+    /***********************************************************************************************************************/
 
     public OccupationPLCInput(String varName, TrackElement targetBlock) {
         this.variableName = varName;

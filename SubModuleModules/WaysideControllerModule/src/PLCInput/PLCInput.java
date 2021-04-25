@@ -63,4 +63,13 @@ public class PLCInput {
         PLCInput other = (PLCInput) o;
         return other.variableName.equals(this.variableName);
     }
+
+    /** changes the boolean value of the PLCInput to a certain value.
+     * ONLY to be used in testing. Using this for an application would defeat the purpose of having PLCInputs for probing boolean values
+     *
+     * @param value
+     */
+    public void set(boolean value) {
+        this.value = value;
+    }
 }

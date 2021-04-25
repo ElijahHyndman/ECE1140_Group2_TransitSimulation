@@ -441,6 +441,11 @@ public class PLCEngine {
      * @after if inputSource variable name is $VARNAME, then .evaluateLogic will use inputSource.evaluate() to generate boolean inputs
      */
     public void registerInputSource(PLCInput inputSource) {
+        // Remove any previous sources for varName
+        try {
+            deregisterInput(inputSource.variableName());
+        } catch (Exception e) { /*Do nothing on removal failure*/}
+        // Store new Input Source
         PLCInputSources.add(inputSource);
     }
 
@@ -456,6 +461,33 @@ public class PLCEngine {
         this.outputTarget = target;
     }
 
+
+    /** removes a PLCInput as a viable input source.
+     * all we need to know is the variable name to remove it
+     *
+     * @param varName, the variable name of the PLCInput we wish to remove
+     * @return boolean, true if PLCInput was found and removed, false if not found so not needed to remove
+     */
+    public boolean deregisterInput(String varName) throws Exception {
+        // proxy used for searching list
+        PLCInput proxy = new PLCInput(varName);
+        /*
+            remove every instance that matches proxy (has same var name)
+         */
+        int location = PLCInputSources.indexOf(proxy);
+        if(location == -1)
+            return false;
+        while( !(location==-1) ) { // While copies of proxy exist within the list...
+            try {
+                PLCInputSources.remove(location);
+                location = PLCInputSources.indexOf(proxy);
+            } catch (Exception failureToRemove) {
+                failureToRemove.printStackTrace();
+                throw new Exception("Failure occurred when attempting to deregister a PLC Input Source from PLCInputSources for PLCEngine");
+            }
+        }
+        return true;
+    }
 
     /** checks that every variable reference in local PLCScript (PLCLines member) has a corresponding PLCInput (variable reference and PLCInput.variableName matches.)
      *  must be true before we can call generic .evaluateLogic() [ if we don't, then PLC script references variable that does not have a source definition]
@@ -494,6 +526,17 @@ public class PLCEngine {
     /*
         Helper Functions
      */
+
+    /** confirms whether a variable reference from the PLCScript has a defined local PLCInput source.
+     *
+     * @return  boolean, a PLCInput source exists in PLCEngine for variable referenced by varName
+     */
+    public boolean sourceIsDefined(String varName) throws Exception {
+        if(PLCInputSources.size() == 0 )
+            return false;
+        PLCInput result = variableReferenceBy( new PLCInput(varName),PLCInputSources);
+        return result != null;
+    }
 
     /** gets the actual PLCInput referenced by a proxy PLCInput from a given list of PLCInput variables.
      *
