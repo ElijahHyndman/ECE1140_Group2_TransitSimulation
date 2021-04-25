@@ -152,7 +152,8 @@ public class RemoteWaysideService implements RemoteWaysideStub {
         ctrl.add(controller);
         WaysideSystem ws = null;
         try {
-            ws = new WaysideSystem(ctrl);
+            // TODO
+            ws = new WaysideSystem();
         } catch (IOException e) {
             System.out.println("Failure to create Wayside System for wayside gui window.");
             e.printStackTrace();

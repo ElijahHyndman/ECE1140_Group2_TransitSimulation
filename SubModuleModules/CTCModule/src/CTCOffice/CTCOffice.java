@@ -6,6 +6,7 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
+import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice implements PhysicsUpdateListener
 {
@@ -63,14 +64,20 @@ public class CTCOffice implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
         try {
-            greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

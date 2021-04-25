@@ -171,6 +171,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/DefaultPLCEngines/BlockCollisionPLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCEngineTest.java">
           <value>
             <Attribute>
@@ -199,6 +206,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/ControllerJurisdictionTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/Elijah_PLCEngineTest.java">
           <value>
             <Attribute>
@@ -214,6 +228,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideUseTesting.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/DefaultPLCEngines/BlockCollisionPLCEngine.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -249,6 +270,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/PLCOutput/SwitchPLCOutput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/ControllerJurisdiction.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

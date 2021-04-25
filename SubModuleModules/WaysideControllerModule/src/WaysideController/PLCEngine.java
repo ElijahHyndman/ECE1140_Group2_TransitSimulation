@@ -34,15 +34,15 @@ public class PLCEngine {
      * @member filePath     String, path to the current file uploaded to this PLCEngine
      */
     // PLC Script
-    private Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
-    private List<String> PLCList = new LinkedList<String>();
-    private String currentPLCFilePath = "";
+    protected Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
+    protected List<String> PLCList = new LinkedList<String>();
+    protected String currentPLCFilePath = "";
 
     // Input Sources
-    private List<PLCInput> PLCInputSources = new LinkedList<PLCInput>();
+    protected List<PLCInput> PLCInputSources = new LinkedList<PLCInput>();
 
     // Output Source
-    private PLCOutput outputTarget = null;
+    protected PLCOutput outputTarget = null;
 
 
     private int numberOfInputs;
@@ -60,6 +60,18 @@ public class PLCEngine {
     public PLCEngine(String pathToPLCFile, PLCOutput targetOutput) throws Exception {
         uploadPLC(pathToPLCFile);
         this.outputTarget = targetOutput;
+    }
+
+    /** turns this PLCEngine into a copy of another PLC Engine
+     *
+     * @param other, an existing PLCEngine whom we are making this one a carbon copy of
+     */
+    public void copy(PLCEngine other) {
+        this.PLCLines = new LinkedList<>(other.PLCLines);
+        this.PLCList = new LinkedList<>(other.PLCList);
+        this.currentPLCFilePath = other.currentPLCFilePath;
+        this.PLCInputSources = new LinkedList<>(other.PLCInputSources);
+        this.outputTarget = other.outputTarget;
     }
 
     /*
@@ -246,7 +258,7 @@ public class PLCEngine {
 
 
     /*
-        Logic Calculation
+        Logic Calculations from PLC
      */
 
 
@@ -373,6 +385,8 @@ public class PLCEngine {
 
     /** calculate boolean logic using locally stored PLC Script (provided using .uploadPLCScript()) and provided input statuses (in)
      *
+     * This functino is used to evaluate inputs through logic and not apply them directly to defined output source (useful for generating what-if scenarios)
+     *
      * @param in
      * @return
      * @throws Exception
@@ -387,7 +401,7 @@ public class PLCEngine {
      * every single variable reference in locally stored PLC script must have a corresponding inputsource definition set using .definePLCInputSource(PLCInputObjectThatHasSameNameAsPLCVariableReference)
      * uses evaluateLogic(inputs) to calculate values, passes locally defined input sources
      *
-     * This is the function intended for use in WaysideController
+     * This function is used to evaluate inputs through logic and immediately apply their results to defined output source
      *
      * @return boolean, output of local PLCScript calculation (member PLCLines) using registered input sources (PLCInputs registered with .registerPLCInputSource())
      */
@@ -443,6 +457,11 @@ public class PLCEngine {
     }
 
 
+    /*
+        PLC Inputs
+     */
+
+
     /** defines a possible input source (PLCInput) for PLCScripts to reference when uploaded to this PLCEngine.
      *  the name of PLCInput variableName member must match the variable names referenced in PLCScript
      *  A PLCInputSource is allowed to be registered and not actually referenced by PLCScript. Registering an InputSource just adds it to the pool of searchable inputs
@@ -468,6 +487,14 @@ public class PLCEngine {
         } catch (Exception e) { /*Do nothing on removal failure*/}
         // Store new Input Source
         PLCInputSources.add(inputSource);
+    }
+
+    /** allows user to register an entire pool of input PLCInput sources
+     *
+     * @param inputPool
+     */
+    public void registerInputSources(ArrayList<PLCInput> inputPool) {
+        this.PLCInputSources.addAll(inputPool);
     }
 
     /** defines an output target object to whom an output rule will automatically be applied when .evaluateLogic() is called.
@@ -673,4 +700,22 @@ public class PLCEngine {
             return (other.operation == this.operation && other.variable == this.variable);
         }
     }
+
+    /** equivalence for PLCEngines comes down to pointing to the same output object
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if ( !(o instanceof PLCEngine) )
+            return false;
+        PLCEngine other = (PLCEngine) o;
+        if (other.outputTarget == null)
+            return false;
+        else if (this.outputTarget == null)
+            return false;
+        else
+            return true;
+    }
+
 }
