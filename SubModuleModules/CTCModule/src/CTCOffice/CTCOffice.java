@@ -283,14 +283,19 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         //TODO -- NEED TO UNCOMMENT
-        /*
+
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            if (lineCol.equals("Green")) {
+                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            }
+            else if (lineCol.equals("Red")){
+                waysides.get(1).broadcastToControllers(speedArrR, authArr);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         //BroadcastingArrays();
 
@@ -419,7 +424,12 @@ public class CTCOffice implements PhysicsUpdateListener
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            if (lineCol.equals("Green")) {
+                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            }
+            else if (lineCol.equals("Red")){
+                waysides.get(1).broadcastToControllers(speedArrR, authArr);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -428,7 +438,6 @@ public class CTCOffice implements PhysicsUpdateListener
         return speedAuthorityTime;
     }
 
-    /*
     public void BroadcastingArrays(){
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
@@ -441,7 +450,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 authorities.remove(i);
             }
         }
-    }*/
+    }
 
     public void LoadSchedule(String filename)
     {try{
@@ -1513,8 +1522,5 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         return SEobj;
     }
-
-
-
 
 }
