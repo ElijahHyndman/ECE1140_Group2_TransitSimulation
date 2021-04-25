@@ -1,4 +1,4 @@
-package WaysideController;
+package PLCInput;
 
 /** allows PLCEngines to refer to generic inputs which can be specified elsewhere.
  *  This class is intended to be extended and overriden to define custom behavior for PLC input sources.
@@ -47,7 +47,7 @@ public class PLCInput {
      *
      * @return
      */
-    public boolean evaluate() {
+    public boolean evaluate() throws Exception {
         return value;
     }
 
@@ -62,5 +62,14 @@ public class PLCInput {
             return false;
         PLCInput other = (PLCInput) o;
         return other.variableName.equals(this.variableName);
+    }
+
+    /** changes the boolean value of the PLCInput to a certain value.
+     * ONLY to be used in testing. Using this for an application would defeat the purpose of having PLCInputs for probing boolean values
+     *
+     * @param value
+     */
+    public void set(boolean value) {
+        this.value = value;
     }
 }

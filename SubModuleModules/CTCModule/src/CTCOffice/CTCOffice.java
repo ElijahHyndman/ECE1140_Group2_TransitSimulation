@@ -6,6 +6,7 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
+import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice implements PhysicsUpdateListener
 {
@@ -63,14 +64,20 @@ public class CTCOffice implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
         try {
-            greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -285,7 +292,7 @@ public class CTCOffice implements PhysicsUpdateListener
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         BroadcastingArrays();
 
@@ -486,7 +493,7 @@ public class CTCOffice implements PhysicsUpdateListener
             waysides.get(0).broadcastToControllers(speedArrG, authArr);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
         BroadcastingArrays();
 
         return speedAuthorityTime;
@@ -496,8 +503,9 @@ public class CTCOffice implements PhysicsUpdateListener
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times)){
-                waysides.broadcastToControllers(speedsR, authorities);
-                waysides.broadcastToControllers(speedsG, authorities);
+                // TODO make these viable
+                //waysides.get(0).broadcastToControllers(speedsR, authorities);
+                //waysides.get(0).broadcastToControllers(speedsG, authorities);
                 times.remove(i);
                 speedsR.remove(i);
                 speedsG.remove(i);

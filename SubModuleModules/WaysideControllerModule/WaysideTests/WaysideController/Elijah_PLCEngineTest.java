@@ -1,5 +1,7 @@
 package WaysideController;
 
+import PLCInput.PLCInput;
+import PLCOutput.PLCOutput;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +38,7 @@ class Elijah_PLCEngineTest {
     }
 
     @Test
-    @DisplayName("PLCEngine vets PLC scripts and denies PLCScript without SET")
+    @DisplayName("[Made to fail for now] PLCEngine vets PLC scripts and denies PLCScript without SET")
     public void PLCwithIncorrectSET() throws Exception {
         engine = new PLCEngine();
         // PLC Script that doesn't end with "SET"
@@ -495,8 +497,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new PLCInput("var1",true);
         PLCInput var2 = new PLCInput("var2",true);
-        engine.registerPLCInputSource(var1);
-        engine.registerPLCInputSource(var2);
+        engine.registerInputSource(var1);
+        engine.registerInputSource(var2);
 
         boolean engineIdentifiesThatPLCReferencesHaveDefinitions = engine.allPLCInputSourcesDefined();
         System.out.printf("Engine has stored input source definitions: %b\n",engineIdentifiesThatPLCReferencesHaveDefinitions);
@@ -520,8 +522,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new PLCInput("var1",true);
         PLCInput var2 = new PLCInput("var2",true);
-        engine.registerPLCInputSource(var1);
-        engine.registerPLCInputSource(var2);
+        engine.registerInputSource(var1);
+        engine.registerInputSource(var2);
 
         // var3 reference does not have defined input source, engine should throw error
         assertThrows(Exception.class, () -> engine.allPLCInputSourcesDefined());
@@ -542,8 +544,8 @@ class Elijah_PLCEngineTest {
         engine.uploadPLC(PLCScript);
         PLCInput var1 = new CustomPLCInputSource("var1",true);
         PLCInput var2 = new CustomPLCInputSource("var2",true);
-        engine.registerPLCInputSource(var1);
-        engine.registerPLCInputSource(var2);
+        engine.registerInputSource(var1);
+        engine.registerInputSource(var2);
         boolean output = engine.evaluateLogic();
         System.out.printf("Output using remembered inputsources: %b\n",output);
     }
@@ -570,8 +572,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
-            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerInputSource( new PLCInput("var1", true) );
+            newEngine.registerInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
@@ -608,8 +610,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
-            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerInputSource( new PLCInput("var1", true) );
+            newEngine.registerInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
@@ -646,8 +648,8 @@ class Elijah_PLCEngineTest {
             PLCEngine newEngine = new PLCEngine();
             newEngine.uploadPLC(genericPLCScript);
             // Each PLCEngine gets 2 unique PLCInput objects each
-            newEngine.registerPLCInputSource( new PLCInput("var1", true) );
-            newEngine.registerPLCInputSource( new PLCInput("var2", false) );
+            newEngine.registerInputSource( new PLCInput("var1", true) );
+            newEngine.registerInputSource( new PLCInput("var2", false) );
             engines.add(newEngine);
         }
         long elapsedTime = System.nanoTime() - startTime;
@@ -681,12 +683,12 @@ class Elijah_PLCEngineTest {
             }
         };
         engine.uploadPLC(PLCScript);
-        engine.registerPLCInputSource(new CustomPLCInputSource("var1",true));
-        engine.registerPLCInputSource(new CustomPLCInputSource("var2",true));
+        engine.registerInputSource(new CustomPLCInputSource("var1",true));
+        engine.registerInputSource(new CustomPLCInputSource("var2",true));
         PLCOutput targetOutput = new PLCOutput("Test Target Output");
-        engine.registerPLCOutputTarget(targetOutput);
+        engine.registerTarget(targetOutput);
         boolean outputResult = engine.evaluateLogic();
-        assertEquals(outputResult,targetOutput.value);
+        assertEquals(outputResult,targetOutput.value());
     }
 
     /*
@@ -725,12 +727,41 @@ class Elijah_PLCEngineTest {
             }
         };
         engine.uploadPLC(PLCScript);
-        engine.registerPLCInputSource(new CustomPLCInputSource("var1",true));
-        engine.registerPLCInputSource(new CustomPLCInputSource("var2",true));
+        engine.registerInputSource(new CustomPLCInputSource("var1",true));
+        engine.registerInputSource(new CustomPLCInputSource("var2",true));
         // Using custom PLC output behavior defined above
         CustomPLCOutput targetOutput = new CustomPLCOutput("Test Target Output");
-        engine.registerPLCOutputTarget(targetOutput);
+        engine.registerTarget(targetOutput);
         boolean outputResult = engine.evaluateLogic();
-        assertEquals(outputResult,targetOutput.value);
+        assertEquals(outputResult,targetOutput.value());
+    }
+
+    /*
+        Deregister Tests
+     */
+
+    @Test
+    @DisplayName("Input Sources can be successfully deregistered")
+    public void deregister() throws Exception {
+        engine = new PLCEngine();
+        String varName = "RepeatedInput";
+        PLCInput a = new PLCInput(varName);
+
+        // Returns false if not found
+        assertEquals(false, engine.deregisterInput(varName));
+
+        engine.registerInputSource(a);
+        assertEquals(true, engine.sourceIsDefined(varName));
+        engine.deregisterInput(varName);
+        assertEquals(false, engine.sourceIsDefined(varName));
+
+        // Register input source multiple times
+        engine.registerInputSource(a);
+        engine.registerInputSource(a);
+        engine.registerInputSource(a);
+        assertEquals(true, engine.sourceIsDefined(varName));
+        // None remain after deregister
+        engine.deregisterInput(varName);
+        assertEquals(false, engine.sourceIsDefined(varName));
     }
 }
