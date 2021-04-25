@@ -105,32 +105,31 @@ public class NonVitalComponents {
         String doors = null;
 
         if (currentBeacon != null){
-            rightDoors = true;
-            leftDoors = false;
-
-        }
-        /*
-        if (doors != null){
-            if (doors.equals("Left")){
+            int start = currentBeacon.indexOf(" ");
+            String half = currentBeacon.substring(start+1);
+            int doorString = half.indexOf(" ");
+            String side = half.substring(doorString + 1);
+            if (side.equals("L")){
                 leftDoors = true;
                 rightDoors = false;
-            }else if(doors.equals("Right")){
-                rightDoors = true;
+            }else if (side.equals("R")){
                 leftDoors = false;
+                rightDoors = true;
+            }else{
+                leftDoors = true;
+                rightDoors = true;
             }
-        } else{
-            rightDoors = false;
-            leftDoors = false;
         }
 
-         */
+        leftDoors = false;
+        rightDoors = false;
     }
 
     public void setAnnouncement(double authority, String beacon){
         String stationName = null;
         if (authority < 200 && authority > 0){
             if (beacon != null){
-                String station = beacon.substring(0, beacon.indexOf(" "));
+                String station = beacon.substring(0, beacon.indexOf(":"));
                 stationName = station;
                 theAnnouncement = "Approaching " + stationName;
                 announcementProgress = true;

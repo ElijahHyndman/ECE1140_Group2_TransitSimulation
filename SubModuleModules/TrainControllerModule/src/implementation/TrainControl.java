@@ -308,7 +308,8 @@ public class TrainControl {
         if (!(beacon==null) && !beaconSet){
             beaconSet = true;
             int start = beacon.indexOf(" ");
-            double stop = Double.parseDouble(beacon.substring(start+1, beacon.length()));
+            String half = beacon.substring(start+1);
+            double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
             System.out.println(stop);
             stoppingDistance = stop;
         }else if (beacon == null && beaconSet == false){
@@ -380,6 +381,8 @@ public class TrainControl {
         }
         this.setSpeedLimit(60/3.6);
         this.setPower();
+        //trainModel.getEmergencyBrake();
+        //trainModel;
     }
 
     public void setTrainData(){

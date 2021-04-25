@@ -30,7 +30,7 @@ public class Train {
     double standardDecelLimit = 1.2 ; //  m/s^2
     double emergencyDecelLimit = 2.73; //  m/s^2
     int id;
-    int passengerCount; //aka ticket sales
+    int passengerCount = 5; //aka ticket sales
 
     //Movement
     Boolean passengerBrake;
@@ -51,7 +51,7 @@ public class Train {
     double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
 
     //Fails
-    boolean signalPickupFail;
+    public boolean signalPickupFail;
     boolean engineFail;
     boolean brakeFail;
     boolean leftDoors; //close=0, open=1
