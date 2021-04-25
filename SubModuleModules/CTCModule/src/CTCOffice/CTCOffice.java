@@ -7,7 +7,7 @@ import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
 
-public class CTCOffice implements PhysicsUpdateListener
+public class CTCOffice //implements PhysicsUpdateListener
 {
     private int thruP;
     private Object[] speedAuthorityTime = new Object[3];
@@ -602,6 +602,33 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         return occ;
+    }
+
+    public boolean CheckSectOcc(int blockNum, String lineCol)
+    {
+        char section = dispArr.get(blockNum).getSection();
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
+        int length = blocks.size();
+        boolean[] occs = new boolean[length];
+        boolean totalocc = false;
+
+        for (int i=0; i<length; i++){
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                occs[i] = waysides.get(0).getOccupancy(blockNum);
+            } catch (IOException e) {
+                System.out.println("Failed to set open for block");
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < length; i++){
+            if (occs[i]){
+                totalocc=true;
+            }
+        }
+        return totalocc;
     }
 
     public boolean CheckSwitch(int blockNum, String lineCol)
