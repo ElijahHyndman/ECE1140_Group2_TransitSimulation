@@ -278,15 +278,9 @@ public class Train {
     }
     public void setLeftDoors(boolean status){
         this.leftDoors = status;
-        if(this.leftDoors == true){
-            disembark();
-        }
     }
     public void setRightDoors(boolean status){
         this.rightDoors = status;
-        if(this.rightDoors == true){
-            disembark();
-        }
     }
 
     public void setPassengerCount(int count){
