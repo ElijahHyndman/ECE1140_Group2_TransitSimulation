@@ -171,7 +171,42 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/DefaultPLCEngines/BlockCollisionPLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCInput/HasAuthorityPLCInputTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCInput/OccupationPLCInputTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCOutput/SwitchPLCOutputTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/ControllerJurisdictionTest.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -199,7 +234,49 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/DefaultPLCEngines/BlockCollisionPLCEngine.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/GPIO/GPIOInput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/PLCInput/HasAuthorityPLCInput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/PLCInput/OccupationPLCInput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/PLCOutput/AuthorityPLCOutput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/PLCOutput/SwitchPLCOutput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/ControllerJurisdiction.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

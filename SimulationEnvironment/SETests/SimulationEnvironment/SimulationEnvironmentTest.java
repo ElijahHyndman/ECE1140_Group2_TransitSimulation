@@ -254,7 +254,7 @@ class SimulationEnvironmentTest {
         SE.getTrackSystem().updateSwitches();
         yard.setAuthority(1);
         yard.setCommandedSpeed(10.0);
-        new CTCJFrame((DisplayLine)SE.getCTC()).setVisible(true);
+        //new CTCJFrame((DisplayLine)SE.getCTC()).setVisible(true);
 
         while(!(SE.getTrains().size() > 0)
 
