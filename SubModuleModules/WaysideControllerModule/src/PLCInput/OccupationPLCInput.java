@@ -61,4 +61,8 @@ public class OccupationPLCInput extends PLCInput {
         }
     }
 
+
+    public String toString() {
+        return String.format("Occupation Listener for Block#%d",target.getBlockNum());
+    }
 }

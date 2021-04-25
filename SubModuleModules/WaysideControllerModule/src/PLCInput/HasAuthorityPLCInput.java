@@ -2,6 +2,9 @@ package PLCInput;
 
 import TrackConstruction.TrackElement;
 
+/** defines behavior of using a block's authority as input for PLC
+ * @author elijah
+ */
 public class HasAuthorityPLCInput extends PLCInput {
     /***********************************************************************************************************************/
     /** Enum
@@ -67,5 +70,10 @@ public class HasAuthorityPLCInput extends PLCInput {
                 // Neither rules are in use. If user has defined a new rule, they forgot to include it in the switch cases
                 throw new Exception(String.format("Unidentified rule in use for HasAuthorityPLCInput detected\nEnsure that case statement is written for any new rule evaluations in evaluate()"));
         }
+    }
+
+
+    public String toString() {
+        return String.format("Authority Listener for Block#%d",target.getBlockNum());
     }
 }

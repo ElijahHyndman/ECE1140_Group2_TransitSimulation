@@ -2,8 +2,7 @@ package PLCOutput;
 
 import TrackConstruction.Switch;
 
-/** PLCOutput that determines the orientation of a Track System switch based on the output of a PLC boolean calculation and a determined rule
- *
+/** defines behavior of using PLCOutput to determine a Track Switch's orientation
  * Note about definitions:
  * switches are defined in the .csv file as Switch (1-0; 5-0)
  * Default refers to a switch being oriented in the first position defined (i.e. 1-0)
@@ -73,6 +72,7 @@ public class SwitchPLCOutput extends PLCOutput {
      */
     @Override
     public void applyOutputRule(boolean value) throws Exception {
+        this.value = value;
         switch (applicationRule) {
             case DefaultWhenTrue:
                 try {
@@ -108,5 +108,10 @@ public class SwitchPLCOutput extends PLCOutput {
                 // Attempting to use unknown rule
                 throw new Exception(String.format("Unidentified rule in use for SwitchPLCOutput application\nEnsure that case statement is written for any new rule evaluations in applyOutputRule()"));
         }
+    }
+
+
+    public String toString() {
+        return String.format("Switch-Orientation Rule for Block#%d",target.getBlockNum());
     }
 }

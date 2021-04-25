@@ -36,6 +36,7 @@ public class PLCEngine {
     // PLC Script
     private Queue<PLCLine> PLCLines = new LinkedList<PLCLine>();
     private List<String> PLCList = new LinkedList<String>();
+    private String currentPLCFilePath = "";
 
     // Input Sources
     private List<PLCInput> PLCInputSources = new LinkedList<PLCInput>();
@@ -43,19 +44,32 @@ public class PLCEngine {
     // Output Source
     private PLCOutput outputTarget = null;
 
+
     private int numberOfInputs;
-    private String filePath = "";
     /***********************************************************************************************************************/
 
     public PLCEngine() {
         super();
     }
+    public PLCEngine(PLCOutput targetOutput) {
+        this.outputTarget = targetOutput;
+    }
     public PLCEngine(String pathToPLCFile) throws Exception {
         uploadPLC(pathToPLCFile);
     }
+    public PLCEngine(String pathToPLCFile, PLCOutput targetOutput) throws Exception {
+        uploadPLC(pathToPLCFile);
+        this.outputTarget = targetOutput;
+    }
 
-    // Get and Set
-    public List<String> getPLCStringList() { return PLCList; }
+    /*
+        Get & Set
+     */
+
+    /** creates one string out of currently uploaded PLC script.
+     *
+     * @return line delineated string filled with PLC commands
+     */
     public String getPLCString() {
         String PLC = "";
         for (String line : PLCList) {
@@ -63,6 +77,13 @@ public class PLCEngine {
             PLC += line + "\n";
         }
         return PLC;
+    }
+    public List<String> getPLCStringList() { return PLCList; }
+    public String getCurrentPLCPath () {
+        return currentPLCFilePath;
+    }
+    public PLCOutput getOutput() {
+        return outputTarget;
     }
 
 
@@ -189,7 +210,7 @@ public class PLCEngine {
         uploadPLC(PLCCommands);
 
         // Store file path for later
-        this.filePath = PLCFilePath;
+        this.currentPLCFilePath = PLCFilePath;
     }
 
 

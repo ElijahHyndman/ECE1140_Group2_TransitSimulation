@@ -241,6 +241,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/PLCOutput/AuthorityPLCOutput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/PLCOutput/SwitchPLCOutput.java">
           <value>
             <Attribute>
