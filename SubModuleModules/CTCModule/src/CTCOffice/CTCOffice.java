@@ -44,9 +44,11 @@ public class CTCOffice implements PhysicsUpdateListener
     public ArrayList<double[]> speedsG =new ArrayList<double[]>();
     public ArrayList<int[]> authorities = new ArrayList<int[]>();
     public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
+    public int[] greenPath= {62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58};
 
     public CTCOffice()
     {
+
 
         waysides = GenerateWaysideSystems(trackObj);
 
@@ -438,6 +440,7 @@ public class CTCOffice implements PhysicsUpdateListener
         return speedAuthorityTime;
     }
 
+    /*
     public void BroadcastingArrays(){
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
@@ -450,7 +453,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 authorities.remove(i);
             }
         }
-    }
+    }*/
 
     public void LoadSchedule(String filename)
     {try{
@@ -707,6 +710,26 @@ public class CTCOffice implements PhysicsUpdateListener
         return rl;
     }
 
+    /*GIH6 adding back to yard*/
+    public int[] backToYard(int bn){
+        int[] newGreenLine = greenPath;
+        int flag=0;
+        for(int i = 0; i < 176; i++){
+            if(newGreenLine[i] != bn) {
+                newGreenLine[i] = 0;
+            }
+            if(newGreenLine[i] == bn)
+                break;
+
+        }
+
+        int[] RouteAr = new int[150];
+        for(int i=0; i < 176; i++)
+            if(newGreenLine[i]!=0)
+                RouteAr[newGreenLine[i]-1] = 1;
+        return RouteAr;
+    }
+
     public int calcAutoRouteLength(int bn, String lc, int tnum)
     {
         int rl;
@@ -837,7 +860,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-        if (bn==65 && lc.equals("Green")){ //Glenbury
+        if (bn==65 && lc.equals("Green")){ // Yard - Glenbury
             if (positions[tnum-1]>=65 && positions[tnum-1]<114)
             {
                 for(int i=104; i<114; i++)
@@ -855,7 +878,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 65;
             }
         }
-        if(bn==73 && lc.equals("Green")){ //Dormont
+        if(bn==73 && lc.equals("Green")){ //GLEN - Dormont
             if (positions[tnum-1]>=73 && positions[tnum-1]<105)
             {
                 for(int i=95; i<105; i++)
@@ -1521,6 +1544,15 @@ public class CTCOffice implements PhysicsUpdateListener
     public SimulationEnvironment getSE()
     {
         return SEobj;
+    }
+
+    /*getting throuput */
+    public int getThroughput(){
+        return this.thruP;
+    }
+    /*setting throughput*/
+    public void setThroughput(int test){
+        thruP = test;
     }
 
 }

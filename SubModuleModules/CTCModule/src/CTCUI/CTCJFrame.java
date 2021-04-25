@@ -4,6 +4,8 @@ package CTCUI;/*
  * and open the template in the editor.
  */
 //iteration 2
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 import CTCOffice.*;
@@ -13,8 +15,10 @@ import Track.Track;
 
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import java.time.*;
+import javax.swing.Timer;
 
 /**
  *
@@ -34,6 +38,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     Track givenSystem = new Track();
     DefaultTableModel model, model2;
     boolean mode = false;
+    public Timer timer;
 
     /**
      * Creates new form CTCJFrame
@@ -47,6 +52,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         givenSystem = null;
         try {
             givenSystem = (Track) myObject;
+            givenSystem = (Track) myObject;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +60,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     @Override
     public void update(){
-
+        occupancy();
+        calcthroughput();
     }
 
     @Override
@@ -840,8 +847,28 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    //GIH6 - ADDED THIS REFRESH AND OCCUPANCY FUNCTIONS
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+   //     refreshOccupancy();
+    }
+
+    //add refreshing for occupied blocks
+    public void refreshOccupancy() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                occupancy();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void occupancy(){
         boolean blockOccG=false;
         boolean blockOccR=false;
         model2 = (DefaultTableModel)jTable3.getModel();
@@ -857,10 +884,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 model2.addRow(new Object[] {i, "None"});
             else if (!blockOccG && blockOccR)
                 model2.addRow(new Object[] {"None", i});
-            else
-                model2.addRow(new Object[] {"None","None"});
+            //  else
+            //    model2.addRow(new Object[] {"None","None"});
         }
-
     }
 
     private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {
@@ -1002,12 +1028,35 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    /*GIH6 - refreshing throughput*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    //    int tp = display.CalcThroughput();
-     //   display.setThroughput(tp);
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
+        jTextField1.setText(String.valueOf(display.getThroughput()));
+    //    refreshThroughput();
+    }
 
-     //   jTextField1.setText(String.valueOf(display.getThroughput()));
+    //adding refresh of throughput
+    //add refreshing for occupied blocks
+    public void refreshThroughput() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcthroughput();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void calcthroughput(){
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
+        jTextField1.setText(String.valueOf(display.getThroughput()));
     }
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {

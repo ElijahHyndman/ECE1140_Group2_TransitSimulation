@@ -1,11 +1,25 @@
 import CTCOffice.CTCOffice;
 import CTCOffice.DisplayLine;
 
+import javax.swing.Timer;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.io.*;
 
 class CTCOfficeTest {
+
+    @org.junit.jupiter.api.Test
+    void backToYard() {
+        CTCOffice instance = new CTCOffice();
+       int[] test = instance.backToYard(105);
+
+       for(int i =0; i<150; i++) {
+           int testi = i+1;
+           System.out.println("BN" + testi + " " + test[i]);
+       }
+    }
+
 
     @org.junit.jupiter.api.Test
     void dispatch() {
