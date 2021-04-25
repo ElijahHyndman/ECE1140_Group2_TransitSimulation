@@ -36,29 +36,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     public CTCJFrame() {
         initComponents();
     }
-    @Override
-    public void latch(Object myObject){
-    }
-
-    @Override
-    public void update(){
-
-    }
-
-    @Override
-    public Object getJFrame() {
-        return null;
-    }
-
-    @Override
-    public void setVis(boolean visible) {
-        setVisible(visible);
-    }
-
-    public void draw(){
-
-    }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -189,7 +166,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane3)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                .addGap(0, 155, Short.MAX_VALUE)
+                                                .addGap(0, 259, Short.MAX_VALUE)
                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -355,7 +332,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         ));
         jScrollPane6.setViewportView(jTable3);
 
-        jLabel18.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.24.10 PM.png")); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-04-24 at 12.41.55 AM.png")); // NOI18N
 
         jRadioButton1.setText("Manual Mode");
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -390,20 +367,19 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                 .addGap(65, 65, 65)
                                                 .addComponent(jRadioButton1)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(83, 83, 83)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(53, 53, 53)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                                 .addComponent(jButton9)
                                                 .addGap(59, 59, 59))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addContainerGap())))
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 717, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -523,7 +499,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel21.setText("Switch Number:");
 
-        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-03-29 at 11.24.10 PM.png")); // NOI18N
+        jLabel13.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-04-24 at 12.41.55 AM.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -554,18 +530,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(jButton4))
                                         .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                                 .addComponent(jLabel14)
                                                 .addGap(54, 54, 54)))
-                                .addGap(40, 40, 40)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 717, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 14, Short.MAX_VALUE))
+                                .addGap(51, 51, 51))
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -597,7 +571,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                                 .addComponent(jLabel14)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(44, Short.MAX_VALUE))
+                                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Maintenance", jPanel3);
@@ -608,7 +582,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 746, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 856, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -622,10 +596,10 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1124,7 +1098,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        display.ClearQueues();
+        //display.ClearQueues();
         model = (DefaultTableModel)jTable2.getModel();
         model.setRowCount(0);
         mode = true;
