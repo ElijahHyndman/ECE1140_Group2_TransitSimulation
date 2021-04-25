@@ -41,7 +41,7 @@ public class SimulationEnvironment extends Thread {
         /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
          */
         clk= new WorldClock();
-        //ctc= new DisplayLine(trackSystem,this);
+        ctc= new DisplayLine(trackSystem,this);
         this.start();
     }
 
@@ -50,8 +50,10 @@ public class SimulationEnvironment extends Thread {
          */
         String greenLineFile = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SimulationEnvironment/SEResources/GreenAndRedLine.csv";
         importTrack(greenLineFile);
+        // System is only the greenline wayside system
+        WaysideSystem system = getCTC().getWaysideSystem().get(0);
 
-        WaysideSystem system = ctc.getWaysideSystem();
+        //WaysideSystem system = ctc.getWaysideSystem();
         // Create single wayside controller for GreenLine
         // Create bock jurisdiction
         /* Old code for one controller with all of green line

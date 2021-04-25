@@ -824,7 +824,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNext() {
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -927,6 +927,7 @@ class TrackTest {
         TrackGUI testGUI = new TrackGUI(instance);
         testGUI.setVisible(true);
         testGUI.latch(instance);
+     //   while (true){}
 
 
         /*
@@ -1118,7 +1119,7 @@ class TrackTest {
             testGUI.setVisible(true);
             testGUI.draw();
             testGUI.latch(instance);
-         //   while(true){}
+           while(true){}
           /*  instance.setFailure(2,"Green",1);
             testGUI.latch(instance);
             System.out.println(instance.getFailures());

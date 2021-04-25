@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="SubModules.TrainControllerModule" />
     <orderEntry type="module" module-name="SubModules.TrainModelModule" />
     <orderEntry type="module" module-name="GraphicUserInterfaces" />
+    <orderEntry type="module" module-name="SubModules.CTCModule" />
   </component>
 </module>
