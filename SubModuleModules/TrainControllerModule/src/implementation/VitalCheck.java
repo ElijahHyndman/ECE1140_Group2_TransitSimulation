@@ -1,5 +1,6 @@
 package implementation;
 
+
 /**
  * Vital component for power calculation redundancy.
  * This class also cross checks TrainControl operations

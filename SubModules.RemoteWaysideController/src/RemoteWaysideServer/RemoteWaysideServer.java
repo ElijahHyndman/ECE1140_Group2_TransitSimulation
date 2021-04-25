@@ -1,38 +1,35 @@
-package RemoteWayside;
+package RemoteWaysideServer;
 
-import RemoteWayside.RemoteWaysideService;
-
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 
+/** handles all of the network setup to make a RemoteWaysideService available to the clients through stubs.
+ *  Implements Runnable so RemoteWaysideServer can be launched on a new thread
+ *
+ *  Goal: Make the RMI stub available over the network so Client may use Remote Invocation to control the Wayside Controller on the Raspberry pi
+ *
+ *  Note About IP Addresses:
+ *  Must be configured with the correct IP Address which other computers on your network may refer to your computer using. If
+ *  you instantiate your RemoteWaysideServer on a machine with IP "192.169.0.143" but provide an IP in the constructor of "192.168.0.1" then
+ *  your server will never be findable.
+ *
+ *  System Layout:
+ *  RemoteWaysideController (on Laptop) object that can be treated as if it were a local WaysideController, but instead manages a remote connection to a remote WaysideControllerService
+ (this)RemoteWaysideServer     (on Pi) hosts the RemoteWaysideService and makes it available for the Client across a network.
+ *  RemoteConnection    (on Laptop) manages the Client->Server connection for the client. If successful, provides the stub for remote objects
+ *  RemoteWaysideStub   (created on Pi, used by Laptop) defines the methods which a Client may invoke remotely
+ *  RemoteWaysideService    (on Pi) implements the methods defined by the RemoteWaysideStub
+ *  RemoteTrackStub     (created on Laptop, used by Pi) defines the methods which a remote WaysideController may invoke remotely
+ *  RemoteTrack         (on Laptop) implements the methods defined by the RemoteTrackStub
+ *
+ *  Useful References:
+ *  RMIRegistry not started reference: https://stackoverflow.com/questions/1823305/rmi-connection-refused-with-localhost
+ *
+ * @author Elijah
+ */
 public class RemoteWaysideServer implements Runnable {
-    /** handles all of the network setup to make a RemoteWaysideService available to the clients through stubs.
-     *  Implements Runnable so RemoteWaysideServer can be launched on a new thread
-     *
-     *  Goal: Make the RMI stub available over the network so Client may use Remote Invocation to control the Wayside Controller on the Raspberry pi
-     *
-     *  Note About IP Addresses:
-     *  Must be configured with the correct IP Address which other computers on your network may refer to your computer using. If
-     *  you instantiate your RemoteWaysideServer on a machine with IP "192.169.0.143" but provide an IP in the constructor of "192.168.0.1" then
-     *  your server will never be findable.
-     *
-     *  System Layout:
-     (this)RemoteWaysideServer     (on Pi) hosts the RemoteWaysideService and makes it available for the Client across a network.
-     *  RemoteConnection    (on Laptop) manages the Client->Server connection for the client. If successful, provides the stub for remote objects
-     *  RemoteWaysideStub   (created on Pi, used by Laptop) defines the methods which a Client may invoke remotely
-     *  RemoteWaysideService    (on Pi) implements the methods defined by the RemoteWaysideStub
-     *  RemoteTrackStub     (created on Laptop, used by Pi) defines the methods which a remote WaysideController may invoke remotely
-     *  RemoteTrack         (on Laptop) implements the methods defined by the RemoteTrackStub
-     *
-     *  Useful References:
-     *  RMIRegistry not started reference: https://stackoverflow.com/questions/1823305/rmi-connection-refused-with-localhost
-     *
-     * @author Elijah
-     */
 
 
     /***********************************************************************************************************************/
@@ -66,13 +63,13 @@ public class RemoteWaysideServer implements Runnable {
     private String serverIP = DEFAULT_SERVER_IP;
     /***********************************************************************************************************************/
 
+    /** default constructor creates a new RemoteWaysideServer object on localhost which can be run on a new thread.
+     * @before nothing
+     * @after registry has been created on communication port and stored locally
+     * @after system IP address for java has been set so machine is findable
+     * @after RemoteWaysideService has been created and ready for hosting
+     */
     public RemoteWaysideServer() {
-        /** default constructor creates a new RemoteWaysideServer object on localhost which can be run on a new thread.
-         * @before nothing
-         * @after registry has been created on communication port and stored locally
-         * @after system IP address for java has been set so machine is findable
-         * @after RemoteWaysideService has been created and ready for hosting
-         */
         try {
             // Must configure system IP Address for java (so client may reach this machine using java)
             // Create the service which we are hosting
@@ -95,9 +92,9 @@ public class RemoteWaysideServer implements Runnable {
     }
 
 
+    /** creates a new RemoteWaysideServer object which can be run on a new thread.
+     */
     public RemoteWaysideServer(String IPString, int communicationPort) {
-        /** creates a new RemoteWaysideServer object which can be run on a new thread.
-         */
         try {
             // Configure system IP Address for java (so client may reach this machine using java)
             // Create the service which we are hosting
@@ -123,13 +120,13 @@ public class RemoteWaysideServer implements Runnable {
     }
 
 
+    /** the RMI registry is where stubs are stored by the server and retrieved from by the client.
+     * RMI Registries exist on a port number, and an RMI registry may or may not already exist on that port
+     *
+     * @before RMIRegistry may already exist on the communication port
+     * @after RMIRegistry exists on the communication port and a reference to it has been stored locally, or an exception has been thrown
+     */
     public Registry getRMIRegistry() throws Exception {
-        /** the RMI registry is where stubs are stored by the server and retrieved from by the client.
-         * RMI Registries exist on a port number, and an RMI registry may or may not already exist on that port
-         *
-         * @before RMIRegistry may already exist on the communication port
-         * @after RMIRegistry exists on the communication port and a reference to it has been stored locally, or an exception has been thrown
-         */
         // Retrieve RMI Registry object from the port
         System.out.printf("Registry operation (port %d): ",communicationPort);
         try {                                                               // Try
@@ -159,12 +156,13 @@ public class RemoteWaysideServer implements Runnable {
         return registry;
     }
 
+
+    /** creates stub from "service" member, loads stub onto specified TCP socketPort number (default = 1099);
+     *
+     * @before RMIRegistry exits and has been stored in class member.
+     * @after RemoteWaysideStub for the hosted RemoteWaysideService has been bound to the RMI Registry
+     */
     public void makeStubAvailable(int socketPort) throws Exception {
-        /** creates stub from "service" member, loads stub onto specified TCP socketPort number (default = 1099);
-         *
-         * @before RMIRegistry exits and has been stored in class member.
-         * @after RemoteWaysideStub for the hosted RemoteWaysideService has been bound to the RMI Registry
-         */
         // Quit if RMI Registry is invalid
         if(registry == null) {
             System.err.println("Server attempted to export stub but the RMI Registry fetched is null.");

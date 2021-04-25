@@ -3,7 +3,42 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/Application/AppTests/GUIWindowLauncherTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Application/src/GUIThread.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Application/src/GUIWindowLauncher.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Application/src/SimulationEnvironmentJFrame.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home/lib/src.zip!/java.desktop/java/awt/Container.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home/lib/src.zip!/java.desktop/javax/swing/JComponent.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -122,7 +157,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/implementation/VitalCheck.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/TrainModelModule/src/TrainModel/Train.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/PLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/Elijah_PLCEngineTest.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -143,6 +199,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/GPIO/GPIOInput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/GPIO.java">
           <value>
             <Attribute>
@@ -150,7 +213,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/PLCEngine.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/PLCInput.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/WaysideController.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/WaysideSystem.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -165,6 +249,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideGUI/WaysideUIJFrameWindow.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteConnection/RemoteWaysideControllerTest.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -186,6 +277,13 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteConnection.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteConnection/RemoteWaysideController.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

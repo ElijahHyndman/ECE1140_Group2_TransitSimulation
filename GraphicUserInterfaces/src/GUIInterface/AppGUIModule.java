@@ -27,4 +27,6 @@ public interface AppGUIModule<T> {
      */
 
     public Object getJFrame();
+
+    public void setVis(boolean visible);
 }
