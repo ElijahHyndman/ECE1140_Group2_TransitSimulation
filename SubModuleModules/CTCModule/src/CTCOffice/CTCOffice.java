@@ -711,7 +711,7 @@ public class CTCOffice implements PhysicsUpdateListener
     }
 
     /*GIH6 adding back to yard*/
-    public int[] backToYard(int bn){
+    public int[] backToYardGreen(int bn){
         int[] newGreenLine = greenPath;
         int flag=0;
         for(int i = 0; i < 176; i++){
@@ -728,6 +728,20 @@ public class CTCOffice implements PhysicsUpdateListener
             if(newGreenLine[i]!=0)
                 RouteAr[newGreenLine[i]-1] = 1;
         return RouteAr;
+    }
+
+    public int[] backToYardRed(int bn){
+        int[] RouteArRed = new int[76];
+        //may want to change this to be the long way around the track
+        if(bn == 16 || bn == 21 || bn == 25|| bn == 35 || bn == 45 || bn == 48) { //F (16 - 9) are the only ones with 1
+            for(int i=0; i < 76; i++)
+                if(i >=9 && i <= bn)
+                    RouteArRed[i] = 1;
+                else
+                    RouteArRed[i]=0;
+        }
+
+        return RouteArRed;
     }
 
     public int calcAutoRouteLength(int bn, String lc, int tnum)
