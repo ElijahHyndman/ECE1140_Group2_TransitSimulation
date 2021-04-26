@@ -1,9 +1,8 @@
-/*
+package TrainModel;/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TrainModel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,6 +13,7 @@ import javax.imageio.ImageIO;
 
 public class MakeImage {
 
+    int dist = 0;
 	public static void main(String[] args) throws IOException {
             
     
@@ -24,6 +24,7 @@ public class MakeImage {
             int width = 500;
             int height = 250;
             int circleWidth = height;
+            dist += distance;
 
 
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -34,7 +35,7 @@ public class MakeImage {
             g2d.setColor(Color.blue);
             g2d.fillRect(0,125, 500, 2);
             g2d.setColor(Color.black);
-            g2d.fillRect(distance, 120, 32, 12);
+            g2d.fillRect(dist, 120, 32, 12);
 
 
 

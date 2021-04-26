@@ -701,19 +701,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         double blockG = displist.get(blockNo).getGrade();
         int sLim = (int)Math.round(displist.get(blockNo).getSpeedLimit()*0.621371);
         double elev = displist.get(blockNo).getElevation()*3.28084;
-        /*String t1 = displist.get(blockNo).getT1();
-        String t2 = displist.get(blockNo).getT2();
-        String t3 = displist.get(blockNo).getT3();
-        String t4 = displist.get(blockNo).getT4();
-        String t5 = displist.get(blockNo).getT5();
-        String t6 = displist.get(blockNo).getT6();
-        String t7 = displist.get(blockNo).getT7();
-        String t8 = displist.get(blockNo).getT8();
-        String t9 = displist.get(blockNo).getT9();
-        String t10 = displist.get(blockNo).getT10();*/
         boolean status = displist.get(blockNo-1).getStatus();
 
-        boolean totalocc = false;
+        boolean totalocc = display.CheckSectOcc(blockNo,lineColor);
 
         //TODO check occupancies and track statuses
 
@@ -729,32 +719,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"A block in this section is occupied. Cannot close track.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(false);
-                    displist.get(1).setStatus(false);
-                    displist.get(2).setStatus(false);
-                    displist.get(3).setStatus(false);
-                    displist.get(4).setStatus(false);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(false);
-                    displist.get(6).setStatus(false);
-                    displist.get(7).setStatus(false);
-                    displist.get(8).setStatus(false);
-                    displist.get(9).setStatus(false);
-                }
-                else
-                {
-                    displist.get(10).setStatus(false);
-                    displist.get(11).setStatus(false);
-                    displist.get(12).setStatus(false);
-                    displist.get(13).setStatus(false);
-                    displist.get(14).setStatus(false);
-                }
-                status = false;
-                displist.get(blockNo).setStatus(false);
+                display.CloseTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }
@@ -798,33 +763,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(true);
-                    displist.get(1).setStatus(true);
-                    displist.get(2).setStatus(true);
-                    displist.get(3).setStatus(true);
-                    displist.get(4).setStatus(true);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(true);
-                    displist.get(6).setStatus(true);
-                    displist.get(7).setStatus(true);
-                    displist.get(8).setStatus(true);
-                    displist.get(9).setStatus(true);
-                }
-                else
-                {
-                    displist.get(10).setStatus(true);
-                    displist.get(11).setStatus(true);
-                    displist.get(12).setStatus(true);
-                    displist.get(13).setStatus(true);
-                    displist.get(14).setStatus(true);
-                }
-                status = true;
+                display.OpenTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
-                //JOptionPane.showMessageDialog(jPanel3, "Block "+blockNo+" now open.");
             }
         }
 
