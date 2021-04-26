@@ -1,7 +1,6 @@
 package WaysideController;
 
 import Track.Track;
-import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import WaysideGUI.WaysideUIClass;
 
@@ -10,158 +9,120 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 public class WaysideSystem {
-
-    private String waysideName;
+    /***********************************************************************************************************************/
+    /** Global Members
+     */
+    public static int NUMBER_WAYSIDE_SYSTEMS = 0;
+    /** Default Members
+     */
+    public static String DEFAULT_GIVEN_NAME_FORMAT = "Wayside System #%d";
+    /** Information Members
+     */
+    private String waysideAlias;
+    private int waysideIndex = ++NUMBER_WAYSIDE_SYSTEMS;
+    private String givenName = String.format(DEFAULT_GIVEN_NAME_FORMAT,waysideIndex);
     private ArrayList<TrackElement> trackSection;
-
-
-    private List<WaysideController> controllers;
-
-
-    private int numberOfControllers;
-    private int[] authorities;
-    private double[] speeds;
-
-    //each track element has a wayside controller, this is an easy way to find each one!
-    private HashMap<Integer, WaysideController> lut;
-
+    /** Operation Members
+     */
+    private Vector<WaysideController> controllers;
+    private HashMap<Integer, WaysideController> lut = new HashMap<Integer, WaysideController>();
+    /***********************************************************************************************************************/
+    /** TODO To Haleigh: WaysideSystem(String, ArrayList) is the preferred constructor when working with Wayside Systems!
+     */
     public WaysideSystem() throws IOException{
-        waysideName = "Green";
-        controllers = new LinkedList<>();
-        numberOfControllers = 0;
+        waysideAlias = givenName;
+        controllers = new Vector<>();
     }
-
-    //This construction is bad, doesn't use the lut at all...
-//    public WaysideSystem(LinkedList<WaysideController> controllers) throws IOException {
-//        currentLine = "Green";
-//        this.controllers = controllers;
-//        numberOfControllers = controllers.size();
-//    }
-
-    public WaysideSystem(String waysideName, ArrayList<TrackElement> trackSection) throws IOException {
-        this.waysideName = waysideName;
+    public WaysideSystem(String waysideAlias, ArrayList<TrackElement> trackSection) throws IOException {
+        this.waysideAlias = waysideAlias;
         this.trackSection = trackSection;
-        controllers = new LinkedList<WaysideController>();
-        this.lut = new HashMap<>();
-        numberOfControllers = 0;
+        controllers = new Vector<>();
     }
 
     /*
-    Helper function that gets all the wayside controllers within the system in a vector
+        CTC Methods
      */
-    public Vector<WaysideController> getControllersVector() {
-        Vector<WaysideController> out = new Vector<WaysideController>();
-        for(WaysideController controller : controllers) {
-            out.add(controller);
-        }
-        return out;
-    }
 
-    /*
-    add a wayside controller
-     */
-    public void addWaysideController(int[] blockNumbers) throws IOException {
-        ArrayList<TrackElement> elementArrayList = findAllElements(blockNumbers);
-        //ArrayList<TrackBlock> blockArrayList = findAllBlocks(blockNumbers);
-        String controllerName = "Controller" + Integer.toString(++numberOfControllers);
-
-        WaysideController controller = new WaysideController(elementArrayList, controllerName);
-        controllers.add(controller);
-
-        TrackElement trackElement;
-        for(int i=0;i < blockNumbers.length;i++){
-            trackElement = getBlockElement(blockNumbers[i], trackSection);
-            lut.put(trackElement.getBlockNum(), controller);
-        }
-    }
-
-    /*
-    add output w/plc within a wayside controller
-     */
-    public void addOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
-        // TODO
-//        getController(blockNumber).addOutput(blockNumber, PLCfile);
-//        outputBlocks.add(getBlockElement(blockNumber, blocks));
-//        getController(blockNumber).generateOutputSignal(blockNumber, false);
-    }
-
-    /*
-add output w/plc within a wayside controller
- */
-    public void updateOutputWaysideController(int blockNumber, String PLCfile) throws IOException, URISyntaxException {
-        // TODO
-//        getController(blockNumber).updateOutput(blockNumber, PLCfile);
-//        outputBlocks.add(getBlockElement(blockNumber, blocks));
-//        getController(blockNumber).generateOutputSignal(blockNumber, false);
-    }
-
-    /*
-    update output within a wayside controller
-     */
-    public void updateOutputWaysideController(int blockNumber) throws IOException {
-        // TODO
-        //getController(blockNumber).generateOutputSignal(blockNumber, false);
-    }
-
-    /*
-    update output within a wayside controller
-     */
-    public void updateAllOutputsWaysideController() throws IOException {
-            //        for(int i=0;i < outputBlocks.size();i++){
-            // TODO
-            //getController(outputBlocks.get(i).getBlockNum()).generateOutputSignal(outputBlocks.get(i).getBlockNum(), false);
-        //}
-    }
-
-    //helper function that finds all the track ELEMENTS with the corresponding blocks numbers and returns the array list (needs improvement)
-    public ArrayList<TrackElement> findAllElements(int[] blockNumbers) throws IOException {
-        ArrayList<TrackElement> newElementSet = new ArrayList<>();
-
-        //needs check to see if the blocks numbers are even part of the system, if not, throw exception!
-
-        for(int i=0;i < blockNumbers.length;i++){
-            for(int j = 0; j < trackSection.size(); j++){
-                if((trackSection.get(j).getBlockNum() == blockNumbers[i]) && (!newElementSet.contains(trackSection.get(j)))){
-                    newElementSet.add(trackSection.get(j));
-                }
-            }
-        }
-
-        return newElementSet;
-    }
-
-    //helper function that finds all the track BLOCKS with the corresponding blocks numbers and returns the array list (needs improvement)
-    public ArrayList<TrackBlock> findAllBlocks(int[] blockNumbers) throws IOException {
-        ArrayList<TrackBlock> newBlockSet = new ArrayList<>();
-
-        //needs check to see if the blocks numbers are even part of the system, if not, throw exception!
-
-        for(int i=0;i < blockNumbers.length;i++){
-            for(int j = 0; j < trackSection.size(); j++){
-                if((trackSection.get(j).getBlockNum() == blockNumbers[i]) && (!newBlockSet.contains(trackSection.get(j))) &&
-                        (trackSection.get(i).getType().equalsIgnoreCase("block"))){
-                    newBlockSet.add((TrackBlock) trackSection.get(j)); //casting should not change the reference.
-                }
-            }
-        }
-
-        return newBlockSet;
-    }
-
-    public TrackElement findBlock(int blockNumber) throws IOException {
-        return getController(blockNumber).getBlockElement(blockNumber);
-    }
-
-    /*
-    finds the corresponding controller for each block!
+    /** finds the controller object which has jurisdiction over a specific block index.
+     *
+     * @param blockNumber
+     * @return
      */
     public WaysideController getController(int blockNumber){
         return lut.get(blockNumber);
     }
 
-    /*
-    somes lines are pre-defined, here is a quick way to generate the lines for the assignment!
+    /** retrieves the occupancy of a block from the track system.
+     * uses look-up table to call upon the correct wayside controller. Failure to update the lut when controller jurisdictions change will cause failure
+     *
+     * @param targetBlockNumber, the unique index of the intended TrackElement block whom we are acquiring the occupancy from
+     * @return boolean, the occupancy of
      */
+    public boolean getOccupancy(int targetBlockNumber) throws Exception {
+            try {
+                // TODO the return should occur here, we need lut first
+                //ctrl.getOccupancyOfBlock(targetBlockNumber);
+            } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+                failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+                throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)"));
+            }
+            return false;
+    }
+
+    /** allows CTC to update the speed and authorities for every block within the TrackLine
+     *  length of (1) lineSpeeds (2) lineAuthorities and (3) the ArrayList<TrackElement> which this WaysideSystem was constructed with must match
+     *  the element indexes in (1) and (2) must match one-to-one to the sequence of blocks within the Track Line, for example (with an offset of one, which is how ours will work):
+     *  element 0 in (1),(2) will correspond to Track block #1 in Green Line
+     *  element 1 in (1),(2) will correspond to Track block #2 in Green Line
+     *  element 2 in (1),(2) will correspond to Track block #3 in Green Line
+     *  ...
+     *  element n in (1),(2) will correspond to Track block #(n+1) in Green Line
+     *
+     *  an example outcome for the Green WaysideSystem would be:
+     *  Index   Arrays (S,A):           Gives outcome:
+     *  0       [25.0][3]               Track Index #1 gets speed 25 and authority 3
+     *  1       [25.0][1]               Track Index #2 gets speed 25 and authority 1
+     *  2       [00.0][0]               Track Index #3 gets speed 0 and authority 0
+     *  ...
+     *
+     * @param lineSpeeds, the array of intended speeds for all of the track blocks as doubles (one to one correspondance)
+     * @param lineAuthorities, the array of intended authorities for all of the track blocks as ints (one to one correspondance)
+     */
+    public void broadcastToControllers(double[] lineSpeeds, int[] lineAuthorities) throws Exception {
+        if(lineSpeeds.length != trackSection.size())
+            throw new Exception (String.format("Length of commanded Speeds Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given speed vector is (%d).\n",
+                                                this.waysideAlias,this.waysideAlias,trackSection.size(),lineSpeeds.length));
+        if(lineAuthorities.length != trackSection.size())
+            throw new Exception (String.format("Length of commanded Authorities Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given Authority vector is (%d).\n",
+                    this.waysideAlias,this.waysideAlias,trackSection.size(),lineAuthorities.length));
+
+        int arrayIndex = 0;
+        for (int blockNum = 1; arrayIndex<trackSection.size(); blockNum++,arrayIndex++) {
+            System.out.println();
+            for (WaysideController ctrl : controllers) {
+                ctrl.setBlockSpeed(blockNum, lineSpeeds[arrayIndex]);
+                ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
+            }
+        }
+    }
+
+    public void setClose(int targetBlockIndex) throws Exception {
+        // TODO
+    }
+
+    public void setOpen(int targetBlockIndex) throws Exception {
+        // TODO
+    }
+
+    public boolean getSwitchStatus(int targetBlockIndex) throws Exception {
+        // TODO
+        return false;
+    }
+
+    public void setSwitchStatus(int targetBlockIndex, boolean orientation) throws Exception {
+        // TODO
+    }
+
     public void generateLine() throws IOException, URISyntaxException {
 //        if(currentLine.equalsIgnoreCase("green line") && (trackSection.size() == 151)) {
 //            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
@@ -284,113 +245,15 @@ add output w/plc within a wayside controller
 //        }
     }
 
-    /*
-    broadcast to all the controllers!
-     */
-    public boolean broadcastToControllers(double[] newSpeeds, int[] newAuthorities) throws IOException {
-        WaysideController temp;
 
-        //RUN CHECKS TO MAKE SURE THE INPUTS ARE VALID HERE!
-
-        //collision safety check
-        for(int i=0;i < authorities.length;i++){
-            if(authorities[i] > 0 && newAuthorities[i] > 0){
-                newAuthorities[i] = 0;
-            }
-        }
-
-        authorities = newAuthorities;
-        speeds = newSpeeds;
-
-        for(int i=0;i < speeds.length;i++){
-            temp = lut.get(i);
-            temp.setSpeed(i, speeds[i]);
-        }
-
-        temp = null;
-        for(int i=0;i < authorities.length;i++){
-            temp = lut.get(i);
-            temp.setAuthority(i, authorities[i]);
-        }
-
-        return false;
-    }
-
-    /*
-    gets the occupancy from the proper controller
-     */
-    public boolean getOccupancy(int blockNumber) throws IOException {
-        // TODO
-        return false;
-    }
-
-    /*
-
-     */
-    public boolean getSwitchStatus(int blockNumber) throws IOException {
-        return getController(blockNumber).getSwitchStatus(blockNumber);
-    }
-
-    /*
-
-     */
-    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
-        getController(blockNumber).setSwitchStatus(blockNumber ,status);
-    }
-
-    /*
-    sets if a track should be CLOSED! failure status is currently used.
-     */
-    public void setClose(int blockNumber) throws IOException {
-        int blockIsClosed = 4;
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(blockIsClosed);
-    }
-    public void setOpen(int blockNumber) throws IOException {
-        int blockIsOpen = 0;
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(blockIsOpen);
-    }
-
-    /*
-    sets if a track should be OPEN! failure status is currently used.
-     */
-    public void openClose(int blockNumber) throws IOException {
-        getController(blockNumber).getBlockElement(blockNumber).setFailureStatus(0);
-    }
-
-    /*
-    helper function - finds the specific block element from the block number
-    */
-    public TrackElement getBlockElement(int blockNumber, ArrayList<TrackElement> blocks) throws IOException {
-        int num;
-        for(int i = 0; i < blocks.size(); i++){
-            num = blocks.get(i).getBlockNum();
-            if(blockNumber == num){
-                return blocks.get(i);
-            }
-        }
-
-        throw new IOException("Controller Error: No block with that number in the wayside...");
-    }
-
-    /*
-    Test Function that gets all the blocks
-     */
-    public ArrayList<TrackElement> getTrackSection(){
-        return trackSection;
-    }
-    public String getLine() {return waysideName;}
-    /*
-    Function -
-        Reads the console and uses that data to perform actions on the entire system
-    Input -
-        commandLine: the name of the input
-            current commands
-            --upload controller PLCfile outputName
-                add a given output to the controller (will be able to be used to connect aswell)
-            --compile controller outputName
-                add
-    Output -
-        String: This will describe what is happening with the command
+    /** accepts string from WaysideSystemUI console to perform action
+     *
+     * Commandline actions:
+     * upload PLC file to controller:
+     * @param commandLine
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
      */
     public String readConsole(String commandLine) throws IOException, URISyntaxException {
         String[] commands = commandLine.split(" ");
@@ -425,7 +288,7 @@ add output w/plc within a wayside controller
 
             // TODO
             //controllers.get(nameIndex).updateOutput(Integer.parseInt(blockNumber),PLCfile);
-            updateAllOutputsWaysideController();
+            //updateAllOutputsWaysideController();
             return "You have successfully uploaded a PLC to " + controllerName;
         }else if(commands[0].equals("update")){ //COMPILE COMMAND
 //            controllerName = commands[1];
@@ -456,7 +319,7 @@ add output w/plc within a wayside controller
                 authority[i] = i;
             }
 
-            broadcastToControllers(speed, authority);
+            //broadcastToControllers(speed, authority);
 
             //generateTestController();
             return "Error in broadcasting - something failed...";
@@ -465,11 +328,45 @@ add output w/plc within a wayside controller
         }
     }
 
-    //TEST GETTERS AND SETTER ******************************************************************************************
-    public HashMap<Integer, WaysideController> getLut(){
-        return lut;
+
+
+    /*
+            Getters and Setters
+     */
+
+
+    /** The expectation is that users will set WaysideAlias to a string name for the track line it overlooks*/
+    public String getLine() {return waysideAlias;}
+    public Vector<WaysideController> getControllers() { return controllers; }
+    public ArrayList<TrackElement> getTrackSection(){
+        return trackSection;
     }
 
+
+
+    /*
+            Cheeky Solution
+     */
+
+
+
+    public boolean isEqual(Object o) {
+        if (!(o instanceof WaysideSystem))
+            return false;
+        WaysideSystem other = (WaysideSystem) o;
+        // Priority 1: Wayside Alias Name matching Wayside Alias Name takes precedence
+        // ignore case to make it easier to use for ctc
+        if (this.waysideAlias.equalsIgnoreCase(other.waysideAlias))
+            return true;
+        // Priority 2: Wayside Given Name matching Wayside Given Name
+        if (this.givenName.equals(this.givenName))
+            return true;
+        // Return false otherwise
+        return false;
+    }
+    /*
+            Main for running just a wayside system on its own
+     */
     public static void main(String[] args) throws IOException, URISyntaxException {
         String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
         Track instance = new Track();

@@ -118,8 +118,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         trackObj = SEt;
     }
 
-    public Object[] Dispatch(String dest, String tNum, String timeD)
-    {
+    public Object[] Dispatch(String dest, String tNum, String timeD) throws Exception {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
@@ -294,7 +293,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             if (lineCol.equals("Green")) {
-                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+               waysides.get(0).broadcastToControllers(speedArrG, authArr);
             }
             else if (lineCol.equals("Red")){
                 waysides.get(1).broadcastToControllers(speedArrR, authArr);
@@ -323,8 +322,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public Object[] AutoDispatch(String dest, String tNum, String timeD)
-    {
+    public Object[] AutoDispatch(String dest, String tNum, String timeD) throws Exception {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
@@ -590,8 +588,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return thruP;
     }
 
-    public boolean CheckOcc(int blockNum, String lineCol)
-    {
+    public boolean CheckOcc(int blockNum, String lineCol) throws Exception {
 
         try {
             for (WaysideSystem ws : waysides) {
@@ -609,8 +606,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return occ;
     }
 
-    public boolean CheckSectOcc(int blockNum, String lineCol)
-    {
+    public boolean CheckSectOcc(int blockNum, String lineCol) throws Exception {
         char section = dispArr.get(blockNum).getSection();
         char lineChar = lineCol.charAt(0);
         ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
@@ -643,7 +639,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             switchstat = waysides.get(0).getSwitchStatus(switchNum);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return switchstat;
@@ -654,7 +650,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         boolean switchstat = !stat;
         try {
             waysides.get(0).setSwitchStatus(switchNum, switchstat);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -671,7 +667,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             try {
                 waysides.get(0).setOpen(blocks.get(i));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to set open for block");
                 e.printStackTrace();
             }
@@ -690,7 +686,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             try {
                 waysides.get(0).setClose(blocks.get(i));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to set closed for block");
                 e.printStackTrace();
             }

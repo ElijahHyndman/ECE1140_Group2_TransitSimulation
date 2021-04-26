@@ -59,8 +59,13 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     @Override
-    public void update(){
-        occupancy();
+    public void update() {
+        try {
+            occupancy();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failure occured when updating occupancy for the system");
+        }
         calcthroughput();
     }
 
@@ -173,7 +178,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                try {
+                    jButton8ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -273,7 +282,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                try {
+                    jButton2ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -494,7 +507,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                try {
+                    jButton7ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -688,7 +705,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
@@ -798,7 +815,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                occupancy();
+                try {
+                    occupancy();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         });
 
@@ -808,7 +829,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         timer.start();
     }
 
-    public void occupancy(){
+    public void occupancy() throws Exception {
         boolean blockOccG=false;
         boolean blockOccR=false;
         model2 = (DefaultTableModel)jTable3.getModel();
@@ -833,7 +854,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         String train;
         String destination;
@@ -1003,7 +1024,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         String filename = jTextField5.getText().trim();
         if (filename.equals("BlueLine"))

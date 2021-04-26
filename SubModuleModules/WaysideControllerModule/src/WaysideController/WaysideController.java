@@ -56,7 +56,7 @@ public class WaysideController implements Serializable {
 
     // Default constructor is necessary for RemoteWaysideController inheritance
     protected WaysideController() {
-        this.controllerAlias = null;
+        this.controllerAlias = controllerName;
     }
 
     public WaysideController(String controllerAlias) {
@@ -82,6 +82,12 @@ public class WaysideController implements Serializable {
             this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
     }
 
+
+
+    /*
+            Wayside System Methods
+     */
+
     /** gives this WaysideController jurisdiction over a set of blocks.
      *
      * @param blocks
@@ -98,6 +104,21 @@ public class WaysideController implements Serializable {
         }
     }
 
+
+    /** handles jurisdiction responsibility generation for an individual block
+     *
+     * @param block
+     */
+    public void overseeBlock(TrackElement block) {
+        System.out.printf("Now overseeing block %d\n",block.getBlockNum());
+    }
+
+
+    /**
+     *
+     * @param tracks
+     * @return
+     */
     public static ArrayList<PLCInput> generateInputPool(ArrayList<TrackElement> tracks) {
         ArrayList<PLCInput> generated = new ArrayList<PLCInput>();
         int trackBlockIndex;
@@ -118,39 +139,104 @@ public class WaysideController implements Serializable {
         return generated;
     }
 
-    /** handles jurisdiction responsibility generation for an individual block
-     *
-     * @param block
-     */
-    public void overseeBlock(TrackElement block) {
-        System.out.printf("Now overseeing block %d\n",block.getBlockNum());
-    }
 
 
     /*
         Methods for CTC
      */
-    public void setSpeed(double[] speeds) throws IOException {
+
+
+
+    /** sets the speed for a TrackElement object if that object is within this controller's jurisdiction.
+     *  This function will be called on this controller even if this controller does not have jurisdiction over the particular block,
+     *  it only applies the output if it is within its jurisdiction
+     *
+     *  expected call frequency: only when the CTC makes a new dispatch (changes to current speed/authorities)
+     *
+     * @param targetBlockIndex, the int index of the target block. Assert: indexes of blocks within the same line (i.e. Green, Red) are unique (no other block within green has the same block index.) indexes are not globally unique
+     * @param newCommandedSpeed, the double for the new speed commanded for trains on the block (gives in kilometers/hour, applied to track as meters/second)
+     * @throws IOException
+     *
+     * @before current commanded speed on the track circuit is not up to date
+     * @after the commanded speed on the track circuit has been set to the new value if it passes the checks
+     */
+    public void setBlockSpeed(int targetBlockIndex, double newCommandedSpeed) throws Exception {
+        for (TrackElement block : jurisdiction) {
+            // only if it is found...
+            if(block.getBlockNum() == targetBlockIndex)
+                applySpeedToBlock(block,newCommandedSpeed);
+        }
     }
 
 
-    public void setSpeed(int blockNumber, double speeds) throws IOException {
+    /** performs all tests and filters to a new speed before its value is applied to a block
+     *
+     * Assert: backwards movement is allowed
+     *
+     * @param blockObject, the TrackElement block object which we are applying the speed to
+     * @param newCommandedSpeed, the new, intended speed for the specified track object
+     */
+    public static void applySpeedToBlock(TrackElement blockObject, double newCommandedSpeed) throws Exception {
+        double maximumForwardSpeed = blockObject.getSpeedLimit();
+        double maximumBackwardSpeed = -maximumForwardSpeed;
+        if (newCommandedSpeed > maximumForwardSpeed)
+            try {blockObject.setCommandedSpeed(maximumForwardSpeed); } catch (Exception failureToApplySpeedToBlock) {
+                throw new Exception (String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
+            }
+        if (newCommandedSpeed < maximumBackwardSpeed)
+            try {blockObject.setCommandedSpeed(maximumBackwardSpeed); } catch (Exception failureToApplySpeedToBlock) {
+                throw new Exception (String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
+            }
+        // Assert: passes filters if maximumBackwardSpeed < commandedSpeed <= 0 or 0 <= commandedSpeed < maximumForwardSpeed
+        try {blockObject.setCommandedSpeed(newCommandedSpeed); } catch (Exception failureToApplySpeedToBlock) {
+            throw new Exception (String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
+        }
+    }
+
+
+    /** sets the speed for a TrackElement object if that object is within this controller's jurisdiction.
+     *  This function will be called on this controller even if this controller does not have jurisdiction over the particular block,
+     *  it only applies the output if it is within its jurisdiction
+     *
+     *  expected call frequency: only when the CTC makes a new dispatch (changes to current speed/authorities)
+     *
+     * @param targetBlockIndex, the int index of the target block. Assert: indexes of blocks within the same line (i.e. Green, Red) are unique (no other block within green has the same block index.) indexes are not globally unique
+     * @param newAuthority, the double for the new speed commanded for trains on the block (gives in kilometers/hour, applied to track as meters/second)
+     * @throws IOException
+     */
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws IOException {
+        for (TrackElement block : jurisdiction) {
+            // only if it is found...
+            if(block.getBlockNum() == targetBlockIndex)
+                // no checks are performed on authority value
+                block.setAuthority(newAuthority);
+        }
+    }
+
+
+    /** returns the occupancy of a TrackElement within this controller's jurisdiction.
+     *  WaysideSystem ensures that this function is only called whenever the track exists within this controller jurisdiction
+     *
+     * @param targetBlockIndex
+     * @return
+     */
+    public boolean getOccupancy(int targetBlockIndex) throws Exception {
+        for (TrackElement block : jurisdiction) {
+            if (block.getBlockNum() == targetBlockIndex)
+                try {
+                    return block.getOccupied();
+                } catch (Exception failureToGetOccupation) {
+                    failureToGetOccupation.printStackTrace();
+                    throw new Exception(String.format("Failed to retrieve occupation of block (index %d)",targetBlockIndex));
+                }
+        }
+        throw new Exception(String.format("Failure occurred when retrieving occupancy from track system: Wayside Controller (%s) does not contain block index %d.",controllerAlias,targetBlockIndex));
     }
 
 
     public double[] getSpeed() {
         return null;
     }
-
-
-    public void setAuthority(int[] authorities) throws IOException {
-    }
-
-
-    public void setAuthority(int blockNumber, int authority) throws IOException {
-    }
-
-
     public int[] getAuthority() {
         return null;
     }
@@ -240,15 +326,6 @@ public class WaysideController implements Serializable {
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
     public void setControllerName(String newName){ this.controllerAlias = newName; }
     public String getControllerAlias(){ return controllerAlias; }
-    public TrackElement getBlockElement(int blockNumber) throws IOException {
-        for(int i = 0; i < jurisdiction.size(); i++){
-            if(blockNumber == jurisdiction.get(i).getBlockNum()){
-                return jurisdiction.get(i);
-            }
-        }
-
-        throw new IOException("Controller Error: No block with that number in controller - " + controllerAlias +  " " + Integer.toString(blockNumber));
-    }
 
     /*
         String Representation

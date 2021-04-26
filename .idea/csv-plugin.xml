@@ -94,6 +94,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/CTCModule/CTCTesting/CTCOfficeTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/CTCModule/src/CTCOffice/CTCOffice.java">
           <value>
             <Attribute>

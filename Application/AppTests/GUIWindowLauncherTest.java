@@ -1,4 +1,3 @@
-import CTCOffice.DisplayLine;
 import Track.Track;
 import Track.TrackGUI;
 import TrackConstruction.TrackBlock;
@@ -8,13 +7,11 @@ import TrainModel.Train;
 import TrainModel.trainGUI;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
-import WaysideGUI.WaysideUIJFrameWindow;
+import WaysideGUI.WaysideSystemUI;
 import implementation.TrainControl;
-import CTCUI.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
@@ -63,7 +60,7 @@ class GUIWindowLauncherTest {
     @Test
     @DisplayName("Generates nonnull Thread Object for WaysideSystem UI")
     public void launcherCreatesNonVoidWaysideUI() throws Exception {
-        WaysideUIJFrameWindow ui = new WaysideUIJFrameWindow();
+        WaysideSystemUI ui = new WaysideSystemUI();
         Runnable result = GUIWindowLauncher.generateThread(ui);
         System.out.println("Resulting Thread object: ");
         System.out.println(result);
@@ -141,7 +138,7 @@ class GUIWindowLauncherTest {
     @Test
     @DisplayName("launches WaysideSystem UI")
     public void launchesWaysideUIWindow() throws Exception {
-        WaysideUIJFrameWindow ui = new WaysideUIJFrameWindow();
+        WaysideSystemUI ui = new WaysideSystemUI();
         // UI must be latched onto object
         WaysideSystem testingWaysideSystem = new WaysideSystem();
         ui.latch(testingWaysideSystem);
@@ -154,7 +151,7 @@ class GUIWindowLauncherTest {
     @Test
     @DisplayName("launches WaysideSystem UI")
     public void launchLongWaysideUIWindow() throws Exception {
-        WaysideUIJFrameWindow ui = new WaysideUIJFrameWindow();
+        WaysideSystemUI ui = new WaysideSystemUI();
 
         LinkedList<WaysideController> ctrls = new LinkedList<WaysideController>();
         // UI must be latched onto object

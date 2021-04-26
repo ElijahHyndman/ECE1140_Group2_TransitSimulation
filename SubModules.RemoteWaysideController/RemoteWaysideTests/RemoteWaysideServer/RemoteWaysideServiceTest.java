@@ -4,7 +4,7 @@ import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
-import WaysideGUI.WaysideUIJFrameWindow;
+import WaysideGUI.WaysideSystemUI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -146,7 +146,7 @@ class RemoteWaysideServiceTest {
      */
     @Test
     public void staticJFrameFunctionWorks() {
-        WaysideUIJFrameWindow result = null;
+        WaysideSystemUI result = null;
         result = RemoteWaysideService.getSingleControllerUI(new WaysideController("Empty Wayside Controller"));
         assertNotNull(result);
     }

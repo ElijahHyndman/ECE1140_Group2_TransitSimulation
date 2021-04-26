@@ -72,7 +72,7 @@ class SimulationEnvironmentTest {
 
     @Test
     @DisplayName("CTC\t\t[CTC will spawn a train in Yard when a new dispatch is called]")
-    void ctcWillSpawnTrainAtYard() {
+    void ctcWillSpawnTrainAtYard() throws Exception {
         SE = new SimulationEnvironment();
         SE.importTrack("SEResources/GreenAndRedLine.csv");
         CTCOffice ctc = SE.getCTC();
@@ -85,12 +85,12 @@ class SimulationEnvironmentTest {
             TrackElement element = SE.getTrackSystem().getGreenLine().get(i);
             blockNumbers[i] = element.getBlockNum();
         }
-        try {
-            // Give jurisdiction to controller
-            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // Give jurisdiction to controller
+//            // SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         ctc.Dispatch("Dormont","new","00:00:20");
         SE.startTime();
@@ -107,7 +107,7 @@ class SimulationEnvironmentTest {
     }
 
     @Test
-    void ctcWillGenerateAuthorityAndSpeed() {
+    void ctcWillGenerateAuthorityAndSpeed() throws Exception {
         SE = new SimulationEnvironment();
         SE.importTrack("SEResources/GreenAndRedLine.csv");
         CTCOffice ctc = SE.getCTC();
@@ -120,13 +120,13 @@ class SimulationEnvironmentTest {
             TrackElement element = SE.getTrackSystem().getGreenLine().get(i);
             blockNumbers[i] = element.getBlockNum();
         }
-        try {
-            // Give jurisdiction to controller
-            // first wayside is green
-            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // Give jurisdiction to controller
+//            // first wayside is green
+//            // SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         ctc.Dispatch("Dormont","new","12:00:00");
         SE.startTime();

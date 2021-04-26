@@ -32,16 +32,16 @@ public class WaysideUIClass extends Thread {
 
     //Vector<WaysideController> controllers = new Vector<WaysideController>();
     WaysideSystem WS;
-    WaysideUIJFrameWindow guiWindow;
+    WaysideSystemUI guiWindow;
 
     public WaysideUIClass() throws IOException {
         WS = new WaysideSystem();
-        guiWindow = new WaysideUIJFrameWindow(WS);
+        guiWindow = new WaysideSystemUI(WS);
     }
 
     public WaysideUIClass(WaysideSystem existingSystem) throws IOException {
         WS = existingSystem;
-        guiWindow = new WaysideUIJFrameWindow(existingSystem);
+        guiWindow = new WaysideSystemUI(existingSystem);
     }
 
     public void run() {
@@ -59,7 +59,7 @@ public class WaysideUIClass extends Thread {
                 System.out.println("A problem occurred using the sleep function inside the WaysideUIClass");
             }
 
-            Vector<WaysideController> samples = (Vector<WaysideController>) WS.getControllersVector();
+            Vector<WaysideController> samples = (Vector<WaysideController>) WS.getControllers();
             guiWindow.updateGUI(samples);
             //guiWindow.update();
         }
