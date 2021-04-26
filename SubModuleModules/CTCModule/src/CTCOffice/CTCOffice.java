@@ -632,17 +632,27 @@ public class CTCOffice //implements PhysicsUpdateListener
         return totalocc;
     }
 
-    public boolean CheckSwitch(int blockNum, String lineCol)
+    public boolean CheckSwitch(int switchNum, String lineCol)
     {
-        boolean switchstat=false;
+        boolean switchstat = false;
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            switchstat = waysides.get(0).getSwitchStatus(blockNum);
+            switchstat = waysides.get(0).getSwitchStatus(switchNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return switchstat;
+    }
+
+    public void ToggleSwitch(int switchNum, boolean stat)
+    {
+        boolean switchstat = !stat;
+        try {
+            waysides.get(0).setSwitchStatus(switchNum, switchstat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void OpenTrack(int blockNum, String lineCol)
@@ -1613,8 +1623,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix;
-        tix = Track.updateTix();
+        int tix = Track.updateTix();
         return tix;
     }
 
