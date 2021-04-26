@@ -306,7 +306,7 @@ class TrackTest {
 
             if (next != null) {
                 test += next.getBlockNum();
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " " + i);
+                System.out.println(cur.getBlockNum() + ", " + i );
                 prev = cur;
                 cur = next;
             }
