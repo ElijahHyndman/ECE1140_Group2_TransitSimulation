@@ -24,7 +24,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
 
     //Below data was mostly just for iteration 2... maybe use in future?
     public ArrayList<Train> trains = new ArrayList<Train>();
-    public int mainTrainIndex;
+    public int mainTrainIndex = 0;
     int namesIndex = 2;
     int trainIndex = 0;
 
@@ -113,7 +113,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         testFailure.setValueAt(trains.get(trainIndex).engineFail, 2, 1);
         
         try {
-            BufferedImage bufImg=ImageIO.read(new File("./src/images/image.png"));
+            BufferedImage bufImg=ImageIO.read(new File("image.png"));
             imageLabel.setIcon(new ImageIcon(bufImg));
             //jlabel.repaint();
             //works even without repaint
@@ -162,9 +162,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         testView = new javax.swing.JPanel();
         tablePane = new javax.swing.JScrollPane();
         testTable = new javax.swing.JTable();
-        selectTrain = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
-        addTrain = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         numTrains = new javax.swing.JLabel();
@@ -226,9 +224,9 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         table1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Acceleration", null, "mph/s^2", "Train Model"},
-                {"Actual Speed", null, "m/h", "Train Model"},
-                {"Commanded Speed", null, "m/h", "Track Model"},
+                {"Acceleration", null, "mph/s", "Train Model"},
+                {"Actual Speed", null, "mph", "Train Model"},
+                {"Commanded Speed", null, "mph", "Track Model"},
                 {"Power", null, "HP", "Train Controller"},
                 {"Authority", null, "blocks", "Track Model"},
                 {"Mass", null, "kg", "Train Model"}
@@ -447,7 +445,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                 {"Actual Speed", null, "mph", null},
                 {"Authority", null, "blocks", null},
                 {"Beacon", null, "-", null},
-                {"Commanded Speed", null, "ft/s", null},
+                {"Commanded Speed", null, "mph", null},
                 {"Doors (Left)", null, "-", null},
                 {"Doors (Right)", null, "-", null},
                 {"Emergency Brake", null, "-", null},
@@ -489,25 +487,9 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
             testTable.getColumnModel().getColumn(1).setResizable(false);
         }
 
-        selectTrain.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Train 1" }));
-        selectTrain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectTrainActionPerformed(evt);
-            }
-        });
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel8.setText("Select Train");
 
-        addTrain.setText("Add New Train");
-        addTrain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addTrainActionPerformed(evt);
-            }
-        });
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel9.setText("Trains in Operation = ");
 
         jButton1.setText("Enter");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -572,7 +554,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                 .addGap(86, 86, 86)
                 .addComponent(jLabel8)
                 .addGap(26, 26, 26)
-                .addComponent(selectTrain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(testViewLayout.createSequentialGroup()
                 .addGroup(testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -593,9 +574,9 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                         .addGap(18, 18, 18)
                         .addComponent(numTrains, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22)
-                        .addComponent(addTrain))
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
+            )
         );
         testViewLayout.setVerticalGroup(
             testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -603,12 +584,10 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                 .addGroup(testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testViewLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(addTrain, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testViewLayout.createSequentialGroup()
                         .addContainerGap(24, Short.MAX_VALUE)
                         .addGroup(testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(selectTrain, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+
                                 .addComponent(jLabel9)
                                 .addComponent(jLabel8))
                             .addComponent(numTrains, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -861,20 +840,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         updateDisplay();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void addTrainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrainActionPerformed
-        Train t2 = new Train(5, 2, 1);
-        trains.add(t2);
-        selectTrain.addItem("Train "+Integer.toString(namesIndex));
-        namesIndex++;
-        numTrains.setText(Integer.toString(namesIndex-1));
-    }//GEN-LAST:event_addTrainActionPerformed
 
-    private void selectTrainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectTrainActionPerformed
-        trainIndex = selectTrain.getSelectedIndex();
-        System.out.println(trainIndex);
-
-        updateTestDisplay();
-    }//GEN-LAST:event_selectTrainActionPerformed
 
     /**
      * @param args the command line arguments
@@ -914,7 +880,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addTrain;
     private javax.swing.JButton additionalButton;
     private javax.swing.JTable additionalTable;
     private javax.swing.JPanel additionalView;
@@ -948,7 +913,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JPanel mainView;
     private javax.swing.JPanel menu;
     private javax.swing.JLabel numTrains;
-    private javax.swing.JComboBox<String> selectTrain;
+
     private javax.swing.JTable table1;
     private javax.swing.JTable table2;
     private javax.swing.JTable table4;
