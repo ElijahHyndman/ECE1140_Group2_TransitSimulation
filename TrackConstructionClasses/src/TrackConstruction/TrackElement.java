@@ -38,7 +38,7 @@ public class TrackElement {
     double commandedSpeed;     //km / hour
 
     //Information on node connections
-    int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
+    int[] directionArray;      //TO ARRAY, all possible edges - meaning from the current block to the next block
     char biDirecitional;
     int[] directionStates = {0,0,0,0};
     String type;

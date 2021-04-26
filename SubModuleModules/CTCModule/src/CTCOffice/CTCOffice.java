@@ -8,7 +8,7 @@ import SimulationEnvironment.*;
 import Track.Track;
 import WorldClock.PhysicsUpdateListener;
 
-public class CTCOffice implements PhysicsUpdateListener
+public class CTCOffice //implements PhysicsUpdateListener
 {
     private int thruP;
     private Object[] speedAuthorityTime = new Object[3];
@@ -35,9 +35,9 @@ public class CTCOffice implements PhysicsUpdateListener
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
-    public CharSequence timeNow = "07:09"; //TODO
+    public CharSequence timeNow;
     private LocalTime now;
-    public Track trackObj;
+    public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
     public int[] positions = new int[10];
     public ArrayList<double[]> speedsR =new ArrayList<double[]>();
@@ -65,14 +65,20 @@ public class CTCOffice implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
         try {
-            greenWS = new WaysideSystem("Green",trackSystem.getGreenLine());
+            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            redWS = new WaysideSystem("Red", trackSystem.getRedLine());
+            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            throw new Exception("To do");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -281,9 +287,6 @@ public class CTCOffice implements PhysicsUpdateListener
             times.add(timeDisp);
             authorities.add(authArr);
         }
-
-        //TODO -- NEED TO UNCOMMENT
-
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
@@ -297,7 +300,7 @@ public class CTCOffice implements PhysicsUpdateListener
             e.printStackTrace();
         }
 
-        //BroadcastingArrays();
+        BroadcastingArrays();
 
         return speedAuthorityTime;
     }
@@ -350,6 +353,75 @@ public class CTCOffice implements PhysicsUpdateListener
         if (dest.equals("Station B")){
             blockNum = 10;
             lineCol = "Blue";}
+        else if (dest.equals("Station C")){
+            blockNum = 15;
+            lineCol = "Blue";}
+        else if (dest.equals("Shadyside")){
+            blockNum = 7;
+            lineCol = "Red";}
+        else if (dest.equals("Herron Ave")){
+            blockNum = 16;
+            lineCol = "Red";}
+        else if (dest.equals("Swissville")){
+            blockNum = 21;
+            lineCol = "Red";}
+        else if (dest.equals("Penn Station")){
+            blockNum = 25;
+            lineCol = "Red";}
+        else if (dest.equals("Steel Plaza")){
+            blockNum = 35;
+            lineCol = "Red";}
+        else if (dest.equals("First Ave")){
+            blockNum = 45;
+            lineCol = "Red";}
+        else if (dest.equals("Station Square")){
+            blockNum = 48;
+            lineCol = "Red";}
+        else if (dest.equals("South Hills Junction")){
+            blockNum = 60;
+            lineCol = "Red";}
+        else if(dest.equals("Pioneer")){
+            blockNum = 2;
+            lineCol = "Green";}
+        else if(dest.equals("Edgebrook")){
+            blockNum = 9;
+            lineCol = "Green";}
+        else if(dest.equals("Station")){
+            blockNum = 16;
+            lineCol = "Green";}
+        else if(dest.equals("Whited")){
+            blockNum = 22;
+            lineCol = "Green";}
+        else if(dest.equals("South Bank")){
+            blockNum = 31;
+            lineCol = "Green";}
+        else if(dest.equals("Central")){
+            blockNum = 39;
+            lineCol = "Green";}
+        else if(dest.equals("Inglewood")){
+            blockNum = 48;
+            lineCol = "Green";}
+        else if(dest.equals("Overbrook")){
+            blockNum = 57;
+            lineCol = "Green";}
+        else if(dest.equals("Glenbury")){
+            blockNum = 65;
+            lineCol = "Green";}
+        else if(dest.equals("Dormont")){
+            blockNum = 73;
+            lineCol = "Green";}
+        else if(dest.equals("Mt Lebanon")){
+            blockNum = 77;
+            lineCol = "Green";}
+        else if(dest.equals("Poplar")){
+            blockNum = 88;
+            lineCol = "Green";}
+        else if(dest.equals("Castle Shannon")){
+            blockNum = 96;
+            lineCol = "Green";}
+        else{
+            blockNum = 0;
+            lineCol = "Green";}
 
         CharSequence timeChar = timeD;
         timeDis = LocalTime.parse(timeChar);
@@ -433,7 +505,7 @@ public class CTCOffice implements PhysicsUpdateListener
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //BroadcastingArrays();
+        BroadcastingArrays();
 
         return speedAuthorityTime;
     }
@@ -442,8 +514,10 @@ public class CTCOffice implements PhysicsUpdateListener
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times)){
+
                 //TODO waysides.broadcastToControllers(speedsR, authorities);
                 // TODO waysides.broadcastToControllers(speedsG, authorities);
+
                 times.remove(i);
                 speedsR.remove(i);
                 speedsG.remove(i);
@@ -532,17 +606,54 @@ public class CTCOffice implements PhysicsUpdateListener
         return occ;
     }
 
-    public boolean CheckSwitch(int blockNum, String lineCol)
+    public boolean CheckSectOcc(int blockNum, String lineCol)
     {
-        boolean switchstat=false;
+        char section = dispArr.get(blockNum).getSection();
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
+        int length = blocks.size();
+        boolean[] occs = new boolean[length];
+        boolean totalocc = false;
+
+        for (int i=0; i<length; i++){
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                occs[i] = waysides.get(0).getOccupancy(blockNum);
+            } catch (IOException e) {
+                System.out.println("Failed to set open for block");
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < length; i++){
+            if (occs[i]){
+                totalocc=true;
+            }
+        }
+        return totalocc;
+    }
+
+    public boolean CheckSwitch(int switchNum, String lineCol)
+    {
+        boolean switchstat = false;
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            switchstat = waysides.get(0).getSwitchStatus(blockNum);
+            switchstat = waysides.get(0).getSwitchStatus(switchNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return switchstat;
+    }
+
+    public void ToggleSwitch(int switchNum, boolean stat)
+    {
+        boolean switchstat = !stat;
+        try {
+            waysides.get(0).setSwitchStatus(switchNum, switchstat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void OpenTrack(int blockNum, String lineCol)
@@ -707,6 +818,26 @@ public class CTCOffice implements PhysicsUpdateListener
         return rl;
     }
 
+    /*GIH6 adding back to yard*/
+    public int[] backToYard(int bn){
+        int[] newGreenLine = greenPath;
+        int flag=0;
+        for(int i = 0; i < 176; i++){
+            if(newGreenLine[i] != bn) {
+                newGreenLine[i] = 0;
+            }
+            if(newGreenLine[i] == bn)
+                break;
+
+        }
+
+        int[] RouteAr = new int[150];
+        for(int i=0; i < 176; i++)
+            if(newGreenLine[i]!=0)
+                RouteAr[newGreenLine[i]-1] = 1;
+        return RouteAr;
+    }
+
     public int calcAutoRouteLength(int bn, String lc, int tnum)
     {
         int rl;
@@ -837,7 +968,7 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-        if (bn==65 && lc.equals("Green")){ //Glenbury
+        if (bn==65 && lc.equals("Green")){ // Yard - Glenbury
             if (positions[tnum-1]>=65 && positions[tnum-1]<114)
             {
                 for(int i=104; i<114; i++)
@@ -855,7 +986,7 @@ public class CTCOffice implements PhysicsUpdateListener
                 positions[tnum-1] = 65;
             }
         }
-        if(bn==73 && lc.equals("Green")){ //Dormont
+        if(bn==73 && lc.equals("Green")){ //GLEN - Dormont
             if (positions[tnum-1]>=73 && positions[tnum-1]<105)
             {
                 for(int i=95; i<105; i++)
@@ -1493,8 +1624,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = 0;
-        //tix = Track.updateTix();
+        int tix = Track.updateTix();
         return tix;
     }
 
@@ -1521,6 +1651,15 @@ public class CTCOffice implements PhysicsUpdateListener
     public SimulationEnvironment getSE()
     {
         return SEobj;
+    }
+
+    /*getting throuput */
+    public int getThroughput(){
+        return this.thruP;
+    }
+    /*setting throughput*/
+    public void setThroughput(int test){
+        thruP = test;
     }
 
 }

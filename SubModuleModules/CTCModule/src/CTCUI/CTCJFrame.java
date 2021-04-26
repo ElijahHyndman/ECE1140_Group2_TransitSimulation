@@ -4,6 +4,8 @@ package CTCUI;/*
  * and open the template in the editor.
  */
 //iteration 2
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 import CTCOffice.*;
@@ -13,8 +15,10 @@ import Track.Track;
 
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import java.time.*;
+import javax.swing.Timer;
 
 /**
  *
@@ -34,6 +38,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     Track givenSystem = new Track();
     DefaultTableModel model, model2;
     boolean mode = false;
+    public Timer timer;
 
     /**
      * Creates new form CTCJFrame
@@ -47,6 +52,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         givenSystem = null;
         try {
             givenSystem = (Track) myObject;
+            givenSystem = (Track) myObject;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +60,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     @Override
     public void update(){
-
+        occupancy();
+        calcthroughput();
     }
 
     @Override
@@ -694,19 +701,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         double blockG = displist.get(blockNo).getGrade();
         int sLim = (int)Math.round(displist.get(blockNo).getSpeedLimit()*0.621371);
         double elev = displist.get(blockNo).getElevation()*3.28084;
-        /*String t1 = displist.get(blockNo).getT1();
-        String t2 = displist.get(blockNo).getT2();
-        String t3 = displist.get(blockNo).getT3();
-        String t4 = displist.get(blockNo).getT4();
-        String t5 = displist.get(blockNo).getT5();
-        String t6 = displist.get(blockNo).getT6();
-        String t7 = displist.get(blockNo).getT7();
-        String t8 = displist.get(blockNo).getT8();
-        String t9 = displist.get(blockNo).getT9();
-        String t10 = displist.get(blockNo).getT10();*/
         boolean status = displist.get(blockNo-1).getStatus();
 
-        boolean totalocc = false;
+        boolean totalocc = display.CheckSectOcc(blockNo,lineColor);
 
         //TODO check occupancies and track statuses
 
@@ -722,32 +719,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"A block in this section is occupied. Cannot close track.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(false);
-                    displist.get(1).setStatus(false);
-                    displist.get(2).setStatus(false);
-                    displist.get(3).setStatus(false);
-                    displist.get(4).setStatus(false);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(false);
-                    displist.get(6).setStatus(false);
-                    displist.get(7).setStatus(false);
-                    displist.get(8).setStatus(false);
-                    displist.get(9).setStatus(false);
-                }
-                else
-                {
-                    displist.get(10).setStatus(false);
-                    displist.get(11).setStatus(false);
-                    displist.get(12).setStatus(false);
-                    displist.get(13).setStatus(false);
-                    displist.get(14).setStatus(false);
-                }
-                status = false;
-                displist.get(blockNo).setStatus(false);
+                display.CloseTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }
@@ -791,33 +763,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(true);
-                    displist.get(1).setStatus(true);
-                    displist.get(2).setStatus(true);
-                    displist.get(3).setStatus(true);
-                    displist.get(4).setStatus(true);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(true);
-                    displist.get(6).setStatus(true);
-                    displist.get(7).setStatus(true);
-                    displist.get(8).setStatus(true);
-                    displist.get(9).setStatus(true);
-                }
-                else
-                {
-                    displist.get(10).setStatus(true);
-                    displist.get(11).setStatus(true);
-                    displist.get(12).setStatus(true);
-                    displist.get(13).setStatus(true);
-                    displist.get(14).setStatus(true);
-                }
-                status = true;
+                display.OpenTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
-                //JOptionPane.showMessageDialog(jPanel3, "Block "+blockNo+" now open.");
             }
         }
 
@@ -840,8 +787,28 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    //GIH6 - ADDED THIS REFRESH AND OCCUPANCY FUNCTIONS
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+   //     refreshOccupancy();
+    }
+
+    //add refreshing for occupied blocks
+    public void refreshOccupancy() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                occupancy();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void occupancy(){
         boolean blockOccG=false;
         boolean blockOccR=false;
         model2 = (DefaultTableModel)jTable3.getModel();
@@ -857,10 +824,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 model2.addRow(new Object[] {i, "None"});
             else if (!blockOccG && blockOccR)
                 model2.addRow(new Object[] {"None", i});
-            else
-                model2.addRow(new Object[] {"None","None"});
+            //  else
+            //    model2.addRow(new Object[] {"None","None"});
         }
-
     }
 
     private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {
@@ -1002,12 +968,35 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    /*GIH6 - refreshing throughput*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    //    int tp = display.CalcThroughput();
-     //   display.setThroughput(tp);
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
+        jTextField1.setText(String.valueOf(display.getThroughput()));
+    //    refreshThroughput();
+    }
 
-     //   jTextField1.setText(String.valueOf(display.getThroughput()));
+    //adding refresh of throughput
+    //add refreshing for occupied blocks
+    public void refreshThroughput() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcthroughput();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void calcthroughput(){
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
+        jTextField1.setText(String.valueOf(display.getThroughput()));
     }
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {
