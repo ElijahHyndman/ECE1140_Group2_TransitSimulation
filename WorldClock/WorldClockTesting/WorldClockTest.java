@@ -3,6 +3,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //import static org.junit.jupiter.api.Assertions.*;
 
@@ -136,13 +137,15 @@ class WorldClockTest {
 
         // NOTE: Max allowable resolution
         clk.setResolution(50.0);
-        predictedConfiguration = generatePredictionString(50.0,3.0,150.0,6);
+        predictedConfiguration = generatePredictionString(10.0,3.0,30.0,33);
         actualResult = clk.getConfiguration();
-        assertEquals(true,actualResult.equals(predictedConfiguration));
+        System.out.println(actualResult);
+        System.out.println(predictedConfiguration);
+        assertTrue(actualResult.equals(predictedConfiguration));
 
         // NOTE: ABOVE max allowable resolution
         clk.setResolution(100.0);
-        predictedConfiguration = generatePredictionString(50.0,3.0,150.0,6);
+        predictedConfiguration = generatePredictionString(10.0,3.0,30.0,33);
         actualResult = clk.getConfiguration();
         assertEquals(true,actualResult.equals(predictedConfiguration));
     }

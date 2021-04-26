@@ -514,9 +514,10 @@ public class CTCOffice //implements PhysicsUpdateListener
         now = LocalTime.parse(timeNow);
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times)){
-                // TODO make these viable
-                //waysides.get(0).broadcastToControllers(speedsR, authorities);
-                //waysides.get(0).broadcastToControllers(speedsG, authorities);
+
+                //TODO waysides.broadcastToControllers(speedsR, authorities);
+                // TODO waysides.broadcastToControllers(speedsG, authorities);
+
                 times.remove(i);
                 speedsR.remove(i);
                 speedsG.remove(i);

@@ -183,14 +183,17 @@ public class Train {
             setSpeed(newV);
         }
         else{
-
+            if (this.actualSpeed < 0) {
+                this.actualSpeed = 0.001;
+            }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
-            F = F - (this.blockGrade/100) * this.mass * 9.81;
+            //F = F - (this.blockGrade/100) * this.mass * 9.81;
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
             setAccel(newA);
         }
+
     }
     public double getTotalDistance(){
         return totalDistance;
