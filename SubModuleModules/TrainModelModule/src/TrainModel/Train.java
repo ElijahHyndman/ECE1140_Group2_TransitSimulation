@@ -183,7 +183,9 @@ public class Train {
             setSpeed(newV);
         }
         else{
-
+            if (this.actualSpeed < 0) {
+                this.actualSpeed = 0.001;
+            }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             F = F - (this.blockGrade/100) * this.mass * 9.81;
             if(F < 0){
@@ -194,6 +196,7 @@ public class Train {
             setSpeed(newV);
             setAccel(newA);
         }
+
     }
     public double getTotalDistance(){
         return totalDistance;
