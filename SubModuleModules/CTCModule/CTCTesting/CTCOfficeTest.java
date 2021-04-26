@@ -12,12 +12,22 @@ class CTCOfficeTest {
     @org.junit.jupiter.api.Test
     void backToYard() {
         CTCOffice instance = new CTCOffice();
-       int[] test = instance.backToYard(105);
+       int[] test = instance.backToYardGreen(105);
 
        for(int i =0; i<150; i++) {
            int testi = i+1;
            System.out.println("BN" + testi + " " + test[i]);
        }
+    }
+    @org.junit.jupiter.api.Test
+    void backToYardRed() {
+        CTCOffice instance = new CTCOffice();
+        int[] test = instance.backToYardRed(21);
+
+        for(int i =0; i<76; i++) {
+            int testi = i+1;
+            System.out.println("BN" + testi + " " + test[i]);
+        }
     }
 
 

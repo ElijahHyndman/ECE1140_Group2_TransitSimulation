@@ -264,7 +264,7 @@ import java.util.Scanner;
 
 
             //need to catch ones BEFORE switch
-            if(current.getCurrentDirection() == -2 && !(current.getType().equals("Switch")) && cur != 16) {
+            if(current.getCurrentDirection() == -2 && !(current.getType().equals("Switch")) && cur != 16 && cur != 44 && cur != 33) {
                 return null;
             }
 
@@ -289,6 +289,10 @@ import java.util.Scanner;
                     return redTrack.get(current.getDirection(0));
                 else if( cur == 9 && prev == 0 )
                     return redTrack.get(current.getDirection(1));
+                else if( cur == 43 && prev == 44 && index == 1)
+                  return redTrack.get(current.getDirection(2));
+                else if(cur == 32 && prev == 33 && index == 1)
+                    return redTrack.get(current.getDirection(2));
                 else
                     return null;
             }
