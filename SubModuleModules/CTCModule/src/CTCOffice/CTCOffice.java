@@ -1690,4 +1690,8 @@ public class CTCOffice //implements PhysicsUpdateListener
             throw new Exception(String.format("CTC WaysideSystem search error: Searching for wayside named %s in waysides returned no result.\nWaysidesContains:\n%s\n",sectionName,waysides));
         return waysides.get(ind);
     }
+
+//    public ArrayList<TrackElement> getRoute() {
+//
+//    }
 }
