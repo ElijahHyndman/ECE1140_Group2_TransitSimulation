@@ -1636,11 +1636,8 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        // TODO Elijah, is this retrieving tickets from the track or is it causing the track to update a new value for ticket sales?
-        // TODO the track should already be generating random ticketSales in Track.updatePhysics(), so all we need to do is ask track for what the current sales are
-        //int tix = Track.updateTix();
-        //return tix;
-        return 0;
+        int tix = trackObj.updateTickets();
+        return tix;
     }
 
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
@@ -1668,7 +1665,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return SEobj;
     }
 
-    /*getting throuput */
+    /*getting throughput */
     public int getThroughput(){
         return this.thruP;
     }
