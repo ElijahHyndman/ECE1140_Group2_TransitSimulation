@@ -156,6 +156,13 @@ public class WaysideSystem {
             Management Methods
      */
 
+    /** accepts a new track for management under this Wayside System, generates all controller and controller information necessary
+     *
+     */
+    public void registerNewTrack(ArrayList<TrackElement> trackLine) throws IOException, URISyntaxException {
+        this.trackSection = trackLine;
+        generateLine();
+    }
 
     /** performs any necessary checks, steps, or filters before accepting a controller into the system
      *
@@ -173,40 +180,32 @@ public class WaysideSystem {
      */
     public void generateControllers(int nControllers) {
         // Generate subsets of current Line Section
-        //Map<boolean, ArrayList<TrackElement>> groups = trackSection.stream().collect(Collectors.partitioningBy());
+        ArrayList< ArrayList<TrackElement> > trackPartitions = partitionArrayList(trackSection,nControllers);
 
     }
 
     /** partitions an arbitrarily sized array list into a specified number of sections (as evenly as possible.)
      *
+     * assert: the element distribution inside of the partitions will NOT be sequential
      */
     public static <T> ArrayList<ArrayList<T>> partitionArrayList(ArrayList<T> list, int sections) {
+        if (sections <= 0)
+            return null;
         ArrayList<ArrayList<T>> subsets= new ArrayList<>();
         // initialize subset arrays
-//        for(int i=0; i<sections; i++) {
-//            ArrayList<T> partition = new ArrayList<>();
-//            subsets.add(partition);
-//        }
+        for(int i=0; i<sections; i++) {
+            ArrayList<T> partition = new ArrayList<>();
+            subsets.add(partition);
+        }
         int size = list.size();
         int assignedPartition;
         // For all items...
-//        for (int i=0; i<size; i++) {
-//            // Calculate which partition gets this item
-//            assignedPartition = i % sections;
-//            // Give item to assigned partition
-//            subsets.get(assignedPartition).add(list.get(i));
-//            System.out.printf("partition %d gets %d\n",assignedPartition,i);
-//        }
-        int perPartition = (int) Math.ceil((double) size / (double) sections );
-        System.out.printf("Each partition gets ~ %d elements\n",perPartition);
-        int start;
-        int end;
-        for (int par=0; par<sections; par++) {
-            start = par*perPartition;
-            if (start > size) break;
-            end = start+perPartition;
-            if (end > size) end = size;
-            subsets.add(new ArrayList<T>(list.subList(start,end)));
+        for (int i=0; i<size; i++) {
+            // Calculate which partition gets this item
+            assignedPartition = i % sections;
+            System.out.printf("%d gets %d\n",assignedPartition,i);
+            // Give item to assigned partition
+            subsets.get(assignedPartition).add(list.get(i));
         }
         return subsets;
     }

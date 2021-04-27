@@ -74,7 +74,7 @@ class WaysideSystem_Information_andStaticFunctions_Test {
      */
 
     @Test
-    @DisplayName("Partitioning test 1 passes (integers)")
+    @DisplayName("Partitioning test passes (integers)")
     void partitionIntegers() {
         ArrayList<Integer> ints = new ArrayList<>() {
             {
@@ -91,12 +91,54 @@ class WaysideSystem_Information_andStaticFunctions_Test {
             }
         };
 
-        List<ArrayList<Integer>> par1 = new ArrayList<>() {
+        List<ArrayList<Integer>> by2 = new ArrayList<>() {
             {
+                add(new ArrayList<Integer>(Arrays.asList(10,30,50,70,90)));
+                add(new ArrayList<Integer>(Arrays.asList(20,40,60,80,100)));
+            }
+        };
+        List<ArrayList<Integer>> by3 = new ArrayList<>() {
+            {
+                add(new ArrayList<Integer>(Arrays.asList(10,40,70,100)));
+                add(new ArrayList<Integer>(Arrays.asList(20,50,80)));
+                add(new ArrayList<Integer>(Arrays.asList(30,60,90)));
+            }
+        };
+        List<ArrayList<Integer>> by4 = new ArrayList<>() {
+            {
+                add(new ArrayList<Integer>(Arrays.asList(10,50,90)));
+                add(new ArrayList<Integer>(Arrays.asList(20,60,100)));
+                add(new ArrayList<Integer>(Arrays.asList(30,70)));
+                add(new ArrayList<Integer>(Arrays.asList(40,80)));
+            }
+        };
+        List<ArrayList<Integer>> by13 = new ArrayList<>() {
+            {
+                add(new ArrayList<Integer>(Arrays.asList(10)));
+                add(new ArrayList<Integer>(Arrays.asList(20)));
+                add(new ArrayList<Integer>(Arrays.asList(30)));
+                add(new ArrayList<Integer>(Arrays.asList(40)));
+                add(new ArrayList<Integer>(Arrays.asList(50)));
+                add(new ArrayList<Integer>(Arrays.asList(60)));
+                add(new ArrayList<Integer>(Arrays.asList(70)));
+                add(new ArrayList<Integer>(Arrays.asList(80)));
+                add(new ArrayList<Integer>(Arrays.asList(90)));
+                add(new ArrayList<Integer>(Arrays.asList(100)));
+                add(new ArrayList<Integer>(Arrays.asList()));
                 add(new ArrayList<Integer>(Arrays.asList()));
                 add(new ArrayList<Integer>(Arrays.asList()));
             }
         };
-        assertEquals(par1, WaysideSystem.partitionArrayList(ints,2));
+        assertEquals(by2, WaysideSystem.partitionArrayList(ints,2));
+        assertEquals(by3, WaysideSystem.partitionArrayList(ints,3));
+        assertEquals(by4, WaysideSystem.partitionArrayList(ints,4));
+        assertEquals(by13, WaysideSystem.partitionArrayList(ints,13));
+        WaysideSystem.partitionArrayList(ints,0);
+    }
+
+    @Test
+    @DisplayName("Partition test passes (TrackElements)")
+    void partitionBlocks() {
+
     }
 }
