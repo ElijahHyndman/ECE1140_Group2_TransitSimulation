@@ -56,10 +56,10 @@ public class Train {
     boolean brakeFail;
     boolean leftDoors; //close=0, open=1
     boolean rightDoors;
-    int cabinTemp;// F
-    String nextStop;
+    int cabinTemp =70;// F
+    String nextStop = "NaN";
     int advertisements;
-    String announcements;
+    String announcements = "NaN";
     boolean cabinLights;
     boolean outerLights;
     boolean headlights;
@@ -163,7 +163,7 @@ public class Train {
         }
             
         if((this.emergencyBrake == true)||this.passengerBrake == true){
-            newV = this.actualSpeed - (this.emergencyDecelLimit*sampleTime); 
+            newV = this.actualSpeed - (this.emergencyDecelLimit*deltaTime);
             newA = -1 * this.emergencyDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -173,7 +173,7 @@ public class Train {
             setSpeed(newV);
         }
         else if(this.serviceBrake == true){
-            newV = this.actualSpeed - (this.standardDecelLimit*sampleTime);
+            newV = this.actualSpeed - (this.standardDecelLimit*deltaTime);
             newA = -1 * this.standardDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);

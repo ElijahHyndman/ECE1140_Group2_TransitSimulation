@@ -46,6 +46,16 @@ class TrainTest {
         assertEquals(0.44704005836555,t1.getAccel() );
     }
     @Test
+    void serviceBrakeAffectsSpeed() {
+        Train t1 = new Train(5, 2, 0);
+
+        t1.setSpeed(10);
+        t1.setServiceBrake(true);
+        t1.updatePhysicalState("", 1);
+
+        assertEquals(8.8,t1.getActualSpeed() );
+    }
+    @Test
     void setPassengerBrake() {
         Train t1 = new Train(5, 2, 0);
 
