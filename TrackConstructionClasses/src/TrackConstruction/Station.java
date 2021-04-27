@@ -107,6 +107,9 @@ public class Station extends TrackElement{
 
     @Override
     public String toString() {
+        return String.format("Block #%d",this.blockNum);
+    }
+    public String totoString() {
         return String.format("Block Num: "+ blockNum +"\n Line: "+ line + "\n Length: "+ length + "\n Grade: " + grade + "\n speedLimit " + speedLimit + "\n elevation " + elevation + "\n cumulativeElevation " + cumulativeElevation + "\n section: " + section + "\n infrastructure: " + infrastructure + "\n Occupied: " + occupied + "\n Status: "+ failureStatus + " \n Block Direction: " + directionArray[0] + " " + directionArray[1] + " " + directionArray[2]);
     }
 }

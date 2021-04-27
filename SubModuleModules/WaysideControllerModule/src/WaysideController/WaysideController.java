@@ -3,14 +3,10 @@ package WaysideController;
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
 import PLCInput.*;
-import PLCOutput.*;
-import Track.Track;
-import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static java.lang.String.valueOf;
@@ -24,27 +20,27 @@ public class WaysideController implements Serializable {
     /** Default Members
      */
     final private boolean DEFAULT_ISSOFTWARE = true;
-    final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "Auth%d";
-    final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "HasOcc%d";
     /** Global Members
      */
-    private static int NUM_CONTROLLERS = 0;
+    private static int GLOBAL_NUM_CONTROLLERS = 0;
     /** Controller Info
      * @member controllerIndex, the global index of this controller (given based on order of creation)
      * @member controllerName, a deterministic name for this controller given its index
      * @member contorllerAlias, a user-defined name for the controller if desired
      * @member isSoftware, boolean of whether this WaysideController is a software (WaysideController) or hardware (RemoteWaysideController) instance
      */
-    private int controllerIndex = ++NUM_CONTROLLERS;
+    private int controllerIndex = ++GLOBAL_NUM_CONTROLLERS;
     private String controllerName = String.format("Controller %d",controllerIndex);
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
+     * @member fullTrack, the entire area over which the wayside system that this controller exists in oversees
      * @member inputPool, a pool of PLCInputs from which the
      */
     private ArrayList<TrackElement> jurisdiction = new ArrayList<TrackElement>(); //jurisdiction
+    private ArrayList<TrackElement> fullTrack = new ArrayList<>();
     private ArrayList<PLCInput> inputPool = new ArrayList<PLCInput>();
     /** PLCScript Members
      */
@@ -56,21 +52,22 @@ public class WaysideController implements Serializable {
 
     // Default constructor is necessary for RemoteWaysideController inheritance
     protected WaysideController() {
-        this.controllerAlias = null;
     }
-
     public WaysideController(String controllerAlias) {
         this.controllerAlias = controllerAlias;
     }
-
     public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias){
         this.controllerAlias = controllerAlias;
         giveJurisdiction(jurisdiction);
     }
+    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController) {
+        this.fullTrack = fullTrackLine;
+        giveJurisdiction(jurisdictionForController);
+    }
     public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController, String controllerAlias) {
-        this.jurisdiction = jurisdictionForController;
         this.controllerAlias = controllerAlias;
-        // Wayside controller can use any track in the track line as a PLC Input
+        this.fullTrack = fullTrackLine;
+        giveJurisdiction(jurisdictionForController);
     }
 
     /** copies values from a target WaysideController into this wayside controller
@@ -82,91 +79,221 @@ public class WaysideController implements Serializable {
             this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
     }
 
-    /** gives this WaysideController jurisdiction over a set of blocks.
+
+
+    /*
+            Wayside System Methods
+     */
+
+
+
+    /** gives this WaysideController jurisdiction over a set of blocks, performs any necessary screening.
      *
      * @param blocks
      * @before WaysideController may or may not have jurisdiction
      * @after WaysideController has taken jurisdiction over new blocks, old jurisdiction has been overwritten
      */
     public void giveJurisdiction(ArrayList<TrackElement> blocks) {
+
         // Clear old PLC scripts
         this.UserPLCScripts = new ArrayList<PLCEngine>();
         this.SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
+
         // Accept new jurisdiction
         for (TrackElement block : blocks) {
             overseeBlock(block);
         }
+        /*
+                Generate new default PLC Scripts
+         */
+        // TODO generate default safety critical scripts
     }
 
-    public static ArrayList<PLCInput> generateInputPool(ArrayList<TrackElement> tracks) {
-        ArrayList<PLCInput> generated = new ArrayList<PLCInput>();
-        int trackBlockIndex;
-        String authorityVariableName;
-        String occupationVariableName;
-
-        // Wayside controller can use any track in the track line as a PLC Input
-        for (TrackElement element : tracks ) {
-            trackBlockIndex = element.getBlockNum();
-            // Referencable Variable Name
-            authorityVariableName = String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
-            occupationVariableName = String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
-            // Create PLC Input Objects
-            generated.add(new HasAuthorityPLCInput(authorityVariableName, element));
-            generated.add(new OccupationPLCInput(occupationVariableName, element));
-            // Add plc objects
-        }
-        return generated;
-    }
 
     /** handles jurisdiction responsibility generation for an individual block
      *
      * @param block
      */
     public void overseeBlock(TrackElement block) {
-        System.out.printf("Now overseeing block %d\n",block.getBlockNum());
+        jurisdiction.add(block);
+        System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
     }
+
+    /** gives this controller access to a pool of PLCInput variables generated by the WaysideSystem
+     *
+     * @param inputs
+     */
+    public void assignInputPool(ArrayList<PLCInput> inputs) {
+        this.inputPool = inputs;
+    }
+
+
 
 
     /*
         Methods for CTC
      */
-    public void setSpeed(double[] speeds) throws IOException {
+
+
+
+    /** sets the speed for a TrackElement object if that object is within this controller's jurisdiction.
+     *  This function will be called on this controller even if this controller does not have jurisdiction over the particular block,
+     *  it only applies the output if it is within its jurisdiction
+     *
+     *  expected call frequency: only when the CTC makes a new dispatch (changes to current speed/authorities)
+     *
+     * @param targetBlockIndex, the int index of the target block. Assert: indexes of blocks within the same line (i.e. Green, Red) are unique (no other block within green has the same block index.) indexes are not globally unique
+     * @param newCommandedSpeed, the double for the new speed commanded for trains on the block (gives in kilometers/hour, applied to track as meters/second)
+     * @throws IOException
+     *
+     * @before current commanded speed on the track circuit is not up to date
+     * @after the commanded speed on the track circuit has been set to the new value if it passes the checks
+     */
+    public void setBlockSpeed(int targetBlockIndex, double newCommandedSpeed) throws Exception {
+        for (TrackElement block : jurisdiction) {
+            // only if it is found...
+            if(block.getBlockNum() == targetBlockIndex)
+                applySpeedToBlock(block,newCommandedSpeed);
+        }
     }
 
 
-    public void setSpeed(int blockNumber, double speeds) throws IOException {
+    /** performs all tests and filters to a new speed before its value is applied to a block
+     *
+     * Assert: backwards movement is allowed
+     *
+     * @param blockObject, the TrackElement block object which we are applying the speed to
+     * @param newCommandedSpeed, the new, intended speed for the specified track object
+     */
+    public static void applySpeedToBlock(TrackElement blockObject, double newCommandedSpeed) throws Exception {
+        double maximumForwardSpeed = (double) blockObject.getSpeedLimit();
+        double maximumBackwardSpeed = -maximumForwardSpeed;
+        if (newCommandedSpeed > maximumForwardSpeed) {
+            try {
+                blockObject.setCommandedSpeed(maximumForwardSpeed);
+                return;
+            } catch (Exception failureToApplySpeedToBlock) {
+                throw new Exception(String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)", blockObject.getBlockNum(), newCommandedSpeed));
+            }
+        } else if (newCommandedSpeed < maximumBackwardSpeed) {
+            try {
+                blockObject.setCommandedSpeed(maximumBackwardSpeed);
+                return;
+            } catch (Exception failureToApplySpeedToBlock) {
+                throw new Exception(String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)", blockObject.getBlockNum(), newCommandedSpeed));
+            }
+        }
+        // Assert: passes filters if maximumBackwardSpeed < commandedSpeed <= 0 or 0 <= commandedSpeed < maximumForwardSpeed
+        else {
+            try {blockObject.setCommandedSpeed(newCommandedSpeed); } catch (Exception failureToApplySpeedToBlock) {
+                throw new Exception (String.format("Failure occured when attempting to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
+            }
+        }
+    }
+
+
+    /** sets the speed for a TrackElement object if that object is within this controller's jurisdiction.
+     *  This function will be called on this controller even if this controller does not have jurisdiction over the particular block,
+     *  it only applies the output if it is within its jurisdiction
+     *
+     *  expected call frequency: only when the CTC makes a new dispatch (changes to current speed/authorities)
+     *
+     * @param targetBlockIndex, the int index of the target block. Assert: indexes of blocks within the same line (i.e. Green, Red) are unique (no other block within green has the same block index.) indexes are not globally unique
+     * @param newAuthority, the double for the new speed commanded for trains on the block (gives in kilometers/hour, applied to track as meters/second)
+     * @throws IOException
+     */
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws Exception {
+        // no checks are performed on authority value
+        for (TrackElement block : jurisdiction) {
+            // only if it is found...
+            if(block.getBlockNum() == targetBlockIndex)
+                applyAuthorityToBlock(block, newAuthority);
+        }
+    }
+
+    /** performs all tests and filters to a new authority before its value is applied to a block
+     *
+     * Assert: backwards movement is allowed
+     *
+     * @param blockObject, the TrackElement block object which we are applying the speed to
+     * @param newAuthority, the new, intended authority for the specified track object
+     */
+    public static void applyAuthorityToBlock(TrackElement blockObject, int newAuthority) throws Exception {
+        // no checks performed on authority
+        try {
+            blockObject.setAuthority(newAuthority);
+        } catch (Exception failureToApplyValueToBlock) {
+            failureToApplyValueToBlock.printStackTrace();
+            throw new Exception (String.format("Failure occured when attempting to set authority for track object (index %d) to speed (%d)",blockObject.getBlockNum(),newAuthority));
+        }
+    }
+
+
+    /** returns the occupancy of a TrackElement within this controller's jurisdiction.
+     *  WaysideSystem ensures that this function is only called whenever the track exists within this controller jurisdiction
+     *
+     * @param targetBlockIndex
+     * @return
+     */
+    public boolean getOccupancy(int targetBlockIndex) throws Exception {
+        // For all blocks under jurisdiction...
+        for (TrackElement block : jurisdiction) {
+            // If this is the right block...
+            if (block.getBlockNum() == targetBlockIndex)
+                try {
+                    // return it's status
+                    return block.getOccupied();
+                } catch (Exception failureToGetOccupation) {
+                    // Complain if status is unreachable
+                    failureToGetOccupation.printStackTrace();
+                    throw new Exception(String.format("Failed to retrieve occupation of block (index %d)",targetBlockIndex));
+                }
+        }
+        // If not within jurisdiction, then wayside system has made an error and its lookup-table is outdated
+        throw new Exception(String.format("Failure occurred when retrieving occupancy from track system: Wayside Controller (%s) does not contain block index %d.",controllerAlias,targetBlockIndex));
     }
 
 
     public double[] getSpeed() {
+        // TODO
         return null;
     }
-
-
-    public void setAuthority(int[] authorities) throws IOException {
-    }
-
-
-    public void setAuthority(int blockNumber, int authority) throws IOException {
-    }
-
-
     public int[] getAuthority() {
+        // TODO
         return null;
     }
-
-
     public boolean getSwitchStatus(int blockNumber) throws IOException {
+        // TODO
         return false;
     }
-
-
     public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
+        // TODO
     }
-
-
     public void setClose(int blockNumber) throws IOException {
+        // TODO
     }
+
+
+
+    /*
+            Get Set
+     */
+
+
+
+    public void giveInputPool(ArrayList<PLCInput> inputPool) {this.inputPool=inputPool;}
+    public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
+    public void setControllerName(String newName){ this.controllerAlias = newName; }
+    public String getControllerAlias(){ return controllerAlias; }
+    public String getControllerName() {return controllerName; }
+    public ArrayList<TrackElement> getJurisdiction() {return jurisdiction;}
+
+
+
+    /*
+            GUI Methods
+     */
+
 
 
     /** generates a String-Hashmap tree representation of this controller for use in the GUI.
@@ -237,22 +364,12 @@ public class WaysideController implements Serializable {
     }
 
 
-    public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
-    public void setControllerName(String newName){ this.controllerAlias = newName; }
-    public String getControllerAlias(){ return controllerAlias; }
-    public TrackElement getBlockElement(int blockNumber) throws IOException {
-        for(int i = 0; i < jurisdiction.size(); i++){
-            if(blockNumber == jurisdiction.get(i).getBlockNum()){
-                return jurisdiction.get(i);
-            }
-        }
-
-        throw new IOException("Controller Error: No block with that number in controller - " + controllerAlias +  " " + Integer.toString(blockNumber));
-    }
 
     /*
         String Representation
      */
+
+
 
     public String toString(){
         String profile = controllerName;

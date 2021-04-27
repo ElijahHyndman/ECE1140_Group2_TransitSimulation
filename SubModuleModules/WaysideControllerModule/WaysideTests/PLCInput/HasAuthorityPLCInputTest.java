@@ -27,7 +27,7 @@ class HasAuthorityPLCInputTest {
         engine = new PLCEngine();
         engine.uploadPLC(simplePLCScript);
         testBlock = new TrackBlock();
-        testBlock.setAuthority(1);
+        testBlock.applyAuthorityToBlock(1);
         testBlock.setCommandedSpeed(20);
         testBlock.setSpeedLimit(10);
         testBlock.setBlockNum(1);
@@ -42,27 +42,27 @@ class HasAuthorityPLCInputTest {
         boolean result;
 
         testAuth = 0;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(false, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
 
         testAuth = 1;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(true, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
 
 
         testAuth = 2;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(true, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
 
 
         testAuth = 3;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(true, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
@@ -70,14 +70,14 @@ class HasAuthorityPLCInputTest {
         // Authority will never be negative but it handles it anyhow
 
         testAuth = -1;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(false, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
 
 
         testAuth = -2;
-        testBlock.setAuthority(testAuth);
+        testBlock.applyAuthorityToBlock(testAuth);
         result = engine.evaluateLogic();
         assertEquals(false, result);
         System.out.printf("Default Constructor: Authority %d -> %b\n",testAuth,result);
@@ -97,7 +97,7 @@ class HasAuthorityPLCInputTest {
             for (int testAuth = 0; testAuth < nTestAuth; testAuth++) {
 
                 // Correct >= usage of authority as input to PLC
-                testBlock.setAuthority(testAuth);
+                testBlock.applyAuthorityToBlock(testAuth);
                 result=engine.evaluateLogic();
                 assertEquals(testAuth >= criteria,result);
                 System.out.printf("Auth[%d] (Rule %s) criteria[%d] -> PLC %b\n",testAuth,listener.rule(),listener.criteria(),result);
@@ -120,7 +120,7 @@ class HasAuthorityPLCInputTest {
             for (int testAuth = 0; testAuth < nTestAuth; testAuth++) {
 
                 // Correct <= usage of authority as input to PLC
-                testBlock.setAuthority(testAuth);
+                testBlock.applyAuthorityToBlock(testAuth);
                 result=engine.evaluateLogic();
                 assertEquals(testAuth <= criteria,result);
                 System.out.printf("Auth[%d] (Rule %s) crit[%d] -> PLC %b\n",testAuth,listener.rule(),listener.criteria(),result);

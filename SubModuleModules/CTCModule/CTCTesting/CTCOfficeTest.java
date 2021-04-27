@@ -32,7 +32,7 @@ class CTCOfficeTest {
 
 
     @org.junit.jupiter.api.Test
-    void dispatch() {
+    void dispatch() throws Exception {
         CTCOffice instance = new CTCOffice();
         System.out.println("Dispatch");
 
