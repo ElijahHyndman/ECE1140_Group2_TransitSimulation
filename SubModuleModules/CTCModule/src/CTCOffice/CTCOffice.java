@@ -507,13 +507,32 @@ public class CTCOffice //implements PhysicsUpdateListener
         return speedAuthorityTime;
     }
 
-    public void BroadcastingArrays(){
+    public void BroadcastingArrays() throws Exception {
         now = LocalTime.parse(timeNow);
+        int count = 0;
         for (int i = 0; i<times.size(); i++){
-            if(now.equals(times)){
+            if(now.equals(times.get(i))){
 
-                //TODO waysides.broadcastToControllers(speedsR, authorities);
-                // TODO waysides.broadcastToControllers(speedsG, authorities);
+                double[] speedsRholder = new double[150];
+                int[] authsRholder = new int[150];
+                authsRholder = authorities.get(i);
+                int[] authsCut = new int[76];
+                speedsRholder = speedsR.get(i);
+                double[] speedsRcut = new double[76];
+                for (int j=0; j<speedsRcut.length; j++){
+                    speedsRcut[j] = speedsRholder[j];
+                    if (speedsRholder[j] != 0){
+                        count++;
+                    }
+                    authsCut[j] = authsRholder[j];
+                }
+
+                if (count!=0){
+                    getWaysideSystem("Red").broadcastToControllers(speedsRcut, authsCut);
+                }
+                else{
+                    getWaysideSystem("Green").broadcastToControllers(speedsG.get(i), authorities.get(i));
+                }
 
                 times.remove(i);
                 speedsR.remove(i);
@@ -1644,10 +1663,9 @@ public class CTCOffice //implements PhysicsUpdateListener
         return tix;
     }
 
-    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
-    {
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) throws Exception {
         this.timeNow = currentTimeString;
-        // TODO dispatch
+        BroadcastingArrays();
     }
 
     public ArrayList getDisps()
