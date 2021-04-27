@@ -256,11 +256,25 @@ public class CTCOffice //implements PhysicsUpdateListener
         else if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
 
-        if(LocalTime.now().isBefore(timeDis) && speed<50)
+        //if(LocalTime.now().isBefore(timeDisp) && speed<50)
+        if (now.isBefore(timeDisp))
         {
             speedAuthorityTime[0] = speed*0.621371;
             speedAuthorityTime[1] = authority;
             speedAuthorityTime[2] = timeDisp;
+
+            if (lineCol.equals("Green")){
+                speedsG.add(speedArrG);
+                speedsR.add(speedArrR);
+                times.add(timeDisp);
+                authorities.add(authArr);
+            }
+            else if (lineCol.equals("Red")){
+                speedsG.add(speedArrG);
+                speedsR.add(speedArrR);
+                times.add(timeDisp);
+                authorities.add(authArr);
+            }
         }
         else
         {
@@ -269,18 +283,6 @@ public class CTCOffice //implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        if (lineCol.equals("Green")){
-            speedsG.add(speedArrG);
-            speedsR.add(speedArrR);
-            times.add(timeDisp);
-            authorities.add(authArr);
-        }
-        else if (lineCol.equals("Red")){
-            speedsG.add(speedArrG);
-            speedsR.add(speedArrR);
-            times.add(timeDisp);
-            authorities.add(authArr);
-        }
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
@@ -460,30 +462,32 @@ public class CTCOffice //implements PhysicsUpdateListener
         if (lineCol.equals("Red"))
             speedArrR = createSpeedArr(route, speed);
 
-        if(LocalTime.now().isBefore(timeDis) && speed<50)
+        //if(LocalTime.now().isBefore(timeDis) && speed<50)
+        if(now.isBefore(timeDisp))
         {
+            // Dispatch occurs later in time
             speedAuthorityTime[0] = speed*0.621371;
             speedAuthorityTime[1] = authority;
             speedAuthorityTime[2] = timeDisp;
+
+            if (lineCol.equals("Green")){
+                speedsG.add(speedArrG);
+                speedsR.add(speedArrR);
+                times.add(timeDisp);
+                authorities.add(authArr);
+            }
+            else if (lineCol.equals("Red")){
+                speedsG.add(speedArrG);
+                speedsR.add(speedArrR);
+                times.add(timeDisp);
+                authorities.add(authArr);
+            }
         }
         else
         {
             speedAuthorityTime[0] = 0;
             speedAuthorityTime[1] = 0;
             speedAuthorityTime[2] = 0;
-        }
-
-        if (lineCol.equals("Green")){
-            speedsG.add(speedArrG);
-            speedsR.add(speedArrR);
-            times.add(timeDisp);
-            authorities.add(authArr);
-        }
-        else if (lineCol.equals("Red")){
-            speedsG.add(speedArrG);
-            speedsR.add(speedArrR);
-            times.add(timeDisp);
-            authorities.add(authArr);
         }
 
         try {
@@ -1643,6 +1647,7 @@ public class CTCOffice //implements PhysicsUpdateListener
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
     {
         this.timeNow = currentTimeString;
+        // TODO dispatch
     }
 
     public ArrayList getDisps()
