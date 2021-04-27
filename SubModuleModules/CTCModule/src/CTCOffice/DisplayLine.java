@@ -5,11 +5,10 @@ package CTCOffice;//Haleigh DeFoor
 import SimulationEnvironment.SimulationEnvironment;
 import Track.Track;
 import WaysideController.WaysideSystem;
-
 import java.io.*;
 import java.util.*;
 
-public class DisplayLine extends CTCOffice
+public class DisplayLine
 {
     int throughput;
     int blockNumber;
@@ -24,25 +23,6 @@ public class DisplayLine extends CTCOffice
     String t1Time, t2Time, t3Time, t4Time, t5Time, t6Time, t7Time, t8Time, t9Time, t10Time;
     boolean occupancy;
     boolean status;
-
-    /*
-    public DisplayLine(Track SEtrack, SimulationEnvironment SE)
-    {
-        trackObj = SEtrack;
-        try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SEobj = SE;
-    }
-    */
-
-    public void copy(DisplayLine given) {
-        this.trackObj = given.getTrack();
-        this.waysides = given.waysides;
-        this.SEobj = given.SEobj;
-    }
 
     public DisplayLine()
     {
@@ -62,16 +42,13 @@ public class DisplayLine extends CTCOffice
         this.status = true;
     }
 
+    /*
     public DisplayLine(Track SEtrack, SimulationEnvironment SE)
     {
         trackObj = SEtrack;
-        try {
-            waysides = new WaysideSystem(trackObj.getGreenLine(),"Green Line");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        waysides = GenerateWaysideSystems(trackObj);
         SEobj = SE;
-    }
+    }*/
 
 
     public DisplayLine(int bn, String lc, char s, int l, int sl, double g, double e, double ce, String i, String t1t, String t2t, String t3t, String t4t, String t5t, String t6t, String t7t, String t8t, String t9t, String t10t)

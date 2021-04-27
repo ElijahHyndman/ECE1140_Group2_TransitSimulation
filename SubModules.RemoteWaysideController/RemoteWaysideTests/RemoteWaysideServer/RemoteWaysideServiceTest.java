@@ -1,6 +1,5 @@
-package RemoteWayside;
+package RemoteWaysideServer;
 
-import Track.Track;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
@@ -10,14 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,6 +111,7 @@ class RemoteWaysideServiceTest {
             block.setBlockNum(i);
             fakeBlocks.add(block);
         }
+        /*
         WaysideController localController = new WaysideController(fakeBlocks,"Local Controller");
 
         // Load and Compile PLC
@@ -136,6 +131,7 @@ class RemoteWaysideServiceTest {
         assertNotSame(localController.getGPIO(),remoteWS.getGPIO());
         assertNotSame(localController.getAllInputNames(),remoteWS.getInputNames());
         assertNotSame(localController.getAllNames(),remoteWS.getAllNames());
+        */
     }
 
     @Test

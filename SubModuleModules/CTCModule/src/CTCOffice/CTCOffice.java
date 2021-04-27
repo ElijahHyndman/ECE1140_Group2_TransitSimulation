@@ -1,16 +1,14 @@
 package CTCOffice;//Haleigh DeFoor
-//CTC Office
 
 import java.util.*;
 import java.io.*;
 import java.time.*;
-
-import TrackConstruction.TrackBlock;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
+import WorldClock.PhysicsUpdateListener;
 
-public class CTCOffice implements PhysicsUpdateListener
+public class CTCOffice //implements PhysicsUpdateListener
 {
     private int thruP;
     private Object[] speedAuthorityTime = new Object[3];
@@ -32,35 +30,77 @@ public class CTCOffice implements PhysicsUpdateListener
     private boolean occ;
     private double speed;
     private int authority;
-    public WaysideSystem waysides, waysideG, waysideR;
+    public ArrayList<WaysideSystem> waysides, waysideG, waysideR;
     private double[] speedArrG = new double[150];
     private double[] speedArrR = new double[150];
     private double[] route = new double[150];
     private int[] authArr = new int[150];
     public CharSequence timeNow;
     private LocalTime now;
-    public Track trackObj;
+    public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
+    public int[] positions = new int[10];
+    public ArrayList<double[]> speedsR =new ArrayList<double[]>();
+    public ArrayList<double[]> speedsG =new ArrayList<double[]>();
+    public ArrayList<int[]> authorities = new ArrayList<int[]>();
+    public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
 
     public CTCOffice()
     {
-        //waysides = new WaysideSystem(trackObj.getBlocks());
-        SEobj = null;
-        trackObj = null;
+
+        waysides = GenerateWaysideSystems(trackObj);
+
+        SEobj = new SimulationEnvironment();
+        trackObj = new Track();
+        trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
     }
 
-    public CTCOffice(Track SEtrack, SimulationEnvironment SE) throws IOException {
-        waysides = new WaysideSystem();
+    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem)
+    {
+        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
+        WaysideSystem greenWS = null;
+        WaysideSystem redWS = null;
+
+        if (trackSystem == null) {
+            return new ArrayList<WaysideSystem>();
+        }
+        try {
+            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
+            throw new Exception("To do");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
+            throw new Exception("To do");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        generatedWaysides.add(greenWS);
+        generatedWaysides.add(redWS);
+
+        return generatedWaysides;
+    }
+
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
+    {
+        waysides = GenerateWaysideSystems(SEtrack);
         trackObj = SEtrack;
         SEobj = SE;
     }
 
-    public WaysideSystem getWaysideSystem()
+    public ArrayList<WaysideSystem> getWaysideSystem()
     {
         return waysides;
     }
 
-    public void setWaysideSystem(WaysideSystem SEws)
+    public void setWaysideSystem(ArrayList<WaysideSystem> SEws)
     {
         waysides = SEws;
     }
@@ -176,7 +216,7 @@ public class CTCOffice implements PhysicsUpdateListener
             lineCol = "Green";}
         else{
             blockNum = 0;
-            lineCol = "Blue";}
+            lineCol = "Green";}
 
         CharSequence timeChar = timeD;
         timeDis = LocalTime.parse(timeChar);
@@ -196,9 +236,214 @@ public class CTCOffice implements PhysicsUpdateListener
         }
         temp = temp+hsub;
 
-        route = calcRoute(blockNum, lineCol);
+        route = calcRoute(blockNum, lineCol, trainNum);
 
-        routeLength = calcRouteLength(blockNum, lineCol);
+        routeLength = calcRouteLength(blockNum, lineCol, trainNum);
+
+        speed = routeLength/1000/temp;
+
+        authority = calcAuthority(route);
+        authArr = createAuthArr(route, authority);
+
+        if (speed<5)
+        {
+            speed = 5;
+            double timeTravel = 1/(speed*1000/routeLength/60);
+            long mins = (long)timeTravel;
+            timeDisp = timeDis.minusMinutes(mins);
+        }
+        else
+        {
+            timeDisp = now;
+        }
+
+        if (lineCol.equals("Green"))
+            speedArrG = createSpeedArr(route, speed);
+        else if (lineCol.equals("Red"))
+            speedArrR = createSpeedArr(route, speed);
+
+        if(LocalTime.now().isBefore(timeDis) && speed<50)
+        {
+            speedAuthorityTime[0] = speed*0.621371;
+            speedAuthorityTime[1] = authority;
+            speedAuthorityTime[2] = timeDisp;
+        }
+        else
+        {
+            speedAuthorityTime[0] = 0;
+            speedAuthorityTime[1] = 0;
+            speedAuthorityTime[2] = 0;
+        }
+
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        try {
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            if (lineCol.equals("Green")) {
+                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            }
+            else if (lineCol.equals("Red")){
+                waysides.get(1).broadcastToControllers(speedArrR, authArr);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BroadcastingArrays();
+
+        return speedAuthorityTime;
+    }
+
+    public void ClearQueues(){
+        for (int i= 0; i<times.size(); i++){
+            times.remove(i);
+        }
+        for (int i = 0; i<speedsR.size(); i++){
+            speedsR.remove(i);
+        }
+        for (int i = 0; i<speedsG.size(); i++){
+            speedsG.remove(i);
+        }
+        for (int i = 0; i<authorities.size(); i++){
+            authorities.remove(i);
+        }
+    }
+
+    public Object[] AutoDispatch(String dest, String tNum, String timeD)
+    {
+        //speedAuthority[0] is speed
+        //speedAuthority[1] is authority
+        //speedAuthority[2] is dispatch time
+        Vector<TrainUnit> trains = SEobj.getTrains();
+
+        if (tNum.equals("Train 1"))
+            trainNum = 1;
+        else if (tNum.equals("Train 2"))
+            trainNum = 2;
+        else if (tNum.equals("Train 3"))
+            trainNum = 3;
+        else if (tNum.equals("Train 4"))
+            trainNum = 4;
+        else if (tNum.equals("Train 5"))
+            trainNum = 5;
+        else if (tNum.equals("Train 6"))
+            trainNum = 6;
+        else if (tNum.equals("Train 7"))
+            trainNum = 7;
+        else if (tNum.equals("Train 8"))
+            trainNum = 8;
+        else if (tNum.equals("Train 9"))
+            trainNum = 9;
+        else if (tNum.equals("Train 10"))
+            trainNum = 10;
+        else
+            SEobj.spawnRunningTrain(trackObj.getBlock(0),trackObj.getBlock(9));
+
+        if (dest.equals("Station B")){
+            blockNum = 10;
+            lineCol = "Blue";}
+        else if (dest.equals("Station C")){
+            blockNum = 15;
+            lineCol = "Blue";}
+        else if (dest.equals("Shadyside")){
+            blockNum = 7;
+            lineCol = "Red";}
+        else if (dest.equals("Herron Ave")){
+            blockNum = 16;
+            lineCol = "Red";}
+        else if (dest.equals("Swissville")){
+            blockNum = 21;
+            lineCol = "Red";}
+        else if (dest.equals("Penn Station")){
+            blockNum = 25;
+            lineCol = "Red";}
+        else if (dest.equals("Steel Plaza")){
+            blockNum = 35;
+            lineCol = "Red";}
+        else if (dest.equals("First Ave")){
+            blockNum = 45;
+            lineCol = "Red";}
+        else if (dest.equals("Station Square")){
+            blockNum = 48;
+            lineCol = "Red";}
+        else if (dest.equals("South Hills Junction")){
+            blockNum = 60;
+            lineCol = "Red";}
+        else if(dest.equals("Pioneer")){
+            blockNum = 2;
+            lineCol = "Green";}
+        else if(dest.equals("Edgebrook")){
+            blockNum = 9;
+            lineCol = "Green";}
+        else if(dest.equals("Station")){
+            blockNum = 16;
+            lineCol = "Green";}
+        else if(dest.equals("Whited")){
+            blockNum = 22;
+            lineCol = "Green";}
+        else if(dest.equals("South Bank")){
+            blockNum = 31;
+            lineCol = "Green";}
+        else if(dest.equals("Central")){
+            blockNum = 39;
+            lineCol = "Green";}
+        else if(dest.equals("Inglewood")){
+            blockNum = 48;
+            lineCol = "Green";}
+        else if(dest.equals("Overbrook")){
+            blockNum = 57;
+            lineCol = "Green";}
+        else if(dest.equals("Glenbury")){
+            blockNum = 65;
+            lineCol = "Green";}
+        else if(dest.equals("Dormont")){
+            blockNum = 73;
+            lineCol = "Green";}
+        else if(dest.equals("Mt Lebanon")){
+            blockNum = 77;
+            lineCol = "Green";}
+        else if(dest.equals("Poplar")){
+            blockNum = 88;
+            lineCol = "Green";}
+        else if(dest.equals("Castle Shannon")){
+            blockNum = 96;
+            lineCol = "Green";}
+        else{
+            blockNum = 0;
+            lineCol = "Green";}
+
+        CharSequence timeChar = timeD;
+        timeDis = LocalTime.parse(timeChar);
+        now = LocalTime.parse(timeNow);
+
+        int h1 = timeDis.getHour();
+        int h2 = now.getHour();
+        int m1 = timeDis.getMinute();
+        int m2 = now.getMinute();
+
+        double temp = m1-m2;
+        temp = temp/60;
+        int hsub = h1-h2;
+        if (m1<m2)
+        {
+            hsub = hsub-1;
+        }
+        temp = temp+hsub;
+
+        route = calcAutoRoute(blockNum, lineCol, trainNum);
+
+        routeLength = calcAutoRouteLength(blockNum, lineCol, trainNum);
 
         speed = routeLength/1000/temp;
 
@@ -235,13 +480,50 @@ public class CTCOffice implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
+        if (lineCol.equals("Green")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+        else if (lineCol.equals("Red")){
+            speedsG.add(speedArrG);
+            speedsR.add(speedArrR);
+            times.add(timeDisp);
+            authorities.add(authArr);
+        }
+
         try {
-            waysides.broadcastToControllers(speedArrG, authArr);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            if (lineCol.equals("Green")) {
+                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+            }
+            else if (lineCol.equals("Red")){
+                waysides.get(1).broadcastToControllers(speedArrR, authArr);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        BroadcastingArrays();
 
         return speedAuthorityTime;
+    }
+
+    public void BroadcastingArrays(){
+        now = LocalTime.parse(timeNow);
+        for (int i = 0; i<times.size(); i++){
+            if(now.equals(times)){
+
+                //TODO waysides.broadcastToControllers(speedsR, authorities);
+                // TODO waysides.broadcastToControllers(speedsG, authorities);
+
+                times.remove(i);
+                speedsR.remove(i);
+                speedsG.remove(i);
+                authorities.remove(i);
+            }
+        }
     }
 
     public void LoadSchedule(String filename)
@@ -307,12 +589,16 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public boolean CheckOcc(int blockNum, String lineCol)
     {
-       /*if (lineCol.equals("Green"))
-            occ = waysideG.getOccupancy(blockNum);
-        else
-            occ = waysideR.getOccupancy(blockNum);*/
+
         try {
-            occ = waysides.getOccupancy(blockNum);
+            for (WaysideSystem ws : waysides) {
+                if(ws.getLine() == lineCol)  {
+                    //If this is the WaysideSystem that controls the corresponding line
+                    occ = ws.getOccupancy(blockNum);
+                } else {
+                    occ = false;
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -320,97 +606,975 @@ public class CTCOffice implements PhysicsUpdateListener
         return occ;
     }
 
-    public boolean CheckSwitch(int blockNum, String lineCol)
+    public boolean CheckSectOcc(int blockNum, String lineCol)
     {
-        boolean switchstat=false;
+        char section = dispArr.get(blockNum).getSection();
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
+        int length = blocks.size();
+        boolean[] occs = new boolean[length];
+        boolean totalocc = false;
+
+        for (int i=0; i<length; i++){
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                occs[i] = waysides.get(0).getOccupancy(blockNum);
+            } catch (IOException e) {
+                System.out.println("Failed to set open for block");
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < length; i++){
+            if (occs[i]){
+                totalocc=true;
+            }
+        }
+        return totalocc;
+    }
+
+    public boolean CheckSwitch(int switchNum, String lineCol)
+    {
+        boolean switchstat = false;
         try {
-            switchstat = waysides.getSwitchStatus(blockNum);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            switchstat = waysides.get(0).getSwitchStatus(switchNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return switchstat;
     }
 
+    public void ToggleSwitch(int switchNum, boolean stat)
+    {
+        boolean switchstat = !stat;
+        try {
+            waysides.get(0).setSwitchStatus(switchNum, switchstat);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void OpenTrack(int blockNum, String lineCol)
     {
-        // Case: null or empty lineCol string provided
-        if (lineCol==null || lineCol.length() < 1) {
-            return;
-        }
         char section = dispArr.get(blockNum).getSection();
-        char lineColChar = lineCol.charAt(0);
-        // TODO Elijah: made a small fix here with the linecol character:)
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section, lineColChar);
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            //waysides.setOpen(blocks.get(i), lineCol);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                waysides.get(0).setOpen(blocks.get(i));
+            } catch (IOException e) {
+                System.out.println("Failed to set open for block");
+                e.printStackTrace();
+            }
         }
     }
 
     public void CloseTrack(int blockNum, String lineCol)
     {
-        // Case: null or empty lineCol string provided
-        if (lineCol==null || lineCol.length() < 1) {
-            return;
-        }
         char section = dispArr.get(blockNum).getSection();
-        char lineColChar = lineCol.charAt(0);
-        // TODO Elijah: made a small fix here with the linecol character:)
-        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineColChar);
+        char lineChar = lineCol.charAt(0);
+        ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
 
         for (int i=0; i<length; i++){
-            //waysides.setClose(blocks.get(i), lineCol);
+            // For now, Just get the greenline wayside system
+            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
+            try {
+                waysides.get(0).setClose(blocks.get(i));
+            } catch (IOException e) {
+                System.out.println("Failed to set closed for block");
+                e.printStackTrace();
+            }
         }
     }
 
-    public int calcRouteLength(int bn, String lc)
+    public int calcRouteLength(int bn, String lc, int tnum)
     {
         int rl;
         if(bn==10 && lc.equals("Blue"))
             rl = 10*50;
         else if(bn==15 && lc.equals("Blue"))
             rl = 10*50;
-        else if(bn==73 && lc.equals("Green"))
-            rl = 50+200+400+700;
+        else if (bn==65 && lc.equals("Green")){ //Glenbury
+            if (positions[tnum-1]>=65 && positions[tnum-1]<114)
+            {
+                rl = 9554;
+            }
+            else {
+                rl = 400;
+            }
+        }
+        else if(bn==73 && lc.equals("Green")){ //Dormont
+            if (positions[tnum-1]>=73 && positions[tnum-1]<105)
+            {
+                rl = 8602;
+            }
+            else {
+                rl = 1300;
+            }
+        }
+        else if (bn==77 && lc.equals("Green")){ //Mt Lebanon
+            if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
+            {
+                rl = 8187;
+            }
+            else {
+                rl = 1900;
+            }
+        }
+        else if(bn==88 && lc.equals("Green")){//Poplar
+            rl = 4587;
+        }
+        else if(bn==96 && lc.equals("Green")){//Castle Shannon
+            rl = 5187;
+        }
+        else if(bn==57 && lc.equals("Green")){//Overbrook
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
+                rl = 19803;
+            }
+            else{
+                rl = 10094;
+            }
+        }
+        else if(bn==48 && lc.equals("Green"))//Inglewood
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
+                rl = 19353;
+            }
+            else{
+                rl = 10544;
+            }
+        }
+        else if(bn==39 && lc.equals("Green"))//Central
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
+                rl = 18903;
+            }
+            else{
+                rl = 10994;
+            }
+        }
+        else if(bn==31 && lc.equals("Green")){//South Bank
+            rl = 18503;
+        }
+        else if(bn==22 && lc.equals("Green")){//Whited
+            if (positions[tnum-1]<22)
+            {
+                rl = 17353;
+            }
+            else{
+                rl= 12853;
+            }
+        }
+        else if (bn==16 && lc.equals("Green")){ //Station
+            if (positions[tnum-1]<16)
+            {
+                rl = 16153;
+            }
+            else{
+                rl = 13903;
+            }
+        }
+        else if (bn==9 && lc.equals("Green")){//Edgebrook
+            rl = 14753;
+        }
+        else if (bn==2 && lc.equals("Green")) {//Pioneer
+            rl = 15453;
+        }
+        if (bn==7 && lc.equals("Red")){//Shadyside
+            rl = 225-50;
+        }
+        if(bn==16 && lc.equals("Red")){//Herron Ave
+            rl= 350+225-50;
+        }
+        if (bn==21 && lc.equals("Red")) {//Swissville
+            rl = 1300+350+225-50;
+        }
+        if (bn == 25 && lc.equals("Red")){//Penn Station
+            rl = 300+1300+350+225-50;
+        }
+        if (bn==35 && lc.equals("Red")) {//Steel Plaza
+            rl = 520+300+1300+350+225-50;
+        }
+        if (bn==45 && lc.equals("Red")) {//First Ave
+            rl = 520+520+300+1300+350+225-50;
+        }
+        if (bn==48 && lc.equals("Red")) {//Station Square
+            rl = 225+520+520+300+1300+350+225-50;
+        }
+        if (bn==60 &&lc.equals("Red")) {//South Hills Junction
+            rl = 743+225+520+520+300+1300+350+225-50;
+        }
         else
             rl = 0;
+
+        rl+=50;
         return rl;
     }
 
-    public double[] calcRoute(int bn, String lc)
+    /*GIH6 adding back to yard*/
+    public int[] backToYard(int bn){
+        int[] newGreenLine = greenPath;
+        int flag=0;
+        for(int i = 0; i < 176; i++){
+            if(newGreenLine[i] != bn) {
+                newGreenLine[i] = 0;
+            }
+            if(newGreenLine[i] == bn)
+                break;
+
+        }
+
+        int[] RouteAr = new int[150];
+        for(int i=0; i < 176; i++)
+            if(newGreenLine[i]!=0)
+                RouteAr[newGreenLine[i]-1] = 1;
+        return RouteAr;
+    }
+
+    public int calcAutoRouteLength(int bn, String lc, int tnum)
+    {
+        int rl;
+        if(bn==10 && lc.equals("Blue"))
+            rl = 10*50;
+        else if(bn==15 && lc.equals("Blue"))
+            rl = 10*50;
+        else if (bn==65 && lc.equals("Green")){ //Glenbury
+            if (positions[tnum-1]>=65 && positions[tnum-1]<114)
+            {
+                rl = 890+162;
+            }
+            else {
+                rl = 450;
+            }
+        }
+        else if(bn==73 && lc.equals("Green")){ //Dormont
+            if (positions[tnum-1]>=73 && positions[tnum-1]<105)
+            {
+                rl = (75*4) + 35 + 380 + (300*9);
+            }
+            else {
+                rl = 900;
+            }
+        }
+        else if (bn==77 && lc.equals("Green")){ //Mt Lebanon
+            if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
+            {
+                rl = (75*4) + (300*9);
+            }
+            else {
+                rl = 600;
+            }
+        }
+        else if(bn==88 && lc.equals("Green")){//Poplar
+            rl = (300*8) + 200 + 87;
+        }
+        else if(bn==96 && lc.equals("Green")){//Castle Shannon
+            rl = 75*8;
+        }
+        else if(bn==57 && lc.equals("Green")){//Overbrook
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
+                rl = 9*50;
+            }
+            else{
+                rl = 540;
+            }
+        }
+        else if(bn==48 && lc.equals("Green"))//Inglewood
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
+                rl = 450;
+            }
+            else{
+                rl = 450;
+            }
+        }
+        else if(bn==39 && lc.equals("Green"))//Central
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
+                rl = 450;
+            }
+            else{
+                rl = 450;
+            }
+        }
+        else if(bn==31 && lc.equals("Green")){//South Bank
+            rl = 1150;
+        }
+        else if(bn==22 && lc.equals("Green")){//Whited
+            if (positions[tnum-1]<22)
+            {
+                rl = (150*4) + 600;
+            }
+            else{
+                rl= 484+40+35+1300;
+            }
+        }
+        else if (bn==16 && lc.equals("Green")){ //Station
+            if (positions[tnum-1]<16)
+            {
+                rl = (4*150)*100;
+            }
+            else{
+                rl = 1050;
+            }
+        }
+        else if (bn==9 && lc.equals("Green")){//Edgebrook
+            rl = 850;
+        }
+        else if (bn==2 && lc.equals("Green")) {//Pioneer
+            rl = 700;
+        }
+        else
+            rl = 0;
+
+        //Start RED LINE
+
+        if (bn==7 && lc.equals("Red")){//Shadyside
+            rl = 225;
+        }
+        if(bn==16 && lc.equals("Red")){//Herron Ave
+            rl= 350;
+        }
+        if (bn==21 && lc.equals("Red")) {//Swissville
+            rl = 1300;
+        }
+        if (bn == 25 && lc.equals("Red")){//Penn Station
+            rl = 300;
+        }
+        if (bn==35 && lc.equals("Red")) {//Steel Plaza
+            rl = 520;
+        }
+        if (bn==45 && lc.equals("Red")) {//First Ave
+            rl = 520;
+        }
+        if (bn==48 && lc.equals("Red")) {//Station Square
+            rl = 225;
+        }
+        if (bn==60 &&lc.equals("Red")) {//South Hills Junction
+            rl = 743;
+        }
+
+        return rl;
+    }
+
+    public double[] calcAutoRoute(int bn, String lc, int tnum)
     {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        if(bn==73 && lc.equals("Green")){
-            for (int i=63; i<75; i++){
-                routeArr[i] = 1;
+
+        if (bn==65 && lc.equals("Green")){ // Yard - Glenbury
+            if (positions[tnum-1]>=65 && positions[tnum-1]<114)
+            {
+                for(int i=104; i<114; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[111] = 2;
+                positions[tnum-1] = 114;
+            }
+            else {
+                for (int i = 61; i < 65; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[62] = 2;
+                positions[tnum-1] = 65;
             }
         }
-        if (bn==65 && lc.equals("Green")){
-            for (int i=63; i<67; i++){
-                routeArr[i] = 1;
+        if(bn==73 && lc.equals("Green")){ //GLEN - Dormont
+            if (positions[tnum-1]>=73 && positions[tnum-1]<105)
+            {
+                for(int i=95; i<105; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i=76; i<85; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[102] = 2;
+                positions[tnum-1] = 105;
+            }
+            else {
+                for (int i = 64; i < 73; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[70] = 2;
+                positions[tnum-1] = 73;
             }
         }
-        if (bn==77 && lc.equals("Green")){
-            for (int i=63; i<79; i++){
+        if (bn==77 && lc.equals("Green")){ //Mt Lebanon
+            if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
+            {
+                for (int i=95; i<100; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for(int i=84; i>=76; i--)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[78] = 2;
+            }
+            else {
+                for (int i = 72; i < 77; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[74] = 2;
+            }
+            positions[tnum-1] = 77;
+        }
+        if(bn==88 && lc.equals("Green")){//Poplar
+            for (int i=76; i<88; i++){
                 routeArr[i] = 1;
+            }
+            routeArr[85] = 2;
+            positions[tnum-1] = 88;
+        }
+        if(bn==96 && lc.equals("Green")){//Castle Shannon
+            for (int i=87; i<96; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[93] = 2;
+            positions[tnum-1] = 96;
+        }
+        if(bn==57 && lc.equals("Green")){//Overbrook
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
+                for (int i = 47; i<57; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[54] = 2;
+                positions[tnum-1] = 57;
+            }
+            else{
+                for (int i = 113; i < 123; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[120] = 2;
+                positions[tnum-1] = 123;
             }
         }
-        if(bn==88 && lc.equals("Green")){
-            for (int i=63; i<90; i++){
-                routeArr[i] = 1;
+        if(bn==48 && lc.equals("Green"))//Inglewood
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
+                for (int i=38; i<48; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[45] = 2;
+                positions[tnum-1] = 48;
+            }
+            else{
+                for (int i=122; i<132; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[129] = 2;
+                positions[tnum-1] = 132;
             }
         }
-        if(bn==96 && lc.equals("Green")){
-            for (int i=63; i<98; i++){
-                routeArr[i] = 1;
+        if(bn==39 && lc.equals("Green"))//Central
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
+                for (int i=30; i<39; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[36] = 2;
+                positions[tnum-1] = 39;
+            }
+            else{
+                for (int i=131; i<141; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[138] = 2;
+                positions[tnum-1] = 141;
             }
         }
-        if(bn==123 && lc.equals("Green")){
-            for (int i=63; i<125; i++){
+        if(bn==31 && lc.equals("Green")){//South Bank
+            for (int i = 21; i<31; i++)
+            {
                 routeArr[i] = 1;
             }
+            routeArr[28] = 2;
+            positions[tnum-1] = 31;
+        }
+        if(bn==22 && lc.equals("Green")){//Whited
+            if (positions[tnum-1]<22)
+            {
+                for (int i = 15; i<22; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[19] = 2;
+            }
+            else{
+                for (int i = 140; i <150; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 27; i>=21; i--)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[23] = 2;
+            }
+            positions[tnum-1] = 22;
+        }
+        if (bn==16 && lc.equals("Green")){ //Station
+            if (positions[tnum-1]<16)
+            {
+                for (int i=1; i>=0; i--){
+                    routeArr[i] = 1;
+                }
+                for (int i = 12; i<16; i++){
+                    routeArr[i] = 1;
+                }
+                routeArr[13] = 2;
+            }
+            else{
+                for (int i = 21; i>=15; i--)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[17] = 2;
+            }
+            positions[tnum-1] = 16;
+        }
+        if (bn==9 && lc.equals("Green")){//Edgebrook
+            for (int i = 15; i>=8; i--)
+            {
+                routeArr[i] = 1;
+            }
+            routeArr[10] = 2;
+            positions[tnum-1] = 9;
+        }
+        if (bn==2 && lc.equals("Green")) {//Pioneer
+            for (int i = 8; i>=1; i--){
+                routeArr[i] = 1;
+            }
+            routeArr[3] = 2;
+            positions[tnum-1] = 2;
+        }
+
+        //Start RED LINE
+
+        if (bn==7 && lc.equals("Red")){//Shadyside
+            for (int i = 6; i<9; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[7] = 2;
+            positions[tnum-1] = 9;
+        }
+        if(bn==16 && lc.equals("Red")){//Herron Ave
+            for (int i = 0; i < 7; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[15] = 1;
+
+            routeArr[14] = 2;
+            positions[tnum-1] = 16;
+        }
+        if (bn==21 && lc.equals("Red")) {//Swissville
+            for (int i = 15; i<21; i++)
+            {
+                routeArr[i]= 1;
+            }
+            routeArr[19] = 2;
+            positions[tnum-1] = 21;
+        }
+        if (bn == 25 && lc.equals("Red")){//Penn Station
+            for (int i = 20; i<25; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[23] = 2;
+            positions[tnum-1] = 25;
+        }
+        if (bn==35 && lc.equals("Red")) {//Steel Plaza
+            for (int i = 24; i<35; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[33] = 2;
+            positions[tnum-1] = 35;
+        }
+        if (bn==45 && lc.equals("Red")) {//First Ave
+            for (int i = 34; i<45; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[43]= 2;
+            positions[tnum-1] = 45;
+        }
+        if (bn==48 && lc.equals("Red")) {//Station Square
+            for (int i = 44; i<48; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[46] = 2;
+            positions[tnum-1] = 48;
+        }
+        if (bn==60 &&lc.equals("Red")) {//South Hills Junction
+            for (int i = 47; i<60; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[58] = 2;
+            positions[tnum-1] = 60;
+        }
+
+        return routeArr;
+    }
+
+    public double[] calcRoute(int bn, String lc, int tnum)
+    {
+        double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+        if (bn==65 && lc.equals("Green")){ //Glenbury
+            if (positions[tnum-1]>=65 && positions[tnum-1]<114)
+            {
+                for(int i=61; i<114; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[111] = 2;
+                positions[tnum-1] = 114;
+            }
+            else {
+                for (int i = 61; i < 65; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[62] = 2;
+                positions[tnum-1] = 65;
+            }
+        }
+        if(bn==73 && lc.equals("Green")){ //Dormont
+            if (positions[tnum-1]>=73 && positions[tnum-1]<105)
+            {
+                //for(int i=95; i<105; i++)
+                //{
+                //    routeArr[i] = 1;
+                //}
+                //for (int i=76; i<85; i++)
+                for(int i=61; i<105; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[102] = 2;
+                positions[tnum-1] = 105;
+            }
+            else {
+                //for (int i = 64; i < 73; i++) {
+                for (int i = 61; i < 73; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[70] = 2;
+                positions[tnum-1] = 73;
+            }
+        }
+        if (bn==77 && lc.equals("Green")){ //Mt Lebanon
+            if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
+            {
+                //for (int i=95; i<100; i++)
+                //{
+                //    routeArr[i] = 1;
+                //}
+                //for(int i=84; i>=76; i--)
+                for (int i=61; i<100; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[78] = 2;
+            }
+            else {
+                //for (int i = 72; i < 77; i++) {
+                for (int i = 61; i < 77; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[74] = 2;
+            }
+            positions[tnum-1] = 77;
+        }
+        if(bn==88 && lc.equals("Green")){//Poplar
+            //for (int i=76; i<88; i++){
+            for (int i=61; i<88; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[85] = 2;
+            positions[tnum-1] = 88;
+        }
+        if(bn==96 && lc.equals("Green")){//Castle Shannon
+            //for (int i=87; i<96; i++){
+            for (int i=61; i<96; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[93] = 2;
+            positions[tnum-1] = 96;
+        }
+        if(bn==57 && lc.equals("Green")){//Overbrook
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
+                //for (int i = 47; i<57; i++)
+                for (int i = 0; i<57; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 61; i<150; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[54] = 2;
+                positions[tnum-1] = 57;
+            }
+            else{
+                //for (int i = 113; i < 123; i++) {
+                for (int i = 61; i < 123; i++) {
+                    routeArr[i] = 1;
+                }
+                routeArr[120] = 2;
+                positions[tnum-1] = 123;
+            }
+        }
+        if(bn==48 && lc.equals("Green"))//Inglewood
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
+                //for (int i=38; i<48; i++)
+                for (int i=0; i<48; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 61; i<150; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[45] = 2;
+                positions[tnum-1] = 48;
+            }
+            else{
+                //for (int i=122; i<132; i++)
+                for (int i=61; i<132; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[129] = 2;
+                positions[tnum-1] = 132;
+            }
+        }
+        if(bn==39 && lc.equals("Green"))//Central
+        {
+            if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
+               // for (int i=30; i<39; i++)
+               // {
+               //     routeArr[i] = 1;
+               // }
+                for (int i=0; i<39; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 61; i<150; i++){
+                    routeArr[i] = 1;
+                }
+                routeArr[36] = 2;
+                positions[tnum-1] = 39;
+            }
+            else{
+                //for (int i=131; i<141; i++)
+                for (int i=61; i<141; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[138] = 2;
+                positions[tnum-1] = 141;
+            }
+        }
+        if(bn==31 && lc.equals("Green")){//South Bank
+            //for (int i = 21; i<31; i++)
+            //{
+            //    routeArr[i] = 1;
+            //}
+            for (int i = 0; i<31; i++)
+            {
+                routeArr[i] = 1;
+            }
+            for (int i = 61; i<150; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[28] = 2;
+            positions[tnum-1] = 31;
+        }
+        if(bn==22 && lc.equals("Green")){//Whited
+            if (positions[tnum-1]<22)
+            {
+           //     for (int i = 15; i<22; i++)
+           //     {
+           //         routeArr[i] = 1;
+           //     }
+           //     routeArr[19] = 2;
+           // }
+           // else{
+           //     for (int i = 140; i <150; i++)
+                for (int i = 0; i<28; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 61; i<150; i++){
+                    routeArr[i] = 1;
+                }
+                routeArr[19] = 2;
+            }
+            else{
+                for (int i = 61; i <150; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 27; i>=21; i--)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[23] = 2;
+            }
+            positions[tnum-1] = 22;
+        }
+        if (bn==16 && lc.equals("Green")){ //Station
+            if (positions[tnum-1]<16)
+            {
+                //for (int i=1; i>=0; i--){
+                //    routeArr[i] = 1;
+               // }
+                //for (int i = 12; i<16; i++){
+                for (int i=61; i<150; i++){
+                    routeArr[i] = 1;
+                }
+                for (int i = 0; i<28; i++){
+                    routeArr[i] = 1;
+                }
+                routeArr[13] = 2;
+            }
+            else{
+                //for (int i = 21; i>=15; i--)
+                for (int i = 61; i<150; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                for (int i = 15; i<28; i++)
+                {
+                    routeArr[i] = 1;
+                }
+                routeArr[17] = 2;
+            }
+            positions[tnum-1] = 16;
+        }
+        if (bn==9 && lc.equals("Green")){//Edgebrook
+        //    for (int i = 15; i>=8; i--)
+        //    {
+        //        routeArr[i] = 1;
+        //    }
+        //    routeArr[10] = 2;
+        //    positions[tnum-1] = 9;
+        //}
+        //if (bn==2 && lc.equals("Green")) {//Pioneer
+        //    for (int i = 8; i>=1; i--){
+            for (int i = 8; i<28; i++)
+            {
+                routeArr[i] = 1;
+            }
+            for (int i = 61; i<150; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[10] = 2;
+            positions[tnum-1] = 9;
+        }
+        if (bn==2 && lc.equals("Green")) {//Pioneer
+            for (int i = 1; i<28; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 61; i<150; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[3] = 2;
+            positions[tnum-1] = 2;
+        }
+
+        //Start RED LINE
+
+        if (bn==7 && lc.equals("Red")){//Shadyside
+            for (int i = 6; i<9; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[7] = 2;
+            positions[tnum-1] = 9;
+        }
+        if(bn==16 && lc.equals("Red")){//Herron Ave
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[15] = 1;
+
+            routeArr[14] = 2;
+            positions[tnum-1] = 16;
+        }
+        if (bn==21 && lc.equals("Red")) {//Swissville
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<21; i++)
+            {
+                routeArr[i]= 1;
+            }
+            routeArr[19] = 2;
+            positions[tnum-1] = 21;
+        }
+        if (bn == 25 && lc.equals("Red")){//Penn Station
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<25; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[23] = 2;
+            positions[tnum-1] = 25;
+        }
+        if (bn==35 && lc.equals("Red")) {//Steel Plaza
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<35; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[33] = 2;
+            positions[tnum-1] = 35;
+        }
+        if (bn==45 && lc.equals("Red")) {//First Ave
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<45; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[43]= 2;
+            positions[tnum-1] = 45;
+        }
+        if (bn==48 && lc.equals("Red")) {//Station Square
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<48; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[46] = 2;
+            positions[tnum-1] = 48;
+        }
+        if (bn==60 &&lc.equals("Red")) {//South Hills Junction
+            for (int i = 0; i < 9; i++){
+                routeArr[i] = 1;
+            }
+            for (int i = 15; i<60; i++){
+                routeArr[i] = 1;
+            }
+            routeArr[58] = 2;
+            positions[tnum-1] = 60;
         }
 
         return routeArr;
@@ -442,13 +1606,16 @@ public class CTCOffice implements PhysicsUpdateListener
     {
         int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++){
-            if (rA[i]!=0) {
+            if (rA[i]==1) {
                 /*for (int j = i; j < auth+i; j++) {
                     aArr[j] = a;
                     a--;
                 }
                 break;*/
                 aArr[i] = auth;
+            }
+            else if (rA[i]==2) {
+                aArr[i] = 888;
             }
         }
 
@@ -457,8 +1624,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = 0;
-        //tix = Track.updateTix();
+        int tix = Track.updateTix();
         return tix;
     }
 
@@ -472,12 +1638,28 @@ public class CTCOffice implements PhysicsUpdateListener
         return dispArr;
     }
 
+    public DisplayLine getDisplayLine(int index)
+    {
+        return dispArr.get(index);
+    }
+
+    /*adding display line to the CTC office displayline arraylist */
+    public void addDisp(DisplayLine disp){
+        dispArr.add(disp);
+    }
+
     public SimulationEnvironment getSE()
     {
         return SEobj;
     }
 
-
-
+    /*getting throuput */
+    public int getThroughput(){
+        return this.thruP;
+    }
+    /*setting throughput*/
+    public void setThroughput(int test){
+        thruP = test;
+    }
 
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-//import CTCOffice.CTCOffice;
+import GUIInterface.AppGUIModule;
 import SimulationEnvironment.SimulationEnvironment;
 import SimulationEnvironment.TrainUnit;
 import TrackConstruction.TrackElement;
@@ -12,61 +12,67 @@ import TrainControlUI.DriverUI;
 import TrainModel.trainGUI;
 import WaysideController.WaysideSystem;
 import WorldClock.WorldClock;
+import CTCOffice.*;
 
-import java.awt.CardLayout;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
-import java.awt.CardLayout;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import java.awt.CardLayout;
-import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-
 /**
  *
  * @author elijah
  */
-public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
-
-    private SimulationEnvironment DisplaySE;
-    /**
-     * Creates new form SimulationEnvironmentJFrame
+public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements AppGUIModule {
+    /** Members
      */
-    public SimulationEnvironmentJFrame(SimulationEnvironment mySE) {
-        DisplaySE = mySE;
+    private SimulationEnvironment SE;
+
+    /** creates new SimulationEnvironmentJFrame from an already existing SimulationEnvironment object
+     */
+    public SimulationEnvironmentJFrame(SimulationEnvironment existingSimulationEnvironment) {
+        SE = existingSimulationEnvironment;
         initComponents();
-        WorldClock clk = DisplaySE.getClock();
+        WorldClock clk = SE.getClock();
         //ClockRatioSlider.setMinimum((int) clk.MINIMUM_RATIO);
         //ClockRatioSlider.setMaximum((int) clk.MAXIMUM_RATIO);
         //ClockResolutionSlider.setMinimum((int) clk.MINIMUM_RESOLUTION);
         //ClockResolutionSlider.setMaximum((int) clk.MAXIMUM_RESOLUTION);
         UpdateSpawnTables();
-        ClockRatioSlider.setValue((int) DisplaySE.getClock().getRatio());
-        ClockResolutionSlider.setValue((int) DisplaySE.getClock().getResolution());
+        ClockRatioSlider.setValue((int) SE.getClock().getRatio());
+        ClockResolutionSlider.setValue((int) SE.getClock().getResolution());
         this.setVisible(true);
     }
+
+    /*
+        Inheritance Methods
+     */
+    @Override
     public void latch(Object myObj) {
-        DisplaySE = (SimulationEnvironment) myObj;
+        SE = (SimulationEnvironment) myObj;
     }
+    @Override
     public void update() {
-        TimeLabel.setText(DisplaySE.getClock().getTimeString());
+        // Show newest Clock Time
+        TimeLabel.setText(SE.getClock().getTimeString());
+        // Redraw all tables
         UpdateSpawnTables();
+    }
+
+    @Override
+    public Object getJFrame() {
+        return this;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
     }
 
     public void setGreenLine() {
@@ -86,6 +92,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         //TODO Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
         //TODO waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
         //TODO this is hard coded
+        //Vector<WaysideSystem> WSystems = SE.getCTC().getWaysideSystem();
         /*if(WSystems.size() != 0) {
             waysideTableModel.setRowCount(WSystems.size());
             waysideTableModel.setValueAt(WSystems.get(0),0,0);
@@ -102,7 +109,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
         // Set the TrainUnit table
         DefaultTableModel trainTableModel = (DefaultTableModel) TrainUnitSpawnTable.getModel();
-        Vector<TrainUnit> trains = DisplaySE.getTrains();
+        Vector<TrainUnit> trains = SE.getTrains();
 
         trainTableModel.setRowCount(trains.size());
 
@@ -139,7 +146,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         MainMenu = new javax.swing.JPanel();
         ClockControlPane = new javax.swing.JPanel();
         ClockResolutionSlider = new javax.swing.JSlider();
-        WorldClock clk = DisplaySE.getClock();
+        WorldClock clk = SE.getClock();
         ClockRatioSlider = new javax.swing.JSlider();
         ClockPauseButton = new javax.swing.JButton();
         WorldClockSpeedLabel = new javax.swing.JLabel();
@@ -434,7 +441,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        boolean success = DisplaySE.importTrack(getPathString());
+        boolean success = SE.importTrack(getPathString());
         if (success) {
             CardLayout card = (CardLayout)mainPanel.getLayout();
             card.show(mainPanel, "MainMenuCard");
@@ -447,10 +454,10 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         String textToStart = "Start";
         String textToPause = "Pause";
         if (currentMode.equals(textToStart)) {
-            DisplaySE.getClock().start();
+            SE.getClock().start();
             ClockPauseButton.setText(textToPause);
         } else if (currentMode.equals(textToPause)){
-            DisplaySE.getClock().halt();
+            SE.getClock().halt();
             ClockPauseButton.setText(textToStart);
         } else {
             ClockPauseButton.setText("error");
@@ -459,24 +466,24 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
 
     private void SpawnTrainButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        DisplaySE.spawnRunningTrain(new TrackElement(), new TrackElement());
+        SE.spawnRunningTrain(new TrackElement(), new TrackElement());
         UpdateSpawnTables();
     }
 
     private void ClockRatioSliderMouseReleased(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
         // TODO add your handling code here:
-        double clockratiomax = DisplaySE.getClock().MAX_ALLOWABLE_RATIO;
-        double clockratiomin = DisplaySE.getClock().MIN_ALLOWABLE_RATIO;
+        double clockratiomax = SE.getClock().MAX_ALLOWABLE_RATIO;
+        double clockratiomin = SE.getClock().MIN_ALLOWABLE_RATIO;
         //double dist = (clockratiomax -clockratiomin) / 100.0;
         //System.out.println("new ratio: " + dist*ClockRatioSlider.getValue());
         System.out.println(ClockRatioSlider.getValue());
-        DisplaySE.getClock().setRatio(ClockRatioSlider.getValue());
+        SE.getClock().setRatio(ClockRatioSlider.getValue());
     }
 
     private void ClockResolutionSliderMouseReleased(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-        DisplaySE.getClock().setResolution(ClockResolutionSlider.getValue());
+        SE.getClock().setResolution(ClockResolutionSlider.getValue());
     }
 
     private void CTCSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
@@ -521,7 +528,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
 
 
-        Vector<TrainUnit> trains = DisplaySE.getTrains();
+        Vector<TrainUnit> trains = SE.getTrains();
         TrainUnit thisTrain = null;
         try {
             thisTrain = trains.get(row);
@@ -536,13 +543,13 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame {
             trainGUI modelUI = new trainGUI(0);
             modelUI.latch(thisTrain.getHull());
             modelUI.setVisible(true);
-            new GUIWindowLauncher<trainGUI>().launchWindow(modelUI);
+            try{GUIWindowLauncher.launchWindow(modelUI);} catch (Exception e) {}
         }
         else if (column == spawnControllerColumn) {
             //DisplaySE.spawnTrainControllerUI(trains.get(row));
             DriverUI controllerUI = new DriverUI();
             controllerUI.latch(thisTrain.getController());
-            new GUIWindowLauncher<DriverUI>().launchWindow(controllerUI);
+            try{GUIWindowLauncher.launchWindow(controllerUI);} catch (Exception e) {}
         }
     }
 

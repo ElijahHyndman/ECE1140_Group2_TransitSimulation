@@ -96,8 +96,8 @@ public class Train {
 
 
     public void setSpeed(double speed) {
-        if (speed > this.speedLimit){
-            this.actualSpeed = this.speedLimit;
+        if (speed > 19.44){
+            this.actualSpeed = 19.44;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
         }
         else if(speed >= 0){
@@ -183,14 +183,20 @@ public class Train {
             setSpeed(newV);
         }
         else{
-
+            if (this.actualSpeed < 0) {
+                this.actualSpeed = 0.001;
+            }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
             F = F - (this.blockGrade/100) * this.mass * 9.81;
+            if(F < 0){
+                F = 0;
+            }
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
             setAccel(newA);
         }
+
     }
     public double getTotalDistance(){
         return totalDistance;
@@ -212,6 +218,9 @@ public class Train {
 
     public void setSpeedLimit(double kmPerHour) { //takes in km/h
         this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
+    }
+    public double getSpeedLimit(){
+        return this.speedLimit;
     }
 
     public void setAuthority(int a) {
@@ -267,15 +276,9 @@ public class Train {
     }
     public void setLeftDoors(boolean status){
         this.leftDoors = status;
-        if(this.leftDoors == true){
-            disembark();
-        }
     }
     public void setRightDoors(boolean status){
         this.rightDoors = status;
-        if(this.rightDoors == true){
-            disembark();
-        }
     }
 
     public void setPassengerCount(int count){
@@ -293,15 +296,16 @@ public class Train {
     }
 
     public void updatePhysicalState(String currentTime, double deltaTime){
-        calculateSpeed(deltaTime);
+
         this.sampleTime = deltaTime;
+        calculateSpeed(deltaTime);
     }
     
     public void convert(){
         this.displayActualSpeed = this.actualSpeed * 3.28084;
         this.displayCommandedSpeed = this.commandedSpeed * 3.28084;
         this.displayAcceleration = this.accel * 3.2808399;
-        
+
     }
     public int disembark(){
         Random rand = new Random(); //instance of random class

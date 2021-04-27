@@ -614,13 +614,13 @@ class TrackTest {
         TrackElement prev = instance.getGreenLine().get(0);
         TrackElement next = null;
         int test=0;
-        for(int i=0; i<185;i++) {
+        for(int i=0; i<177;i++) {
             next = instance.getNextGreen(cur, prev);
            // System.out.println("prev and cur"+ prev.getBlockNum() + " " + cur.getBlockNum() + " next " + next.getBlockNum());
             if(i == 36) {
                 instance.getSwitches().get(12).setSwitchState(true); // testing switch to 101
                 instance.getSwitches().get(11).setSwitchState(true); //86-85 or 100-85
-                System.out.println("**" + instance.getSwitches().get(12).getDirectionStates(2) + " ** index " + instance.getSwitches().get(12).getIndex());
+           //    System.out.println("**" + instance.getSwitches().get(12).getDirectionStates(2) + " ** index " + instance.getSwitches().get(12).getIndex());
                 instance.updateSwitches();
             }
 
@@ -633,14 +633,14 @@ class TrackTest {
             }
             if (next != null) {
                 test += next.getBlockNum();
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " " + i);
+                System.out.print(cur.getBlockNum() + ", ");
                 prev = cur;
                 cur = next;
             }
 
 
             if(next == null) {
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " ");
+                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + ", ");
                 System.out.println("null");
                 break;
             }
@@ -824,7 +824,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNext() {
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv";
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -927,6 +927,7 @@ class TrackTest {
         TrackGUI testGUI = new TrackGUI(instance);
         testGUI.setVisible(true);
         testGUI.latch(instance);
+     //   while (true){}
 
 
         /*
@@ -1045,6 +1046,17 @@ class TrackTest {
 
     }
 
+    @org.junit.jupiter.api.Test
+    void testDisplaySwitch() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.getSwitches().get(2).setSwitchState(true);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+        instance.getSwitches().get(2).setSwitchState(false);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+    }
 
     @org.junit.jupiter.api.Test
     void blocksInSection() {
@@ -1118,7 +1130,7 @@ class TrackTest {
             testGUI.setVisible(true);
             testGUI.draw();
             testGUI.latch(instance);
-         //   while(true){}
+         //  while(true){}
           /*  instance.setFailure(2,"Green",1);
             testGUI.latch(instance);
             System.out.println(instance.getFailures());
