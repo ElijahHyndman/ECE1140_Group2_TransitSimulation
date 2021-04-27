@@ -234,6 +234,7 @@ public class Train {
             setAccel(-1 * this.emergencyDecelLimit);
     }
     public void setEmergencyBrake(Boolean brake) {
+
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
 
