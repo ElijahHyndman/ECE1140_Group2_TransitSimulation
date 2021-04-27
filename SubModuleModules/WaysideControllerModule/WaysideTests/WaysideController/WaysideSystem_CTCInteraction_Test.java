@@ -35,7 +35,7 @@ class WaysideSystem_CTCInteraction_Test {
         for (int i =0; i<nBlocks; i++) {
             TrackBlock newblock = new TrackBlock();
             newblock.setBlockNum(i+1);
-            newblock.setAuthority(0);
+            newblock.applyAuthorityToBlock(0);
             newblock.setCommandedSpeed(10.0);
             newblock.setSpeedLimit( (int) speedLimit);
             newblock.setOccupied(true);
@@ -137,7 +137,7 @@ class WaysideSystem_CTCInteraction_Test {
 
 
     @Test
-    @DisplayName("")
+    @DisplayName("CTC can set commanded speeds for track system using WaysideSystem")
     void canSetSpeeds() {
         double[] newSpeeds = new double[5];
         TrackElement block1 = section.get(0);
@@ -259,6 +259,182 @@ class WaysideSystem_CTCInteraction_Test {
         assertEquals(-speedLimit,block3.getCommandedSpeed());
         assertEquals(-speedLimit,block4.getCommandedSpeed());
         assertEquals(-speedLimit,block5.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",1,block1.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",2,block2.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",3,block3.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",4,block4.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",5,block5.getCommandedSpeed());
+    }
+
+
+    @Test
+    @DisplayName("CTC can set Authorities for track system using WaysideSystem")
+    void canSetAuthorities() throws Exception {
+        int[] newAuth = new int[5];
+        TrackElement block1 = section.get(0);
+        TrackElement block2 = section.get(1);
+        TrackElement block3 = section.get(2);
+        TrackElement block4 = section.get(3);
+        TrackElement block5 = section.get(4);
+        assertEquals(0, block1.getAuthority());
+        assertEquals(0, block1.getAuthority());
+        assertEquals(0, block1.getAuthority());
+        assertEquals(0, block1.getAuthority());
+        assertEquals(0, block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+
+
+
+        System.out.println("\n===========");
+        newAuth[0] = 1;
+        newAuth[1] = 2;
+        newAuth[2] = 3;
+        newAuth[3] = 4;
+        newAuth[4] = 5;
+        sys.setAuthorities(newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+
+        System.out.println("\n===========");
+        newAuth[0] = 6;
+        newAuth[1] = 7;
+        newAuth[2] = 8;
+        newAuth[3] = 9;
+        newAuth[4] = 10;
+        sys.setAuthorities(newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+
+        System.out.println("\n===========testing large numbers");
+        newAuth[0] = 888;
+        newAuth[1] = 888;
+        newAuth[2] = 888;
+        newAuth[3] = 888;
+        newAuth[4] = 888;
+        sys.setAuthorities(newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+
+        System.out.println("\n===========testing negatives");
+        newAuth[0] = -1;
+        newAuth[1] = -2;
+        newAuth[2] = -3;
+        newAuth[3] = -4;
+        newAuth[4] = -5;
+        sys.setAuthorities(newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+    }
+
+    @Test
+    @DisplayName("CTC can use broadcast to controllers")
+    void broadcast() throws Exception {
+        double[] newSpeeds = new double[5];
+        int[] newAuth = new int[5];
+        TrackElement block1 = section.get(0);
+        TrackElement block2 = section.get(1);
+        TrackElement block3 = section.get(2);
+        TrackElement block4 = section.get(3);
+        TrackElement block5 = section.get(4);
+
+
+        newAuth[0] = 1;
+        newAuth[1] = 2;
+        newAuth[2] = 3;
+        newAuth[3] = 4;
+        newAuth[4] = 5;
+        newSpeeds[0] = 1.0;
+        newSpeeds[1] = 2.0;
+        newSpeeds[2] = 3.0;
+        newSpeeds[3] = 4.0;
+        newSpeeds[4] = 5.0;
+        sys.broadcastToControllers(newSpeeds,newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        assertEquals(newSpeeds[0],block1.getCommandedSpeed());
+        assertEquals(newSpeeds[1],block2.getCommandedSpeed());
+        assertEquals(newSpeeds[2],block3.getCommandedSpeed());
+        assertEquals(newSpeeds[3],block4.getCommandedSpeed());
+        assertEquals(newSpeeds[4],block5.getCommandedSpeed());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
+        System.out.printf("Block %d , Speed=%f\n",1,block1.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",2,block2.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",3,block3.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",4,block4.getCommandedSpeed());
+        System.out.printf("Block %d , Speed=%f\n",5,block5.getCommandedSpeed());
+
+
+
+        System.out.println("\n===========");
+        newAuth[0] = 10;
+        newAuth[1] = 10;
+        newAuth[2] = 10;
+        newAuth[3] = 10;
+        newAuth[4] = 888;
+        newSpeeds[0] = 20.0;
+        newSpeeds[1] = 20.0;
+        newSpeeds[2] = 10.0;
+        newSpeeds[3] = 5.0;
+        newSpeeds[4] = 20.0;
+        sys.broadcastToControllers(newSpeeds,newAuth);
+        assertEquals(newAuth[0], block1.getAuthority());
+        assertEquals(newAuth[1], block2.getAuthority());
+        assertEquals(newAuth[2], block3.getAuthority());
+        assertEquals(newAuth[3], block4.getAuthority());
+        assertEquals(newAuth[4], block5.getAuthority());
+        assertEquals(newSpeeds[0],block1.getCommandedSpeed());
+        assertEquals(newSpeeds[1],block2.getCommandedSpeed());
+        assertEquals(newSpeeds[2],block3.getCommandedSpeed());
+        assertEquals(newSpeeds[3],block4.getCommandedSpeed());
+        assertEquals(newSpeeds[4],block5.getCommandedSpeed());
+        System.out.printf("Block %d , Auth=%d\n",1,block1.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",2,block2.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",3,block3.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",4,block4.getAuthority());
+        System.out.printf("Block %d , Auth=%d\n",5,block5.getAuthority());
         System.out.printf("Block %d , Speed=%f\n",1,block1.getCommandedSpeed());
         System.out.printf("Block %d , Speed=%f\n",2,block2.getCommandedSpeed());
         System.out.printf("Block %d , Speed=%f\n",3,block3.getCommandedSpeed());

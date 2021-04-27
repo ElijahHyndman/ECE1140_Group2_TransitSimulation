@@ -8,7 +8,6 @@ import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -143,7 +142,7 @@ class TrainUnitTest {
         int expectedAuthority = 10;
         TrackBlock BlockGreenA = new TrackBlock();
         BlockGreenA.setCommandedSpeed(expectedSpeed);
-        BlockGreenA.setAuthority(expectedAuthority);
+        BlockGreenA.applyAuthorityToBlock(expectedAuthority);
         trn.placeOn(BlockGreenA);
         // Confirm Placement, Confirm isRunning
         waitForTrainObjectToCatchUp();
@@ -347,7 +346,7 @@ class TrainUnitTest {
         int fakeAuthority = 10;
         double fakeSpeed = 10.0;
         trn.placeOn(testBlock);
-        testBlock.setAuthority(fakeAuthority);
+        testBlock.applyAuthorityToBlock(fakeAuthority);
         testBlock.setCommandedSpeed(fakeSpeed);
 
         // it takes a few milliseconds for the train to come back around in its sampling loop
@@ -362,7 +361,7 @@ class TrainUnitTest {
         // Updating speed and authority on the block will reflect onto the TrainUnit
         fakeSpeed = 40.0;
         fakeAuthority = 3;
-        testBlock.setAuthority(fakeAuthority);
+        testBlock.applyAuthorityToBlock(fakeAuthority);
         testBlock.setCommandedSpeed(fakeSpeed);
         // it takes a few milliseconds for the train to come back around in its sampling loop
         waitForTrainObjectToCatchUp();
@@ -399,7 +398,7 @@ class TrainUnitTest {
 
         //DriverUI controlgui = new DriverUI();
 
-        BlockGreenA.setAuthority(2);
+        BlockGreenA.applyAuthorityToBlock(2);
         BlockGreenA.setCommandedSpeed(25.0);
 
         trn.placeOn(BlockGreenA);
@@ -553,7 +552,7 @@ class TrainUnitTest {
         // Test block with 0 authority
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(10.0);
-        testBlock.setAuthority(0);
+        testBlock.applyAuthorityToBlock(0);
 
         // Physics clock for update commands
         WorldClock physicsClk = new WorldClock(4.0,1.0);
@@ -602,7 +601,7 @@ class TrainUnitTest {
         // Test Block
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(desiredSpeed);
-        testBlock.setAuthority(10000);
+        testBlock.applyAuthorityToBlock(10000);
 
         // Physics clock for update commands
         WorldClock physicsClk = new WorldClock(1.0,1.0);
@@ -653,7 +652,7 @@ class TrainUnitTest {
         // Test Block
         TrackBlock testBlock = new TrackBlock();
         testBlock.setCommandedSpeed(desiredSpeed);
-        testBlock.setAuthority(10000);
+        testBlock.applyAuthorityToBlock(10000);
         trn.placeOn(testBlock);
 
         // Physics clock for update commands
@@ -707,7 +706,7 @@ class TrainUnitTest {
         // Block Set-up
         TrackBlock shortBlock = new TrackBlock();
         shortBlock.setLength(blockLength);
-        shortBlock.setAuthority(1000);
+        shortBlock.applyAuthorityToBlock(1000);
         shortBlock.setCommandedSpeed(20.0);
         // Train placement
         trn.placeOn(shortBlock);
@@ -769,10 +768,10 @@ class TrainUnitTest {
             TrackElement BlockA = circleTrack.getBlock(0);
             TrackElement BlockB = circleTrack.getBlock(1);
             BlockA.setLength(50);
-            BlockA.setAuthority(1000);
+            BlockA.applyAuthorityToBlock(1000);
             BlockA.setCommandedSpeed(10.0);
             BlockB.setLength(50);
-            BlockB.setAuthority(1000);
+            BlockB.applyAuthorityToBlock(1000);
             BlockB.setCommandedSpeed(10.0);
 
             trn.placeOn(BlockA);
@@ -830,13 +829,13 @@ class TrainUnitTest {
             TrackElement BlockB = circleTrack.getBlock(1);
             TrackElement BlockC = circleTrack.getBlock(2);
             BlockA.setLength(50);
-            BlockA.setAuthority(1000);
+            BlockA.applyAuthorityToBlock(1000);
             BlockA.setCommandedSpeed(10.0);
             BlockB.setLength(50);
-            BlockB.setAuthority(1000);
+            BlockB.applyAuthorityToBlock(1000);
             BlockB.setCommandedSpeed(10.0);
             BlockC.setLength(120);
-            BlockC.setAuthority(1000);
+            BlockC.applyAuthorityToBlock(1000);
             BlockC.setCommandedSpeed(10.0);
 
             trn.placeOn(BlockA);

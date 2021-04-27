@@ -131,7 +131,7 @@ class SimulationEnvironmentTest {
         SE.startTime();
 
         // Get the train yard, set it to speed and authority
-        SE.getTrackSystem().getBlock(0).setAuthority(2);
+        SE.getTrackSystem().getBlock(0).applyAuthorityToBlock(2);
         SE.getTrackSystem().getBlock(0).setCommandedSpeed(10.0);
 
         TrackGUI trackui = new TrackGUI(SE.getTrackSystem());
@@ -202,7 +202,7 @@ class SimulationEnvironmentTest {
 
         ArrayList<TrackElement> greenLine = SE.getTrackSystem().getGreenLine();
         for(TrackElement block : greenLine) {
-            block.setAuthority(10);
+            block.applyAuthorityToBlock(10);
             block.setCommandedSpeed(15.0);
         }
 
@@ -251,7 +251,7 @@ class SimulationEnvironmentTest {
         // Switch out of yard
         SE.getTrackSystem().getSwitches().get(10).setSwitchState(true);
         SE.getTrackSystem().updateSwitches();
-        yard.setAuthority(1);
+        yard.applyAuthorityToBlock(1);
         yard.setCommandedSpeed(10.0);
         //new CTCJFrame((DisplayLine)SE.getCTC()).setVisible(true);
 

@@ -34,13 +34,13 @@ public class AuthorityPLCOutput extends PLCOutput {
     public void haltBlock(TrackElement target) {
         isHalted = true;
         rememberedAuthority = target.getAuthority();
-        target.setAuthority(0);
+        target.applyAuthorityToBlock(0);
     }
     public void releaseHalt(TrackElement target) {
         if (isHalted) {
             // release halt
             isHalted = false;
-            target.setAuthority(rememberedAuthority);
+            target.applyAuthorityToBlock(rememberedAuthority);
             rememberedAuthority = 0;
         } else {
             // If we are not releasing a halt on it, then leave it be

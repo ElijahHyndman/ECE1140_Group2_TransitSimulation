@@ -161,7 +161,7 @@ class GUIWindowLauncherTest {
                 TrackBlock fakeBlock = new TrackBlock();
                 fakeBlock.setOccupied(false);
                 fakeBlock.setCommandedSpeed(10.0);
-                fakeBlock.setAuthority(2);
+                fakeBlock.applyAuthorityToBlock(2);
                 fakeBlock.setSpeedLimit(25);
                 jurisdiction.add(fakeBlock);
             }

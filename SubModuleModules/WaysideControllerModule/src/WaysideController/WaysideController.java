@@ -186,7 +186,7 @@ public class WaysideController implements Serializable {
         // Assert: passes filters if maximumBackwardSpeed < commandedSpeed <= 0 or 0 <= commandedSpeed < maximumForwardSpeed
         else {
             try {blockObject.setCommandedSpeed(newCommandedSpeed); } catch (Exception failureToApplySpeedToBlock) {
-                throw new Exception (String.format("Failure occured when attempted to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
+                throw new Exception (String.format("Failure occured when attempting to set speed for track object (index %d) to speed (%f)",blockObject.getBlockNum(),newCommandedSpeed));
             }
         }
     }
@@ -202,12 +202,29 @@ public class WaysideController implements Serializable {
      * @param newAuthority, the double for the new speed commanded for trains on the block (gives in kilometers/hour, applied to track as meters/second)
      * @throws IOException
      */
-    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws IOException {
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws Exception {
+        // no checks are performed on authority value
         for (TrackElement block : jurisdiction) {
             // only if it is found...
             if(block.getBlockNum() == targetBlockIndex)
-                // no checks are performed on authority value
-                block.setAuthority(newAuthority);
+                applyAuthorityToBlock(block, newAuthority);
+        }
+    }
+
+    /** performs all tests and filters to a new authority before its value is applied to a block
+     *
+     * Assert: backwards movement is allowed
+     *
+     * @param blockObject, the TrackElement block object which we are applying the speed to
+     * @param newAuthority, the new, intended authority for the specified track object
+     */
+    public static void applyAuthorityToBlock(TrackElement blockObject, int newAuthority) throws Exception {
+        // no checks performed on authority
+        try {
+            blockObject.setAuthority(newAuthority);
+        } catch (Exception failureToApplyValueToBlock) {
+            failureToApplyValueToBlock.printStackTrace();
+            throw new Exception (String.format("Failure occured when attempting to set authority for track object (index %d) to speed (%d)",blockObject.getBlockNum(),newAuthority));
         }
     }
 

@@ -84,7 +84,7 @@ class WaysideSystem_PLC_Test {
         // false false -> allowed
         block1.setOccupied(false);
         block2.setOccupied(false);
-        block3.setAuthority(3);
+        block3.applyAuthorityToBlock(3);
         script.evaluateLogic();
         assertEquals(3, block3.getAuthority());
         System.out.printf("%b %b -> occ=%d (%s)\n",block1.getOccupied(),block2.getOccupied(),block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
@@ -92,7 +92,7 @@ class WaysideSystem_PLC_Test {
         // false true -> halt
         block1.setOccupied(false);
         block2.setOccupied(true);
-        block3.setAuthority(3);
+        block3.applyAuthorityToBlock(3);
         script.evaluateLogic();
         assertEquals(0, block3.getAuthority());
         System.out.printf("%b %b -> occ=%d (%s)\n",block1.getOccupied(),block2.getOccupied(),block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
@@ -100,7 +100,7 @@ class WaysideSystem_PLC_Test {
         // true false -> halt
         block1.setOccupied(true);
         block2.setOccupied(false);
-        block3.setAuthority(3);
+        block3.applyAuthorityToBlock(3);
         script.evaluateLogic();
         assertEquals(0, block3.getAuthority());
         System.out.printf("%b %b -> occ=%d (%s)\n",block1.getOccupied(),block2.getOccupied(),block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
@@ -108,7 +108,7 @@ class WaysideSystem_PLC_Test {
         // true true -> halt
         block1.setOccupied(true);
         block2.setOccupied(true);
-        block3.setAuthority(3);
+        block3.applyAuthorityToBlock(3);
         script.evaluateLogic();
         assertEquals(0, block3.getAuthority());
         System.out.printf("%b %b -> occ=%d (%s)\n",block1.getOccupied(),block2.getOccupied(),block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
@@ -124,7 +124,7 @@ class WaysideSystem_PLC_Test {
         // true true -> halt
 
         System.out.printf("Applying authority once: %d\n",appliedAuth);
-        block3.setAuthority(appliedAuth);
+        block3.applyAuthorityToBlock(appliedAuth);
         System.out.printf("Before halting: occ=%d (%s)\n",block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
         System.out.println("Halting");
         block1.setOccupied(true);
@@ -148,7 +148,7 @@ class WaysideSystem_PLC_Test {
 
         appliedAuth = 10;
         System.out.printf("\n=========Applying new authority once: %d [while block is halted]\n",appliedAuth);
-        block3.setAuthority(10);
+        block3.applyAuthorityToBlock(10);
         System.out.printf("For a short instant before evaluating halt logic again: occ=%d (%s)\n",block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
         script.evaluateLogic();
         assertEquals(0, block3.getAuthority());

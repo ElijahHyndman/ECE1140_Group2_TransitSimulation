@@ -72,7 +72,7 @@ class RemoteWaysideServiceTest {
         fakeBlocks.add(switchBlock);
         for (int i=1; i<=numBlocks; i++) {
             TrackElement block = new TrackBlock();
-            block.setAuthority(defaultAuthority);
+            block.applyAuthorityToBlock(defaultAuthority);
             block.setCommandedSpeed(defaultSpeed);
             block.setOccupied(false);
             block.setBlockNum(i);
@@ -105,7 +105,7 @@ class RemoteWaysideServiceTest {
         fakeBlocks.add(switchBlock);
         for (int i=1; i<=numBlocks; i++) {
             TrackElement block = new TrackBlock();
-            block.setAuthority(defaultAuthority);
+            block.applyAuthorityToBlock(defaultAuthority);
             block.setCommandedSpeed(defaultSpeed);
             block.setOccupied(false);
             block.setBlockNum(i);
