@@ -16,9 +16,12 @@ public class AuthorityPLCOutput extends PLCOutput {
      */
     private final AuthOutRule DEFAULT_AUTHORITY_APPLICATION_RULE = AuthOutRule.HaltWhenTrue;
     /** Members
+     * @member rememberedAuthority, whenever we inhibit the authority of a block based on PLC output, we should remember what value it used to be so we can restore it when inhibition is lifted
      */
     private TrackElement target;
     private AuthOutRule applicationRule = DEFAULT_AUTHORITY_APPLICATION_RULE;
+    private int rememberedAuthority = 0;
+    private boolean isHalted = false;
     /***********************************************************************************************************************/
     public AuthorityPLCOutput(TrackElement target) {
         this.target = target;
@@ -28,6 +31,21 @@ public class AuthorityPLCOutput extends PLCOutput {
         this.applicationRule = rule;
     }
 
+    public void haltBlock(TrackElement target) {
+        isHalted = true;
+        rememberedAuthority = target.getAuthority();
+        target.setAuthority(0);
+    }
+    public void releaseHalt(TrackElement target) {
+        if (isHalted) {
+            // release halt
+            isHalted = false;
+            target.setAuthority(rememberedAuthority);
+            rememberedAuthority = 0;
+        } else {
+            // If we are not releasing a halt on it, then leave it be
+        }
+    }
     @Override
     public void applyOutputRule(boolean value) throws Exception {
         this.value = value;
@@ -36,9 +54,10 @@ public class AuthorityPLCOutput extends PLCOutput {
                 try {
                     if (value) {
                         // Halt the block
-                        target.setAuthority(0);
+                        haltBlock(target);
                     } else {
-                        // Leave authority as it is
+                        // reapply authority
+                        releaseHalt(target);
                     }
                     return;
                 } catch (Exception failureToApplyAuthority) {
@@ -49,9 +68,10 @@ public class AuthorityPLCOutput extends PLCOutput {
                 try {
                     if (value) {
                         // Leave authority as it is
+                        releaseHalt(target);
                     } else {
                         // Halt the block
-                        target.setAuthority(0);
+                        haltBlock(target);
                     }
                     return;
                 } catch (Exception failureToApplyAuthority) {

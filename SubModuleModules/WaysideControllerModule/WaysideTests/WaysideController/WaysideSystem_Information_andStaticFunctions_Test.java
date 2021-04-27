@@ -142,7 +142,7 @@ class WaysideSystem_Information_andStaticFunctions_Test {
     @DisplayName("Partition test passes (TrackElements)")
     void partitionBlocks() {
         Track sys = new Track();
-        sys.importTrack("/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SubModuleModules/TrackModelModule/src/Track/RedGreenUpdated.csv");
+        sys.importTrack("Resources/RedGreenUpdated.csv");
         ArrayList<TrackElement> greenline = sys.getGreenLine();
         //ArrayList<ArrayList<TrackElement>>subsets = WaysideSystem.partitionArrayList(greenline,)
         //for (ArrayList<TrackElement> parition : subsets)

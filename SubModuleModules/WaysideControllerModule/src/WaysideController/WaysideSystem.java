@@ -26,8 +26,8 @@ public class WaysideSystem {
     public static HasAuthorityPLCInput.AuthRule DEFAULT_AUTHORITY_RULE = HasAuthorityPLCInput.AuthRule.TrueWhenGreaterOrEqual;
     public static int DEFAULT_AUTHORITY_CRITERIA = 1;
     public static OccupationPLCInput.OccRule DEFAULT_OCCUPATION_RULE = OccupationPLCInput.OccRule.TrueWhenOccupied;
-    final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "Auth%d";
-    final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "HasOcc%d";
+    final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "HASAUTH%d";
+    final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "OCC%d";
     /** Information Members
      */
     private String trackSectionName;
@@ -202,8 +202,8 @@ public class WaysideSystem {
             /*
                     General input forms for all blocks
              */
-            occupationInput = new OccupationPLCInput(String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_OCCUPATION_RULE);
-            hasAuthorityInput = new HasAuthorityPLCInput(String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_AUTHORITY_RULE, DEFAULT_AUTHORITY_CRITERIA);
+            occupationInput = new OccupationPLCInput(String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_OCCUPATION_RULE);
+            hasAuthorityInput = new HasAuthorityPLCInput(String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_AUTHORITY_RULE, DEFAULT_AUTHORITY_CRITERIA);
             /*
                     Switch input forms
              */
@@ -218,9 +218,6 @@ public class WaysideSystem {
                 Station st = (Station) element;
                 // account for any station inputs
             }
-            // debug
-            System.out.printf("Auth: %s\n",hasAuthorityInput);
-            System.out.printf("Occ: \n",occupationInput);
 
             // store to list
             inputs.add(occupationInput);
