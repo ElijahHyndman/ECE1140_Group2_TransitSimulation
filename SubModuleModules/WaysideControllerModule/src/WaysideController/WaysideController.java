@@ -42,9 +42,11 @@ public class WaysideController implements Serializable {
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
+     * @member fullTrack, the entire area over which the wayside system that this controller exists in oversees
      * @member inputPool, a pool of PLCInputs from which the
      */
     private ArrayList<TrackElement> jurisdiction = new ArrayList<TrackElement>(); //jurisdiction
+    private ArrayList<TrackElement> fullTrack = new ArrayList<>();
     private ArrayList<PLCInput> inputPool = new ArrayList<PLCInput>();
     /** PLCScript Members
      */
@@ -88,6 +90,8 @@ public class WaysideController implements Serializable {
             Wayside System Methods
      */
 
+
+
     /** gives this WaysideController jurisdiction over a set of blocks.
      *
      * @param blocks
@@ -120,23 +124,25 @@ public class WaysideController implements Serializable {
      * @return
      */
     public static ArrayList<PLCInput> generateInputPool(ArrayList<TrackElement> tracks) {
-        ArrayList<PLCInput> generated = new ArrayList<PLCInput>();
-        int trackBlockIndex;
-        String authorityVariableName;
-        String occupationVariableName;
-
-        // Wayside controller can use any track in the track line as a PLC Input
-        for (TrackElement element : tracks ) {
-            trackBlockIndex = element.getBlockNum();
-            // Referencable Variable Name
-            authorityVariableName = String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
-            occupationVariableName = String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
-            // Create PLC Input Objects
-            generated.add(new HasAuthorityPLCInput(authorityVariableName, element));
-            generated.add(new OccupationPLCInput(occupationVariableName, element));
-            // Add plc objects
-        }
-        return generated;
+            // TODO this is the responsibility of the Wayside System
+//        ArrayList<PLCInput> generated = new ArrayList<PLCInput>();
+//        int trackBlockIndex;
+//        String authorityVariableName;
+//        String occupationVariableName;
+//
+//        // Wayside controller can use any track in the track line as a PLC Input
+//        for (TrackElement element : tracks ) {
+//            trackBlockIndex = element.getBlockNum();
+//            // Referencable Variable Name
+//            authorityVariableName = String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
+//            occupationVariableName = String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT, trackBlockIndex);
+//            // Create PLC Input Objects
+//            generated.add(new HasAuthorityPLCInput(authorityVariableName, element));
+//            generated.add(new OccupationPLCInput(occupationVariableName, element));
+//            // Add plc objects
+//        }
+//        return generated;
+        return null;
     }
 
 
@@ -235,24 +241,44 @@ public class WaysideController implements Serializable {
 
 
     public double[] getSpeed() {
+        // TODO
         return null;
     }
     public int[] getAuthority() {
+        // TODO
         return null;
     }
-
-
     public boolean getSwitchStatus(int blockNumber) throws IOException {
+        // TODO
         return false;
     }
-
-
     public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
+        // TODO
     }
-
-
     public void setClose(int blockNumber) throws IOException {
+        // TODO
     }
+
+
+
+    /*
+            Get Set
+     */
+
+
+
+    public void giveInputPool(ArrayList<PLCInput> inputPool) {this.inputPool=inputPool;}
+    public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
+    public void setControllerName(String newName){ this.controllerAlias = newName; }
+    public String getControllerAlias(){ return controllerAlias; }
+    public ArrayList<TrackElement> getJurisdiction() {return jurisdiction;}
+
+
+
+    /*
+            GUI Methods
+     */
+
 
 
     /** generates a String-Hashmap tree representation of this controller for use in the GUI.
@@ -323,13 +349,12 @@ public class WaysideController implements Serializable {
     }
 
 
-    public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
-    public void setControllerName(String newName){ this.controllerAlias = newName; }
-    public String getControllerAlias(){ return controllerAlias; }
 
     /*
         String Representation
      */
+
+
 
     public String toString(){
         String profile = controllerName;

@@ -7,6 +7,8 @@ import WaysideGUI.WaysideUIClass;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class WaysideSystem {
     /***********************************************************************************************************************/
@@ -16,32 +18,41 @@ public class WaysideSystem {
     /** Default Members
      */
     public static String DEFAULT_GIVEN_NAME_FORMAT = "Wayside System #%d";
+    public static String DEFAULT_LINE_NAME = "Unnamed Section";
+    public static int DEFAULT_NUM_CONTROLLERS = 3;
     /** Information Members
      */
-    private String waysideAlias;
+    private String trackSectionName;
     private int waysideIndex = ++NUMBER_WAYSIDE_SYSTEMS;
     private String givenName = String.format(DEFAULT_GIVEN_NAME_FORMAT,waysideIndex);
-    private ArrayList<TrackElement> trackSection;
+    private ArrayList<TrackElement> trackSection = new ArrayList<>();
     /** Operation Members
      */
-    private Vector<WaysideController> controllers;
+    private Vector<WaysideController> controllers = new Vector<>();
     private HashMap<Integer, WaysideController> lut = new HashMap<Integer, WaysideController>();
     /***********************************************************************************************************************/
     /** TODO To Haleigh: WaysideSystem(String, ArrayList) is the preferred constructor when working with Wayside Systems!
      */
     public WaysideSystem() throws IOException{
-        waysideAlias = givenName;
+        trackSectionName = DEFAULT_LINE_NAME;
         controllers = new Vector<>();
     }
-    public WaysideSystem(String waysideAlias, ArrayList<TrackElement> trackSection) throws IOException {
-        this.waysideAlias = waysideAlias;
+    public WaysideSystem(String trackSectionName) throws IOException {
+        this.trackSectionName = trackSectionName;
+    }
+    public WaysideSystem(String trackSectionName, ArrayList<TrackElement> trackSection, int numberControllers) throws IOException {
+        this.trackSectionName = trackSectionName;
         this.trackSection = trackSection;
-        controllers = new Vector<>();
+        generateControllers(numberControllers);
     }
+
+
 
     /*
         CTC Methods
      */
+
+
 
     /** finds the controller object which has jurisdiction over a specific block index.
      *
@@ -49,8 +60,10 @@ public class WaysideSystem {
      * @return
      */
     public WaysideController getController(int blockNumber){
+        // TODO
         return lut.get(blockNumber);
     }
+
 
     /** retrieves the occupancy of a block from the track system.
      * uses look-up table to call upon the correct wayside controller. Failure to update the lut when controller jurisdictions change will cause failure
@@ -68,6 +81,7 @@ public class WaysideSystem {
             }
             return false;
     }
+
 
     /** allows CTC to update the speed and authorities for every block within the TrackLine
      *  length of (1) lineSpeeds (2) lineAuthorities and (3) the ArrayList<TrackElement> which this WaysideSystem was constructed with must match
@@ -89,19 +103,32 @@ public class WaysideSystem {
      * @param lineAuthorities, the array of intended authorities for all of the track blocks as ints (one to one correspondance)
      */
     public void broadcastToControllers(double[] lineSpeeds, int[] lineAuthorities) throws Exception {
-        if(lineSpeeds.length != trackSection.size())
-            throw new Exception (String.format("Length of commanded Speeds Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given speed vector is (%d).\n",
-                                                this.waysideAlias,this.waysideAlias,trackSection.size(),lineSpeeds.length));
+        setAuthorities(lineAuthorities);
+        setCommandedSpeeds(lineSpeeds);
+    }
+
+    public void setAuthorities(int[] lineAuthorities) throws Exception {
         if(lineAuthorities.length != trackSection.size())
             throw new Exception (String.format("Length of commanded Authorities Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given Authority vector is (%d).\n",
-                    this.waysideAlias,this.waysideAlias,trackSection.size(),lineAuthorities.length));
-
+                    this.trackSectionName,this.trackSectionName,trackSection.size(),lineAuthorities.length));
         int arrayIndex = 0;
+        // For each Block in line... For each controller...
         for (int blockNum = 1; arrayIndex<trackSection.size(); blockNum++,arrayIndex++) {
-            System.out.println();
+            for (WaysideController ctrl : controllers) {
+                ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
+            }
+        }
+    }
+
+    public void setCommandedSpeeds(double[] lineSpeeds) throws Exception {
+        if(lineSpeeds.length != trackSection.size())
+            throw new Exception (String.format("Length of commanded Speeds Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given speed vector is (%d).\n",
+                    this.trackSectionName,this.trackSectionName,trackSection.size(),lineSpeeds.length));
+        int arrayIndex = 0;
+        // For each Block in line... For each controller...
+        for (int blockNum = 1; arrayIndex<trackSection.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockSpeed(blockNum, lineSpeeds[arrayIndex]);
-                ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
             }
         }
     }
@@ -122,6 +149,68 @@ public class WaysideSystem {
     public void setSwitchStatus(int targetBlockIndex, boolean orientation) throws Exception {
         // TODO
     }
+
+
+
+    /*
+            Management Methods
+     */
+
+
+    /** performs any necessary checks, steps, or filters before accepting a controller into the system
+     *
+     * @param controller
+     */
+    public void addController(WaysideController controller) {
+        controllers.add(controller);
+        this.trackSection.addAll(controller.getJurisdiction());
+    }
+
+
+    /** creates all WaysideController objects whenever the Track Line has been established (track array given.)
+     *
+     * @param nControllers
+     */
+    public void generateControllers(int nControllers) {
+        // Generate subsets of current Line Section
+        //Map<boolean, ArrayList<TrackElement>> groups = trackSection.stream().collect(Collectors.partitioningBy());
+
+    }
+
+    /** partitions an arbitrarily sized array list into a specified number of sections (as evenly as possible.)
+     *
+     */
+    public static <T> ArrayList<ArrayList<T>> partitionArrayList(ArrayList<T> list, int sections) {
+        ArrayList<ArrayList<T>> subsets= new ArrayList<>();
+        // initialize subset arrays
+//        for(int i=0; i<sections; i++) {
+//            ArrayList<T> partition = new ArrayList<>();
+//            subsets.add(partition);
+//        }
+        int size = list.size();
+        int assignedPartition;
+        // For all items...
+//        for (int i=0; i<size; i++) {
+//            // Calculate which partition gets this item
+//            assignedPartition = i % sections;
+//            // Give item to assigned partition
+//            subsets.get(assignedPartition).add(list.get(i));
+//            System.out.printf("partition %d gets %d\n",assignedPartition,i);
+//        }
+        int perPartition = (int) Math.ceil((double) size / (double) sections );
+        System.out.printf("Each partition gets ~ %d elements\n",perPartition);
+        int start;
+        int end;
+        for (int par=0; par<sections; par++) {
+            start = par*perPartition;
+            if (start > size) break;
+            end = start+perPartition;
+            if (end > size) end = size;
+            subsets.add(new ArrayList<T>(list.subList(start,end)));
+        }
+        return subsets;
+    }
+
 
     public void generateLine() throws IOException, URISyntaxException {
 //        if(currentLine.equalsIgnoreCase("green line") && (trackSection.size() == 151)) {
@@ -336,7 +425,8 @@ public class WaysideSystem {
 
 
     /** The expectation is that users will set WaysideAlias to a string name for the track line it overlooks*/
-    public String getLine() {return waysideAlias;}
+    public String getLineName() {return trackSectionName;}
+    public String getIdentificationName() {return givenName;}
     public Vector<WaysideController> getControllers() { return controllers; }
     public ArrayList<TrackElement> getTrackSection(){
         return trackSection;
@@ -349,18 +439,20 @@ public class WaysideSystem {
      */
 
 
-
-    public boolean isEqual(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (!(o instanceof WaysideSystem))
             return false;
         WaysideSystem other = (WaysideSystem) o;
         // Priority 1: Wayside Alias Name matching Wayside Alias Name takes precedence
         // ignore case to make it easier to use for ctc
-        if (this.waysideAlias.equalsIgnoreCase(other.waysideAlias))
+        if (this.trackSectionName.equalsIgnoreCase(other.trackSectionName)) {
             return true;
+        }
         // Priority 2: Wayside Given Name matching Wayside Given Name
-        if (this.givenName.equals(this.givenName))
+        if (this.givenName.equals(other.givenName)) {
             return true;
+        }
         // Return false otherwise
         return false;
     }

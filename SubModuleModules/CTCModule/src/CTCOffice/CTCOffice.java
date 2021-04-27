@@ -6,7 +6,6 @@ import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
-import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice //implements PhysicsUpdateListener
 {
@@ -592,7 +591,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
         try {
             for (WaysideSystem ws : waysides) {
-                if(ws.getLine() == lineCol)  {
+                if(ws.getLineName() == lineCol)  {
                     //If this is the WaysideSystem that controls the corresponding line
                     occ = ws.getOccupancy(blockNum);
                 } else {
