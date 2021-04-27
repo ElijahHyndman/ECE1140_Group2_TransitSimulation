@@ -58,7 +58,7 @@ public class Train {
     boolean rightDoors;
     int cabinTemp =70;// F
     String nextStop = "NaN";
-    int advertisements;
+    int advertisements = 1;
     String announcements = "NaN";
     boolean cabinLights;
     boolean outerLights;
@@ -114,13 +114,14 @@ public class Train {
     }
     public void setAccel(double acceleration) {
         this.maxAccel = 23330 / this.mass;
-        if(acceleration > maxAccel){
+        if ( acceleration > maxAccel ) {
             this.accel = this.maxAccel;
             this.displayAcceleration = this.maxAccel * 2.236936;
-        }else {
+        } else {
             this.accel = acceleration;
             this.displayAcceleration = this.accel * 2.236936;
         }
+
     }
     public void setDisplayAccel(double acceleration) {
         this.displayAcceleration = acceleration;
