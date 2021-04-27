@@ -1648,7 +1648,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = Track.updateTix();
+        int tix = Track.updateTickets();
         return tix;
     }
 
@@ -1677,7 +1677,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return SEobj;
     }
 
-    /*getting throuput */
+    /*getting throughput */
     public int getThroughput(){
         return this.thruP;
     }
