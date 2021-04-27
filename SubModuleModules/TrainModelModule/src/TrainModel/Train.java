@@ -58,7 +58,7 @@ public class Train {
     boolean rightDoors;
     int cabinTemp;// F
     String nextStop;
-    int advertisements;
+    int advertisements; //declares ad# to play
     String announcements;
     boolean cabinLights;
     boolean outerLights;
@@ -221,23 +221,15 @@ public class Train {
         this.beacon = beaconVal;
     }
     public void setPassengerBrake(Boolean brake) {
-
-        if(this.brakeFail != true){
             this.passengerBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
-        }            
     }
     public void setEmergencyBrake(Boolean brake) {
-
-        if(this.brakeFail != true){
             this.emergencyBrake = brake;
             setAccel(-1 * this.emergencyDecelLimit);
-        }else{
-            this.emergencyBrake = false;
-        }
+
     }
     public void setServiceBrake(Boolean brake) {
-
         if(this.brakeFail != true){
             this.serviceBrake = brake;
             setAccel(-1 * this.standardDecelLimit);
