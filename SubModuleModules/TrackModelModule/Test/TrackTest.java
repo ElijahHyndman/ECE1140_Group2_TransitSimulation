@@ -13,7 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TrackTest {
 
-
+    /*
+    Testing getting next for red and green
+    make sure that the red and green
+     */
     @org.junit.jupiter.api.Test
     void testgetNextRedGreen() {
         System.out.println("getNextGreen");
@@ -42,6 +45,9 @@ class TrackTest {
     }
 
 
+    /*
+    testing the path with switch 0 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch0Red() {
         System.out.println("getNextGreen");
@@ -65,6 +71,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing the path with switch 1 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch1Red() {
         System.out.println("getNextGreen");
@@ -93,6 +102,10 @@ class TrackTest {
        assertEquals(test,127);
 
     }
+
+    /*
+    testing the path with switch 2 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch2Red() {
         System.out.println("getNextGreen");
@@ -127,6 +140,10 @@ class TrackTest {
         // -- switch 5 (43-44 - 43-67)
         // -- switch 6 (52-53-52-66)
     }
+
+    /*
+    testing the path with switch 3 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch3Red() {
         System.out.println("getNextGreen");
@@ -160,6 +177,9 @@ class TrackTest {
         // -- switch 6 (52-53-52-66)
     }
 
+    /*
+    testing the path with switch 4 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch4Red() {
         System.out.println("getNextGreen");
@@ -190,6 +210,10 @@ class TrackTest {
         // -- switch 5 (43-44 - 43-67)
         // -- switch 6 (52-53-52-66)
     }
+
+    /*
+    testing the path with switch 5 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch5Red() {
         System.out.println("getNextGreen");
@@ -220,6 +244,9 @@ class TrackTest {
         // -- switch 6 (52-53-52-66)
     }
 
+    /*
+    testing the path with switch 6 being on or off
+     */
     @org.junit.jupiter.api.Test
     void switch6Red() {
         System.out.println("getNextGreen");
@@ -250,6 +277,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing the entire path of the red entire path of the redline
+     */
     @org.junit.jupiter.api.Test
     void getNextRedCircle() {
         System.out.println("getNextGreen");
@@ -322,6 +352,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing import path
+     */
     @org.junit.jupiter.api.Test
     void importTrack() {
         System.out.println("importTrack");
@@ -332,6 +365,9 @@ class TrackTest {
         assertEquals(expResult, result);
     }
 
+    /*
+    testing the green Line
+     */
     @org.junit.jupiter.api.Test
     void getGreenLine() {
         System.out.println("importTrack");
@@ -342,6 +378,9 @@ class TrackTest {
         System.out.println(instance.getGreenLine());
     }
 
+    /*
+    testing the getting a train from yard to the green line
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenYardSwitch() {
         System.out.println("getNextGreen");
@@ -388,6 +427,9 @@ class TrackTest {
 
     }
 
+    /*
+    iterate through method for the green line
+     */
     public int iterateNext(Track instance, int iter, int curI, int prevI) {
         TrackElement cur = instance.getGreenLine().get(curI);
         TrackElement prev = instance.getGreenLine().get(prevI);
@@ -414,6 +456,9 @@ class TrackTest {
         return test;
     }
 
+    /*
+    iterating through red line for testing red switches
+     */
     public int iterateNextRed(Track instance, int iter, int curI, int prevI) {
         TrackElement cur = instance.getRedLine().get(curI);
         TrackElement prev = instance.getRedLine().get(prevI);
@@ -440,6 +485,9 @@ class TrackTest {
         return test;
     }
 
+    /*
+    testing switches directions when updating switches
+     */
     @org.junit.jupiter.api.Test
     void testingSwitch() {
         System.out.println("getNextGreen");
@@ -461,6 +509,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing green switch 11
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches11() {
         System.out.println("getNextGreen");
@@ -495,6 +546,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing the path with switch 8 being toggled
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches8() {
         System.out.println("getNextGreen");
@@ -526,6 +580,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing the path with switch 9 being toggled
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches9() {
         //switch to yard
@@ -541,6 +598,9 @@ class TrackTest {
         test = iterateNext(instance,4,57,56);
     }
 
+    /*
+    testing the path with switch 7 being toggled
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches7() {
         System.out.println("getNextGreen");
@@ -572,6 +632,9 @@ class TrackTest {
 
     }
 
+    /*
+    testing the path with switch 12 being toggled
+     */
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches12() {
         System.out.println("getNextGreen");
@@ -607,7 +670,7 @@ class TrackTest {
 
     }
 
-
+    /*getting the path for the green line*/
     @org.junit.jupiter.api.Test
     void getNextGreen() {
         System.out.println("getNextGreen");
@@ -661,6 +724,7 @@ class TrackTest {
         }
     }
 
+    /*testing getting red line*/
     @org.junit.jupiter.api.Test
     void getRedLine() {
         System.out.println("importTrack");
@@ -670,6 +734,7 @@ class TrackTest {
         System.out.println(instance.getRedLine());
     }
 
+    /*getting the block*/
     @org.junit.jupiter.api.Test
     void getBlock() {
         System.out.println("importTrack");
@@ -688,6 +753,7 @@ class TrackTest {
 
     }
 
+    /*testing getting blockLine*/
     @org.junit.jupiter.api.Test
     void getBlockLine() {
         System.out.println("importTrack");
@@ -706,6 +772,7 @@ class TrackTest {
         }
     }
 
+    /*testing the track heater*/
     @org.junit.jupiter.api.Test
     void getTrackHeaterStatus() {
         System.out.println("importTrack");
@@ -719,6 +786,7 @@ class TrackTest {
 
     }
 
+    /*setting environmental temperature*/
     @org.junit.jupiter.api.Test
     void setEnvironmentalTemperature() {
         System.out.println("importTrack");
@@ -731,6 +799,7 @@ class TrackTest {
 
     }
 
+    /*getting beacons for the green line*/
     @org.junit.jupiter.api.Test
     void getBeacon() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
@@ -745,6 +814,7 @@ class TrackTest {
 
     }
 
+    /*test getting switches*/
     @org.junit.jupiter.api.Test
     void getSwitches() {
         System.out.println("get Switches");
@@ -755,7 +825,7 @@ class TrackTest {
     }
 
 
-
+    /*setting and fixing failures */
     @org.junit.jupiter.api.Test
     void setFailure() {
         System.out.println("importTrack");
@@ -930,6 +1000,7 @@ class TrackTest {
 
     }
 
+
     @org.junit.jupiter.api.Test
     void setSwitch() {
         System.out.println("setSwitch");
@@ -999,6 +1070,7 @@ class TrackTest {
 
     }
 
+    /*setting switch and getting direcitonality test*/
     @org.junit.jupiter.api.Test
     void setSwitchTest() {
         System.out.println("setSwitch");
@@ -1022,7 +1094,7 @@ class TrackTest {
 
     }
 
-
+    /*getting the list of stations*/
     @org.junit.jupiter.api.Test
     void getStations() {
         System.out.println("getting blocks in track ");
@@ -1034,6 +1106,9 @@ class TrackTest {
             System.out.println(test.get(i).getInfrastructure());
     }
 
+    /*
+    testing the beacons
+     */
     @org.junit.jupiter.api.Test
     void testBeacons(){
         System.out.println("getting blocks in track ");
@@ -1045,6 +1120,9 @@ class TrackTest {
             System.out.println(instance.getBeaconArray().get(i).getBeacon());
     }
 
+    /*
+    Testing opening and closing track functionality
+     */
     @org.junit.jupiter.api.Test
     void closeAndOpenTrack(){
         System.out.println("getting blocks in track ");
@@ -1059,6 +1137,9 @@ class TrackTest {
 
     }
 
+    /*
+    Testing display switch
+     */
     @org.junit.jupiter.api.Test
     void testDisplaySwitch() {
         System.out.println("getting blocks in track ");
@@ -1071,6 +1152,9 @@ class TrackTest {
         System.out.println(instance.getSwitches().get(2).getSwitchState());
     }
 
+    /*
+    function that is grabbing all blocks in a section -- implemented to support the CTC
+     */
     @org.junit.jupiter.api.Test
     void blocksInSection() {
         System.out.println("getting blocks in track ");
@@ -1130,6 +1214,7 @@ class TrackTest {
 
     }
 
+    /*test of UI being updated*/
     @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
