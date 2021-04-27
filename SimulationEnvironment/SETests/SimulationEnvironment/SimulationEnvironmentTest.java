@@ -1,7 +1,6 @@
 package SimulationEnvironment;
 
 import CTCOffice.*;
-import CTCUI.CTCJFrame;
 import Track.*;
 import TrainControlUI.DriverUI;
 import TrainModel.trainGUI;
@@ -242,7 +241,7 @@ class SimulationEnvironmentTest {
         //WaysideSystem ws = SE.getCTC().getWaysideSystems().get(0);
         WaysideSystem ws = new WaysideSystem();
         assertNotEquals(null,ws);
-        assertNotEquals(null,ws.getController(0));
+        assertNotEquals(null,ws.getControllerOfBlock(0));
 
         //SE.getCTC().Dispatch("Mt Lebanon","new","01:01:01");
         SE.startTime();

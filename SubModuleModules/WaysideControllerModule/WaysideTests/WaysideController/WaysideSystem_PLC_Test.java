@@ -173,4 +173,11 @@ class WaysideSystem_PLC_Test {
         System.out.printf("%b %b -> occ=%d (%s)\n",block1.getOccupied(),block2.getOccupied(),block3.getAuthority(), block3.getAuthority() > 0 ? "ALLOW" : "HALT");
 
     }
+
+
+    @Test
+    @DisplayName("Inputs are usable in script (through controllers)")
+    void inputsUsable2() throws Exception {
+        sys.registerNewTrack(greenLine);
+    }
 }

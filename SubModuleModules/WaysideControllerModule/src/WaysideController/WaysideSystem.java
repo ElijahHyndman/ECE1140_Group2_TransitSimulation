@@ -10,7 +10,6 @@ import WaysideGUI.WaysideUIClass;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class WaysideSystem {
@@ -29,12 +28,14 @@ public class WaysideSystem {
     final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "HASAUTH%d";
     final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "OCC%d";
     /** Information Members
+     * @member trackLine, the arraylist of the entire Track System Line Color which this wayside system will overlook (e.x. the full arraylist of the green line)
      */
     private String trackSectionName;
     private int waysideIndex = ++NUMBER_WAYSIDE_SYSTEMS;
     private String givenName = String.format(DEFAULT_GIVEN_NAME_FORMAT,waysideIndex);
-    private ArrayList<TrackElement> trackSection = new ArrayList<>();
+    private ArrayList<TrackElement> trackLine = new ArrayList<>();
     /** Operation Members
+     * @member lut, lookup table that maps block number indexes (integer) to the associated controller that has jursidiction over that block (WaysideController)
      */
     private Vector<WaysideController> controllers = new Vector<>();
     private HashMap<Integer, WaysideController> lut = new HashMap<Integer, WaysideController>();
@@ -50,12 +51,18 @@ public class WaysideSystem {
     public WaysideSystem(String trackSectionName) throws IOException {
         this.trackSectionName = trackSectionName;
     }
-    public WaysideSystem(String trackSectionName, ArrayList<TrackElement> trackSection, int numberControllers) throws IOException, URISyntaxException {
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName, int numberControllers) throws IOException, URISyntaxException {
         this.trackSectionName = trackSectionName;
-        this.trackSection = trackSection;
+        this.trackLine = trackLine;
         this.numberControllers = numberControllers;
         // Splits track into jurisdictions
-        registerNewTrack(trackSection);
+        registerNewTrack(trackLine);
+    }
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName) throws IOException, URISyntaxException {
+        this.trackSectionName = trackSectionName;
+        this.trackLine = trackLine;
+        // Splits track into jurisdictions
+        registerNewTrack(trackLine);
     }
 
 
@@ -66,17 +73,6 @@ public class WaysideSystem {
 
 
 
-    /** finds the controller object which has jurisdiction over a specific block index.
-     *
-     * @param blockNumber
-     * @return
-     */
-    public WaysideController getController(int blockNumber){
-        // TODO
-        return lut.get(blockNumber);
-    }
-
-
     /** retrieves the occupancy of a block from the track system.
      * uses look-up table to call upon the correct wayside controller. Failure to update the lut when controller jurisdictions change will cause failure
      *
@@ -84,14 +80,17 @@ public class WaysideSystem {
      * @return boolean, the occupancy of
      */
     public boolean getOccupancy(int targetBlockNumber) throws Exception {
+            WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+            // A controller must oversee every block
+            if (ctrl == null)
+                throw new Exception(String.format("Wayside System error: look up table for block index %d returned a null controller object when searching for occupancy\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+            // Attempt to get occupancy from controller
             try {
-                // TODO the return should occur here, we need lut first
-                //ctrl.getOccupancyOfBlock(targetBlockNumber);
+                return ctrl.getOccupancy(targetBlockNumber);
             } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
                 failureToRetrieveOccupancyFromTrackElement.printStackTrace();
-                throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)"));
+                throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)",targetBlockNumber));
             }
-            return false;
     }
 
 
@@ -119,26 +118,38 @@ public class WaysideSystem {
         setCommandedSpeeds(lineSpeeds);
     }
 
+
+    /** sets the authorities for the entire track line under this WaysideSystem's jurisdiction using an array of integers
+     *
+     * @param lineAuthorities, MUST match the same length as the track line arraylist used to create this wayside system. one-to-one match
+     * @throws Exception size of array does not match jurisdiction; failure to set authority to controller
+     */
     public void setAuthorities(int[] lineAuthorities) throws Exception {
-        if(lineAuthorities.length != trackSection.size())
+        if(lineAuthorities.length != trackLine.size())
             throw new Exception (String.format("Length of commanded Authorities Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given Authority vector is (%d).\n",
-                    this.trackSectionName,this.trackSectionName,trackSection.size(),lineAuthorities.length));
+                    this.trackSectionName,this.trackSectionName, trackLine.size(),lineAuthorities.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex<trackSection.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
             }
         }
     }
 
+
+    /** sets the commanded speeds for the entire track line under this WaysideSystem's jurisdiction using an array of doubles
+     *
+     * @param lineSpeeds, MUST match the same length as the track line arraylist used to create this wayside system. one-to-one match
+     * @throws Exception
+     */
     public void setCommandedSpeeds(double[] lineSpeeds) throws Exception {
-        if(lineSpeeds.length != trackSection.size())
+        if(lineSpeeds.length != trackLine.size())
             throw new Exception (String.format("Length of commanded Speeds Array given to Wayside System (%s) does not match the size of tracks which %s controls.\nLength of line under Wayside jurisdiction is (%d) and length of given speed vector is (%d).\n",
-                    this.trackSectionName,this.trackSectionName,trackSection.size(),lineSpeeds.length));
+                    this.trackSectionName,this.trackSectionName, trackLine.size(),lineSpeeds.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex<trackSection.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockSpeed(blockNum, lineSpeeds[arrayIndex]);
             }
@@ -163,6 +174,16 @@ public class WaysideSystem {
     }
 
 
+    /** finds the controller object which has jurisdiction over a specific block index.
+     *
+     * @param blockNumber
+     * @return
+     */
+    public WaysideController getControllerOfBlock(int blockNumber){
+        //System.out.printf("Controller assigned to block (%d) is ctrl (%s)\n",blockNumber,lut.get(blockNumber).getControllerName());
+        return lut.get(blockNumber);
+    }
+
 
     /*
             Management Methods
@@ -170,7 +191,7 @@ public class WaysideSystem {
 
 
 
-    /** accepts a new track for management under this Wayside System, generates all controller and controller information necessary
+    /** accepts a new track for management under this Wayside System and handles all operations with auto-generation, generates all controller and controller information necessary
      *
      * @before current track may be out of date
      * @after given track has been stored
@@ -179,10 +200,37 @@ public class WaysideSystem {
      * @after wayside controllers have been created for all jurisdictions
      */
     public void registerNewTrack(ArrayList<TrackElement> trackLine) throws IOException, URISyntaxException {
-        this.trackSection = trackLine;
+        /*
+                New Track Operations
+         */
+        this.trackLine = trackLine;
         this.trackLineInputPool = generateInputPool(trackLine);
         ArrayList<ArrayList<TrackElement>> jurisdictions = partitionArrayList(trackLine, numberControllers);
-        // TODO generateWaysideControllers();
+
+        /*
+                Create controllers
+         */
+        for (ArrayList<TrackElement> jurisdiction : jurisdictions) {
+            generateController(jurisdiction);
+        }
+    }
+
+
+    /** performs any steps and filters when registering a new controller under the jurisdiction of this wayside system
+     *
+     */
+    public void generateController(ArrayList<TrackElement> assignedControllerJurisdiction) {
+        // Create new controller and assign it jurisdiction
+        WaysideController newController = new WaysideController(trackLine, assignedControllerJurisdiction);
+        controllers.add(newController);
+        // Give controller access to full input pool
+        newController.assignInputPool(trackLineInputPool);
+        // Register controller under LUT for block purposes
+        for (TrackElement block : assignedControllerJurisdiction) {
+            // controller is associated by integer blocknumber key
+            lut.put(block.getBlockNum(), newController);
+//            System.out.printf("%s has been associated with block %d in LUT\n",newController.getControllerName(),block.getBlockNum());
+        }
     }
 
 
@@ -256,16 +304,6 @@ public class WaysideSystem {
         return subsets;
     }
 
-
-    /** performs any necessary checks, steps, or filters before accepting a controller into the system
-     *
-     * @param controller
-     */
-    public void addController(WaysideController controller) {
-        // TODO
-//        controllers.add(controller);
-//        this.trackSection.addAll(controller.getJurisdiction());
-    }
 
 
 
@@ -486,8 +524,8 @@ public class WaysideSystem {
     public String getLineName() {return trackSectionName;}
     public String getIdentificationName() {return givenName;}
     public Vector<WaysideController> getControllers() { return controllers; }
-    public ArrayList<TrackElement> getTrackSection(){
-        return trackSection;
+    public ArrayList<TrackElement> getTrackLine(){
+        return trackLine;
     }
 
 
