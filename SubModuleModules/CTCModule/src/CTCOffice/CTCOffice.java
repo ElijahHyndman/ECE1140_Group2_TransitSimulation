@@ -1,5 +1,6 @@
 package CTCOffice;//Haleigh DeFoor
 
+import java.net.URISyntaxException;
 import java.util.*;
 import java.io.*;
 import java.time.*;
@@ -57,33 +58,25 @@ public class CTCOffice //implements PhysicsUpdateListener
         trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
     }
 
-    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem)
-    {
-        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
-        WaysideSystem greenWS = null;
-        WaysideSystem redWS = null;
-
+    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
         if (trackSystem == null) {
             return new ArrayList<WaysideSystem>();
         }
-        try {
-            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
-            throw new Exception("To do");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        try {
-            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
-            throw new Exception("To do");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
+        WaysideSystem greenWS = null;
+        WaysideSystem redWS = null;
+        try {
+            greenWS = new  WaysideSystem(trackSystem.getGreenLine(),"Green");
+        } catch (Exception failedToGetGreenLineFromTrack) {
+            failedToGetGreenLineFromTrack.printStackTrace();
+        }
+        try {
+            redWS = new WaysideSystem(trackSystem.getRedLine(),"Red");
+        } catch (Exception failedToGetRedLineFromTrack) {
+            failedToGetRedLineFromTrack.printStackTrace();
+        }
         generatedWaysides.add(greenWS);
         generatedWaysides.add(redWS);
 
@@ -1684,4 +1677,17 @@ public class CTCOffice //implements PhysicsUpdateListener
         thruP = test;
     }
 
+    /*
+        Haleigh,
+        here's the special function for getting wayside systems by name
+        if you create a wayside system using:  new WaysideSystem(trackSystem.getRedLine(),"Red");
+        then you can use:
+     */
+    public WaysideSystem getWaysideSystem(String sectionName) throws Exception {
+        WaysideSystem proxy = new WaysideSystem(sectionName);
+        int ind =  waysides.indexOf(proxy);
+        if (ind == -1)
+            throw new Exception(String.format("CTC WaysideSystem search error: Searching for wayside named %s in waysides returned no result.\nWaysidesContains:\n%s\n",sectionName,waysides));
+        return waysides.get(ind);
+    }
 }
