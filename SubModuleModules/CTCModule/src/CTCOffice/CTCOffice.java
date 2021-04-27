@@ -1,12 +1,12 @@
 package CTCOffice;//Haleigh DeFoor
 
+import java.net.URISyntaxException;
 import java.util.*;
 import java.io.*;
 import java.time.*;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
-import WorldClock.PhysicsUpdateListener;
 
 public class CTCOffice //implements PhysicsUpdateListener
 {
@@ -58,33 +58,25 @@ public class CTCOffice //implements PhysicsUpdateListener
         trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
     }
 
-    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem)
-    {
-        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
-        WaysideSystem greenWS = null;
-        WaysideSystem redWS = null;
-
+    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
         if (trackSystem == null) {
             return new ArrayList<WaysideSystem>();
         }
-        try {
-            // TODO greenWS = new WaysideSystem(trackSystem.getGreenLine(), "Green");
-            throw new Exception("To do");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        try {
-            // TODO redWS = new WaysideSystem(trackSystem.getRedLine(), "Red");
-            throw new Exception("To do");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
+        WaysideSystem greenWS = null;
+        WaysideSystem redWS = null;
+        try {
+            greenWS = new  WaysideSystem(trackSystem.getGreenLine(),"Green");
+        } catch (Exception failedToGetGreenLineFromTrack) {
+            failedToGetGreenLineFromTrack.printStackTrace();
+        }
+        try {
+            redWS = new WaysideSystem(trackSystem.getRedLine(),"Red");
+        } catch (Exception failedToGetRedLineFromTrack) {
+            failedToGetRedLineFromTrack.printStackTrace();
+        }
         generatedWaysides.add(greenWS);
         generatedWaysides.add(redWS);
 
@@ -118,8 +110,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         trackObj = SEt;
     }
 
-    public Object[] Dispatch(String dest, String tNum, String timeD)
-    {
+    public Object[] Dispatch(String dest, String tNum, String timeD) throws Exception {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
@@ -294,7 +285,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             if (lineCol.equals("Green")) {
-                waysides.get(0).broadcastToControllers(speedArrG, authArr);
+               waysides.get(0).broadcastToControllers(speedArrG, authArr);
             }
             else if (lineCol.equals("Red")){
                 waysides.get(1).broadcastToControllers(speedArrR, authArr);
@@ -323,8 +314,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public Object[] AutoDispatch(String dest, String tNum, String timeD)
-    {
+    public Object[] AutoDispatch(String dest, String tNum, String timeD) throws Exception {
         //speedAuthority[0] is speed
         //speedAuthority[1] is authority
         //speedAuthority[2] is dispatch time
@@ -590,12 +580,11 @@ public class CTCOffice //implements PhysicsUpdateListener
         return thruP;
     }
 
-    public boolean CheckOcc(int blockNum, String lineCol)
-    {
+    public boolean CheckOcc(int blockNum, String lineCol) throws Exception {
 
         try {
             for (WaysideSystem ws : waysides) {
-                if(ws.getLine() == lineCol)  {
+                if(ws.getLineName() == lineCol)  {
                     //If this is the WaysideSystem that controls the corresponding line
                     occ = ws.getOccupancy(blockNum);
                 } else {
@@ -609,8 +598,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return occ;
     }
 
-    public boolean CheckSectOcc(int blockNum, String lineCol)
-    {
+    public boolean CheckSectOcc(int blockNum, String lineCol) throws Exception {
         char section = dispArr.get(blockNum).getSection();
         char lineChar = lineCol.charAt(0);
         ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
@@ -643,7 +631,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             switchstat = waysides.get(0).getSwitchStatus(switchNum);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return switchstat;
@@ -654,7 +642,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         boolean switchstat = !stat;
         try {
             waysides.get(0).setSwitchStatus(switchNum, switchstat);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -671,7 +659,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             try {
                 waysides.get(0).setOpen(blocks.get(i));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to set open for block");
                 e.printStackTrace();
             }
@@ -690,7 +678,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
             try {
                 waysides.get(0).setClose(blocks.get(i));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to set closed for block");
                 e.printStackTrace();
             }
@@ -1648,8 +1636,11 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = Track.updateTix();
-        return tix;
+        // TODO Elijah, is this retrieving tickets from the track or is it causing the track to update a new value for ticket sales?
+        // TODO the track should already be generating random ticketSales in Track.updatePhysics(), so all we need to do is ask track for what the current sales are
+        //int tix = Track.updateTix();
+        //return tix;
+        return 0;
     }
 
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
@@ -1686,4 +1677,17 @@ public class CTCOffice //implements PhysicsUpdateListener
         thruP = test;
     }
 
+    /*
+        Haleigh,
+        here's the special function for getting wayside systems by name
+        if you create a wayside system using:  new WaysideSystem(trackSystem.getRedLine(),"Red");
+        then you can use:
+     */
+    public WaysideSystem getWaysideSystem(String sectionName) throws Exception {
+        WaysideSystem proxy = new WaysideSystem(sectionName);
+        int ind =  waysides.indexOf(proxy);
+        if (ind == -1)
+            throw new Exception(String.format("CTC WaysideSystem search error: Searching for wayside named %s in waysides returned no result.\nWaysidesContains:\n%s\n",sectionName,waysides));
+        return waysides.get(ind);
+    }
 }

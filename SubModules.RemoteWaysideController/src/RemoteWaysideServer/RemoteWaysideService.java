@@ -2,7 +2,7 @@ package RemoteWaysideServer;
 
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
-import WaysideGUI.WaysideUIJFrameWindow;
+import WaysideGUI.WaysideSystemUI;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -113,7 +113,7 @@ public class RemoteWaysideService implements RemoteWaysideStub {
         // Define Thread and its behavior
         Thread one = new Thread() {
             public void run() {
-                WaysideUIJFrameWindow ui = null;
+                WaysideSystemUI ui = null;
                 try {
                     ui = getSingleControllerUI(controller);
                     ui.setVisible(true);
@@ -147,7 +147,7 @@ public class RemoteWaysideService implements RemoteWaysideStub {
 
     /** creates a jframe window that allows for a single WaysideController (instead of a full wayside system).
      */
-    public static WaysideUIJFrameWindow getSingleControllerUI(WaysideController controller) {
+    public static WaysideSystemUI getSingleControllerUI(WaysideController controller) {
         LinkedList<WaysideController> ctrl = new LinkedList<WaysideController>();
         ctrl.add(controller);
         WaysideSystem ws = null;
@@ -159,7 +159,7 @@ public class RemoteWaysideService implements RemoteWaysideStub {
             e.printStackTrace();
         }
         try {
-            WaysideUIJFrameWindow window = new WaysideUIJFrameWindow(ws);
+            WaysideSystemUI window = new WaysideSystemUI(ws);
             System.out.println(window);
             return window;
         } catch (IOException e) {

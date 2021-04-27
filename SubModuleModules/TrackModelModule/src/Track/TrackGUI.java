@@ -1152,7 +1152,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 if(!authorityT.equals("Authority")) {
                     auth = Integer.parseInt(authorityT);
-                    temp.setAuthority(auth);
+                    temp.applyAuthorityToBlock(auth);
                 }
 
                 if(!speedT.equals("Speed")) {

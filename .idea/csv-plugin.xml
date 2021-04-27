@@ -94,6 +94,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/CTCModule/CTCTesting/CTCOfficeTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/CTCModule/src/CTCOffice/CTCOffice.java">
           <value>
             <Attribute>
@@ -228,6 +235,27 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/Elijah_PLCEngineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_CTCInteraction_Test.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_PLC_Test.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_SystemInformation_Test.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
