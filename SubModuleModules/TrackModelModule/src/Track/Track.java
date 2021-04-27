@@ -495,7 +495,7 @@ import java.util.Scanner;
 
 
         //updating tickets
-        public static int updateTickets(){
+        public int updateTickets(){
             int ticketTotal = 0;
             for(int i=0; i<stationsArrayList.size();i++)
                 ticketTotal += stationsArrayList.get(i).getTicketSales();
