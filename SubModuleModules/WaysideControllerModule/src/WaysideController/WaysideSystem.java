@@ -1,6 +1,9 @@
 package WaysideController;
 
+import PLCInput.*;
 import Track.Track;
+import TrackConstruction.Station;
+import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 import WaysideGUI.WaysideUIClass;
 
@@ -20,6 +23,11 @@ public class WaysideSystem {
     public static String DEFAULT_GIVEN_NAME_FORMAT = "Wayside System #%d";
     public static String DEFAULT_LINE_NAME = "Unnamed Section";
     public static int DEFAULT_NUM_CONTROLLERS = 3;
+    public static HasAuthorityPLCInput.AuthRule DEFAULT_AUTHORITY_RULE = HasAuthorityPLCInput.AuthRule.TrueWhenGreaterOrEqual;
+    public static int DEFAULT_AUTHORITY_CRITERIA = 1;
+    public static OccupationPLCInput.OccRule DEFAULT_OCCUPATION_RULE = OccupationPLCInput.OccRule.TrueWhenOccupied;
+    final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "Auth%d";
+    final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "HasOcc%d";
     /** Information Members
      */
     private String trackSectionName;
@@ -30,6 +38,8 @@ public class WaysideSystem {
      */
     private Vector<WaysideController> controllers = new Vector<>();
     private HashMap<Integer, WaysideController> lut = new HashMap<Integer, WaysideController>();
+    private ArrayList<PLCInput> trackLineInputPool = new ArrayList<PLCInput>();
+    private int numberControllers = DEFAULT_NUM_CONTROLLERS;
     /***********************************************************************************************************************/
     /** TODO To Haleigh: WaysideSystem(String, ArrayList) is the preferred constructor when working with Wayside Systems!
      */
@@ -40,10 +50,12 @@ public class WaysideSystem {
     public WaysideSystem(String trackSectionName) throws IOException {
         this.trackSectionName = trackSectionName;
     }
-    public WaysideSystem(String trackSectionName, ArrayList<TrackElement> trackSection, int numberControllers) throws IOException {
+    public WaysideSystem(String trackSectionName, ArrayList<TrackElement> trackSection, int numberControllers) throws IOException, URISyntaxException {
         this.trackSectionName = trackSectionName;
         this.trackSection = trackSection;
-        generateControllers(numberControllers);
+        this.numberControllers = numberControllers;
+        // Splits track into jurisdictions
+        registerNewTrack(trackSection);
     }
 
 
@@ -156,59 +168,109 @@ public class WaysideSystem {
             Management Methods
      */
 
+
+
     /** accepts a new track for management under this Wayside System, generates all controller and controller information necessary
      *
+     * @before current track may be out of date
+     * @after given track has been stored
+     * @after all of the PLC input variables have been created and may be referenced
+     * @after given trackLine has been partitioned into jurisdictions (number jurisdictions = @member numberControllers)
+     * @after wayside controllers have been created for all jurisdictions
      */
     public void registerNewTrack(ArrayList<TrackElement> trackLine) throws IOException, URISyntaxException {
         this.trackSection = trackLine;
-        generateLine();
+        this.trackLineInputPool = generateInputPool(trackLine);
+        ArrayList<ArrayList<TrackElement>> jurisdictions = partitionArrayList(trackLine, numberControllers);
+        // TODO generateWaysideControllers();
     }
+
+
+    /** generates pool of possible inputs a user would want to refer to in their PLC scripts for this whole system
+     *
+     * handles the formatting of variable input names for the PLCScript based on defined String constants at top of this file
+     *
+     * @before current input pool may reflect an old track  or may not exist
+     * @return an input pool which matches the
+     */
+    public ArrayList<PLCInput> generateInputPool(ArrayList<TrackElement> track) {
+        ArrayList<PLCInput> inputs = new ArrayList<PLCInput>();
+        PLCInput occupationInput;
+        PLCInput hasAuthorityInput;
+        for (TrackElement element : track) {
+            int blockIndex = element.getBlockNum();
+            /*
+                    General input forms for all blocks
+             */
+            occupationInput = new OccupationPLCInput(String.format(AUTHORITY_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_OCCUPATION_RULE);
+            hasAuthorityInput = new HasAuthorityPLCInput(String.format(OCCUPATION_INPUT_PLC_VARIABLE_FORMAT,blockIndex), element, DEFAULT_AUTHORITY_RULE, DEFAULT_AUTHORITY_CRITERIA);
+            /*
+                    Switch input forms
+             */
+            if (element instanceof Switch) {
+                Switch sw = (Switch) element;
+                // account for any switch inputs
+            }
+            /*
+                    Station input forms
+             */
+            if (element instanceof Station) {
+                Station st = (Station) element;
+                // account for any station inputs
+            }
+            // debug
+            System.out.printf("Auth: %s\n",hasAuthorityInput);
+            System.out.printf("Occ: \n",occupationInput);
+
+            // store to list
+            inputs.add(occupationInput);
+            inputs.add(hasAuthorityInput);
+        }
+        return inputs;
+    }
+
+    /** partitions an arbitrarily sized array list into a specified number of sections (as evenly as possible.)
+     *
+     * assert: element distribution is now sequential when mapped to partitions
+     */
+    public static <T> ArrayList<ArrayList<T>> partitionArrayList(ArrayList<T> list, int sections) {
+        if (sections <= 0)
+            return null;
+        ArrayList<ArrayList<T>> subsets= new ArrayList<>();
+
+        // initialize subset arrays
+        for(int i=0; i<sections; i++) {
+            ArrayList<T> partition = new ArrayList<>();
+            subsets.add(partition);
+        }
+
+        // perParition is rounded up of even distribution
+        int size = list.size();
+        int perPartition = (int) Math.ceil((double)size / (double)sections);
+        int assignedPartition;
+        // i iterates over the entire list, assignedPartition breaks i into partition chunks
+        int i = 0;
+        for (T item : list) {
+            // integer division
+            assignedPartition = i / perPartition;
+            subsets.get(assignedPartition).add( list.get(i) );
+            i++;
+        }
+        return subsets;
+    }
+
 
     /** performs any necessary checks, steps, or filters before accepting a controller into the system
      *
      * @param controller
      */
     public void addController(WaysideController controller) {
-        controllers.add(controller);
-        this.trackSection.addAll(controller.getJurisdiction());
+        // TODO
+//        controllers.add(controller);
+//        this.trackSection.addAll(controller.getJurisdiction());
     }
 
 
-    /** creates all WaysideController objects whenever the Track Line has been established (track array given.)
-     *
-     * @param nControllers
-     */
-    public void generateControllers(int nControllers) {
-        // Generate subsets of current Line Section
-        ArrayList< ArrayList<TrackElement> > trackPartitions = partitionArrayList(trackSection,nControllers);
-
-    }
-
-    /** partitions an arbitrarily sized array list into a specified number of sections (as evenly as possible.)
-     *
-     * assert: the element distribution inside of the partitions will NOT be sequential
-     */
-    public static <T> ArrayList<ArrayList<T>> partitionArrayList(ArrayList<T> list, int sections) {
-        if (sections <= 0)
-            return null;
-        ArrayList<ArrayList<T>> subsets= new ArrayList<>();
-        // initialize subset arrays
-        for(int i=0; i<sections; i++) {
-            ArrayList<T> partition = new ArrayList<>();
-            subsets.add(partition);
-        }
-        int size = list.size();
-        int assignedPartition;
-        // For all items...
-        for (int i=0; i<size; i++) {
-            // Calculate which partition gets this item
-            assignedPartition = i % sections;
-            System.out.printf("%d gets %d\n",assignedPartition,i);
-            // Give item to assigned partition
-            subsets.get(assignedPartition).add(list.get(i));
-        }
-        return subsets;
-    }
 
 
     public void generateLine() throws IOException, URISyntaxException {

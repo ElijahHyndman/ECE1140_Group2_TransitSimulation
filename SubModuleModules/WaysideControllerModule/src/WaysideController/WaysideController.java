@@ -3,14 +3,10 @@ package WaysideController;
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
 import PLCInput.*;
-import PLCOutput.*;
-import Track.Track;
-import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static java.lang.String.valueOf;
@@ -24,18 +20,16 @@ public class WaysideController implements Serializable {
     /** Default Members
      */
     final private boolean DEFAULT_ISSOFTWARE = true;
-    final static public String AUTHORITY_INPUT_PLC_VARIABLE_FORMAT = "Auth%d";
-    final static public String OCCUPATION_INPUT_PLC_VARIABLE_FORMAT = "HasOcc%d";
     /** Global Members
      */
-    private static int NUM_CONTROLLERS = 0;
+    private static int GLOBAL_NUM_CONTROLLERS = 0;
     /** Controller Info
      * @member controllerIndex, the global index of this controller (given based on order of creation)
      * @member controllerName, a deterministic name for this controller given its index
      * @member contorllerAlias, a user-defined name for the controller if desired
      * @member isSoftware, boolean of whether this WaysideController is a software (WaysideController) or hardware (RemoteWaysideController) instance
      */
-    private int controllerIndex = ++NUM_CONTROLLERS;
+    private int controllerIndex = ++GLOBAL_NUM_CONTROLLERS;
     private String controllerName = String.format("Controller %d",controllerIndex);
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;

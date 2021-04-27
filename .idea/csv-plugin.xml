@@ -248,6 +248,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_PLC_Test.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_SystemInformation_Test.java">
           <value>
             <Attribute>
