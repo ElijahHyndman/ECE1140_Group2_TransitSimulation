@@ -229,7 +229,7 @@ public class TrainControl {
         }
     }
 
-    //Commanded Speed input from Train Model, in km/h
+    //Commanded Speed input from Train Model
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
         if (eBrake){
@@ -337,6 +337,10 @@ public class TrainControl {
         if (beaconSet && trainVelocity == 0){
             nonVitalComponents.setDoors(beacon);
         }
+    }
+
+    public void openDoorAtStation(boolean door){
+
     }
 
     /*
