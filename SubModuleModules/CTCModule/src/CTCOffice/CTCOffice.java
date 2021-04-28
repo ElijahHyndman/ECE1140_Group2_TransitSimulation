@@ -32,10 +32,10 @@ public class CTCOffice //implements PhysicsUpdateListener
     private double speed;
     private int authority;
     public ArrayList<WaysideSystem> waysides, waysideG, waysideR;
-    private double[] speedArrG = new double[150];
-    private double[] speedArrR = new double[150];
-    private double[] route = new double[150];
-    private int[] authArr = new int[150];
+    private double[] speedArrG = new double[151];
+    private double[] speedArrR = new double[151];
+    private double[] route = new double[151];
+    private int[] authArr = new int[151];
     public CharSequence timeNow;
     private LocalTime now;
     public Track trackObj = new Track();
@@ -214,6 +214,14 @@ public class CTCOffice //implements PhysicsUpdateListener
         else if(dest.equals("Castle Shannon")){
             blockNum = 96;
             lineCol = "Green";}
+        else if (dest.equals("OffShoot 1")){
+            blockNum = 69;
+            lineCol = "Red";
+        }
+        else if (dest.equals("OffShoot 2")){
+            blockNum =74;
+            lineCol = "Red";
+        }
         else{
             blockNum = 0;
             lineCol = "Green";}
