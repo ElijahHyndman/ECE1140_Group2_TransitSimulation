@@ -3,7 +3,7 @@ package CTCUI;/*
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-//iteration 2
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -44,9 +44,46 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame() {
+    public CTCJFrame(CTCOffice ctc) {
+        display = ctc;
         initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+        givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update() {
+        try {
+            occupancy();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failure occured when updating occupancy for the system");
+        }
+        calcthroughput();
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,7 +183,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                try {
+                    jButton8ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -305,7 +346,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                try {
+                    jButton2ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -397,7 +442,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                try {
+                    jButton9ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -518,7 +567,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                try {
+                    jButton6ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -530,7 +583,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                try {
+                    jButton7ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -696,7 +753,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -728,8 +784,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -781,8 +836,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -833,8 +887,10 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
+    //GIH6 - ADDED THIS REFRESH AND OCCUPANCY FUNCTIONS
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
+        //     refreshOccupancy();
         boolean blockOccG=false;
         boolean blockOccR=false;
         model2 = (DefaultTableModel)jTable3.getModel();
@@ -856,12 +912,51 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     }
 
+    //add refreshing for occupied blocks
+    public void refreshOccupancy() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    occupancy();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void occupancy() throws Exception {
+        boolean blockOccG=false;
+        boolean blockOccR=false;
+        model2 = (DefaultTableModel)jTable3.getModel();
+        model2.setRowCount(0);
+
+        for(int i = 0; i<150; i++)
+        {
+            blockOccG=display.CheckOcc(i, "Green");
+            blockOccR=display.CheckOcc(i, "Red");
+            if (blockOccG && blockOccR)
+                model2.addRow(new Object[] {i, i});
+            else if (blockOccG && !blockOccR)
+                model2.addRow(new Object[] {i, "None"});
+            else if (!blockOccG && blockOccR)
+                model2.addRow(new Object[] {"None", i});
+            //  else
+            //    model2.addRow(new Object[] {"None","None"});
+        }
+    }
+
     private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         String train;
         String destination;
         String timeD;
@@ -876,7 +971,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         Object[] speedAuthority = new Object[3];
         DisplayLine dispatch = new DisplayLine();
 
-        speedAuthority = dispatch.Dispatch(destination, train, timeD);
+        speedAuthority = display.Dispatch(destination, train, timeD);
 
         if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))
             line="Red";
@@ -998,11 +1093,34 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    /*GIH6 - refreshing throughput*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
         int tp = display.CalcThroughput();
         display.setThroughput(tp);
 
+        jTextField1.setText(String.valueOf(display.getThroughput()));
+        //    refreshThroughput();
+    }
+
+    //adding refresh of throughput
+    //add refreshing for occupied blocks
+    public void refreshThroughput() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcthroughput();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void calcthroughput(){
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
         jTextField1.setText(String.valueOf(display.getThroughput()));
     }
 
@@ -1010,8 +1128,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         String filename = jTextField5.getText().trim();
         if (filename.equals("BlueLine"))
         {
@@ -1033,7 +1150,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-        DisplayLine fileLoader = new DisplayLine();
+        CTCOffice fileLoader = new CTCOffice();
         display = fileLoader;
         display.LoadSchedule(filename);
 
@@ -1129,9 +1246,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //ArrayList<DisplayLine> displist = display.getDisps();
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         int switchNum = Integer.parseInt(jTextField2.toString());
         boolean status = display.CheckSwitch(switchNum,color);
         //TODO add switch checker if possible
@@ -1142,13 +1257,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //display.ClearQueues();
-        model = (DefaultTableModel)jTable2.getModel();
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {model = (DefaultTableModel)jTable2.getModel();
         model.setRowCount(0);
         ArrayList<DisplayLine> displist = display.getDisps();
-        displist.clear();
         mode = true;
     }
 
@@ -1161,8 +1272,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         color = "Red";
         String filename;
         filename = "/Users/haleighdefoor/RedLineData.csv";
-        DisplayLine fileLoader = new DisplayLine();
-        display = fileLoader;
         display.LoadSchedule(filename);
     }
 
@@ -1171,10 +1280,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         color = "Green";
         String filename;
         filename = "/Users/haleighdefoor/GreenLineData.csv";
-        DisplayLine fileLoader = new DisplayLine();
-        display = fileLoader;
         display.LoadSchedule(filename);
     }
+
 
     /**
      * @param args the command line arguments
@@ -1206,7 +1314,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame().setVisible(true);
+                new CTCJFrame(new CTCOffice()).setVisible(true);
             }
         });
     }
