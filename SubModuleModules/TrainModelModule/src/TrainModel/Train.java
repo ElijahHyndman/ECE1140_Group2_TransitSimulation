@@ -72,8 +72,7 @@ public class Train {
     double displayAcceleration; //  ft/s^2
 
 
-    //getters
-
+    //getters for train controller
     public int  getNumberOfCars() {
         return numberOfCars;
     }
@@ -91,11 +90,15 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
+    //end
 
-    //setters
 
-
+    //setters for speed, accel, power
     public void setSpeed(double speed) {
+        /*
+        Caps speed at max possible train speed 70km/h; speed can't go below 0
+        If we decide to use negative speeds, just use this as abs value and handle negative in TrainUnit
+         */
         if (speed > 19.44){
             this.actualSpeed = 19.44;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
@@ -113,7 +116,9 @@ public class Train {
         this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setAccel(double acceleration) {
-        this.maxAccel = 23330 / this.mass;
+        /*
+        Caps accel at max specified in train model datasheet
+         */
         if ( acceleration > maxAccel ) {
             this.accel = this.maxAccel;
             this.displayAcceleration = this.maxAccel * 2.236936;
@@ -136,29 +141,45 @@ public class Train {
         this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
     public void setPower(double pow) {
-        if(this.engineFail != true){
-            this.power = pow;
-        }else{
+        /*
+        Caps power at 120; can't go below 0; sets to 0 during engine fail
+         */
+        if(this.engineFail == true){
             this.power = 0;
+        }else if(pow>120){
+            this.power=120;
+        }else if(pow<0){
+            this.power = 0;
+        }else{
+            this.power = pow;
         }
     }
-
-
-    //ADDED FOR TESTING
     public double getPower(){
         return power;
     }
 
+
     public void calculateSpeed(double deltaTime){
+        /*
+        ****Most Important method in Train Model****
+        -This calculates the new accel and speed for the train model after using updatePhysicalState()
+        -First checks if emergency brake is active and ignores power command if so.
+        -Second checks if service brake is active and ignores power command if so.
+        -Third calculates force from power command, last speed, and block grade
+          -calculates new accel from force and current mass
+          -calculates new speed from new accel and last speed
+
+         */
         //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
         double newA;
-        
-        //check for zero velocity & power command
 
+        //keeps track of train's distance traveled in total and on certain block
         totalDistance += this.actualSpeed*deltaTime;
         blockDistance += this.actualSpeed*deltaTime;
+
+        //check for zero velocity & power command
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
@@ -188,6 +209,19 @@ public class Train {
                 this.actualSpeed = 0.001;
             }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
+
+            /*
+                *Note on simplifying calculating force of gravity of incline
+                Calc:
+                 F = [sin(atan(blockGrade/100)) *mass*9.81];
+
+                But, for blockGrade<20:
+                [sin(atan(blockGrade/100))] == blockGrade/100
+
+                Simpler Calc:
+                 F = [(blockGrade/100) *mass*9.81];
+             */
+
             F = F - (this.blockGrade/100) * this.mass * 9.81;
             if(F < 0){
                 F = 0;
@@ -199,6 +233,8 @@ public class Train {
         }
 
     }
+
+    //For simulation purposes
     public double getTotalDistance(){
         return totalDistance;
     }
@@ -208,28 +244,38 @@ public class Train {
     public void setBlockDistance(double distance){
         blockDistance = distance;
     }
+    //end
+
+
     public double calculateMass() {
+        /*
+        Uses 75 kg as standard mass for passenger.
+         -Average mass of american adult = 80kg (Journal of BMC Public Health, 2013)
+         -Average mass of american child (<18) = 40kg (Journal of BMC Public Health, 2013)
+        Assuming 90% of passengers are adults, average passenger weight is 75kg
+         */
         this.mass = this.trainMass*this.numberOfCars + 75 * (passengerCount + crewCount);
         return this.mass;
     }
 
+    //Setters for data from track
     public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
     }
-
     public void setSpeedLimit(double kmPerHour) { //takes in km/h
         this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
     public double getSpeedLimit(){
         return this.speedLimit;
     }
-
     public void setAuthority(int a) {
         this.authority = a;
     }
     public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
+    //end
+
     public void setPassengerBrake(Boolean brake) {
 
         if(this.brakeFail != true){
@@ -263,6 +309,7 @@ public class Train {
     }
     public void setEngineFail(Boolean fail) {
         this.engineFail = fail;
+        this.power = 0;
     }
     public void setCabinTemp(int temp) {
         this.cabinTemp = temp;
@@ -344,5 +391,39 @@ public class Train {
 
     public int getPassengerCount() {
         return this.passengerCount;
+    }
+
+    /*
+    retrieve nonVitals:
+    int cabinTemp =70;// F
+    String nextStop = "NaN";
+    int advertisements = 1;
+    String announcements = "NaN";
+    boolean cabinLights;
+    boolean outerLights;
+    boolean headlights;
+     */
+
+    public String getNextStop() {
+        return nextStop;
+    }
+
+    public int getAdvertisements() {
+        return advertisements;
+    }
+    public boolean getOuterLights(){
+        return outerLights;
+    }
+    public boolean getCabinLights(){
+        return cabinLights;
+    }
+    public boolean getHeadlights(){
+        return headlights;
+    }
+    public String getAnnouncements() {
+        return announcements;
+    }
+    public int getCabinTemp() {
+        return cabinTemp;
     }
 }
