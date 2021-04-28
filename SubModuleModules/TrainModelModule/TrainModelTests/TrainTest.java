@@ -31,19 +31,16 @@ class TrainTest {
     void calculateSpeedWithBlockIncline(){
         Train t1 = new Train(5,2,0);
 
-        t1.setPower(80);
+        t1.setPower(100);
         t1.setBlockGrade(1);
         t1.calculateSpeed(1);
 
-        double force = (80*1000)/1;
+        double force = (100*1000)/1;
         force = force - (1/100)*9.81*t1.getMass();
         double newA = force/t1.getMass();
         double speed = 1 + newA/2;
 
-        Train t2 = t1;
-
         assertEquals(Math.round(speed), Math.round(t1.getActualSpeed()));
-        assertEquals(80, t2.getPower());
     }
 
     @Test
@@ -77,21 +74,28 @@ class TrainTest {
     void setPassengerBrake() {
         Train t1 = new Train(5, 2, 0);
 
+        t1.setSpeed(10);
         t1.setPassengerBrake(true);
-        assertEquals(true, t1.getPassengerBrake());
+        t1.calculateSpeed(1);
+
+
+        assertEquals(10-2.73, t1.getActualSpeed());
     }
     @Test
     void setEmergencyBrake() {
         Train t1 = new Train(5, 2, 0);
 
+        t1.setSpeed(10);
         t1.setEmergencyBrake(true);
-        assertEquals(true,t1.getEmergencyBrake() );
+        t1.calculateSpeed(1);
+
+        assertEquals(10-2.73,t1.getActualSpeed() );
     }
     @Test
     void changingAtStation() {
         Train t1 = new Train(5, 2, 0);
-        t1.setPassengerCount(20);
 
+        t1.setPassengerCount(20);
         t1.setPassengersBoarding(10);
         int leaving = t1.disembark();
 

@@ -39,7 +39,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public trainGUI(int index) {
         initComponents();
         this.mainTrainIndex = index;
-        numTrains.setText(Integer.toString(namesIndex-1));
         
     }
     public void newTrain() {
@@ -165,7 +164,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        numTrains = new javax.swing.JLabel();
         jScrollPane8 = new javax.swing.JScrollPane();
         testFailure = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
@@ -498,8 +496,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
             }
         });
 
-        numTrains.setBackground(new java.awt.Color(250, 250, 250));
-        numTrains.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         testFailure.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         testFailure.setModel(new javax.swing.table.DefaultTableModel(
@@ -572,7 +568,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                         .addGap(72, 72, 72)
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(numTrains, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
@@ -590,7 +585,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
 
                                 .addComponent(jLabel9)
                                 .addComponent(jLabel8))
-                            .addComponent(numTrains, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            )))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(testViewLayout.createSequentialGroup()
@@ -912,7 +907,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JPanel mainView;
     private javax.swing.JPanel menu;
-    private javax.swing.JLabel numTrains;
 
     private javax.swing.JTable table1;
     private javax.swing.JTable table2;
