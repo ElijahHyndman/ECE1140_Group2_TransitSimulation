@@ -586,7 +586,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             if(newGreenLine[i] == start) {
                 flag = 1;
             }
-            else if(flag == 1 && newGreenLine[i] == end) {
+            else if(flag == 1 && newGreenLine[i] == end-1) {
                 flag2=1;
                 beacon2 = newGreenLine[i-2];
             }
@@ -599,13 +599,14 @@ public class CTCOffice //implements PhysicsUpdateListener
         int[] RouteAr = new int[151];
         for(int i=0; i < 176; i++) {
             if (start == 0) {
-                RouteAr[0] = 1;
+                RouteAr[0] = 3;
                 RouteAr[62]=1;
             }
             if(end == 0)
                 RouteAr[0] =1;
             if(i == beacon2)
                 RouteAr[i] = 2;
+
             if (newGreenLine[i] != 0)
                 RouteAr[newGreenLine[i]] = 1;
         }
@@ -630,10 +631,10 @@ public class CTCOffice //implements PhysicsUpdateListener
                 flag = 1;
 
             }
-            else if(flag == 1 && newRedLine[i] == end) {
+            else if(flag == 1 && newRedLine[i] == end-1) {
 
                 if(flag2 != 1)
-                beacon2 = newRedLine[i-2];
+                beacon2 = newRedLine[i-1];
 
                 flag2=1;
 
@@ -649,11 +650,11 @@ public class CTCOffice //implements PhysicsUpdateListener
         int[] RouteAr = new int[77];
         for(int i=0; i < 106; i++) {
             if(start == 0) {
-                RouteAr[0] = 1;
+                RouteAr[0] = 666;
                 RouteAr[9] = 1;
             }
             if(end == 0){
-                RouteAr[0]=1;
+                RouteAr[0]=666;
                 RouteAr[10]=1;
                 RouteAr[9] =1;
             }
