@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/Application/AppTests/RemoteWaysideConverterTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Application/src/GUIThread.java">
           <value>
             <Attribute>
@@ -21,6 +28,13 @@
           <value>
             <Attribute>
               <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Application/src/RemoteWaysideConverter.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -494,6 +508,13 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteWayside/RemoteWaysideService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWaysideServer/RemoteWaysideServer.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

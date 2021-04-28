@@ -200,6 +200,16 @@ public class WaysideController extends Thread implements Serializable {
         }
     }
 
+    public void giveInput(PLCInput input) {
+        this.inputPool.add(input);
+        for (PLCEngine safetyScript : SafetyCriticalPLCScripts) {
+            safetyScript.registerInputSource(input);
+        }
+        for (PLCEngine userScript : UserPLCScripts) {
+            userScript.registerInputSource(input);
+        }
+    }
+
 
     /** writes the PLC for avoiding collision.
      * blocks are connected to a variable number of other blocks
@@ -212,14 +222,22 @@ public class WaysideController extends Thread implements Serializable {
      */
     public static PLCEngine generateCollisionAvoidanceScript(TrackElement element) throws Exception {
         // Switches have a third connection that need to be considered
-        int thisBlockIndex = element.getBlockNum();
-        int blockAfterIndex = element.getDirection(0);
-        int blockBeforeIndex = element.getDirection(1);
-        int switchAfterIndex = element.getDirection(2);
-        boolean oneDirectional = (blockBeforeIndex < 1);
-        boolean isSwitch = (switchAfterIndex > 0);
+        int thisBlockIndex;
+        int blockAfterIndex;
+        int blockBeforeIndex;
+        int switchAfterIndex;
+        try {
+            thisBlockIndex = element.getBlockNum();
+            blockAfterIndex = element.getDirection(0);
+            blockBeforeIndex = element.getDirection(1);
+            switchAfterIndex = element.getDirection(2);
+        } catch (Exception failureToGetDirections) {
+            failureToGetDirections.printStackTrace();
+            System.out.printf("\"Failed to get directions for track element (index:%d), not going to generate collisin script\"\n",element.getBlockNum());
+            return new PLCEngine();
+        }
         ArrayList<String> PLCScript;
-        if (oneDirectional) {
+        if (blockAfterIndex!=0 && blockBeforeIndex==0 && switchAfterIndex==0) {
             // Case: One-Directional
             PLCScript = new ArrayList<>() {
                 {
@@ -229,8 +247,8 @@ public class WaysideController extends Thread implements Serializable {
                     add(String.format("SET"));
                 }
             };
-        } else if (isSwitch) {
-            // Case: Switch
+        }  else if (blockAfterIndex!=0 && blockBeforeIndex!=0 && switchAfterIndex==0){
+            // Case: Two-Directional
             PLCScript = new ArrayList<>() {
                 {
                     add(String.format("LD OCC%d", blockBeforeIndex));
@@ -242,7 +260,7 @@ public class WaysideController extends Thread implements Serializable {
                 }
             };
         } else {
-            // Case: Two-Directional
+            // Case: Switch
             PLCScript = new ArrayList<>() {
                 {
                     add(String.format("LD OCC%d", blockBeforeIndex));
@@ -550,7 +568,7 @@ public class WaysideController extends Thread implements Serializable {
 
 
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
-    //public void setControllerName(String newName){ this.controllerAlias = newName; }
+    public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
     public String getControllerName() {return controllerName; }
     public ArrayList<TrackElement> getJurisdiction() {return jurisdiction;}
@@ -647,6 +665,21 @@ public class WaysideController extends Thread implements Serializable {
     public String toMedString() {
         String profile = toString();
         profile+= "Jurisdiction: TODO\n";
+        return profile;
+    }
+    public String toLongString() {
+        String profile = controllerName;
+        if (controllerAlias != null)
+            profile += String.format("[Alias \"%s\"]\n",controllerAlias);
+        profile += "\n";
+        profile+="=====Jurisdiction:\n";
+        for (TrackElement block : jurisdiction) {
+            profile+= block.toString()+"\n";
+        }
+        profile+="=====InputPool:\n";
+        for(PLCInput input : inputPool) {
+            profile+=input.toString()+"\n";
+        }
         return profile;
     }
 }
