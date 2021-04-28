@@ -1,6 +1,6 @@
 import TrainModel.Train;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TrainTest {
@@ -26,6 +26,24 @@ class TrainTest {
 
         assertEquals(speed, t1.getActualSpeed());
 
+    }
+    @Test
+    void calculateSpeedWithBlockIncline(){
+        Train t1 = new Train(5,2,0);
+
+        t1.setPower(80);
+        t1.setBlockGrade(1);
+        t1.calculateSpeed(1);
+
+        double force = (80*1000)/1;
+        force = force - (1/100)*9.81*t1.getMass();
+        double newA = force/t1.getMass();
+        double speed = 1 + newA/2;
+
+        Train t2 = t1;
+
+        assertEquals(Math.round(speed), Math.round(t1.getActualSpeed()));
+        assertEquals(80, t2.getPower());
     }
 
     @Test
@@ -134,6 +152,10 @@ class TrainTest {
         assertEquals(true,t1.getCabinLights() );
         assertEquals(true,t1.getOuterLights() );
         assertEquals(true,t1.getHeadlights() );
+
+    }
+    @Test
+    void testingTrainControlInteractions(){
 
     }
 }

@@ -205,9 +205,6 @@ public class Train {
             setSpeed(newV);
         }
         else{
-            if (this.actualSpeed < 0) {
-                this.actualSpeed = 0.001;
-            }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
 
             /*
