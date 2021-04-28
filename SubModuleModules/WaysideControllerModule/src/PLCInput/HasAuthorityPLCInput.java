@@ -1,5 +1,6 @@
 package PLCInput;
 
+import PLCOutput.AuthorityPLCOutput;
 import TrackConstruction.TrackElement;
 
 /** defines behavior of using a block's authority as input for PLC
@@ -72,8 +73,17 @@ public class HasAuthorityPLCInput extends PLCInput {
         }
     }
 
-
+    @Override
     public String toString() {
         return String.format("Authority Listener for Block#%d",target.getBlockNum());
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof HasAuthorityPLCInput) )
+            return false;
+        HasAuthorityPLCInput other = (HasAuthorityPLCInput) o;
+        if ( other.variableName.equals(this.variableName) && other.target.equals(this.target)) // We could require that evaluationRules match but I've made the decision not to && other.evaluationRule.equals(this.evaluationRule))
+            return true;
+        else return false;
     }
 }

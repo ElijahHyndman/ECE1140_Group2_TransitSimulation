@@ -7,6 +7,7 @@ public class Station extends TrackElement{
     int throughput;  //passengers Leaving Train
     int ticketSales; //Ticket sales per station
     String name;
+    int people =0;
     boolean occupied;
 
     public Station(){
@@ -35,7 +36,8 @@ public class Station extends TrackElement{
     /*Set Ticket Sales */
     public void setTicketSales(){
         Random rand = new Random();
-        this.ticketSales = Math.abs(rand.nextInt()) % 80;
+        this.ticketSales += Math.abs(rand.nextInt()) % 11;
+        people = this.ticketSales;
     }
 
     public void setName(String nameTemp){
@@ -63,14 +65,18 @@ public class Station extends TrackElement{
     public void setOccupied(boolean occupiedVar){
         this.occupied = occupiedVar;
 
+        /* changing updating ticketsales
         if(occupiedVar){
             this.setTicketSales();
-        }
+        }*/
         this.occupied = occupiedVar;
     }
 
     /*get ticket sales*/
     public int getTicketSales(){ return this.ticketSales;}
+
+    /*generate from ticket sales number 0 - ticket sales */
+
 
     /*get throughput*/
     public int getThroughput() { return this.throughput;}
@@ -85,9 +91,25 @@ public class Station extends TrackElement{
     /*get Beacon*/
    // public String getBeacon() { return this.beacon;}
 
+    //TODO exitTrain -- void and give an integer number of people
+    public void exitTrain(int N){
+        this.throughput = N;
+    }
+
+    //TODO boardTrain -- return between 0 and p people onTrack = 0, people board train random to people on track, people on track
+    public int boardTrain(){
+        Random rand = new Random();
+        int leaving;
+        leaving = Math.abs(rand.nextInt()) % people;
+        people -= leaving;
+        return leaving;
+    }
 
     @Override
     public String toString() {
+        return String.format("Block #%d",this.blockNum);
+    }
+    public String totoString() {
         return String.format("Block Num: "+ blockNum +"\n Line: "+ line + "\n Length: "+ length + "\n Grade: " + grade + "\n speedLimit " + speedLimit + "\n elevation " + elevation + "\n cumulativeElevation " + cumulativeElevation + "\n section: " + section + "\n infrastructure: " + infrastructure + "\n Occupied: " + occupied + "\n Status: "+ failureStatus + " \n Block Direction: " + directionArray[0] + " " + directionArray[1] + " " + directionArray[2]);
     }
 }

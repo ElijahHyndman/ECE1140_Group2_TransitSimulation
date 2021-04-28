@@ -4,14 +4,21 @@ package CTCUI;/*
  * and open the template in the editor.
  */
 //iteration 2
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 import CTCOffice.*;
 import GUIInterface.AppGUIModule;
+import Track.Track;
+//import TrackModelModule.*;
+
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import java.time.*;
+import javax.swing.Timer;
 
 /**
  *
@@ -26,16 +33,56 @@ import java.time.*;
 
 public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
-    DisplayLine display = new DisplayLine();
+    //display is the CTC Office
+    CTCOffice display = new CTCOffice();
+    Track givenSystem = new Track();
     DefaultTableModel model, model2;
     boolean mode = false;
+    public Timer timer;
 
     /**
      * Creates new form CTCJFrame
      */
-    public CTCJFrame() {
+    public CTCJFrame(CTCOffice ctc) {
+        display = ctc;
         initComponents();
     }
+    @Override
+    public void latch(Object myObject){
+        givenSystem = null;
+        try {
+            givenSystem = (Track) myObject;
+            givenSystem = (Track) myObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update() {
+        try {
+            occupancy();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failure occured when updating occupancy for the system");
+        }
+        calcthroughput();
+    }
+
+    @Override
+    public Object getJFrame() {
+        return null;
+    }
+
+    @Override
+    public void setVis(boolean visible) {
+        setVisible(visible);
+    }
+
+    public void draw(){
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,7 +129,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jLabel18 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton1  = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -131,7 +178,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                try {
+                    jButton8ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -166,7 +217,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane3)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                .addGap(0, 259, Short.MAX_VALUE)
+                                                .addGap(0, 149, Short.MAX_VALUE)
                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                                                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,7 +259,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(41, 41, 41))
         );
 
-        jTabbedPane3.addTab("Automatic", jPanel4);
+        jTabbedPane3.addTab("Scheduling", jPanel4);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "New", "Train 1", "Train 2", "Train 3", "Train 4", "Train 5", "Train 6", "Train 7", "Train 8", "Train 9", "Train 10" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -231,7 +282,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                try {
+                    jButton2ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -452,7 +507,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                try {
+                    jButton7ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -646,7 +705,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
@@ -659,19 +718,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         double blockG = displist.get(blockNo).getGrade();
         int sLim = (int)Math.round(displist.get(blockNo).getSpeedLimit()*0.621371);
         double elev = displist.get(blockNo).getElevation()*3.28084;
-        /*String t1 = displist.get(blockNo).getT1();
-        String t2 = displist.get(blockNo).getT2();
-        String t3 = displist.get(blockNo).getT3();
-        String t4 = displist.get(blockNo).getT4();
-        String t5 = displist.get(blockNo).getT5();
-        String t6 = displist.get(blockNo).getT6();
-        String t7 = displist.get(blockNo).getT7();
-        String t8 = displist.get(blockNo).getT8();
-        String t9 = displist.get(blockNo).getT9();
-        String t10 = displist.get(blockNo).getT10();*/
         boolean status = displist.get(blockNo-1).getStatus();
 
-        boolean totalocc = false;
+        boolean totalocc = display.CheckSectOcc(blockNo,lineColor);
 
         //TODO check occupancies and track statuses
 
@@ -687,32 +736,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"A block in this section is occupied. Cannot close track.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(false);
-                    displist.get(1).setStatus(false);
-                    displist.get(2).setStatus(false);
-                    displist.get(3).setStatus(false);
-                    displist.get(4).setStatus(false);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(false);
-                    displist.get(6).setStatus(false);
-                    displist.get(7).setStatus(false);
-                    displist.get(8).setStatus(false);
-                    displist.get(9).setStatus(false);
-                }
-                else
-                {
-                    displist.get(10).setStatus(false);
-                    displist.get(11).setStatus(false);
-                    displist.get(12).setStatus(false);
-                    displist.get(13).setStatus(false);
-                    displist.get(14).setStatus(false);
-                }
-                status = false;
-                displist.get(blockNo).setStatus(false);
+                display.CloseTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }
@@ -746,7 +770,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         boolean status = displist.get(blockNo).getStatus();
 
-        if (block==0 || (block>150 && lineColor.equals("Green")) || (block>76 && lineColor.equals("Red")))
+        if (block==0 || block>150)
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
         }
@@ -756,33 +780,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
-                if (blockNo==0 || blockNo==1 || blockNo==2 ||blockNo==3||blockNo==4)
-                {
-                    displist.get(0).setStatus(true);
-                    displist.get(1).setStatus(true);
-                    displist.get(2).setStatus(true);
-                    displist.get(3).setStatus(true);
-                    displist.get(4).setStatus(true);
-                }
-                else if (blockNo==5||blockNo==6||blockNo==7||blockNo==8||blockNo==9)
-                {
-                    displist.get(5).setStatus(true);
-                    displist.get(6).setStatus(true);
-                    displist.get(7).setStatus(true);
-                    displist.get(8).setStatus(true);
-                    displist.get(9).setStatus(true);
-                }
-                else
-                {
-                    displist.get(10).setStatus(true);
-                    displist.get(11).setStatus(true);
-                    displist.get(12).setStatus(true);
-                    displist.get(13).setStatus(true);
-                    displist.get(14).setStatus(true);
-                }
-                status = true;
+                display.OpenTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
-                //JOptionPane.showMessageDialog(jPanel3, "Block "+blockNo+" now open.");
             }
         }
 
@@ -805,8 +804,32 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    //GIH6 - ADDED THIS REFRESH AND OCCUPANCY FUNCTIONS
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+   //     refreshOccupancy();
+    }
+
+    //add refreshing for occupied blocks
+    public void refreshOccupancy() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    occupancy();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void occupancy() throws Exception {
         boolean blockOccG=false;
         boolean blockOccR=false;
         model2 = (DefaultTableModel)jTable3.getModel();
@@ -822,17 +845,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 model2.addRow(new Object[] {i, "None"});
             else if (!blockOccG && blockOccR)
                 model2.addRow(new Object[] {"None", i});
-            else
-                model2.addRow(new Object[] {"None","None"});
+            //  else
+            //    model2.addRow(new Object[] {"None","None"});
         }
-
     }
 
     private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         String train;
         String destination;
@@ -846,9 +868,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
         Object[] speedAuthority = new Object[3];
-        DisplayLine dispatch = new DisplayLine();
+        //DisplayLine dispatch = new DisplayLine(display.getTrack(), display.getSE());
 
-        speedAuthority = dispatch.Dispatch(destination, train, timeD);
+        speedAuthority = display.Dispatch(destination, train, timeD);
 
         if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction"))
             line="Red";
@@ -915,7 +937,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             t10 = timeD;
         }
 
-        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        //CONFUSED WHAT DOES THIS DO??
+        DisplayLine dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+        //add dispatch to CTC office
 
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
@@ -965,11 +989,34 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
+    /*GIH6 - refreshing throughput*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         int tp = display.CalcThroughput();
         display.setThroughput(tp);
+        jTextField1.setText(String.valueOf(display.getThroughput()));
+    //    refreshThroughput();
+    }
 
+    //adding refresh of throughput
+    //add refreshing for occupied blocks
+    public void refreshThroughput() {
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcthroughput();
+            }
+        });
+
+        timer.setRepeats(true);
+        // Aprox. 60 FPS
+        timer.setDelay(17);
+        timer.start();
+    }
+
+    public void calcthroughput(){
+        int tp = display.CalcThroughput();
+        display.setThroughput(tp);
         jTextField1.setText(String.valueOf(display.getThroughput()));
     }
 
@@ -977,7 +1024,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         String filename = jTextField5.getText().trim();
         if (filename.equals("BlueLine"))
@@ -986,13 +1033,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         }
         else if (filename.equals("GreenLine"))
         {
-            filename = "/Users/haleighdefoor/schedule.csv";
+            filename = "C:\\Users\\grhen\\OneDrive\\Documents\\testSchedule.csv";
+
+            //filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
+            //"/Users/haleighdefoor/schedule.csv";
         }
         else
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-        DisplayLine fileLoader = new DisplayLine();
+         CTCOffice fileLoader = new CTCOffice();
         display = fileLoader;
         display.LoadSchedule(filename);
 
@@ -1134,7 +1184,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CTCJFrame().setVisible(true);
+                new CTCJFrame(new CTCOffice()).setVisible(true);
             }
         });
     }
@@ -1196,25 +1246,5 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextPane jTextPane2;
-
-    @Override
-    public void latch(Object myObject) {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public Object getJFrame() {
-        return this;
-    }
-
-    @Override
-    public void setVis(boolean visible) {
-
-    }
     // End of variables declaration
 }

@@ -10,8 +10,6 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import PLCInput.OccupationPLCInput;
-
 /**
  * @author elijah
  */
@@ -45,11 +43,11 @@ class OccupationPLCInputTest {
         target2 = new TrackBlock();
         target1.setOccupied(false);
         target2.setOccupied(false);
-        target1.setAuthority(1);
+        target1.applyAuthorityToBlock(1);
         target1.setCommandedSpeed(20);
         target1.setSpeedLimit(10);
         target1.setBlockNum(1);
-        target2.setAuthority(1);
+        target2.applyAuthorityToBlock(1);
         target2.setCommandedSpeed(20);
         target2.setSpeedLimit(10);
         target2.setBlockNum(2);

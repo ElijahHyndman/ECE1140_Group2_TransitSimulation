@@ -61,8 +61,18 @@ public class OccupationPLCInput extends PLCInput {
         }
     }
 
-
+    @Override
     public String toString() {
         return String.format("Occupation Listener for Block#%d",target.getBlockNum());
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (! (o instanceof OccupationPLCInput) ) {
+            return false;
+        }
+        OccupationPLCInput other = (OccupationPLCInput) o;
+        if ( other.variableName.equals(this.variableName) && other.target.equals(this.target)) // We could require that evaluationRules match but I've made the decision not to && other.evaluationRule.equals(this.evaluationRule))
+            return true;
+        else return false;
     }
 }

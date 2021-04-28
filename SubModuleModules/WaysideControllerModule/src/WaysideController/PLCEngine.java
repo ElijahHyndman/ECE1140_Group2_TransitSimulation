@@ -61,6 +61,10 @@ public class PLCEngine {
         uploadPLC(pathToPLCFile);
         this.outputTarget = targetOutput;
     }
+    public PLCEngine(ArrayList<String> PLCScript, PLCOutput targetOutput) throws Exception {
+        uploadPLC(PLCScript);
+        this.outputTarget = targetOutput;
+    }
 
     /** turns this PLCEngine into a copy of another PLC Engine
      *
@@ -489,12 +493,19 @@ public class PLCEngine {
         PLCInputSources.add(inputSource);
     }
 
-    /** allows user to register an entire pool of input PLCInput sources
+    /** allows user to append an entire pool of input PLCInput sources to current list of sources
      *
      * @param inputPool
      */
     public void registerInputSources(ArrayList<PLCInput> inputPool) {
         this.PLCInputSources.addAll(inputPool);
+    }
+
+    /** allows user to overwrite current list of input PLCInput sources with a new list
+     *
+     */
+    public void setInputSources(ArrayList<PLCInput> inputPool) {
+        this.PLCInputSources = inputPool;
     }
 
     /** defines an output target object to whom an output rule will automatically be applied when .evaluateLogic() is called.

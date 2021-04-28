@@ -1,7 +1,6 @@
 package SimulationEnvironment;
 
 import CTCOffice.*;
-import CTCUI.CTCJFrame;
 import Track.*;
 import TrainControlUI.DriverUI;
 import TrainModel.trainGUI;
@@ -72,7 +71,7 @@ class SimulationEnvironmentTest {
 
     @Test
     @DisplayName("CTC\t\t[CTC will spawn a train in Yard when a new dispatch is called]")
-    void ctcWillSpawnTrainAtYard() {
+    void ctcWillSpawnTrainAtYard() throws Exception {
         SE = new SimulationEnvironment();
         SE.importTrack("SEResources/GreenAndRedLine.csv");
         CTCOffice ctc = SE.getCTC();
@@ -85,12 +84,12 @@ class SimulationEnvironmentTest {
             TrackElement element = SE.getTrackSystem().getGreenLine().get(i);
             blockNumbers[i] = element.getBlockNum();
         }
-        try {
-            // Give jurisdiction to controller
-            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // Give jurisdiction to controller
+//            // SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         ctc.Dispatch("Dormont","new","00:00:20");
         SE.startTime();
@@ -107,7 +106,7 @@ class SimulationEnvironmentTest {
     }
 
     @Test
-    void ctcWillGenerateAuthorityAndSpeed() {
+    void ctcWillGenerateAuthorityAndSpeed() throws Exception {
         SE = new SimulationEnvironment();
         SE.importTrack("SEResources/GreenAndRedLine.csv");
         CTCOffice ctc = SE.getCTC();
@@ -120,19 +119,19 @@ class SimulationEnvironmentTest {
             TrackElement element = SE.getTrackSystem().getGreenLine().get(i);
             blockNumbers[i] = element.getBlockNum();
         }
-        try {
-            // Give jurisdiction to controller
-            // first wayside is green
-            SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // Give jurisdiction to controller
+//            // first wayside is green
+//            // SE.getCTC().getWaysideSystem().get(0).addWaysideController(blockNumbers);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         ctc.Dispatch("Dormont","new","12:00:00");
         SE.startTime();
 
         // Get the train yard, set it to speed and authority
-        SE.getTrackSystem().getBlock(0).setAuthority(2);
+        SE.getTrackSystem().getBlock(0).applyAuthorityToBlock(2);
         SE.getTrackSystem().getBlock(0).setCommandedSpeed(10.0);
 
         TrackGUI trackui = new TrackGUI(SE.getTrackSystem());
@@ -203,7 +202,7 @@ class SimulationEnvironmentTest {
 
         ArrayList<TrackElement> greenLine = SE.getTrackSystem().getGreenLine();
         for(TrackElement block : greenLine) {
-            block.setAuthority(10);
+            block.applyAuthorityToBlock(10);
             block.setCommandedSpeed(15.0);
         }
 
@@ -242,7 +241,7 @@ class SimulationEnvironmentTest {
         //WaysideSystem ws = SE.getCTC().getWaysideSystems().get(0);
         WaysideSystem ws = new WaysideSystem();
         assertNotEquals(null,ws);
-        assertNotEquals(null,ws.getController(0));
+        assertNotEquals(null,ws.getControllerOfBlock(0));
 
         //SE.getCTC().Dispatch("Mt Lebanon","new","01:01:01");
         SE.startTime();
@@ -252,7 +251,7 @@ class SimulationEnvironmentTest {
         // Switch out of yard
         SE.getTrackSystem().getSwitches().get(10).setSwitchState(true);
         SE.getTrackSystem().updateSwitches();
-        yard.setAuthority(1);
+        yard.applyAuthorityToBlock(1);
         yard.setCommandedSpeed(10.0);
         //new CTCJFrame((DisplayLine)SE.getCTC()).setVisible(true);
 
