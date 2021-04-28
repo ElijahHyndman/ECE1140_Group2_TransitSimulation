@@ -262,6 +262,8 @@ public class CTCOffice //implements PhysicsUpdateListener
             route = routeGreen(startNum,endNum);
         }
 
+        positions[trainNum-1] = endNum;
+
         routeLength = calcRouteLength(route, lineCol);
 
         speed = routeLength/1000/temp;
