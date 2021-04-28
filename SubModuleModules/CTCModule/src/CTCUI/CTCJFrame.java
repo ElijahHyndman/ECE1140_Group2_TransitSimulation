@@ -39,6 +39,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     DefaultTableModel model, model2;
     boolean mode = false;
     public Timer timer;
+    String color;
 
     /**
      * Creates new form CTCJFrame
@@ -754,7 +755,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
@@ -1118,6 +1119,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 display.AutoDispatch(dest, trainNum, time);
             }
         }
+        color = displist.get(0).getLine();
     }
 
     private void jButton8MouseClicked(java.awt.event.MouseEvent evt) {

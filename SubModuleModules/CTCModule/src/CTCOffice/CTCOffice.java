@@ -283,37 +283,16 @@ public class CTCOffice //implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        try {
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            if (lineCol.equals("Green")) {
-               waysides.get(0).broadcastToControllers(speedArrG, authArr);
-            }
-            else if (lineCol.equals("Red")){
-                waysides.get(1).broadcastToControllers(speedArrR, authArr);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         BroadcastingArrays();
 
         return speedAuthorityTime;
     }
 
     public void ClearQueues(){
-        for (int i= 0; i<times.size(); i++){
-            times.remove(i);
-        }
-        for (int i = 0; i<speedsR.size(); i++){
-            speedsR.remove(i);
-        }
-        for (int i = 0; i<speedsG.size(); i++){
-            speedsG.remove(i);
-        }
-        for (int i = 0; i<authorities.size(); i++){
-            authorities.remove(i);
-        }
+        times.clear();
+        speedsG.clear();
+        speedsR.clear();
+        authorities.clear();
     }
 
     public Object[] AutoDispatch(String dest, String tNum, String timeD) throws Exception {
@@ -490,18 +469,6 @@ public class CTCOffice //implements PhysicsUpdateListener
             speedAuthorityTime[2] = 0;
         }
 
-        try {
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            if (lineCol.equals("Green")) {
-                waysides.get(0).broadcastToControllers(speedArrG, authArr);
-            }
-            else if (lineCol.equals("Red")){
-                waysides.get(1).broadcastToControllers(speedArrR, authArr);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         BroadcastingArrays();
 
         return speedAuthorityTime;
@@ -605,7 +572,13 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public boolean CheckOcc(int blockNum, String lineCol) throws Exception {
 
-        try {
+        if (lineCol.equals("Green")){
+            occ = getWaysideSystem("Green").getOccupancy(blockNum);
+        }
+        else if (lineCol.equals("Red")){
+            occ = getWaysideSystem("Red").getOccupancy(blockNum);
+        }
+        /*try {
             for (WaysideSystem ws : waysides) {
                 if(ws.getLineName() == lineCol)  {
                     //If this is the WaysideSystem that controls the corresponding line
@@ -616,7 +589,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         return occ;
     }
@@ -629,81 +602,98 @@ public class CTCOffice //implements PhysicsUpdateListener
         boolean[] occs = new boolean[length];
         boolean totalocc = false;
 
-        for (int i=0; i<length; i++){
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            try {
-                occs[i] = waysides.get(0).getOccupancy(blockNum);
-            } catch (IOException e) {
-                System.out.println("Failed to set open for block");
-                e.printStackTrace();
+        if (lineCol.equals("Green")) {
+            for (int i = 0; i < length; i++) {
+                try {
+                    occs[i] = getWaysideSystem("Green").getOccupancy(blockNum);
+                } catch (IOException e) {
+                    System.out.println("Failed to set open for block");
+                    e.printStackTrace();
+                }
+            }
+            for (int i = 0; i < length; i++) {
+                if (occs[i]) {
+                    totalocc = true;
+                }
             }
         }
-        for (int i = 0; i < length; i++){
-            if (occs[i]){
-                totalocc=true;
+        else if (lineCol.equals("Red")){
+            for (int i = 0; i < length; i++) {
+                try {
+                    occs[i] = getWaysideSystem("Red").getOccupancy(blockNum);
+                } catch (IOException e) {
+                    System.out.println("Failed to set open for block");
+                    e.printStackTrace();
+                }
+            }
+            for (int i = 0; i < length; i++) {
+                if (occs[i]) {
+                    totalocc = true;
+                }
             }
         }
         return totalocc;
     }
 
-    public boolean CheckSwitch(int switchNum, String lineCol)
-    {
+    public boolean CheckSwitch(int bNum, String lineColor) throws Exception {
         boolean switchstat = false;
-        try {
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            switchstat = waysides.get(0).getSwitchStatus(switchNum);
+
+        if (lineColor.equals("Green")){
+            switchstat = getWaysideSystem("Green").getSwitchStatus(bNum);
+        }
+        else if (lineColor.equals("Red")){
+            switchstat = getWaysideSystem("Red").getSwitchStatus(bNum);
+        }
+
+        /*try {
+            switchstat = waysides.get(0).getSwitchStatus(bNum);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return switchstat;
     }
 
-    public void ToggleSwitch(int switchNum, boolean stat)
-    {
+    public void ToggleSwitch(int switchNum, boolean stat, String lineCol) throws Exception {
         boolean switchstat = !stat;
-        try {
-            waysides.get(0).setSwitchStatus(switchNum, switchstat);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (lineCol.equals("Green")){
+            getWaysideSystem("Green").setSwitchStatus(switchNum,switchstat);
+        }
+        else if (lineCol.equals("Red")){
+            getWaysideSystem("Red").setSwitchStatus(switchNum,switchstat);
         }
     }
 
-    public void OpenTrack(int blockNum, String lineCol)
-    {
+    public void OpenTrack(int blockNum, String lineCol) throws Exception {
         char section = dispArr.get(blockNum).getSection();
         char lineChar = lineCol.charAt(0);
         ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
-
-        for (int i=0; i<length; i++){
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            try {
-                waysides.get(0).setOpen(blocks.get(i));
-            } catch (Exception e) {
-                System.out.println("Failed to set open for block");
-                e.printStackTrace();
+        if (lineCol.equals("Green")) {
+            for (int i = 0; i < length; i++) {
+                getWaysideSystem("Green").setOpen(blocks.get(i));
+            }
+        }
+        else if (lineCol.equals("Red")) {
+            for (int i = 0; i < length; i++) {
+                getWaysideSystem("Red").setOpen(blocks.get(i));
             }
         }
     }
 
-    public void CloseTrack(int blockNum, String lineCol)
-    {
+    public void CloseTrack(int blockNum, String lineCol) throws Exception {
         char section = dispArr.get(blockNum).getSection();
         char lineChar = lineCol.charAt(0);
         ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
         int length = blocks.size();
 
-        for (int i=0; i<length; i++){
-            // For now, Just get the greenline wayside system
-            // TODO make this an if statement so we can call the right Wayside Controller instead of only green
-            try {
-                waysides.get(0).setClose(blocks.get(i));
-            } catch (Exception e) {
-                System.out.println("Failed to set closed for block");
-                e.printStackTrace();
+        if (lineCol.equals("Green")) {
+            for (int i = 0; i < length; i++) {
+                getWaysideSystem("Green").setClose(blocks.get(i));
+            }
+        }
+        else if (lineCol.equals("Red")) {
+            for (int i = 0; i < length; i++) {
+                getWaysideSystem("Red").setClose(blocks.get(i));
             }
         }
     }
