@@ -1,17 +1,9 @@
 //import CTCOffice.CTCOffice;
 //import CTCUI.CTCJFrame;
-import GUIInterface.AppGUIModule;
 import SimulationEnvironment.*;
-import Track.*;
 import TrackConstruction.TrackElement;
 import TrainControlUI.DriverUI;
-import TrainModel.Train;
-import TrainModel.trainGUI;
-import WaysideController.WaysideSystem;
-import WaysideGUI.WaysideUIJFrameWindow;
 import implementation.TrainControl;
-
-import java.sql.Driver;
 
 public class TrainSimulationApplication extends Thread {
 

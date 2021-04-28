@@ -453,8 +453,11 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             // Check if we should progress to the next block
             handleBlockTransitions();
         }
+        /* When we stop running, we stop interacting with the world (interacting with blocks, checking distances, etc.)
+            so we stop updating the physics for this item (physics updates relies on interactingWithWorld=true) */
+        this.interactingWithWorld = false;
         //System.out.println("Train has stopped running");
-        trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running",name,this.hashCode()));
+        trainEventLogger.info(String.format("TrainUnit (%s : %s) has stopped running.",name,this.hashCode()));
     }
 
 
@@ -621,6 +624,9 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
 
     public String toString() {
         return String.format("TrainUnit (%s : %s)",name,this.hashCode());
+    }
+    public String toMovementString() {
+        return String.format("%s velocity(%.1f)[m/s] totalDist(%.1f)[m] blockDist(%.1f)[m]",this.toString(),this.hull.getActualSpeed(),this.hull.getTotalDistance(),this.hull.getBlockDistance());
     }
     public String informationString() {
         if(occupies == null || lastOccupied == null) {

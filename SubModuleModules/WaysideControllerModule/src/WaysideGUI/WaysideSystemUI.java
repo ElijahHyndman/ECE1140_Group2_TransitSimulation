@@ -5,7 +5,6 @@ import WaysideController.WaysideSystem;
 
 import java.awt.CardLayout;
 import java.io.IOException;
-import java.util.List;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -20,7 +19,7 @@ import javax.swing.JViewport;
 /**
  * @author elijah
  */
-public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIModule {
+public class WaysideSystemUI extends javax.swing.JFrame implements AppGUIModule {
 
     /**
      * Creates new form WaysideUIJFrameWindow
@@ -52,19 +51,19 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     private static boolean protectedUpdate = false;
 
 
-    public WaysideUIJFrameWindow() throws IOException {
+    public WaysideSystemUI() throws IOException {
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(Vector<WaysideController> existingListOfControllers) throws IOException {
+    public WaysideSystemUI(Vector<WaysideController> existingListOfControllers) throws IOException {
         this.controllers = existingListOfControllers;
         initComponents();
         updateControllerSelectText();
     }
 
-    public WaysideUIJFrameWindow(WaysideSystem existingSystem) throws IOException {
-        this.controllers = existingSystem.getControllersVector();
+    public WaysideSystemUI(WaysideSystem existingSystem) throws IOException {
+        this.controllers = existingSystem.getControllers();
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
@@ -77,7 +76,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
     public void latch(Object myObject) {
         try {
             this.system = (WaysideSystem) myObject;
-            this.controllers = system.getControllersVector();
+            this.controllers = system.getControllers();
         }catch (Exception e) {
             System.err.println("Failure to convert WaysideUIJFrame latch() function parameter to type WaysideSystem");
         }
@@ -1198,13 +1197,13 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(WaysideUIJFrameWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaysideSystemUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(WaysideUIJFrameWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaysideSystemUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(WaysideUIJFrameWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaysideSystemUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(WaysideUIJFrameWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(WaysideSystemUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -1212,7 +1211,7 @@ public class WaysideUIJFrameWindow extends javax.swing.JFrame implements AppGUIM
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new WaysideUIJFrameWindow().setVisible(true);
+                    new WaysideSystemUI().setVisible(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
