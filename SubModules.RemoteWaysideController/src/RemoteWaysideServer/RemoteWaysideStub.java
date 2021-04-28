@@ -1,6 +1,7 @@
 package RemoteWaysideServer;
 
 import PLCInput.PLCInput;
+import RemoteBlock.RemoteBlockStub;
 import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
 
@@ -47,8 +48,10 @@ public interface RemoteWaysideStub extends Remote {
     public void setControllerAlias(String controllerAlias) throws RemoteException;
     public String getControllerAlias() throws RemoteException;
     public String getControllerName() throws RemoteException;
+    public void setControllerName(String name) throws RemoteException;
     public ArrayList<TrackElement> getJurisdiction() throws RemoteException;
-    public String toString();
     public String toMedString() throws RemoteException;
     public void start() throws RemoteException;
+    public void overseeBlock(TrackElement remoteBlock) throws Exception;
+    public void giveInput(PLCInput input) throws RemoteException;
 }

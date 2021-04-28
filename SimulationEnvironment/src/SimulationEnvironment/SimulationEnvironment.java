@@ -36,142 +36,35 @@ public class SimulationEnvironment extends Thread {
     private Track trackSystem = new Track();
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
+
+    /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
+     */
     public SimulationEnvironment() {
-        /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
-         */
         clk= new WorldClock();
         ctc= new CTCOffice();
         this.start();
     }
 
-    public void castGreenLine() {
-        // Depricated: wayside system handles all wayside controller spawning now
-//        /** Sets the SimulationEnvironment to host all of the
-//         */
-//        String greenLineFile = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/SimulationEnvironment/SEResources/GreenAndRedLine.csv";
-//        importTrack(greenLineFile);
-//        // System is only the greenline wayside system
-//        WaysideSystem system = getCTC().getWaysideSystem().get(0);
-//
-//        //WaysideSystem system = ctc.getWaysideSystem();
-//        // Create single wayside controller for GreenLine
-//        // Create bock jurisdiction
-//        /* Old code for one controller with all of green line
-//        int sizeOfGreenLine = trackSystem.getGreenLine().size();
-//        int[] blockNumbers = new int[sizeOfGreenLine];
-//        for (int i=0; i<sizeOfGreenLine;i++) {
-//            // BlockNum may be an arbitrary number, treat it as such
-//            // Skip i=0, train yard
-//            TrackElement element = trackSystem.getGreenLine().get(i);
-//            blockNumbers[i] = element.getBlockNum();
-//        }
-//        */
-//        int[] controller1Blocks = new int[21];
-//        int[] controller2Blocks = new int[38];
-//        int[] controller3Blocks = new int[13];
-//        int[] controller4Blocks = new int[13];
-//        int[] controller5Blocks = new int[8];
-//        int[] controller6Blocks = new int[20];
-//        int[] controller7Blocks = new int[1];
-//        int[] controller8Blocks = new int[38];
-//        int j;
-//
-//        //controller1
-//        for(int i=0;i <= 20;i++){
-//            controller1Blocks[i] = i;
-//        }
-//
-//        //controller2
-//        j = 21;
-//        for(int i=0;i <= 26;i++){
-//            controller2Blocks[i] = j;
-//            j++;
-//        }
-//        j = 140;
-//        for(int i=27;i <= 37;i++){
-//            controller2Blocks[i] = j;
-//            j++;
-//        }
-//
-//        //controller3
-//        j=48;
-//        for(int i=0;i <= 12;i++){
-//            controller3Blocks[i] = j;
-//            j++;
-//        }
-//
-//        //controller4
-//        j=61;
-//        for(int i=0;i <= 12;i++){
-//            controller4Blocks[i] = j;
-//            j++;
-//        }
-//
-//        //controller5
-//        j=74;
-//        for(int i=0;i <= 6;i++){
-//            controller5Blocks[i] = j;
-//            j++;
-//        }
-//        controller5Blocks[7] = 101;
-//
-//        //controller6
-//        j=81;
-//        for(int i=0;i <= 19;i++){
-//            controller6Blocks[i] = j;
-//            j++;
-//        }
-//
-//        //controller7
-//        controller7Blocks[0] = 0;
-//
-//        //controller8
-//        j=102;
-//        for(int i=0;i <= 37;i++){
-//            controller8Blocks[i] = j;
-//            j++;
-//        }
-//        //
-//        try {
-//            // Create controllers from jurisdictions
-//            system.addWaysideController(controller1Blocks);
-//            system.addWaysideController(controller2Blocks);
-//            system.addWaysideController(controller3Blocks);
-//            system.addWaysideController(controller4Blocks);
-//            system.addWaysideController(controller5Blocks);
-//            system.addWaysideController(controller6Blocks);
-//            system.addWaysideController(controller7Blocks);
-//            system.addWaysideController(controller8Blocks);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String scheduleFilename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
-//
-//        // Add PLCs to controller
-//        try {
-//            system.addOutputWaysideController(12, "SwitchBlock12PLC");
-//            system.addOutputWaysideController(29, "SwitchBlock29PLC");
-//            system.addOutputWaysideController(58, "SwitchBlock58PLC");
-//            system.addOutputWaysideController(62, "SwitchBlock62PLC");
-//            system.addOutputWaysideController(76, "SwitchBlock76PLC");
-//            system.addOutputWaysideController(85, "SwitchBlock85PLC");
-//            system.addOutputWaysideController(0, "SwitchYardPLC");
-//            system.updateAllOutputsWaysideController();
-//        } catch(Exception e) {
-//            System.out.println(":(");
-//        }
 
-    }
+    /*
+            World Object: Train
+     */
 
+
+
+    /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
+     *  on new thread=]*/
     public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
-        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-         *  on new thread=]*/
     }
+
+
 
     /*
         World Time Methods
      */
+
+
+
     public void setWorldTime(double worldTimeInHours) {
         /** sets the current world time to a double of hours since midnight.
          *  effect is immediate, if clk is running then it will continue accumulating onto new time.
@@ -182,19 +75,19 @@ public class SimulationEnvironment extends Thread {
         clk.setWorldTime(worldTimeInHours);
     }
 
+
+
     /*
         Track Methods
     */
-    public void setTrack(Track newTrackSystem) {
-        /** sets the track system for the entire simulation environment, updates the CTC.
-         */
-        trackSystem = newTrackSystem;
-        ctc.setTrack(trackSystem);
-    }
 
-    public boolean importTrack(String trackCSVFilePath) {
-        /** attempts to build trackSystem from the given TrackCSVFilePath.
-         */
+
+
+
+
+    /** attempts to build trackSystem from the given TrackCSVFilePath.
+     */
+    public boolean importTrack(String trackCSVFilePath) throws Exception {
         Track newTrack = new Track();
         try {
             newTrack.importTrack(trackCSVFilePath);
@@ -203,6 +96,14 @@ public class SimulationEnvironment extends Thread {
         }
         setTrack(newTrack);
         return true;
+    }
+
+
+    /** sets the track system for the entire simulation environment, updates the CTC.
+     */
+    public void setTrack(Track newTrackSystem) throws Exception {
+        trackSystem = newTrackSystem;
+        ctc.updateTrack(trackSystem);
     }
 
 
@@ -232,26 +133,6 @@ public class SimulationEnvironment extends Thread {
         return newTrain;
     }
 
-
-//    public void placeRunningTrain(TrainUnit newTrain, TrackElement location) {
-//        /** places an already created, given train at a specific, already created TrackElement and DOES set it to running
-//         *  on new thread. Gives the TrainUnit an individual train index
-//         *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
-//         *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
-//         */
-//        placeTrain(newTrain,location);
-//        newTrain.start();
-//    }
-//
-//    public void placeTrain(TrainUnit newTrain, TrackElement location) {
-//        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-//         *  on new thread. Gives the TrainUnit an individual train index
-//         *  @before user has a TrainUnit Object and a TrackElement Object, TrainUnit does not exist within SE yet
-//         *  @after user's TrainUnit now exists within the SE, TrainUnit has been placed onto user's TrackElement
-//         */
-//        addTrain(newTrain);
-//        newTrain.placeOn(location);
-//    }
 
     /*
         GUI Spawning
@@ -293,22 +174,6 @@ public class SimulationEnvironment extends Thread {
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }
-
-    public void run() {
-        while(true) {
-            /*
-            Vector<WaysideSystem> ws = ctc.getWaysideSystems();
-            for (WaysideSystem system : ws) {
-                try {
-                    system.updateAllOutputsWaysideController();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-             */
-        }
-    }
-
     public WorldClock getClock() {return clk;}
     public void pauseTime() {clk.halt();}
     public void startTime() {clk.start();}

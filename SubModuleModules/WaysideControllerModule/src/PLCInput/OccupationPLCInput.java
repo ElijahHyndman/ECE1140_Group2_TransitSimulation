@@ -2,9 +2,11 @@ package PLCInput;
 
 import TrackConstruction.TrackElement;
 
+import java.io.Serializable;
+
 /** PLCInput type that monitors the occupation status of a TrackElement for use as a PLCInput.
  */
-public class OccupationPLCInput extends PLCInput {
+public class OccupationPLCInput extends PLCInput implements Serializable {
     /***********************************************************************************************************************/
     /** Enum
      */
@@ -63,7 +65,7 @@ public class OccupationPLCInput extends PLCInput {
 
     @Override
     public String toString() {
-        return String.format("Occupation Listener for Block#%d",target.getBlockNum());
+        return String.format("Occ Listener (Block:#%d), obj:%s",target.getBlockNum(),target);
     }
     @Override
     public boolean equals(Object o) {

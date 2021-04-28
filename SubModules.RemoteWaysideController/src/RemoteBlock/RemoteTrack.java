@@ -5,13 +5,14 @@ import TrackConstruction.SwitchInterfaceForWayside;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 /** we must determine the correct remote connection to provide based on the given block, this function ascertains that
  *
  */
-public class RemoteTrack extends TrackElement implements SwitchInterfaceForWayside {
+public class RemoteTrack extends TrackElement implements SwitchInterfaceForWayside, Serializable {
     /***********************************************************************************************************************/
     /** Members
      */
@@ -32,23 +33,21 @@ public class RemoteTrack extends TrackElement implements SwitchInterfaceForWaysi
     public static RemoteBlockStub getRemoteConnection(TrackElement targetBlock) throws Exception {
         int useAnyPortKey = 0;
 
-        if (targetBlock instanceof TrackBlock) {
-            RemoteBlockService service = new RemoteBlockService(targetBlock);
-            RemoteBlockStub stub = (RemoteBlockStub) UnicastRemoteObject.exportObject(service,useAnyPortKey);
-            System.out.printf("===Type:Block %s\n", stub.toString());
-            return stub;
-
-        } else if (targetBlock instanceof Switch) {
+        if (targetBlock instanceof Switch) {
             Switch sw = (Switch) targetBlock;
             RemoteSwitchService service = new RemoteSwitchService(sw);
             // using inheritance
             RemoteBlockStub stub = (RemoteSwitchStub) UnicastRemoteObject.exportObject(service,useAnyPortKey);
             System.out.printf("===Type:Switch %s\n", stub.toString());
             return stub;
+        } else {
+            RemoteBlockService service = new RemoteBlockService(targetBlock);
+            RemoteBlockStub stub = (RemoteBlockStub) UnicastRemoteObject.exportObject(service,useAnyPortKey);
+            System.out.printf("===Type:Block %s\n", stub.toString());
+            return stub;
+
         }
-        else {
-            throw new Exception(String.format("Tried to create remote stub for item (%s) but there is no stub defined for that type yet.",targetBlock));
-        }
+          //  throw new Exception(String.format("Tried to create remote stub for item (%s) but there is no stub defined for that type yet.",targetBlock));
     }
 
     public RemoteBlockStub getStub() {
@@ -166,6 +165,13 @@ public class RemoteTrack extends TrackElement implements SwitchInterfaceForWaysi
             return sw.getSwitchState();
         }
         return "Invalid response from remote switch";
+    }
+
+    @Override
+    public String toString() {
+        String str = super.toString();
+        str += " " +localTargetBlock.toString() + " -> " + stub.toString();
+        return str;
     }
 
 }

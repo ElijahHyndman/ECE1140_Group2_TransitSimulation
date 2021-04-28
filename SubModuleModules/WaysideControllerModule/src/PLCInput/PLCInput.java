@@ -1,12 +1,14 @@
 package PLCInput;
 
+import java.io.Serializable;
+
 /** allows PLCEngines to refer to generic inputs which can be specified elsewhere.
  *  This class is intended to be extended and overriden to define custom behavior for PLC input sources.
  *
  *  Using this class as-is lets you test the PLCEngine using generic true or false, but overriding the .evaluate() funciton allows you to devise your own custom sources for PLC Script boolean input gathering
  * @author elijah
  */
-public class PLCInput {
+public class PLCInput implements Serializable {
     /** Default Members
      */
     private final boolean DEFAULT_INITIAL_VALUE = false;

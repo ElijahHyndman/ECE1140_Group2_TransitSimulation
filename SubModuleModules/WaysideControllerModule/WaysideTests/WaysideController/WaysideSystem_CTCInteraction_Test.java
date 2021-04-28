@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -274,6 +275,10 @@ class WaysideSystem_CTCInteraction_Test {
     @Test
     @DisplayName("CTC can set Authorities for track system using WaysideSystem")
     void canSetAuthorities() throws Exception {
+        for (TrackElement block : section) {
+            block.setOccupied(false);
+        }
+
         int[] newAuth = new int[5];
         TrackElement block1 = section.get(0);
         TrackElement block2 = section.get(1);
@@ -300,6 +305,7 @@ class WaysideSystem_CTCInteraction_Test {
         newAuth[3] = 4;
         newAuth[4] = 5;
         sys.setAuthorities(newAuth);
+        try{TimeUnit.SECONDS.sleep(1);} catch (Exception e){}
         assertEquals(newAuth[0], block1.getAuthority());
         assertEquals(newAuth[1], block2.getAuthority());
         assertEquals(newAuth[2], block3.getAuthority());
@@ -369,6 +375,10 @@ class WaysideSystem_CTCInteraction_Test {
     @Test
     @DisplayName("CTC can use broadcast to controllers")
     void broadcast() throws Exception {
+        for (TrackElement block : section) {
+            block.setOccupied(false);
+        }
+
         double[] newSpeeds = new double[5];
         int[] newAuth = new int[5];
         TrackElement block1 = section.get(0);
