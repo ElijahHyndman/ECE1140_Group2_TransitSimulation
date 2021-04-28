@@ -20,7 +20,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testgetNextRedGreen() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         TrackElement cur = instance.getRedLine().get(3);
@@ -51,7 +51,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch0Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -77,7 +77,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch1Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -109,7 +109,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch2Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -147,7 +147,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch3Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -183,7 +183,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch4Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -217,7 +217,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch5Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -250,7 +250,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void switch6Red() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -283,7 +283,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextRedCircle() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -358,7 +358,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void importTrack() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         boolean expResult = true;
         boolean result = instance.importTrack(filepath);
@@ -371,7 +371,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getGreenLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         boolean expResult = true;
         instance.importTrack(filepath);
@@ -384,7 +384,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreenYardSwitch() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -491,7 +491,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testingSwitch() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -515,7 +515,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches11() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -552,7 +552,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches8() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -587,7 +587,7 @@ class TrackTest {
     void getNextGreenSwitches9() {
         //switch to yard
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -604,7 +604,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches7() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -638,7 +638,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreenSwitches12() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -674,7 +674,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreen() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -728,7 +728,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getRedLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getRedLine());
@@ -738,7 +738,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getBlock() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getBlock(0));
@@ -757,7 +757,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getBlockLine() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
        System.out.println(instance.getBlockLine(0, "Red"));
@@ -776,7 +776,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getTrackHeaterStatus() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
@@ -790,7 +790,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setEnvironmentalTemperature() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setEnvironmentalTemperature(20);
@@ -804,7 +804,7 @@ class TrackTest {
     void getBeacon() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         for(int i = 0; i<=150; i++) {
@@ -818,7 +818,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getSwitches() {
         System.out.println("get Switches");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         System.out.println(instance.getSwitches());
@@ -829,7 +829,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setFailure() {
         System.out.println("importTrack");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.setFailure(1,"Red",1);
@@ -867,7 +867,7 @@ class TrackTest {
         boolean expResult = false;
         boolean result = instance.validFile(filePath);
         assertEquals(expResult, result);
-        filePath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        filePath = "src/Track/RedGreenUpdated.csv";
         expResult = true;
         result = instance.validFile(filePath);
         assertEquals(expResult,result);
@@ -877,7 +877,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testDispatchYard(){
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -907,7 +907,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNext() {
         System.out.println("getNext");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -982,7 +982,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void updateTickets(){
         System.out.println("updateTickets");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         assertEquals(instance.updateTickets(),0);
@@ -1004,7 +1004,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setSwitch() {
         System.out.println("setSwitch");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -1074,7 +1074,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void setSwitchTest() {
         System.out.println("setSwitch");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -1098,7 +1098,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getStations() {
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         ArrayList<Station> test = instance.getStations();
@@ -1112,7 +1112,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testBeacons(){
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -1126,7 +1126,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void closeAndOpenTrack(){
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -1143,7 +1143,8 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testDisplaySwitch() {
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+       // String filepath ="C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
         instance.getSwitches().get(2).setSwitchState(true);
@@ -1158,7 +1159,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void blocksInSection() {
         System.out.println("getting blocks in track ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -1218,7 +1219,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void testingGUIUpdate() {
         System.out.println("Testing UI ");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
