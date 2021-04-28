@@ -26,6 +26,7 @@ public class TrackElement implements Serializable {
     double elevation;            //meters
     double cumulativeElevation;  //meters
     int currentDirection;
+    boolean lights;
 
     //for printing purposes
     String infrastructure;
@@ -217,4 +218,14 @@ public class TrackElement implements Serializable {
     public void setSwitchState(boolean switches) {}
 
     public int getDirectionStates(int index) { return 0;}
+
+    /*get railroad crossing*/
+    public boolean getLightRail() {return lights;}
+
+    /*public set railway crossing*/
+     public void setLightRail(boolean lit) {
+         lights = lit;
+     }
+
+
 }

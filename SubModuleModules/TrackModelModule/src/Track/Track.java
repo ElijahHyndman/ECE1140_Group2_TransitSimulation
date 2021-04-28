@@ -24,7 +24,7 @@ import java.util.Scanner;
         int SIZE_LINE_B=0;
         double environmentalTemperature;
         double totalTime;
-        String DISPATCHLINE = "Red";
+        String DISPATCH_LINE = "Red";
 
         //Creating Graphs for RED LINE and GREEN LINE
         ArrayList<TrackElement> redTrack;
@@ -231,9 +231,6 @@ import java.util.Scanner;
                     greenTrack.get(toA).setCurrentDirection(-2);
                     greenTrack.get(blockb).setCurrentDirection(1);
                     greenTrack.get(toB).setCurrentDirection(1);
-
-
-
                 }
             }
 
@@ -314,7 +311,6 @@ import java.util.Scanner;
             else if (previous.getDirection(1) == cur)
                 return redTrack.get(current.getDirection(1));
 
-
             return ret;
         }
 
@@ -379,87 +375,21 @@ import java.util.Scanner;
         /*dispatch line*/
         public void dispatchLine(int a){
             if(a == 0)
-                DISPATCHLINE = "Green";
+                DISPATCH_LINE = "Green";
             else if(a == 1)
-                DISPATCHLINE = "Red";
+                DISPATCH_LINE = "Red";
         }
 
         /*adding getNext */
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             TrackElement ret = null;
             if(current != null) {
-                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
+                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCH_LINE.equals("Green"))
                     ret = getNextGreen(current, previous);
-                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
+                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCH_LINE.equals("Red"))
                     ret = getNextRed(current, previous);
             }
 
-            /*
-            int cur = current.getBlockNum();
-
-
-           if(cur == 0){
-               if(switchesArrayList.get(10).getIndex()==true)
-                   return greenTrack.get(62);
-               else
-                   return null;
-           }
-
-
-            int prev = previous.getBlockNum();
-            char sectionPrev = previous.getSection();
-            char sectionCur = current.getSection();
-            TrackElement ret = null;
-
-            //dealing with the yard
-            /*
-             if(current.getCurrentDirection() == -1 && current.getDirectionStates(0) == -1){
-                return greenTrack.get(62); // This returns the YARD BLOCK when switch is on !!
-            }else if (current.getCurrentDirection() == -1)
-                return null;
-            */
-             //dealing with directionality
-
-            /*
-            if(current.getCurrentDirection() > 0) // switch is on
-                ret = greenTrack.get(current.getCurrentDirection());
-            else if(!current.getBiDirectional()) // one way track
-                   ret = greenTrack.get(current.getDirection(0));
-            else if(previous.getDirection(0) == cur) { // continue go in positive diretion
-                    if(current.getLine().equals("Green"))
-                        ret = greenTrack.get(current.getDirection(0));
-                    else
-                        ret = redTrack.get(current.getDirection(0));
-                }
-            else if(previous.getDirection(1) == cur){ // continue to go in negative direction
-                    if(current.getLine().equals("Green"))
-                         ret = greenTrack.get(current.getDirection(1));
-                    else
-                         ret = redTrack.get(current.getDirection(1));
-            }
-            else if(previous.getDirection(0) == 0)
-                ret = greenTrack.get(current.getDirection(0));
-
-
-            //Green Track Edge Cases -- Where Directions Change
-            if(prev == 100 && cur == 85){
-                ret = greenTrack.get(current.getDirection(1));
-                return ret;
-            }
-            if(prev == 150 && cur == 28){
-                ret = greenTrack.get(current.getDirection(1));
-            }
-            if(prev == 1 && cur == 13){
-                ret = greenTrack.get(current.getDirection(0));
-            }
-
-
-            //Checking if switch statuses are correct
-            if(current.getCurrentDirection() == -2 && current.getDirection(0) == 0) {
-                return null;
-            }
-
-        */
         return ret;
         }
 
@@ -492,8 +422,6 @@ import java.util.Scanner;
         public boolean getTrackHeaterStatus(){
             return TRACK_HEATER;
         }
-
-
         //updating tickets FOR THE CTC
         public int updateTickets(){
             int ticketTotal = 0;
@@ -508,7 +436,6 @@ import java.util.Scanner;
             //updating all ticketSales
             for(int i=0; i<stationsArrayList.size();i++)
                 stationsArrayList.get(i).setTicketSales();
-
         }
 
 
