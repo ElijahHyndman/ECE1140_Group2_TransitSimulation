@@ -437,6 +437,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWaysideServer/RemoteWaysideService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/WorldClock/WorldClockTesting/WorldClockTest.java">
           <value>
             <Attribute>

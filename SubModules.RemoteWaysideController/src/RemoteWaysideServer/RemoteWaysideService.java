@@ -1,11 +1,14 @@
 package RemoteWaysideServer;
 
+import PLCInput.PLCInput;
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 import WaysideGUI.WaysideSystemUI;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -59,8 +62,8 @@ public class RemoteWaysideService implements RemoteWaysideStub {
      */
     public RemoteWaysideService() {
         // Create WaysideController object
-        controller = new WaysideController("Remote Wayside Controller");
-        controller.setControllerName("Remote WaysideController");
+        controller = new WaysideController("Remote Wayside Controller Service");
+        //controller.setControllerAlias("Remote WaysideController Service");
     }
 
 
@@ -130,10 +133,146 @@ public class RemoteWaysideService implements RemoteWaysideStub {
         one.start();
     }
 
+    @Override
+    public void assignInputPool(ArrayList<PLCInput> inputs) throws RemoteException {
+        this.controller.assignInputPool(inputs);
+    }
+
+    @Override
+    public void setBlockSpeed(int targetBlockIndex, double newCommandedSpeed) throws RemoteException {
+        try {
+            this.controller.setBlockSpeed(targetBlockIndex, newCommandedSpeed);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws RemoteException {
+        try {
+            this.controller.setBlockAuthority(targetBlockIndex, newAuthority);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean getOccupancy(int targetBlockIndex) throws RemoteException {
+        try {
+            return this.controller.getOccupancy(targetBlockIndex);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        throw new RemoteException("Failure occurred on remote wayside controller to get block occupancy status");
+    }
+
+    @Override
+    public void setClose(int blockNumber) throws RemoteException {
+        try {
+            this.controller.setClose(blockNumber);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setOpen(int blockNumber) throws RemoteException {
+        try {
+            this.controller.setOpen(blockNumber);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean getIsClosed(int blockNumber) throws RemoteException {
+        try {
+            return this.controller.getIsClosed(blockNumber);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        throw new RemoteException("Failure occurred on remote wayside controller to get block closure status");
+    }
+
+    @Override
+    public boolean getSwitchStatus(int blockNumber) throws RemoteException {
+        try {
+            return this.controller.getSwitchStatus(blockNumber);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        throw new RemoteException("Failure occurred on remote wayside controller to get switch status");
+    }
+
+    @Override
+    public void setSwitchStatus(int blockNumber, boolean status) throws RemoteException {
+        try {
+            this.controller.setSwitchStatus(blockNumber, status);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setControllerAlias(String controllerAlias) throws RemoteException {
+        try {
+            this.controller.setControllerAlias(controllerAlias);
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getControllerAlias() throws RemoteException {
+        try {
+            return this.controller.getControllerAlias();
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        return "Failure to get remote Controller Alias";
+    }
+
+    @Override
+    public String getControllerName() throws RemoteException {
+        try {
+            return this.controller.getControllerName();
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        return "Failure to get remote Controller Name";
+    }
+
+    @Override
+    public ArrayList<TrackElement> getJurisdiction() throws RemoteException {
+        try {
+            return this.controller.getJurisdiction();
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        throw new RemoteException("Failure occurred on remote wayside controller to retrieve jurisdiction");
+    }
+
+    @Override
+    public String toMedString() throws RemoteException {
+        try {
+            return "Remote: " + this.controller.toMedString();
+        } catch (Exception controllerError) {
+            controllerError.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void start() throws RemoteException {
+        this.controller.start();
+    }
+
+
 
     /*
         Static Helper Functions
      */
+
 
 
     /** creates a vector which contains just the given wayside controller.
