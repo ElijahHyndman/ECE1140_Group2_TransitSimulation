@@ -1,5 +1,6 @@
 package TrackConstruction;
 import java.util.Random;
+/**AUTHOR:  Grace Henderson**/
 
 public class Station extends TrackElement{
     String station;
