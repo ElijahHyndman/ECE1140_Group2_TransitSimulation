@@ -1,13 +1,16 @@
 package CTCOffice;//Haleigh DeFoor
 
-import java.net.URISyntaxException;
-import java.util.*;
-import java.io.*;
-import java.time.*;
-import WaysideController.WaysideSystem;
-import SimulationEnvironment.*;
+import SimulationEnvironment.SimulationEnvironment;
+import SimulationEnvironment.TrainUnit;
 import Track.Track;
-import WorldClock.PhysicsUpdateListener;
+import WaysideController.WaysideSystem;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Vector;
 
 public class CTCOffice //implements PhysicsUpdateListener
 {
@@ -58,7 +61,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
         SEobj = new SimulationEnvironment();
         trackObj = new Track();
-        trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackObj.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\RedGreenUpdated.csv");
     }
 
     public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {

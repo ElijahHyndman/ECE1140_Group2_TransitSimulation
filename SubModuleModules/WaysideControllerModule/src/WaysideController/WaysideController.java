@@ -2,16 +2,17 @@ package WaysideController;
 
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
-import PLCInput.*;
-import PLCOutput.*;
+import PLCInput.PLCInput;
+import PLCOutput.AuthorityPLCOutput;
+import PLCOutput.PLCOutput;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
-
-import static java.lang.String.valueOf;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 /** module class that uses boolean logic to dictate Track System controls. 
  * @author Harsh
@@ -257,7 +258,7 @@ public class WaysideController extends Thread implements Serializable {
         AuthorityPLCOutput haltAuthorityOutput = new AuthorityPLCOutput(element, AuthorityPLCOutput.AuthOutRule.HaltWhenTrue);
         PLCEngine collisionAvoidance = new PLCEngine(PLCScript, haltAuthorityOutput);
         // Debug
-        System.out.printf(".");
+        //System.out.printf(".");
         return collisionAvoidance;
     }
 
