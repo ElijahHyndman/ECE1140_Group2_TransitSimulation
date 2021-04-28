@@ -1,6 +1,7 @@
 package PLCOutput;
 
 import TrackConstruction.Switch;
+import TrackConstruction.SwitchInterfaceForWayside;
 
 /** defines behavior of using PLCOutput to determine a Track Switch's orientation
  * Note about definitions:
@@ -35,22 +36,22 @@ public class SwitchPLCOutput extends PLCOutput {
      * @member applicationRule, SwitchRule  the method we use to map a PLC boolean output of (true, false) to a switch orientation of (Default, Secondary)
      * @member orientation, ORI     the current orientatino of the switch. This variable is updated manually as the switch is manipulated, so there may be discrepancy between this representation and the real orientation if something goes wrong
      */
-    private Switch target;
+    private SwitchInterfaceForWayside target;
     private SwitchRule applicationRule = DEFAULT_SWITCH_RULE;
     private ORI orientation = DEFAULT_INITIAL_ORIENTATION;
     private boolean switchIsManuallyOverriden = false;
     /***********************************************************************************************************************/
-    public SwitchPLCOutput (Switch targetSwitch) {
+    public SwitchPLCOutput (SwitchInterfaceForWayside targetSwitch) {
         this.target = targetSwitch;
         this.variableName = String.format(DEFAULT_VAR_FORMAT,target.getBlockNum());
         orientation = (targetSwitch.getSwitchState().equals("DEFAULT")) ? ORI.DEFAULT : ORI.SECONDARY;
     }
-    public SwitchPLCOutput (String varName, Switch targetSwitch) {
+    public SwitchPLCOutput (String varName, SwitchInterfaceForWayside targetSwitch) {
         this.variableName = varName;
         this.target = targetSwitch;
         orientation = (targetSwitch.getSwitchState().equals("DEFAULT")) ? ORI.DEFAULT : ORI.SECONDARY;
     }
-    public SwitchPLCOutput (String varName, Switch targetSwitch, SwitchRule rule) {
+    public SwitchPLCOutput (String varName, SwitchInterfaceForWayside targetSwitch, SwitchRule rule) {
         this.variableName = varName;
         this.target = targetSwitch;
         this.applicationRule = rule;

@@ -48,7 +48,7 @@ public interface RemoteWaysideStub extends Remote {
     public String getControllerAlias() throws RemoteException;
     public String getControllerName() throws RemoteException;
     public ArrayList<TrackElement> getJurisdiction() throws RemoteException;
-    public String toString() throws RemoteException;
+    public String toString();
     public String toMedString() throws RemoteException;
     public void start() throws RemoteException;
 }

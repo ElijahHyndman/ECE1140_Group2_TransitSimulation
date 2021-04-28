@@ -374,6 +374,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteBlock/RemoteBlockServiceTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteBlock/RemoteTrackTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteConnection/RemoteWaysideControllerTest.java">
           <value>
             <Attribute>
@@ -389,6 +403,48 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteWayside/RemoteWaysideServiceTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/RemoteWaysideTests/RemoteWaysideServer/RemoteWaysideServiceTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteBlock/RemoteBlockService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteBlock/RemoteBlockStub.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteBlock/RemoteSwitchService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteBlock/RemoteSwitchStub.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteBlock/RemoteTrack.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -438,6 +494,13 @@
           </value>
         </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteWaysideServer/RemoteWaysideService.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/TrackConstructionClasses/src/TrackConstruction/Switch.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

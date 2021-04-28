@@ -1,6 +1,6 @@
 package TrackConstruction;
 
-public class Switch extends TrackElement{
+public class Switch extends TrackElement implements SwitchInterfaceForWayside{
     /**
      * Switch: The switch is a junction between three track objects.
      *  Switches can be visualized as a Y. There are always three track objects connected to a switch.
@@ -126,5 +126,9 @@ public class Switch extends TrackElement{
     }
     public String totoString() {
         return String.format("Block Num: "+ blockNum +"\n Line: "+ line + "\n Length: "+ length + "\n Grade: " + grade + "\n speedLimit " + speedLimit + "\n elevation " + elevation + "\n cumulativeElevation " + cumulativeElevation + "\n section: " + section + "\n infrastructure: " + infrastructure + "\n Occupied: " + occupied + "\n Status: "+ failureStatus + " \n Block Direction: " + directionArray[0] + " " + directionArray[1] + " " + directionArray[2]);
+    }
+
+    public int getBlockNumb() {
+        return super.getBlockNum();
     }
 }
