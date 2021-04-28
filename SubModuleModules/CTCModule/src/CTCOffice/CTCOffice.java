@@ -247,7 +247,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
         route = calcRoute(blockNum, lineCol, trainNum);
 
-        routeLength = calcRouteLength(blockNum, lineCol, trainNum);
+        routeLength = calcRouteLength(route, lineCol);
 
         speed = routeLength/1000/temp;
 
@@ -534,128 +534,21 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public int calcRouteLength(int bn, String lc, int tnum)
+    public int calcRouteLength(double[] routeAr, String lineCol)
     {
-        int rl;
-        if(bn==10 && lc.equals("Blue"))
-            rl = 10*50;
-        else if(bn==15 && lc.equals("Blue"))
-            rl = 10*50;
-        else if (bn==65 && lc.equals("Green")){ //Glenbury
-            if (positions[tnum-1]>=65 && positions[tnum-1]<114)
-            {
-                rl = 9554;
-            }
-            else {
-                rl = 400;
-            }
-        }
-        else if(bn==73 && lc.equals("Green")){ //Dormont
-            if (positions[tnum-1]>=73 && positions[tnum-1]<105)
-            {
-                rl = 8602;
-            }
-            else {
-                rl = 1300;
-            }
-        }
-        else if (bn==77 && lc.equals("Green")){ //Mt Lebanon
-            if (positions[tnum-1] == 88 || positions[tnum-1] == 96)
-            {
-                rl = 8187;
-            }
-            else {
-                rl = 1900;
-            }
-        }
-        else if(bn==88 && lc.equals("Green")){//Poplar
-            rl = 4587;
-        }
-        else if(bn==96 && lc.equals("Green")){//Castle Shannon
-            rl = 5187;
-        }
-        else if(bn==57 && lc.equals("Green")){//Overbrook
-            if(!(positions[tnum-1]>=62 && positions[tnum-1]<123)) {
-                rl = 19803;
-            }
-            else{
-                rl = 10094;
-            }
-        }
-        else if(bn==48 && lc.equals("Green"))//Inglewood
-        {
-            if(!(positions[tnum-1]>=62 && positions[tnum-1]<132)) {
-                rl = 19353;
-            }
-            else{
-                rl = 10544;
-            }
-        }
-        else if(bn==39 && lc.equals("Green"))//Central
-        {
-            if(!(positions[tnum-1]>=62 && positions[tnum-1]<141)) {
-                rl = 18903;
-            }
-            else{
-                rl = 10994;
-            }
-        }
-        else if(bn==31 && lc.equals("Green")){//South Bank
-            rl = 18503;
-        }
-        else if(bn==22 && lc.equals("Green")){//Whited
-            if (positions[tnum-1]<22)
-            {
-                rl = 17353;
-            }
-            else{
-                rl= 12853;
-            }
-        }
-        else if (bn==16 && lc.equals("Green")){ //Station
-            if (positions[tnum-1]<16)
-            {
-                rl = 16153;
-            }
-            else{
-                rl = 13903;
-            }
-        }
-        else if (bn==9 && lc.equals("Green")){//Edgebrook
-            rl = 14753;
-        }
-        else if (bn==2 && lc.equals("Green")) {//Pioneer
-            rl = 15453;
-        }
-        if (bn==7 && lc.equals("Red")){//Shadyside
-            rl = 225-50;
-        }
-        if(bn==16 && lc.equals("Red")){//Herron Ave
-            rl= 350+225-50;
-        }
-        if (bn==21 && lc.equals("Red")) {//Swissville
-            rl = 1300+350+225-50;
-        }
-        if (bn == 25 && lc.equals("Red")){//Penn Station
-            rl = 300+1300+350+225-50;
-        }
-        if (bn==35 && lc.equals("Red")) {//Steel Plaza
-            rl = 520+300+1300+350+225-50;
-        }
-        if (bn==45 && lc.equals("Red")) {//First Ave
-            rl = 520+520+300+1300+350+225-50;
-        }
-        if (bn==48 && lc.equals("Red")) {//Station Square
-            rl = 225+520+520+300+1300+350+225-50;
-        }
-        if (bn==60 &&lc.equals("Red")) {//South Hills Junction
-            rl = 743+225+520+520+300+1300+350+225-50;
-        }
-        else
-            rl = 0;
+        int routeLength=0;
+        for(int i=0; i<routeAr.length; i++){
 
-        rl+=50;
-        return rl;
+            if(routeAr[i] == 1){
+                if(lineCol.equals("Green"))
+                routeLength += trackObj.getGreenLine().get(i).getLength();
+                else
+                    routeLength += trackObj.getRedLine().get(i).getLength();
+            }
+
+        }
+        return routeLength;
+
     }
 
     /*GIH6 adding back to yard*/
