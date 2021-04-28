@@ -91,7 +91,7 @@ public class RemoteConnection {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         WaysideController localController = new WaysideController(new ArrayList<TrackElement>(),"Local Controller");
         RemoteWaysideStub remoteWaysideController = null;

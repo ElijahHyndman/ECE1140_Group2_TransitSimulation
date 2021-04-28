@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -166,13 +167,14 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         jLabel23 = new javax.swing.JLabel();
         passengerTest = new javax.swing.JTextField();
         jTestBlue = new javax.swing.JButton();
-        lengthTraveled = new javax.swing.JTextField();
+       lengthTraveled = new javax.swing.JTextField();
+        updateTix = new javax.swing.JButton();
 
         jScrollPane9.setViewportView(jEditorPane1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        loadTrack.setText("Input Track");
+        loadTrack.setText("Input Track:");
         loadTrack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 loadTrack(evt);
@@ -261,7 +263,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel2.setText("Input Track");
 
-        jTextField1.setText("Input File");
+        jTextField1.setText("Input File:  C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
 
         Submit.setText("Submit");
         Submit.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -330,7 +332,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel24.setText("Update Temp:");
 
-        greenTrack.setText("greenLine");
+        greenTrack.setText("");
         greenTrack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 greenTrackMouseClicked(evt);
@@ -578,7 +580,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel9.setText("CHANGE BLOCK INFO / SET FAILURES:");
 
-        jButton10.setText("LOAD TEST TRACK (RED / GREEN)");
+        //WANT TO CHANGE THIS TO SET AUTHORITY AND SPEED TO TRAIN DISMOUNTING TO DORMONT
+        jButton10.setText("Run Train on Red Line");
         jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton10MouseClicked(evt);
@@ -633,15 +636,31 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         passengerTest.setText("-1");
 
-        jTestBlue.setText("LOAD TEST TRACK (BLUE)");
+        //Changing to Running Train on Track
+        jTestBlue.setText("Run Train On Green Track");
         jTestBlue.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTestBlueMouseClicked(evt);
+                try {
+                    jTestBlueMouseClicked(evt);
+                    runTrain runT = new runTrain(trackList);
+                    runT.start();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
-        lengthTraveled.setText("Length Traveled");
 
+
+
+        lengthTraveled.setText("UpdateTickets");
+
+        updateTix.setText("Update Tickets");
+        updateTix.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateTixActionPerformed(evt);
+            }
+        });
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -697,6 +716,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                                                                 .addComponent(switchTest, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel7Layout.createSequentialGroup()
                                                                 .addGap(111, 111, 111)
+                                                                .addComponent(updateTix, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                 .addComponent(lengthTraveled, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel7Layout.createSequentialGroup()
@@ -771,7 +791,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(15, 15, 15)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(failStatusTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel18))
+                                        .addComponent(jLabel18)
+                                        .addComponent(updateTix))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
@@ -953,6 +974,11 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         timer.start();
     }
 
+
+    public void testRuns(){
+        runTrain runT = new runTrain(trackList);
+        runT.start();
+    }
     /*Button for signals / signals / Beacons */
 
     private void signal(java.awt.event.MouseEvent evt) {
@@ -1081,19 +1107,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     /*Load Test Track File */
     private void jButton10MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-        Track test = new Track();
-        if(test.validFile("C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv")){ // C:\Users\grhen\OneDrive\Documents\Test.csv"
-            JOptionPane.showMessageDialog(null, "Loading Test Red Track");
-
-
-            if(test.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv")) {
-                trackList = test;
-                JOptionPane.showMessageDialog(null, "Track Successfully Loaded");
-            }
-            else
-                JOptionPane.showMessageDialog(null, "ERROR: Track not loaded");
-        }
-
+        runTrainRed runT = new runTrainRed(trackList);
+        runT.start();
 
 
     }
@@ -1112,7 +1127,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         String switchT = switchTest.getText().trim();
         String passengerT = passengerTest.getText().trim();
         String failStatusT = failStatusTest.getText().trim();
-        String lengthT = lengthTraveled.getText().trim();
+      //  String lengthT = lengthTraveled.getText().trim();
 
         //Parsing info into different areas to test functionality
         int bN=0;
@@ -1167,42 +1182,44 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 if(!switchT.equals("Change Switch")){
                     switches = Integer.parseInt(switchT);
-                    temp.setSwitchState(switches);
+                    if(switches == 0)
+                        temp.setSwitchState(false);
+                    else
+                    temp.setSwitchState(true);
                 }
 
-                if(!lengthT.equals("Length Traveled")){
-                    LenT = Double.parseDouble(lengthT);
+               // if(!lengthT.equals("Length Traveled")){
+                 //   LenT = Double.parseDouble(lengthT);
                     //  trackList.setTrainsLength(LenT);
                     //   JOptionPane.showMessageDialog(null, "NOW : " + trackList.getTrainsLength() + " AND " + trackList.getBlocksLength());
-                }
+              // }
 
             }
         }
 
     }
 
-
-
-    private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) {
+    private void updateTixActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        Track test = new Track();
-        if(test.validFile("C:\\Users\\grhen\\OneDrive\\Documents\\BlueLine.csv")){ // C:\Users\grhen\OneDrive\Documents\Test.csv"
-            JOptionPane.showMessageDialog(null, "Loading Test Red Track");
+        trackList.increaseTickets();
 
-
-            if(test.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\BlueLine.csv")) {
-                trackList = test;
-                JOptionPane.showMessageDialog(null, "Track Successfully Loaded");
-            }
-            else
-                JOptionPane.showMessageDialog(null, "ERROR: Track not loaded");
-        }
     }
+
+    private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) throws InterruptedException {
+        // TODO add your handling code here:
+        testRuns();
+
+    }
+
+
+
 
     //ADDING ONLY GREEN LINE SHOWING
     private void greenTrackMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-       GREENDISP = 1;
+
+        runTrain runT = new runTrain(trackList);
+        runT.start();
     }
 
     private void viewGreenTrack(){
@@ -1347,6 +1364,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JTextField speedTest;
     private javax.swing.JTextField switchTest;
     private javax.swing.JButton updateTest;
+    private javax.swing.JButton updateTix;
     // End of variables declaration
 }
 

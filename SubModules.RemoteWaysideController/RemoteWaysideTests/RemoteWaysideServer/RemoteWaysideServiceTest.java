@@ -62,7 +62,7 @@ class RemoteWaysideServiceTest {
 
     @Test
     @DisplayName("WaysideController\t\t[Remote Wayside Controller can be cast using a local controller with fake blocks]")
-    public void controllerCanBeCast() throws RemoteException {
+    public void controllerCanBeCast() throws Exception {
         // Create casting controller
         ArrayList<TrackElement> fakeBlocks = new ArrayList<TrackElement>();
         int numBlocks = 5;

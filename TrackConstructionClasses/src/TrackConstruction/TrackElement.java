@@ -1,5 +1,5 @@
 package TrackConstruction;
-
+/**Author Grace Henderson **/
 public class TrackElement {
     /**
      * Track Element: This defines an interface which every object that exists on a track will implement.
@@ -210,8 +210,8 @@ public class TrackElement {
     /*get failure status*/
     public String getFailureStatus(){ return this.failureStatus;}
 
-    /*get swithc state*/
-    public void setSwitchState(int switches) {}
+    /*get switch state*/
+    public void setSwitchState(boolean switches) {}
 
     public int getDirectionStates(int index) { return 0;}
 }
