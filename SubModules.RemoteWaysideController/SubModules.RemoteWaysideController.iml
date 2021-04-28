@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="SubModules.WaysideControllerModule" />
     <orderEntry type="module" module-name="GraphicUserInterfaces" />
     <orderEntry type="module" module-name="TrackConstructionClasses" />
+    <orderEntry type="module" module-name="WorldClock" />
   </component>
 </module>

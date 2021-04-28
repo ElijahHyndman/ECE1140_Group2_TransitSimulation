@@ -33,7 +33,10 @@ public class AuthorityPLCOutput extends PLCOutput {
 
     public void haltBlock(TrackElement target) {
         isHalted = true;
-        rememberedAuthority = target.getAuthority();
+        int currentAuth = target.getAuthority();
+        if (currentAuth != 0) {
+            rememberedAuthority = target.getAuthority();
+        }
         target.applyAuthorityToBlock(0);
     }
     public void releaseHalt(TrackElement target) {

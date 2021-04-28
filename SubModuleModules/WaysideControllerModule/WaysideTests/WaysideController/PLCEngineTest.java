@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author elijah
  */
-class Elijah_PLCEngineTest {
+class PLCEngineTest {
     PLCEngine engine;
 
     /*
