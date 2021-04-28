@@ -1,6 +1,8 @@
 package TrackConstruction;
 
-public class Switch extends TrackElement implements SwitchInterfaceForWayside{
+import java.io.Serializable;
+
+public class Switch extends TrackElement implements SwitchInterfaceForWayside, Serializable {
 
     /**
      * Switch: The switch is a junction between three track objects.
