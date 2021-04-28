@@ -373,8 +373,9 @@ public class WaysideController extends Thread implements Serializable {
         // no checks are performed on authority value
         for (TrackElement block : jurisdiction) {
             // only if it is found...
-            if(block.getBlockNum() == targetBlockIndex)
+            if(block.getBlockNum() == targetBlockIndex) {
                 applyAuthorityToBlock(block, newAuthority);
+            }
         }
     }
 

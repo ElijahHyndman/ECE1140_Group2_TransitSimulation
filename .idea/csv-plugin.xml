@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/Application/src/TestingIntegration.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home/lib/src.zip!/java.desktop/java/awt/Container.java">
           <value>
             <Attribute>

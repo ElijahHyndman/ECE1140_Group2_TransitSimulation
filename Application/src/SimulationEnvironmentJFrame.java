@@ -439,7 +439,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         // TODO add your handling code here:
     }
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
         boolean success = SE.importTrack(getPathString());
         if (success) {
