@@ -207,7 +207,7 @@ public class TrackElement {
     public String getFailureStatus(){ return this.failureStatus;}
 
     /*get switch state*/
-    public void setSwitchState(int switches) {}
+    public void setSwitchState(boolean switches) {}
 
     public int getDirectionStates(int index) { return 0;}
 }

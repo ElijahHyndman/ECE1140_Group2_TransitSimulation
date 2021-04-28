@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -173,7 +174,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        loadTrack.setText("Input Track");
+        loadTrack.setText("Input Track:");
         loadTrack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 loadTrack(evt);
@@ -262,7 +263,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel2.setText("Input Track");
 
-        jTextField1.setText("Input File");
+        jTextField1.setText("Input File:  C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
 
         Submit.setText("Submit");
         Submit.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -331,7 +332,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel24.setText("Update Temp:");
 
-        greenTrack.setText("greenLine");
+        greenTrack.setText("");
         greenTrack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 greenTrackMouseClicked(evt);
@@ -579,7 +580,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel9.setText("CHANGE BLOCK INFO / SET FAILURES:");
 
-        jButton10.setText("LOAD TEST TRACK (RED / GREEN)");
+        //WANT TO CHANGE THIS TO SET AUTHORITY AND SPEED TO TRAIN DISMOUNTING TO DORMONT
+        jButton10.setText("Run Train on Red Line");
         jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton10MouseClicked(evt);
@@ -634,12 +636,22 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
         passengerTest.setText("-1");
 
-        jTestBlue.setText("LOAD TEST TRACK (BLUE)");
+        //Changing to Running Train on Track
+        jTestBlue.setText("Run Train On Green Track");
         jTestBlue.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTestBlueMouseClicked(evt);
+                try {
+                    jTestBlueMouseClicked(evt);
+                    runTrain runT = new runTrain(trackList);
+                    runT.start();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+
+
 
         lengthTraveled.setText("UpdateTickets");
 
@@ -962,6 +974,11 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         timer.start();
     }
 
+
+    public void testRuns(){
+        runTrain runT = new runTrain(trackList);
+        runT.start();
+    }
     /*Button for signals / signals / Beacons */
 
     private void signal(java.awt.event.MouseEvent evt) {
@@ -1090,19 +1107,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     /*Load Test Track File */
     private void jButton10MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-        Track test = new Track();
-        if(test.validFile("C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv")){ // C:\Users\grhen\OneDrive\Documents\Test.csv"
-            JOptionPane.showMessageDialog(null, "Loading Test Red Track");
-
-
-            if(test.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\Test.csv")) {
-                trackList = test;
-                JOptionPane.showMessageDialog(null, "Track Successfully Loaded");
-            }
-            else
-                JOptionPane.showMessageDialog(null, "ERROR: Track not loaded");
-        }
-
+        runTrainRed runT = new runTrainRed(trackList);
+        runT.start();
 
 
     }
@@ -1176,7 +1182,10 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 if(!switchT.equals("Change Switch")){
                     switches = Integer.parseInt(switchT);
-                    temp.setSwitchState(switches);
+                    if(switches == 0)
+                        temp.setSwitchState(false);
+                    else
+                    temp.setSwitchState(true);
                 }
 
                // if(!lengthT.equals("Length Traveled")){
@@ -1196,26 +1205,21 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
     }
 
-    private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) {
+    private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) throws InterruptedException {
         // TODO add your handling code here:
-        Track test = new Track();
-        if(test.validFile("C:\\Users\\grhen\\OneDrive\\Documents\\BlueLine.csv")){ // C:\Users\grhen\OneDrive\Documents\Test.csv"
-            JOptionPane.showMessageDialog(null, "Loading Test Red Track");
+        testRuns();
 
-
-            if(test.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\BlueLine.csv")) {
-                trackList = test;
-                JOptionPane.showMessageDialog(null, "Track Successfully Loaded");
-            }
-            else
-                JOptionPane.showMessageDialog(null, "ERROR: Track not loaded");
-        }
     }
+
+
+
 
     //ADDING ONLY GREEN LINE SHOWING
     private void greenTrackMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-       GREENDISP = 1;
+
+        runTrain runT = new runTrain(trackList);
+        runT.start();
     }
 
     private void viewGreenTrack(){

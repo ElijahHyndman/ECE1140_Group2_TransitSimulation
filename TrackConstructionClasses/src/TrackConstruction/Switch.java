@@ -113,8 +113,13 @@ public class Switch extends TrackElement{
 
     /*get Siwtch State()*/
     public String getSwitchState() {
+
         int ind = (INDEX) ? 1 : 0;
-        return this.switches[ind];}
+        if(ind < switches.length)
+            return this.switches[ind];
+        else
+            return "FROM YARD Yard-63";
+    }
 
     /*get Occupied*/
     @Override
