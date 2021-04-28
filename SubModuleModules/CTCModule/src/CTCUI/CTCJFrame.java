@@ -972,10 +972,14 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         destination = String.valueOf(jComboBox2.getSelectedItem());
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
+        if (destination.equals("Yard")){
+            display.GiveColor(color);
+        }
+
         Object[] speedAuthority = new Object[3];
         DisplayLine dispatch = new DisplayLine();
 
-        speedAuthority = dispatch.Dispatch(destination, train, timeD);
+        speedAuthority = display.Dispatch(destination, train, timeD);
 
         line = color;
 
@@ -1039,10 +1043,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         }
 
         dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
-
-        if (destination.equals("Yard")){
-            checkColor(color);
-        }
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
         jTextField3.setText(String.valueOf(speedAuthority[1]));
