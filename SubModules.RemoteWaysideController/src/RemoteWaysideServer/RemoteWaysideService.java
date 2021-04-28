@@ -1,6 +1,7 @@
 package RemoteWaysideServer;
 
 import PLCInput.PLCInput;
+import RemoteBlock.RemoteBlockStub;
 import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
@@ -243,6 +244,11 @@ public class RemoteWaysideService implements RemoteWaysideStub {
     }
 
     @Override
+    public void setControllerName(String name) throws RemoteException {
+        this.controller.setControllerName(name);
+    }
+
+    @Override
     public ArrayList<TrackElement> getJurisdiction() throws RemoteException {
         try {
             return this.controller.getJurisdiction();
@@ -265,6 +271,16 @@ public class RemoteWaysideService implements RemoteWaysideStub {
     @Override
     public void start() throws RemoteException {
         this.controller.start();
+    }
+
+    @Override
+    public void overseeBlock(TrackElement remoteBlock) throws Exception {
+        this.controller.overseeBlock(remoteBlock);
+    }
+
+    @Override
+    public void giveInput(PLCInput input) throws RemoteException {
+        this.controller.giveInput(input);
     }
 
 

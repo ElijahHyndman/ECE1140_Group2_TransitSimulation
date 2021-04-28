@@ -4,6 +4,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.io.*;
 import java.time.*;
+
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
@@ -53,27 +55,27 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public CTCOffice()
     {
-
-        waysides = GenerateWaysideSystems(trackObj);
-
-        SEobj = new SimulationEnvironment();
         trackObj = new Track();
-        trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+    }
+
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
+    {
+        waysides = GenerateWaysideSystems(SEtrack);
+        trackObj = SEtrack;
+        SEobj = SE;
     }
 
     public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
+        // If track system doesn't exist yet
         if (trackSystem == null) {
             return new ArrayList<WaysideSystem>();
         }
 
-
+        // Generate wayside if not
         ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
         WaysideSystem greenWS = null;
         WaysideSystem redWS = null;
 
-        if (trackSystem == null) {
-            return new ArrayList<WaysideSystem>();
-        }
         try {
             greenWS = new  WaysideSystem(trackSystem.getGreenLine(),"Green");
         } catch (Exception failedToGetGreenLineFromTrack) {
@@ -91,11 +93,29 @@ public class CTCOffice //implements PhysicsUpdateListener
         return generatedWaysides;
     }
 
-    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
-    {
-        waysides = GenerateWaysideSystems(SEtrack);
-        trackObj = SEtrack;
-        SEobj = SE;
+    public void updateTrack(Track trackSystem) throws Exception {
+        // Assert: We will only be using red and green track lines from track
+        ArrayList<TrackElement> redLine;
+        ArrayList<TrackElement> greenLine;
+        try {
+            greenLine = trackSystem.getGreenLine();
+            WaysideSystem greenWS = new WaysideSystem(greenLine, "Green");
+            waysides.add(greenWS);
+        } catch (Exception greenLineGenerationError) {
+            greenLineGenerationError.printStackTrace();
+        }
+        try {
+            redLine = trackSystem.getRedLine();
+            WaysideSystem redWS = new WaysideSystem(redLine,"Red");
+            waysides.add(redWS);
+        } catch (Exception redLineGenerationError) {
+            redLineGenerationError.printStackTrace();
+        }
+        this.trackObj = trackSystem;
+    }
+
+    public void setSE(SimulationEnvironment SE) {
+        this.SEobj = SE;
     }
 
     public ArrayList<WaysideSystem> getWaysideSystem()

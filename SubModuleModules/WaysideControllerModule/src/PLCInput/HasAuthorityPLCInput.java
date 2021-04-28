@@ -3,10 +3,12 @@ package PLCInput;
 import PLCOutput.AuthorityPLCOutput;
 import TrackConstruction.TrackElement;
 
+import java.io.Serializable;
+
 /** defines behavior of using a block's authority as input for PLC
  * @author elijah
  */
-public class HasAuthorityPLCInput extends PLCInput {
+public class HasAuthorityPLCInput extends PLCInput implements Serializable {
     /***********************************************************************************************************************/
     /** Enum
      */
@@ -75,7 +77,7 @@ public class HasAuthorityPLCInput extends PLCInput {
 
     @Override
     public String toString() {
-        return String.format("Authority Listener for Block#%d",target.getBlockNum());
+        return String.format("Auth Listener (Block:#%d), obj:%s",target.getBlockNum(),target);
     }
     @Override
     public boolean equals(Object o) {
