@@ -55,6 +55,9 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public CTCOffice()
     {
+
+        waysides = GenerateWaysideSystems(trackObj);
+        SEobj = new SimulationEnvironment();
         trackObj = new Track();
     }
 
@@ -584,7 +587,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public int calcRouteLength(double[] routeAr, String lineCol)
+    public int calcRouteLength(int[] routeAr, String lineCol)
     {
         int routeLength=0;
         for(int i=0; i<routeAr.length; i++){
@@ -628,8 +631,8 @@ public class CTCOffice //implements PhysicsUpdateListener
         int[] newGreenLine = greenPathNY;
         int flag=0;
         int flag2 =0;
-        int beacon = end-2;
-        int beacon2=0;
+        int beacon2 =0;
+
         for(int i = 0; i < 180; i++){
             if(newGreenLine[i] != start && flag == 0) {
                 newGreenLine[i] = 0;
@@ -637,8 +640,11 @@ public class CTCOffice //implements PhysicsUpdateListener
             if(newGreenLine[i] == start) {
                 flag = 1;
             }
-            else if(flag == 1 && newGreenLine[i] == end-1) {
+            else if(flag == 1 && newGreenLine[i] == end) {
+                if(flag2 != 1)
+                    beacon2 = newGreenLine[i-2];
                 flag2=1;
+
             }
             else if(flag2 == 1) {
                 newGreenLine[i] = 0;
