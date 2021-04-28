@@ -1,5 +1,5 @@
 package TrackConstruction;
-
+/** Author Grace Henderson **/
 public class Switch extends TrackElement{
     /**
      * Switch: The switch is a junction between three track objects.
