@@ -822,7 +822,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public int getTickets()
     {
-        int tix = Track.updateTix();
+        int tix = trackObj.updateTickets();
         return tix;
     }
 

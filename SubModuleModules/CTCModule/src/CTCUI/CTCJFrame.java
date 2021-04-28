@@ -1060,7 +1060,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         {
             model.addRow(new Object[] {displist.get(i).getLine(),displist.get(i).getSection(),displist.get(i).getBlockNumber(), displist.get(i).getInfrastructure(),displist.get(i).getT1(),displist.get(i).getT2(),displist.get(i).getT3(),displist.get(i).getT4(),displist.get(i).getT5(),displist.get(i).getT6(),displist.get(i).getT7(),displist.get(i).getT8(),displist.get(i).getT9(),displist.get(i).getT10()});
         }
-
+        /*
         for (int i = 0; i<displist.size(); i++){
             if (displist.get(i).getT1()!=null){
                 String dest = displist.get(i).getInfrastructure();
@@ -1122,7 +1122,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 String time = displist.get(i).getT10();
                 display.AutoDispatch(dest, trainNum, time);
             }
-        }
+        }*/
         color = displist.get(0).getLine();
     }
 
