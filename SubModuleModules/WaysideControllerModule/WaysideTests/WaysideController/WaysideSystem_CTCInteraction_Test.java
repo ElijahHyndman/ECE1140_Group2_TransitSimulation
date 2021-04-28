@@ -23,6 +23,7 @@ class WaysideSystem_CTCInteraction_Test {
     ArrayList<TrackElement> section = new ArrayList<>();
     int nBlocks = 5;
     double speedLimit = 25.0;
+    int[] defaultdir = {1,2,3};
 
     // Controllers
     WaysideSystem sys;
@@ -32,7 +33,7 @@ class WaysideSystem_CTCInteraction_Test {
     }
 
     @BeforeEach
-    public void setup() throws IOException, URISyntaxException {
+    public void setup() throws Exception {
         for (int i =0; i<nBlocks; i++) {
             TrackBlock newblock = new TrackBlock();
             newblock.setBlockNum(i+1);
@@ -41,6 +42,7 @@ class WaysideSystem_CTCInteraction_Test {
             newblock.setSpeedLimit( (int) speedLimit);
             newblock.setOccupied(true);
             newblock.setFailureStatus(0);
+            newblock.setDirection(defaultdir);
             section.add(newblock);
         }
         sys = new WaysideSystem(section,"TestingSection");

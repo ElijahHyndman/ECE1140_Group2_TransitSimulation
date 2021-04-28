@@ -51,14 +51,14 @@ public class WaysideSystem {
     public WaysideSystem(String trackSectionName) throws IOException {
         this.trackSectionName = trackSectionName;
     }
-    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName, int numberControllers) throws IOException, URISyntaxException {
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName, int numberControllers) throws Exception {
         this.trackSectionName = trackSectionName;
         this.trackLine = trackLine;
         this.numberControllers = numberControllers;
         // Splits track into jurisdictions
         registerNewTrack(trackLine);
     }
-    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName) throws IOException, URISyntaxException {
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName) throws Exception {
         this.trackSectionName = trackSectionName;
         this.trackLine = trackLine;
         // Splits track into jurisdictions
@@ -284,7 +284,7 @@ public class WaysideSystem {
      * @after given trackLine has been partitioned into jurisdictions (number jurisdictions = @member numberControllers)
      * @after wayside controllers have been created for all jurisdictions
      */
-    public void registerNewTrack(ArrayList<TrackElement> trackLine) throws IOException, URISyntaxException {
+    public void registerNewTrack(ArrayList<TrackElement> trackLine) throws Exception {
         /*
                 New Track Operations
          */
@@ -304,7 +304,7 @@ public class WaysideSystem {
     /** performs any steps and filters when registering a new controller under the jurisdiction of this wayside system
      *
      */
-    public void generateController(ArrayList<TrackElement> assignedControllerJurisdiction) {
+    public void generateController(ArrayList<TrackElement> assignedControllerJurisdiction) throws Exception {
         // Create new controller and assign it jurisdiction
         WaysideController newController = new WaysideController(trackLine, assignedControllerJurisdiction);
         controllers.add(newController);
@@ -315,6 +315,8 @@ public class WaysideSystem {
             // controller is associated by integer blocknumber key
             lut.put(block.getBlockNum(), newController);
         }
+        // launches controller onto a new thread
+        newController.start();
     }
 
 

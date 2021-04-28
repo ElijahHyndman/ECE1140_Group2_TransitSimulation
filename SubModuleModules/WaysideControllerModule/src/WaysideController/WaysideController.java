@@ -17,7 +17,7 @@ import static java.lang.String.valueOf;
  * @author Harsh
  * @editor Elijah
  */
-public class WaysideController implements Serializable {
+public class WaysideController extends Thread implements Serializable {
     /***********************************************************************************************************************/
     /** Default Members
      */
@@ -35,6 +35,7 @@ public class WaysideController implements Serializable {
     private String controllerName = String.format("Controller %d",controllerIndex);
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
+    private boolean running = false;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
@@ -59,15 +60,15 @@ public class WaysideController implements Serializable {
     public WaysideController(String controllerAlias) {
         this.controllerAlias = controllerAlias;
     }
-    public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias){
+    public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias) throws Exception {
         this.controllerAlias = controllerAlias;
         giveJurisdiction(jurisdiction);
     }
-    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController) {
+    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController) throws Exception {
         this.fullTrack = fullTrackLine;
         giveJurisdiction(jurisdictionForController);
     }
-    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController, String controllerAlias) {
+    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController, String controllerAlias) throws Exception {
         this.controllerAlias = controllerAlias;
         this.fullTrack = fullTrackLine;
         giveJurisdiction(jurisdictionForController);
@@ -83,6 +84,43 @@ public class WaysideController implements Serializable {
     }
 
 
+    /*
+            Process
+     */
+
+    /** function used to launch this WaysideController on a new thread and continually update defined PLC Scripts.
+     * user defined plc scripts are evaluated, then safety critical scripts are updated to overwrite user scripts
+     *
+     */
+    @Override
+    public void run() {
+        running = true;
+        while (running) {
+            for (PLCEngine userScript : UserPLCScripts) {
+                try {
+                    userScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+                }
+            }
+            for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
+                try {
+                    safetyCriticalScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                }
+            }
+        }
+    }
+
+    /** (called from this thread) interrupts running loop (which exists on separate thread) so PLC stop continually updating
+     *
+     */
+    public void halt() {
+        this.running = false;
+    }
 
     /*
             Wayside System Methods
@@ -96,7 +134,7 @@ public class WaysideController implements Serializable {
      * @before WaysideController may or may not have jurisdiction
      * @after WaysideController has taken jurisdiction over new blocks, old jurisdiction has been overwritten
      */
-    public void giveJurisdiction(ArrayList<TrackElement> blocks) {
+    public void giveJurisdiction(ArrayList<TrackElement> blocks) throws Exception {
 
         // Clear old PLC scripts
         this.UserPLCScripts = new ArrayList<PLCEngine>();
@@ -116,11 +154,25 @@ public class WaysideController implements Serializable {
      *
      * @param block, the track block whom this wayside controller shall take output responsibilities for
      */
-    public void overseeBlock(TrackElement block) {
+    public void overseeBlock(TrackElement block) throws Exception {
         jurisdiction.add(block);
         System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
         // TODO generate default safety critical scripts
         // TODO if switch, add switch orientation output to hashmap
+        try {
+            SafetyCriticalPLCScripts.add(generateCollisionAvoidanceScript(block));
+        } catch (Exception failedToGenerateScript) {
+            failedToGenerateScript.printStackTrace();
+            System.out.println(String.format("Failure to generate default collision script for block index %d",block.getBlockNum()));
+        }
+        if (block instanceof Switch) {
+            try {
+                SafetyCriticalPLCScripts.add(generateSwitchConflictAvoidanceScript( (Switch) block));
+            } catch (Exception failedToGenerateScript) {
+                failedToGenerateScript.printStackTrace();
+                System.out.println(String.format("Failure to generate default collision script for switch with block index %d", block.getBlockNum()));
+            }
+        }
 
     }
 
@@ -191,6 +243,21 @@ public class WaysideController implements Serializable {
         return collisionAvoidance;
     }
 
+
+    /**
+     *
+     * @param sw
+     * @return
+     * @throws Exception
+     */
+    public static PLCEngine generateSwitchConflictAvoidanceScript (Switch sw) throws Exception {
+        // TODO
+        int thisBlockIndex = sw.getBlockNum();
+        int blockAfterIndex = sw.getDirection(0);
+        int blockBeforeIndex = sw.getDirection(1);
+        int switchAfterIndex = sw.getDirection(2);
+        return null;
+    }
 
 
 
