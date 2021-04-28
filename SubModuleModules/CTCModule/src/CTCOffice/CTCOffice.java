@@ -34,13 +34,13 @@ public class CTCOffice //implements PhysicsUpdateListener
     public ArrayList<WaysideSystem> waysides, waysideG, waysideR;
     private double[] speedArrG = new double[151];
     private double[] speedArrR = new double[151];
-    private double[] route = new double[151];
+    private int[] route = new int[151];
     private int[] authArr = new int[151];
     public CharSequence timeNow;
     private LocalTime now;
     public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
-    public int[] positions = new int[10];
+    public int[] positions = {429,429,429,429,429,429,429,429,429,429};
     public ArrayList<double[]> speedsR =new ArrayList<double[]>();
     public ArrayList<double[]> speedsG =new ArrayList<double[]>();
     public ArrayList<int[]> authorities = new ArrayList<int[]>();
@@ -244,8 +244,23 @@ public class CTCOffice //implements PhysicsUpdateListener
             hsub = hsub-1;
         }
         temp = temp+hsub;
+        int startNum = 0;
 
-        route = calcRoute(blockNum, lineCol, trainNum);
+        if (positions[trainNum-1] == 429){
+            startNum=0;
+        }
+        else{
+            startNum = positions[trainNum-1];
+        }
+
+        int endNum = blockNum;
+
+        if (lineCol.equals("Green")){
+            route = routeRed(startNum,endNum);
+        }
+        else if (lineCol.equals("Red")){
+            route = routeGreen(startNum,endNum);
+        }
 
         routeLength = calcRouteLength(route, lineCol);
 
@@ -534,7 +549,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public int calcRouteLength(double[] routeAr, String lineCol)
+    public int calcRouteLength(int[] routeAr, String lineCol)
     {
         int routeLength=0;
         for(int i=0; i<routeAr.length; i++){
@@ -679,7 +694,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return routeArr;
     }
 
-    public double[] createSpeedArr(double[] rA, double sp)
+    public double[] createSpeedArr(int[] rA, double sp)
     {
         double[] sArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++)
@@ -691,7 +706,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return sArr;
     }
 
-    public int calcAuthority(double[] routeArr)
+    public int calcAuthority(int[] routeArr)
     {
         int count=0;
         for (int i=0; i<150; i++){
@@ -701,7 +716,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return count;
     }
 
-    public int[] createAuthArr(double[] rA, int auth)
+    public int[] createAuthArr(int[] rA, int auth)
     {
         int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++){
