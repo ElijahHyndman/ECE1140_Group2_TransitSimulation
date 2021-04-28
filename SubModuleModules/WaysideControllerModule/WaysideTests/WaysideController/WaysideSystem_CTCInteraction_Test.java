@@ -1,5 +1,6 @@
 package WaysideController;
 
+import TrackConstruction.Switch;
 import TrackConstruction.TrackBlock;
 import TrackConstruction.TrackElement;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,7 @@ class WaysideSystem_CTCInteraction_Test {
             newblock.setCommandedSpeed(10.0);
             newblock.setSpeedLimit( (int) speedLimit);
             newblock.setOccupied(true);
+            newblock.setFailureStatus(0);
             section.add(newblock);
         }
         sys = new WaysideSystem(section,"TestingSection");
@@ -440,5 +442,73 @@ class WaysideSystem_CTCInteraction_Test {
         System.out.printf("Block %d , Speed=%f\n",3,block3.getCommandedSpeed());
         System.out.printf("Block %d , Speed=%f\n",4,block4.getCommandedSpeed());
         System.out.printf("Block %d , Speed=%f\n",5,block5.getCommandedSpeed());
+    }
+
+
+    @Test
+    @DisplayName("CTC can set blocks as closed and as open")
+    void setCloseAndOpen() throws Exception {
+        // Show that they are open
+        System.out.printf("Block %d failure status: %s\n",1,section.get(0).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",2,section.get(1).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",3,section.get(2).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",4,section.get(3).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",5,section.get(4).getFailureStatus());
+        // Test that getIsClosed identifies correct value
+        assertEquals(section.get(0).getFailureStatus().equals("CLOSED"),sys.getIsClosed(1));
+        assertEquals(section.get(1).getFailureStatus().equals("CLOSED"),sys.getIsClosed(2));
+        assertEquals(section.get(2).getFailureStatus().equals("CLOSED"),sys.getIsClosed(3));
+        assertEquals(section.get(3).getFailureStatus().equals("CLOSED"),sys.getIsClosed(4));
+        assertEquals(section.get(4).getFailureStatus().equals("CLOSED"),sys.getIsClosed(5));
+
+        sys.setClose(1);
+        sys.setClose(2);
+        sys.setClose(3);
+        sys.setClose(4);
+        sys.setClose(5);
+        System.out.printf("Block %d failure status: %s\n",1,section.get(0).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",2,section.get(1).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",3,section.get(2).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",4,section.get(3).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",5,section.get(4).getFailureStatus());
+        assertEquals(section.get(0).getFailureStatus().equals("CLOSED"),sys.getIsClosed(1));
+        assertEquals(section.get(1).getFailureStatus().equals("CLOSED"),sys.getIsClosed(2));
+        assertEquals(section.get(2).getFailureStatus().equals("CLOSED"),sys.getIsClosed(3));
+        assertEquals(section.get(3).getFailureStatus().equals("CLOSED"),sys.getIsClosed(4));
+        assertEquals(section.get(4).getFailureStatus().equals("CLOSED"),sys.getIsClosed(5));
+
+        sys.setOpen(1);
+        sys.setOpen(2);
+        sys.setOpen(3);
+        sys.setOpen(4);
+        sys.setOpen(5);
+        System.out.printf("Block %d failure status: %s\n",1,section.get(0).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",2,section.get(1).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",3,section.get(2).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",4,section.get(3).getFailureStatus());
+        System.out.printf("Block %d failure status: %s\n",5,section.get(4).getFailureStatus());
+        assertEquals(section.get(0).getFailureStatus().equals("CLOSED"),sys.getIsClosed(1));
+        assertEquals(section.get(1).getFailureStatus().equals("CLOSED"),sys.getIsClosed(2));
+        assertEquals(section.get(2).getFailureStatus().equals("CLOSED"),sys.getIsClosed(3));
+        assertEquals(section.get(3).getFailureStatus().equals("CLOSED"),sys.getIsClosed(4));
+        assertEquals(section.get(4).getFailureStatus().equals("CLOSED"),sys.getIsClosed(5));
+    }
+
+
+    @Test
+    @DisplayName("")
+    void canGetAndSetSwitchStatus () throws Exception {
+        section.add(new Switch("Green", 'A', 6, 100.0, -3.0, 55, "SWITCH (0-1; 0-2)",-3,0.5, new int[]{0,0,0},"n"));
+        sys.registerNewTrack(section);
+
+
+        System.out.printf("Switch orientation is Secondary: %b\n",sys.getSwitchStatus(6));
+        sys.setSwitchStatus(6,true);
+        System.out.printf("Switch orientation is Secondary: %b\n",sys.getSwitchStatus(6));
+        sys.setSwitchStatus(6,false);
+        System.out.printf("Switch orientation is Secondary: %b\n",sys.getSwitchStatus(6));
+        sys.setSwitchStatus(6,true);
+        System.out.printf("Switch orientation is Secondary: %b\n",sys.getSwitchStatus(6));
+
     }
 }

@@ -178,6 +178,187 @@ class WaysideSystem_PLC_Test {
     @Test
     @DisplayName("Inputs are usable in script (through controllers)")
     void inputsUsable2() throws Exception {
-        sys.registerNewTrack(greenLine);
+        TrackElement block;
+        TrackElement before;
+        TrackElement after;
+
+        // One directional cases
+        System.out.println("Single directional tests\n");
+        block = greenLine.get(9);
+        after = greenLine.get(8);
+        before = greenLine.get(0);
+        System.out.printf("Block %s is adjacent to blocks (%s,%s)\n",block.getBlockNum(), before.getBlockNum(), after.getBlockNum());
+        PLCEngine script = WaysideController.generateCollisionAvoidanceScript(block);
+        script.registerInputSource(new OccupationPLCInput("OCC8",after));
+        script.registerInputSource(new OccupationPLCInput("OCC9",block));
+        System.out.printf(script.getPLCString());
+        block.setOccupied(true);
+        block.setAuthority(10);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0,block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+        after.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+
+
+
+        System.out.println("==================");
+        block = greenLine.get(3);
+        after = greenLine.get(2);
+        before = greenLine.get(0);
+        System.out.printf("Block %s is adjacent to blocks (%s,%s)\n",block.getBlockNum(), before.getBlockNum(), after.getBlockNum());
+        script = WaysideController.generateCollisionAvoidanceScript(block);
+        script.registerInputSource(new OccupationPLCInput("OCC2",after));
+        script.registerInputSource(new OccupationPLCInput("OCC3",block));
+        System.out.printf(script.getPLCString());
+        block.setOccupied(true);
+        block.setAuthority(10);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0,block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+        after.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After occupancy (%b) mean auth=%d\n",after.getOccupied(),block.getAuthority());
+
+
+        // Two directional cases
+        System.out.println("\nTwo Directional Tests\n");
+        System.out.println("==================");
+        block = greenLine.get(13);
+        after = greenLine.get(14);
+        before = greenLine.get(12);
+        System.out.printf("Block %s is adjacent to blocks (%s,%s)\n",block.getBlockNum(), before.getBlockNum(), after.getBlockNum());
+        script = WaysideController.generateCollisionAvoidanceScript(block);
+        script.registerInputSource(new OccupationPLCInput("OCC12",after));
+        script.registerInputSource(new OccupationPLCInput("OCC13",block));
+        script.registerInputSource(new OccupationPLCInput("OCC14",before));
+        System.out.printf(script.getPLCString());
+
+        block.setOccupied(true);
+        before.setOccupied(false);
+        after.setOccupied(false);
+        block.setAuthority(10);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0,block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+
+
+
+        System.out.println("==================");
+        block = greenLine.get(76);
+        after = greenLine.get(77);
+        before = greenLine.get(101);
+        System.out.printf("Block %s is adjacent to blocks (%s,%s)\n",block.getBlockNum(), before.getBlockNum(), after.getBlockNum());
+        script = WaysideController.generateCollisionAvoidanceScript(block);
+        script.registerInputSource(new OccupationPLCInput("OCC77",after));
+        script.registerInputSource(new OccupationPLCInput("OCC76",block));
+        script.registerInputSource(new OccupationPLCInput("OCC101",before));
+        System.out.printf(script.getPLCString());
+
+        block.setOccupied(true);
+        before.setOccupied(false);
+        after.setOccupied(false);
+        block.setAuthority(10);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0,block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+
+
+        throw new Exception("DO THE SWITCH CASES");
+        // Switch cases
+        System.out.println("\nSwitch Directional Tests\n");
+        System.out.println("==================");
+        block = greenLine.get(12);
+        after = greenLine.get(8);
+        TrackElement op1 = greenLine.get(101);
+        TrackElement op2 = greenLine.get(101);
+        System.out.printf("Block %s is adjacent to blocks (%s,%s,%s)\n",block.getBlockNum(), after.getBlockNum(),op1.getBlockNum(),op2.getBlockNum());
+        script = WaysideController.generateCollisionAvoidanceScript(block);
+        script.registerInputSource(new OccupationPLCInput("OCC77",after));
+        script.registerInputSource(new OccupationPLCInput("OCC76",block));
+        script.registerInputSource(new OccupationPLCInput("OCC101",before));
+        System.out.printf(script.getPLCString());
+
+        block.setOccupied(true);
+        before.setOccupied(false);
+        after.setOccupied(false);
+        block.setAuthority(10);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0,block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        after.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(false);
+        script.evaluateLogic();
+        assertEquals(10, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
+        before.setOccupied(true);
+        after.setOccupied(true);
+        script.evaluateLogic();
+        assertEquals(0, block.getAuthority());
+        System.out.printf("After,Before occupancy (%b,%b) mean auth=%d\n",after.getOccupied(),before.getOccupied(),block.getAuthority());
     }
 }

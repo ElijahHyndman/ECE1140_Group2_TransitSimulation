@@ -253,7 +253,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextRedCircle() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 
@@ -611,7 +611,7 @@ class TrackTest {
     @org.junit.jupiter.api.Test
     void getNextGreen() {
         System.out.println("getNextGreen");
-        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
 

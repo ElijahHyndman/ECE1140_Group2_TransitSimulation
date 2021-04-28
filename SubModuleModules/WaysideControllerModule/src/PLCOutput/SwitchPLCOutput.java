@@ -38,6 +38,7 @@ public class SwitchPLCOutput extends PLCOutput {
     private Switch target;
     private SwitchRule applicationRule = DEFAULT_SWITCH_RULE;
     private ORI orientation = DEFAULT_INITIAL_ORIENTATION;
+    private boolean switchIsManuallyOverriden = false;
     /***********************************************************************************************************************/
     public SwitchPLCOutput (Switch targetSwitch) {
         this.target = targetSwitch;
@@ -63,7 +64,7 @@ public class SwitchPLCOutput extends PLCOutput {
     public void setNewRule(SwitchRule newRule) {
         this.applicationRule = newRule;
     }
-
+    public void setSwitchManualOverride(boolean isManual) { this.switchIsManuallyOverriden = isManual;}
 
     /** method called whenever the PLC engine calculates a new output from a script; executes the intended behavior based on the PLC output and the selected application rule.
      *
@@ -72,6 +73,11 @@ public class SwitchPLCOutput extends PLCOutput {
      */
     @Override
     public void applyOutputRule(boolean value) throws Exception {
+        // Do not process PLC output if CTC is manually overriding switch:
+        if (this.switchIsManuallyOverriden)
+            return;
+
+        // If PLC control is not inhibited:
         this.value = value;
         switch (applicationRule) {
             case DefaultWhenTrue:
