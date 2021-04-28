@@ -10,6 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.Timer;
 
+/**
+ * AUTHOR: Grhen
+ */
 
 public class TrackApplication {
 
@@ -23,11 +26,6 @@ public class TrackApplication {
     public static void main(String[] args) {
         TrackApplication run = new TrackApplication();
         InputStream inputStream = TrackApplication.class.getResourceAsStream("/Track/RedGreenUpdated.csv");
-
-
-
-        // String filename = "SubModuleModules/TrackModelModule/src/Track/RedGreenUpdated.csv";
-      //  run.getTrack().importTrack(filename);
         TrackGUI trackUI = new TrackGUI(run.getTrack());
         trackUI.setVisible(true);
 

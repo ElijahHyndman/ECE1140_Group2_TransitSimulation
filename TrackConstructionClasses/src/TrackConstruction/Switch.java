@@ -1,6 +1,6 @@
 package TrackConstruction;
 
-public class Switch extends TrackElement{
+public class Switch extends TrackElement implements SwitchInterfaceForWayside{
     /**
      * Switch: The switch is a junction between three track objects.
      *  Switches can be visualized as a Y. There are always three track objects connected to a switch.
