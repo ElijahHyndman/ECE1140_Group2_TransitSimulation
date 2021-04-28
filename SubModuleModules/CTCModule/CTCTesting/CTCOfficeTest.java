@@ -87,6 +87,29 @@ class CTCOfficeTest {
         //assertEquals(sum, answer);
     }
 
+    @org.junit.jupiter.api.Test
+    void trying2AtEnd() {
+        CTCOffice instance = new CTCOffice();
+
+        int[] stations = {7,16, 25, 35, 45, 60};
+
+        int sum = 0;
+        int start = 25;
+        int end = 35;
+        int[] test = instance.routeRed(start,end);
+        int answer =0;
+        System.out.println("Start and end " + start + " " + end);
+        for (int i = start; i <= end; i++) {
+            answer += i;
+        }
+        for (int i = 0; i < 77; i++) {
+
+            System.out.println("BN" + i + " " + test[i]);
+            if (test[i] != 0)
+                sum += i;
+        }
+
+    }
 
 
 

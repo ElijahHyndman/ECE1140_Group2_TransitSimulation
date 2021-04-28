@@ -53,9 +53,8 @@ public class CTCOffice //implements PhysicsUpdateListener
     public CTCOffice()
     {
 
-        waysides = GenerateWaysideSystems(trackObj);
-
-        SEobj = new SimulationEnvironment();
+       // waysides = GenerateWaysideSystems(trackObj);
+       // SEobj = new SimulationEnvironment();
         trackObj = new Track();
         trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
     }
@@ -578,7 +577,8 @@ public class CTCOffice //implements PhysicsUpdateListener
         int[] newGreenLine = greenPathNY;
         int flag=0;
         int flag2 =0;
-
+        int beacon = end-2;
+        int beacon2=0;
         for(int i = 0; i < 180; i++){
             if(newGreenLine[i] != start && flag == 0) {
                 newGreenLine[i] = 0;
@@ -588,6 +588,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             }
             else if(flag == 1 && newGreenLine[i] == end) {
                 flag2=1;
+                beacon2 = newGreenLine[i-2];
             }
             else if(flag2 == 1) {
                 newGreenLine[i] = 0;
@@ -603,6 +604,8 @@ public class CTCOffice //implements PhysicsUpdateListener
             }
             if(end == 0)
                 RouteAr[0] =1;
+            if(i == beacon2)
+                RouteAr[i] = 2;
             if (newGreenLine[i] != 0)
                 RouteAr[newGreenLine[i]] = 1;
         }
@@ -615,21 +618,33 @@ public class CTCOffice //implements PhysicsUpdateListener
         int[] newRedLine = redPath;
         int flag=0;
         int flag2 =0;
+        int counter =0;
+        int beacon2=0;
         for(int i = 0; i < 106; i++){
+
             if(newRedLine[i] != start && flag == 0) {
                 newRedLine[i] = 0;
+
             }
             if(newRedLine[i] == start && flag2 == 0) {
                 flag = 1;
+
             }
             else if(flag == 1 && newRedLine[i] == end) {
+
+                if(flag2 != 1)
+                beacon2 = newRedLine[i-2];
+
                 flag2=1;
+
             }
             else if(flag2 == 1) {
                 newRedLine[i] = 0;
             }
 
         }
+
+
 
         int[] RouteAr = new int[77];
         for(int i=0; i < 106; i++) {
@@ -642,6 +657,9 @@ public class CTCOffice //implements PhysicsUpdateListener
                 RouteAr[10]=1;
                 RouteAr[9] =1;
             }
+            if(i == beacon2)
+                RouteAr[beacon2]=2;
+
             if (newRedLine[i] != 0)
                 RouteAr[newRedLine[i]] = 1;
         }
