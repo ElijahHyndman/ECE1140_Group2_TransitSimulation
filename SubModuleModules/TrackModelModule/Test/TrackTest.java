@@ -150,7 +150,7 @@ class TrackTest {
         test = iterateNextRed(instance,5,30,29);
         assertEquals(test,282);
         test = iterateNextRed(instance,5,34,35);
-        assertEquals(test,33);
+        assertEquals(test,284);
         test = iterateNextRed(instance,5,73,74);
         assertEquals(test,194);
 
@@ -211,10 +211,10 @@ class TrackTest {
         assertEquals(test,67);
         instance.getSwitches().get(5).setSwitchState(true);
         instance.updateSwitches();
-       test = iterateNextRed(instance,5,42,41);
+      test = iterateNextRed(instance,5,42,41);
        assertEquals(test,317);
         test = iterateNextRed(instance,5,45,46);
-        assertEquals(test,44);
+        assertEquals(test,291);
         test = iterateNextRed(instance,5,68,69);
         assertEquals(test,233);
         // -- switch 6 (52-53-52-66)
@@ -263,7 +263,7 @@ class TrackTest {
         instance.getSwitches().get(0).setSwitchState(true);
         instance.getSwitches().get(1).setSwitchState(true);
 
-        //IF only loop to T - S - R and pack up
+        //IF only loop to T - S - R and pack up 43 and 38
      //   instance.getSwitches().get(4).setSwitchState(true);
       //  instance.getSwitches().get(5).setSwitchState(true);
 
@@ -281,7 +281,7 @@ class TrackTest {
                 instance.updateSwitches();
             }
             if(i == 41){
-                instance.getSwitches().get(6).setSwitchState(true);
+
                 instance.getSwitches().get(1).setSwitchState(false);
                 instance.getSwitches().get(0).setSwitchState(false);
                 instance.getSwitches().get(4).setSwitchState(false); // for loop around q - p - o
@@ -290,13 +290,23 @@ class TrackTest {
                 instance.updateSwitches();
             }
             if(i == 51){
-                instance.getSwitches().get(6).setSwitchState(false);
+                instance.getSwitches().get(6).setSwitchState(true);
                 instance.updateSwitches();
             }
 
+            if(i == 70) { // This isn't working so need to rechange / update switches
+                instance.getSwitches().get(5).setSwitchState(true);
+                instance.getSwitches().get(4).setSwitchState(true);
+                instance.getSwitches().get(3).setSwitchState(true);
+                instance.getSwitches().get(2).setSwitchState(true);
+                instance.getSwitches().get(0).setSwitchState(true);
+                instance.updateSwitches();
+            }
+
+
             if (next != null) {
                 test += next.getBlockNum();
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " " + i);
+                System.out.println(cur.getBlockNum() + ", " + i );
                 prev = cur;
                 cur = next;
             }
@@ -436,6 +446,9 @@ class TrackTest {
         String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
+
+        for(int i = 0; i < instance.getSwitches().size(); i++)
+            System.out.println(instance.getSwitches().get(i).getInfrastructure() + " " + i);
 
 
         instance.getSwitches().get(11).setSwitchState(false); // testing switch to 76 - 77 or 77 - 101
@@ -614,13 +627,13 @@ class TrackTest {
         TrackElement prev = instance.getGreenLine().get(0);
         TrackElement next = null;
         int test=0;
-        for(int i=0; i<185;i++) {
+        for(int i=0; i<177;i++) {
             next = instance.getNextGreen(cur, prev);
            // System.out.println("prev and cur"+ prev.getBlockNum() + " " + cur.getBlockNum() + " next " + next.getBlockNum());
             if(i == 36) {
                 instance.getSwitches().get(12).setSwitchState(true); // testing switch to 101
                 instance.getSwitches().get(11).setSwitchState(true); //86-85 or 100-85
-                System.out.println("**" + instance.getSwitches().get(12).getDirectionStates(2) + " ** index " + instance.getSwitches().get(12).getIndex());
+           //    System.out.println("**" + instance.getSwitches().get(12).getDirectionStates(2) + " ** index " + instance.getSwitches().get(12).getIndex());
                 instance.updateSwitches();
             }
 
@@ -633,14 +646,14 @@ class TrackTest {
             }
             if (next != null) {
                 test += next.getBlockNum();
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " " + i);
+                System.out.print(cur.getBlockNum() + ", ");
                 prev = cur;
                 cur = next;
             }
 
 
             if(next == null) {
-                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + " ");
+                System.out.println(cur.getBlockNum() + "" +  cur.getSection() + ", ");
                 System.out.println("null");
                 break;
             }
@@ -1046,6 +1059,17 @@ class TrackTest {
 
     }
 
+    @org.junit.jupiter.api.Test
+    void testDisplaySwitch() {
+        System.out.println("getting blocks in track ");
+        String filepath = "C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
+        Track instance = new Track();
+        instance.importTrack(filepath);
+        instance.getSwitches().get(2).setSwitchState(true);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+        instance.getSwitches().get(2).setSwitchState(false);
+        System.out.println(instance.getSwitches().get(2).getSwitchState());
+    }
 
     @org.junit.jupiter.api.Test
     void blocksInSection() {
@@ -1119,7 +1143,7 @@ class TrackTest {
             testGUI.setVisible(true);
             testGUI.draw();
             testGUI.latch(instance);
-           while(true){}
+         //  while(true){}
           /*  instance.setFailure(2,"Green",1);
             testGUI.latch(instance);
             System.out.println(instance.getFailures());

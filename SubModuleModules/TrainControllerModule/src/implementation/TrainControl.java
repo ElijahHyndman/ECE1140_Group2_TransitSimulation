@@ -296,7 +296,6 @@ public class TrainControl {
 
     //Authority input from Train Model, in blocks
     public void setAuthority(int distBlock){
-
         authority = distBlock;
         if (authority == 0 && beacon == null){
             useEmergencyBrake(true);

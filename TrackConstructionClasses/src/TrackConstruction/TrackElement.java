@@ -38,7 +38,7 @@ public class TrackElement {
     double commandedSpeed;     //km / hour
 
     //Information on node connections
-    int[] directionArray;      //TOARRAY, all possible edges - meaning from the current block to the next block
+    int[] directionArray;      //TO ARRAY, all possible edges - meaning from the current block to the next block
     char biDirecitional;
     int[] directionStates = {0,0,0,0};
     String type;
@@ -93,10 +93,13 @@ public class TrackElement {
     public void setCumulativeElevation(double cumulativeElevation){this.cumulativeElevation = cumulativeElevation;}
 
     /*Setting Authority*/
-    public void setAuthority(int authority) { this.authority = authority;}
+    public void applyAuthorityToBlock(int authority) { this.authority = authority;}
 
     /*Setting Commanded Speed*/
     public void setCommandedSpeed(double commandedSpeed) { this.commandedSpeed = commandedSpeed;}
+
+    /*Setting Authority*/
+    public void setAuthority(int authority) {this.authority = authority;}
 
     /*Setting direction array*/
     public void setDirection(int [] directionArray) {this.directionArray = directionArray;}
@@ -152,6 +155,7 @@ public class TrackElement {
 
     /*get Authority */
     public int getAuthority() { return this.authority;}
+
 
     /*get CommandedSpeed*/
     public double getCommandedSpeed() { return this.commandedSpeed;}
