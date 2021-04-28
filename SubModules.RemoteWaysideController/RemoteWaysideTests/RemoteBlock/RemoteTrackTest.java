@@ -152,4 +152,108 @@ class RemoteTrackTest {
         System.out.printf("%s\n",element.getSwitchState());
     }
 
+    @Test
+    @DisplayName("")
+    void inputsWorkFromRemoteBlock() throws Exception {
+        target = tracksys.getGreenLine().get(15);
+        RemoteTrack element = new RemoteTrack(target);
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC15");
+                add("LD HASAUTH15");
+                add("AND");
+                add("SET");
+            }
+        };
+        PLCInput blockOccInput = new OccupationPLCInput("OCC15",element, OccupationPLCInput.OccRule.TrueWhenOccupied);
+        PLCInput blockAuthInput = new HasAuthorityPLCInput("HASAUTH15",element, HasAuthorityPLCInput.AuthRule.TrueWhenGreaterOrEqual, 1);
+        PLCOutput a = new PLCOutput("result");
+        PLCEngine engine = new PLCEngine(PLCScript,a);
+        engine.registerInputSource(blockOccInput);
+        engine.registerInputSource(blockAuthInput);
+
+        // false false
+        target.setOccupied(false);
+        target.setAuthority(0);
+        engine.evaluateLogic();
+        assertFalse(a.value());
+
+        // true false
+        target.setOccupied(true);
+        target.setAuthority(0);
+        engine.evaluateLogic();
+        assertFalse(a.value());
+
+        // true true
+        target.setOccupied(true);
+        target.setAuthority(1);
+        engine.evaluateLogic();
+        assertTrue(a.value());
+
+        // false true
+        target.setOccupied(false);
+        target.setAuthority(1);
+        engine.evaluateLogic();
+        assertFalse(a.value());
+    }
+
+    @Test
+    @DisplayName("")
+    void outputsWorkToRemoteBlock() throws Exception {
+        target = tracksys.getGreenLine().get(15);
+        RemoteTrack element = new RemoteTrack(target);
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD A");
+                add("LD B");
+                add("OR");
+                add("SET");
+            }
+        };
+        PLCInput a = new PLCInput("A");
+        PLCInput b = new PLCInput("B");
+        PLCOutput blockAuth = new AuthorityPLCOutput(target, AuthorityPLCOutput.AuthOutRule.HaltWhenTrue);
+        PLCEngine engine = new PLCEngine(PLCScript,blockAuth);
+        engine.registerInputSource(a);
+        engine.registerInputSource(b);
+
+        target.setAuthority(10);
+
+        System.out.println("Test: boolean OR boolean -> halt block (auth=0)");
+
+        // false false
+        a.set(false);
+        b.set(false);
+        engine.evaluateLogic();
+        assertEquals(10,target.getAuthority());
+        System.out.printf("%b + %b -> %d\n",a.evaluate(),b.evaluate(), target.getAuthority());
+
+        // false true
+        a.set(false);
+        b.set(true);
+        engine.evaluateLogic();
+        assertEquals(0,target.getAuthority());
+        System.out.printf("%b + %b -> %d\n",a.evaluate(),b.evaluate(), target.getAuthority());
+
+        // true false
+        a.set(true);
+        b.set(false);
+        engine.evaluateLogic();
+        assertEquals(0,target.getAuthority());
+        System.out.printf("%b + %b -> %d\n",a.evaluate(),b.evaluate(), target.getAuthority());
+
+        // true true
+        a.set(true);
+        b.set(true);
+        engine.evaluateLogic();
+        assertEquals(0,target.getAuthority());
+        System.out.printf("%b + %b -> %d\n",a.evaluate(),b.evaluate(), target.getAuthority());
+
+        // false false
+        a.set(false);
+        b.set(false);
+        engine.evaluateLogic();
+        assertEquals(10,target.getAuthority());
+        System.out.printf("%b + %b -> %d\n",a.evaluate(),b.evaluate(), target.getAuthority());
+    }
 }

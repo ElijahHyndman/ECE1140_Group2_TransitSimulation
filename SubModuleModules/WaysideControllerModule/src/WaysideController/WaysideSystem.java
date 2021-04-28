@@ -317,6 +317,7 @@ public class WaysideSystem {
         }
         // launches controller onto a new thread
         newController.start();
+        System.out.println("!");
     }
 
 

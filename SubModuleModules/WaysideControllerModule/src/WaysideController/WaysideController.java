@@ -160,7 +160,7 @@ public class WaysideController extends Thread implements Serializable {
      */
     public void overseeBlock(TrackElement block) throws Exception {
         jurisdiction.add(block);
-        System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
+        //System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
         try {
             PLCEngine collisionPLC = generateCollisionAvoidanceScript(block);
             collisionPLC.setInputSources(inputPool);
@@ -172,9 +172,10 @@ public class WaysideController extends Thread implements Serializable {
         if (block instanceof Switch) {
             // TODO add switch orientation output to hashmap
             try {
-                PLCEngine switchPLC = generateSwitchConflictAvoidanceScript( (Switch) block);
-                switchPLC.setInputSources(inputPool);
-                SafetyCriticalPLCScripts.add(switchPLC);
+                // TODO
+                //PLCEngine switchPLC = generateSwitchConflictAvoidanceScript( (Switch) block);
+                //switchPLC.setInputSources(inputPool);
+                //SafetyCriticalPLCScripts.add(switchPLC);
             } catch (Exception failedToGenerateScript) {
                 failedToGenerateScript.printStackTrace();
                 System.out.println(String.format("Failure to generate default collision script for switch with block index %d", block.getBlockNum()));
@@ -255,6 +256,8 @@ public class WaysideController extends Thread implements Serializable {
         }
         AuthorityPLCOutput haltAuthorityOutput = new AuthorityPLCOutput(element, AuthorityPLCOutput.AuthOutRule.HaltWhenTrue);
         PLCEngine collisionAvoidance = new PLCEngine(PLCScript, haltAuthorityOutput);
+        // Debug
+        System.out.printf(".");
         return collisionAvoidance;
     }
 
