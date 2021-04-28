@@ -154,8 +154,5 @@ class TrainTest {
         assertEquals(true,t1.getHeadlights() );
 
     }
-    @Test
-    void testingTrainControlInteractions(){
 
-    }
 }
