@@ -975,12 +975,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         Object[] speedAuthority = new Object[3];
         DisplayLine dispatch = new DisplayLine();
 
-        speedAuthority = display.Dispatch(destination, train, timeD);
+        speedAuthority = dispatch.Dispatch(destination, train, timeD);
 
-        if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))
-            line="Red";
-        else
-            line="Green";
+        line = color;
 
         int blockNo = Integer.parseInt(speedAuthority[1].toString());
         char sect = displist.get(blockNo).getSection();
@@ -1043,6 +1040,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
 
+        if (destination.equals("Yard")){
+            checkColor(color);
+        }
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
         jTextField3.setText(String.valueOf(speedAuthority[1]));
