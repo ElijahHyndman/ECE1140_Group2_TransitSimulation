@@ -93,6 +93,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return generatedWaysides;
     }
 
+
     public void updateTrack(Track trackSystem) throws Exception {
         // Assert: We will only be using red and green track lines from track
         ArrayList<TrackElement> redLine;
@@ -118,23 +119,19 @@ public class CTCOffice //implements PhysicsUpdateListener
         this.SEobj = SE;
     }
 
-    public ArrayList<WaysideSystem> getWaysideSystem()
-    {
+    public ArrayList<WaysideSystem> getWaysideSystem() {
         return waysides;
     }
 
-    public void setWaysideSystem(ArrayList<WaysideSystem> SEws)
-    {
+    public void setWaysideSystem(ArrayList<WaysideSystem> SEws) {
         waysides = SEws;
     }
 
-    public Track getTrack()
-    {
+    public Track getTrack() {
         return trackObj;
     }
 
-    public void setTrack(Track SEt)
-    {
+    public void setTrack(Track SEt) {
         trackObj = SEt;
     }
 
@@ -296,15 +293,13 @@ public class CTCOffice //implements PhysicsUpdateListener
         authority = calcAuthority(route);
         authArr = createAuthArr(route, authority);
 
-        if (speed<5)
-        {
+        if (speed<5) {
             speed = 5;
             double timeTravel = 1/(speed*1000/routeLength/60);
             long mins = (long)timeTravel;
             timeDisp = timeDis.minusMinutes(mins);
         }
-        else
-        {
+        else {
             timeDisp = now;
         }
 
@@ -314,8 +309,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             speedArrR = createSpeedArr(route, speed);
 
         //if(LocalTime.now().isBefore(timeDisp) && speed<50)
-        if (now.isBefore(timeDisp))
-        {
+        if (now.isBefore(timeDisp)) {
             speedAuthorityTime[0] = speed*0.621371;
             speedAuthorityTime[1] = authority;
             speedAuthorityTime[2] = timeDisp;
@@ -333,8 +327,7 @@ public class CTCOffice //implements PhysicsUpdateListener
                 authorities.add(authArr);
             }
         }
-        else
-        {
+        else {
             speedAuthorityTime[0] = 0;
             speedAuthorityTime[1] = 0;
             speedAuthorityTime[2] = 0;
@@ -395,17 +388,15 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
     }
 
-    public void LoadSchedule(String filename)
-    {try{
+    public void LoadSchedule(String filename){
+        try{
         Scanner input = new Scanner(new File(filename));
         //read files to get input and read data to UI
         input.useDelimiter(",|\\n");
         int count = 0;
-        while (input.hasNext())
-        {
+        while (input.hasNext()) {
 
-            if (count<19)
-            {
+            if (count<19) {
                 count++;
                 input.next();
                 continue;
@@ -436,14 +427,12 @@ public class CTCOffice //implements PhysicsUpdateListener
             count++;
         }
         input.close();
-    }catch(Exception e)
-    {
+    }catch(Exception e) {
         e.printStackTrace();
     }
     }
 
-    public int CalcThroughput()
-    {
+    public int CalcThroughput() {
         trackObj = new Track();
         int tix = trackObj.updateTickets();
         now = LocalTime.parse(timeNow);
@@ -720,8 +709,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return RouteAr;
     }
 
-    public double[] calcRoute(int bn, String lc, int tnum)
-    {
+    public double[] calcRoute(int bn, String lc, int tnum) {
         double[] routeArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 
@@ -729,11 +717,9 @@ public class CTCOffice //implements PhysicsUpdateListener
         return routeArr;
     }
 
-    public double[] createSpeedArr(int[] rA, double sp)
-    {
+    public double[] createSpeedArr(int[] rA, double sp) {
         double[] sArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        for (int i=0; i<150; i++)
-        {
+        for (int i=0; i<150; i++) {
             if(rA[i] != 0)
                 sArr[i] = sp;
         }
@@ -741,8 +727,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return sArr;
     }
 
-    public int calcAuthority(int[] routeArr)
-    {
+    public int calcAuthority(int[] routeArr) {
         int count=0;
         for (int i=0; i<150; i++){
             if(routeArr[i]!=0)
@@ -751,8 +736,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return count;
     }
 
-    public int[] createAuthArr(int[] rA, int auth)
-    {
+    public int[] createAuthArr(int[] rA, int auth) {
         int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++){
             if (rA[i]==1) {
@@ -764,31 +748,26 @@ public class CTCOffice //implements PhysicsUpdateListener
                 aArr[i] = auth;
             }
             else if (rA[i]==2) {
-                aArr[i] = 888;
             }
         }
 
         return aArr;
     }
 
-    public int getTickets()
-    {
+    public int getTickets() {
         int tix = trackObj.updateTickets();
         return tix;
     }
 
-    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds)
-    {
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
         this.timeNow = currentTimeString;
     }
 
-    public ArrayList getDisps()
-    {
+    public ArrayList getDisps() {
         return dispArr;
     }
 
-    public DisplayLine getDisplayLine(int index)
-    {
+    public DisplayLine getDisplayLine(int index) {
         return dispArr.get(index);
     }
 
@@ -797,8 +776,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         dispArr.add(disp);
     }
 
-    public SimulationEnvironment getSE()
-    {
+    public SimulationEnvironment getSE() {
         return SEobj;
     }
 
