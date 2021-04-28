@@ -1,5 +1,5 @@
 package TrackConstruction;
-/** Author Grace Henderson **/
+
 public class Switch extends TrackElement{
     /**
      * Switch: The switch is a junction between three track objects.
@@ -131,5 +131,9 @@ public class Switch extends TrackElement{
     }
     public String totoString() {
         return String.format("Block Num: "+ blockNum +"\n Line: "+ line + "\n Length: "+ length + "\n Grade: " + grade + "\n speedLimit " + speedLimit + "\n elevation " + elevation + "\n cumulativeElevation " + cumulativeElevation + "\n section: " + section + "\n infrastructure: " + infrastructure + "\n Occupied: " + occupied + "\n Status: "+ failureStatus + " \n Block Direction: " + directionArray[0] + " " + directionArray[1] + " " + directionArray[2]);
+    }
+
+    public int getBlockNumb() {
+        return super.getBlockNum();
     }
 }
