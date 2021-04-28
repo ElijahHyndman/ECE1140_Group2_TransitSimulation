@@ -96,7 +96,7 @@ public class RemoteConnection {
         WaysideController localController = new WaysideController(new ArrayList<TrackElement>(),"Local Controller");
         RemoteWaysideStub remoteWaysideController = null;
         try {
-            remoteWaysideController = retrieveRemoteWaysideController("192.168.0.111",5099,"Service");
+            remoteWaysideController = retrieveRemoteWaysideController("192.168.0.106",5099,"Service");
             System.out.println(remoteWaysideController);
             System.out.println(remoteWaysideController.handshake("This is from Elijah"));
         } catch (Exception e) {

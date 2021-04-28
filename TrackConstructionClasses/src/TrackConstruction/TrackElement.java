@@ -1,6 +1,9 @@
 package TrackConstruction;
+
+import java.io.Serializable;
+
 /**Author Grace Henderson **/
-public class TrackElement {
+public class TrackElement implements Serializable {
     /**
      * Track Element: This defines an interface which every object that exists on a track will implement.
      *  All track elements will have these elements and behaviors in common.

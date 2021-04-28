@@ -1,5 +1,6 @@
 package RemoteWaysideServer;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
@@ -179,6 +180,7 @@ public class RemoteWaysideServer implements Runnable {
             System.out.printf("===%s\n", stub.toString());
         } catch (Exception e) {
             System.out.printf("Stub operation (port %d): failure\n", socketPort);
+            e.printStackTrace();
             throw new Exception("Failure to create RMI Stub");
         }
         // Bind RMI stub to RMI Registry
@@ -189,6 +191,10 @@ public class RemoteWaysideServer implements Runnable {
             System.out.printf("Stub Binding operation (port %d): failure\n",socketPort);
             throw new Exception("Failure to bind RMI stub to RMI Registry");
         }
+    }
+
+    public WaysideController.WaysideController getController() throws RemoteException {
+        return service.getController();
     }
 
 

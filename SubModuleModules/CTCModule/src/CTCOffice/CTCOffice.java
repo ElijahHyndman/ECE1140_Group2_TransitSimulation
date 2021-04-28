@@ -4,6 +4,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.io.*;
 import java.time.*;
+
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideSystem;
 import SimulationEnvironment.*;
 import Track.Track;
@@ -34,17 +36,18 @@ public class CTCOffice //implements PhysicsUpdateListener
     public ArrayList<WaysideSystem> waysides, waysideG, waysideR;
     private double[] speedArrG = new double[151];
     private double[] speedArrR = new double[151];
-    private double[] route = new double[151];
+    private int[] route = new int[151];
     private int[] authArr = new int[151];
     public CharSequence timeNow;
     private LocalTime now;
     public Track trackObj = new Track();
     public SimulationEnvironment SEobj;
-    public int[] positions = new int[10];
+    public int[] positions = {429,429,429,429,429,429,429,429,429,429};
     public ArrayList<double[]> speedsR =new ArrayList<double[]>();
     public ArrayList<double[]> speedsG =new ArrayList<double[]>();
     public ArrayList<int[]> authorities = new ArrayList<int[]>();
     public ArrayList<LocalTime> times = new ArrayList<LocalTime>();
+    public String UIcol;
 
     public int[] greenPath= {0,62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58};
     public int[] redPath = {0,9,8, 7, 6, 5, 4, 3, 2, 1, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 67, 68, 69, 70, 71, 38, 37, 36, 35, 34, 33, 32, 72, 73, 74, 75, 76, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9};
@@ -52,26 +55,27 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public CTCOffice()
     {
-
-       // waysides = GenerateWaysideSystems(trackObj);
-       // SEobj = new SimulationEnvironment();
         trackObj = new Track();
-        trackObj.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+    }
+
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
+    {
+        waysides = GenerateWaysideSystems(SEtrack);
+        trackObj = SEtrack;
+        SEobj = SE;
     }
 
     public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
+        // If track system doesn't exist yet
         if (trackSystem == null) {
             return new ArrayList<WaysideSystem>();
         }
 
-
+        // Generate wayside if not
         ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
         WaysideSystem greenWS = null;
         WaysideSystem redWS = null;
 
-        if (trackSystem == null) {
-            return new ArrayList<WaysideSystem>();
-        }
         try {
             greenWS = new  WaysideSystem(trackSystem.getGreenLine(),"Green");
         } catch (Exception failedToGetGreenLineFromTrack) {
@@ -89,11 +93,29 @@ public class CTCOffice //implements PhysicsUpdateListener
         return generatedWaysides;
     }
 
-    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
-    {
-        waysides = GenerateWaysideSystems(SEtrack);
-        trackObj = SEtrack;
-        SEobj = SE;
+    public void updateTrack(Track trackSystem) throws Exception {
+        // Assert: We will only be using red and green track lines from track
+        ArrayList<TrackElement> redLine;
+        ArrayList<TrackElement> greenLine;
+        try {
+            greenLine = trackSystem.getGreenLine();
+            WaysideSystem greenWS = new WaysideSystem(greenLine, "Green");
+            waysides.add(greenWS);
+        } catch (Exception greenLineGenerationError) {
+            greenLineGenerationError.printStackTrace();
+        }
+        try {
+            redLine = trackSystem.getRedLine();
+            WaysideSystem redWS = new WaysideSystem(redLine,"Red");
+            waysides.add(redWS);
+        } catch (Exception redLineGenerationError) {
+            redLineGenerationError.printStackTrace();
+        }
+        this.trackObj = trackSystem;
+    }
+
+    public void setSE(SimulationEnvironment SE) {
+        this.SEobj = SE;
     }
 
     public ArrayList<WaysideSystem> getWaysideSystem()
@@ -222,6 +244,10 @@ public class CTCOffice //implements PhysicsUpdateListener
             blockNum =74;
             lineCol = "Red";
         }
+        else if (dest.equals("Yard")){
+            blockNum = 0;
+            lineCol = CheckColor();
+        }
         else{
             blockNum = 0;
             lineCol = "Green";}
@@ -243,8 +269,25 @@ public class CTCOffice //implements PhysicsUpdateListener
             hsub = hsub-1;
         }
         temp = temp+hsub;
+        int startNum = 0;
 
-        route = calcRoute(blockNum, lineCol, trainNum);
+        if (positions[trainNum-1] == 429){
+            startNum=0;
+        }
+        else{
+            startNum = positions[trainNum-1];
+        }
+
+        int endNum = blockNum;
+
+        if (lineCol.equals("Green")){
+            route = routeRed(startNum,endNum);
+        }
+        else if (lineCol.equals("Red")){
+            route = routeGreen(startNum,endNum);
+        }
+
+        positions[trainNum-1] = endNum;
 
         routeLength = calcRouteLength(route, lineCol);
 
@@ -307,6 +350,14 @@ public class CTCOffice //implements PhysicsUpdateListener
         speedsG.clear();
         speedsR.clear();
         authorities.clear();
+    }
+
+    public void GiveColor(String col){
+        UIcol = col;
+    }
+
+    public String CheckColor(){
+        return UIcol;
     }
 
     public void BroadcastingArrays() throws Exception {
@@ -588,7 +639,6 @@ public class CTCOffice //implements PhysicsUpdateListener
             }
             else if(flag == 1 && newGreenLine[i] == end-1) {
                 flag2=1;
-                beacon2 = newGreenLine[i-2];
             }
             else if(flag2 == 1) {
                 newGreenLine[i] = 0;
@@ -698,7 +748,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return routeArr;
     }
 
-    public double[] createSpeedArr(double[] rA, double sp)
+    public double[] createSpeedArr(int[] rA, double sp)
     {
         double[] sArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++)
@@ -710,7 +760,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return sArr;
     }
 
-    public int calcAuthority(double[] routeArr)
+    public int calcAuthority(int[] routeArr)
     {
         int count=0;
         for (int i=0; i<150; i++){
@@ -720,7 +770,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         return count;
     }
 
-    public int[] createAuthArr(double[] rA, int auth)
+    public int[] createAuthArr(int[] rA, int auth)
     {
         int[] aArr  = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         for (int i=0; i<150; i++){

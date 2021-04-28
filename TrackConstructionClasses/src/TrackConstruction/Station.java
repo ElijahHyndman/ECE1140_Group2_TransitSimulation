@@ -1,8 +1,9 @@
 package TrackConstruction;
+import java.io.Serializable;
 import java.util.Random;
 /**AUTHOR:  Grace Henderson**/
 
-public class Station extends TrackElement{
+public class Station extends TrackElement implements Serializable {
     String station;
     String beacon;
     int throughput;  //passengers Leaving Train

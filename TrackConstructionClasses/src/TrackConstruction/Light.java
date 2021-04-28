@@ -1,4 +1,6 @@
 package TrackConstruction;
 
-public class Light {
+import java.io.Serializable;
+
+public class Light implements Serializable {
 }

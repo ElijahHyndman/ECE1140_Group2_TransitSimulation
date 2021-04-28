@@ -1,7 +1,13 @@
 package RemoteConnection;
 
+import PLCInput.PLCInput;
 import RemoteWaysideServer.RemoteWaysideStub;
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
+import WaysideGUI.WaysideSystemUI;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /** object that allows us to use a WaysideController object running on a separate device (using a RemoteWaysideServer) as if it werre running locally on this machine.
 
@@ -70,5 +76,187 @@ public class RemoteWaysideController extends WaysideController {
         try{result = remoteCtrl.handshake(clientString);} catch (Exception e) {e.printStackTrace();}
         String expectedResult = clientString + SERVER_CONFIRMATION_STRING;
         return result.equals(expectedResult);
+    }
+
+
+
+    /*
+            Wrapping methods using stub
+     */
+
+
+
+    public String handshake(String fromClient) throws RemoteException {
+        return remoteCtrl.handshake(fromClient);
+    }
+
+
+    /** returns the WaysideController object located on the remote machine.
+     * @assert local member "controller" is never null
+     * @return WaysideController, the wayside controller object that the RemoteWaysideService is hosting
+     */
+    public WaysideController getController() throws RemoteException {
+        return remoteCtrl.getController();
+    }
+
+
+    /** turns this remote WaysideController into a copy of a given wayside controller.
+     * @param ctrl  WaysideController, the controller which we will create a carbon copy of into the remote WaysideController
+     * @before WaysideController hosted by RemoteService may be empty or filled with values
+     * @after WaysideController hosted by RemoteService has been overwritten to be a carbon copy of given WaysideController object (deep copy)
+     */
+    public void castController(WaysideController ctrl) throws RemoteException {
+        remoteCtrl.castController(ctrl);
+    }
+
+
+    /** generates a User Interface Window on the hosting machine for the remote WaysideController.
+     * @before remote wayside controller is not null, may have values in it.
+     * @after a new WaysideController Jframe UI window has been spawned
+     * @after new JFrame window is running and updating on a new thread
+     */
+    public void spawnUI() throws RemoteException {
+        remoteCtrl.spawnUI();
+    }
+
+    @Override
+    public void assignInputPool(ArrayList<PLCInput> inputs) {
+        try {
+            remoteCtrl.assignInputPool(inputs);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setBlockSpeed(int targetBlockIndex, double newCommandedSpeed) throws RemoteException {
+        remoteCtrl.setBlockSpeed(targetBlockIndex,newCommandedSpeed);
+    }
+
+    @Override
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws RemoteException {
+        remoteCtrl.setBlockAuthority(targetBlockIndex,newAuthority);
+    }
+
+    @Override
+    public boolean getOccupancy(int targetBlockIndex) throws RemoteException {
+        return remoteCtrl.getOccupancy(targetBlockIndex);
+    }
+
+    @Override
+    public void setClose(int blockNumber) throws RemoteException {
+        remoteCtrl.setClose(blockNumber);
+    }
+
+    @Override
+    public void setOpen(int blockNumber) throws RemoteException {
+        remoteCtrl.setOpen(blockNumber);
+    }
+
+    @Override
+    public boolean getIsClosed(int blockNumber) throws RemoteException {
+        return remoteCtrl.getIsClosed(blockNumber);
+    }
+
+    @Override
+    public boolean getSwitchStatus(int blockNumber) throws RemoteException {
+        return remoteCtrl.getSwitchStatus(blockNumber);
+    }
+
+    @Override
+    public void setSwitchStatus(int blockNumber, boolean status) throws RemoteException {
+        remoteCtrl.setSwitchStatus(blockNumber,status);
+    }
+
+    @Override
+    public void setControllerAlias(String controllerAlias) {
+        try {
+            remoteCtrl.setControllerAlias(controllerAlias);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getControllerAlias() {
+        try {
+            return remoteCtrl.getControllerAlias();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return "failed";
+    }
+
+    @Override
+    public String getControllerName() {
+        try {
+           return remoteCtrl.getControllerName();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return "failure";
+    }
+
+    @Override
+    public void setControllerName(String name) {
+        try {
+            remoteCtrl.setControllerName(name);
+            System.out.println("Setting controller name");
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ArrayList<TrackElement> getJurisdiction() {
+        try {
+            return remoteCtrl.getJurisdiction();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void giveInput(PLCInput input) {
+        try {
+            remoteCtrl.giveInput(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toMedString() {
+        try {
+            return remoteCtrl.toMedString();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return "failure";
+    }
+
+    @Override
+    public void start() {
+        try {
+            remoteCtrl.start();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void overseeBlock(TrackElement remoteBlock) throws Exception {
+        try {
+            remoteCtrl.overseeBlock(remoteBlock);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }

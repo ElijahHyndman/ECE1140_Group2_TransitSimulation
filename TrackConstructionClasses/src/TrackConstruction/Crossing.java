@@ -1,4 +1,6 @@
 package TrackConstruction;
 
-public class Crossing {
+import java.io.Serializable;
+
+public class Crossing implements Serializable {
 }
