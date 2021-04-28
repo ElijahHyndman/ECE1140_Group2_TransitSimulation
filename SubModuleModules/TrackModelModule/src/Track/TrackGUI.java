@@ -166,7 +166,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         jLabel23 = new javax.swing.JLabel();
         passengerTest = new javax.swing.JTextField();
         jTestBlue = new javax.swing.JButton();
-        lengthTraveled = new javax.swing.JTextField();
+       lengthTraveled = new javax.swing.JTextField();
+        updateTix = new javax.swing.JButton();
 
         jScrollPane9.setViewportView(jEditorPane1);
 
@@ -640,8 +641,14 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
             }
         });
 
-        lengthTraveled.setText("Length Traveled");
+        lengthTraveled.setText("UpdateTickets");
 
+        updateTix.setText("Update Tickets");
+        updateTix.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateTixActionPerformed(evt);
+            }
+        });
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -697,6 +704,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                                                                 .addComponent(switchTest, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel7Layout.createSequentialGroup()
                                                                 .addGap(111, 111, 111)
+                                                                .addComponent(updateTix, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                 .addComponent(lengthTraveled, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel7Layout.createSequentialGroup()
@@ -771,7 +779,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(15, 15, 15)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(failStatusTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel18))
+                                        .addComponent(jLabel18)
+                                        .addComponent(updateTix))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
@@ -1112,7 +1121,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
         String switchT = switchTest.getText().trim();
         String passengerT = passengerTest.getText().trim();
         String failStatusT = failStatusTest.getText().trim();
-        String lengthT = lengthTraveled.getText().trim();
+      //  String lengthT = lengthTraveled.getText().trim();
 
         //Parsing info into different areas to test functionality
         int bN=0;
@@ -1170,18 +1179,22 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                     temp.setSwitchState(switches);
                 }
 
-                if(!lengthT.equals("Length Traveled")){
-                    LenT = Double.parseDouble(lengthT);
+               // if(!lengthT.equals("Length Traveled")){
+                 //   LenT = Double.parseDouble(lengthT);
                     //  trackList.setTrainsLength(LenT);
                     //   JOptionPane.showMessageDialog(null, "NOW : " + trackList.getTrainsLength() + " AND " + trackList.getBlocksLength());
-                }
+              // }
 
             }
         }
 
     }
 
+    private void updateTixActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        trackList.increaseTickets();
 
+    }
 
     private void jTestBlueMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
@@ -1347,6 +1360,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JTextField speedTest;
     private javax.swing.JTextField switchTest;
     private javax.swing.JButton updateTest;
+    private javax.swing.JButton updateTix;
     // End of variables declaration
 }
 

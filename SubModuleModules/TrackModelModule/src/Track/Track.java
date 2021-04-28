@@ -7,7 +7,7 @@ import WorldClock.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+/**Author Grace Henderson**/
     public class Track implements PhysicsUpdateListener {
 
         //Members in Class
@@ -488,13 +488,13 @@ import java.util.Scanner;
 
         }
 
-
+        //getting track heater status
         public boolean getTrackHeaterStatus(){
             return TRACK_HEATER;
         }
 
 
-        //updating tickets
+        //updating tickets FOR THE CTC
         public int updateTickets(){
             int ticketTotal = 0;
             for(int i=0; i<stationsArrayList.size();i++)
@@ -503,6 +503,7 @@ import java.util.Scanner;
             return ticketTotal;
         }
 
+        //FOR the module -- increase and setting ticket sales whenever sim environment calls
         public void increaseTickets(){
             //updating all ticketSales
             for(int i=0; i<stationsArrayList.size();i++)
@@ -624,9 +625,10 @@ import java.util.Scanner;
             return blockArrayList.toString();
         }
 
-
+        /*used by sim environment to call and increase tickets */
         @Override
         public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+            updateSwitches();
             totalTime += deltaTime_inSeconds;
             if((int)totalTime%15 == 0)
                 increaseTickets();
