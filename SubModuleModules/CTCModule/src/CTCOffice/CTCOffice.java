@@ -119,7 +119,11 @@ public class CTCOffice implements PhysicsUpdateListener
         if (tNum.equals("Train 1")) {
             trainNum = 1;
             trackObj.dispatchLine(0); // 0 is for green 1 is for red
-            SEobj.spawnRunningTrain(trackObj.getGreenLine().get(63), trackObj.getGreenLine().get(62));
+            SEobj.spawnRunningTrain(trackObj.getGreenLine().get(66), trackObj.getGreenLine().get(63));
+
+
+
+
         }
         else if (tNum.equals("Train 2"))
             trainNum = 2;

@@ -244,7 +244,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 oncePerStationFlag = true;
                 // Convert occupies to Station type
                 occupies = (Station) occupies;
-                trainEventLogger.severe(String.format("%s has entered station block (%s) at time (%s)",this.toString(),occupies.getInfrastructure(),currentTime));
+                trainEventLogger.finer(String.format("%s has entered station block (%s) at time (%s)",this.toString(),occupies.getInfrastructure(),currentTime));
             }
         }
 
@@ -340,6 +340,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
     public void spawnOn(TrackElement location, TrackElement awayFrom) {
         placeOn(location);
         lastOccupied = awayFrom;
+        System.out.println("This is location " + location);
     }
 
 
@@ -401,11 +402,13 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         hull.updatePhysicalState(currentTimeString,deltaTime_inSeconds);
 
         // Update Controller's physics
-        if (!controllerDisconnected)
-            control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
+        if (!controllerDisconnected) {
+            System.out.println("******updating control data");
+            control.updateCommandOutputs(currentTimeString, deltaTime_inSeconds);
+        }
 
         // Update physics to logger (very frequent)
-        trainEventLogger.severe(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
+       trainEventLogger.info(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
                 name,this.hashCode(),
                 deltaTime_inSeconds,
                 hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance(),
@@ -539,7 +542,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         // Feed Speed and Authority from track to Train Hull
         retrieveAuthorityFromTrack();
         retrieveSpeedFromTrack();
-        trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%d) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
+        trainEventLogger.finest(String.format("TrainUnit (%s : %s) TrainModel has pulled Speed/Authority (%f,%d) from the Track Circuit",name,this.hashCode(),hull.getCommandedSpeed(),hull.getAuthority()));
         // Have Train Controller fetch Commanded Speed, Commanded Authority, and Actual Speed
         trainEventLogger.finer(String.format("TrainUnit (%s : %s) TrainController has pulled Speed/Authority/ActualSpeed (%f,%d,%f) from TrainModel",name,this.hashCode(),control.getCommandedSpeed(),control.getAuthority(),control.getActualSpeed()));
     }
@@ -555,13 +558,17 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         if (occupies == null) {
             COMMANDED_AUTHORITY = -1;
             hull.setAuthority(COMMANDED_AUTHORITY);
+            getController().setCommandedSpeed(COMMANDED_AUTHORITY);
+
             trainEventLogger.finest(String.format("TrainUnit (%s,%s) TrainModel is not on a rail, pulling invalid CommandedSpeed=-1.0",name,this.hashCode()));
             return;
         }
         // Pull Commanded Authority from Track
         COMMANDED_AUTHORITY = occupies.getAuthority();
+        getController().setCommandedSpeed(COMMANDED_AUTHORITY);
         // Give Authority to Hull
         hull.setAuthority(COMMANDED_AUTHORITY);
+        getController().setAuthority(COMMANDED_AUTHORITY);
         // Control will pull these values during run() function
     }
 
@@ -580,6 +587,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         }
         // Pull Commanded Speed from Track
         COMMANDED_SPEED = occupies.getCommandedSpeed();
+        //SEETING
+        getController().setCommandedSpeed(COMMANDED_SPEED);
         // Pull speed limit from Track
         SPEED_LIMIT=occupies.getSpeedLimit();
         // Give Speed to Hull

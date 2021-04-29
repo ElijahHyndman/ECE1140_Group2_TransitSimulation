@@ -41,6 +41,7 @@ public class TrainControl {
     public double stoppingDistance;
     boolean beaconSet;
     private double route;
+    private String doors;
     String simTime;
 
     public TrainControl(){
@@ -73,6 +74,7 @@ public class TrainControl {
         speedLimit = 0;
         beacon = null;
         alert = null;
+        doors = null;
         shouldBrake = 0;
         nonVitalComponents = new NonVitalComponents();
         sampleTime = .1;
@@ -94,6 +96,7 @@ public class TrainControl {
         boolean externalLights = nonVitalComponents.getExternalLights();
         boolean rightDoors = nonVitalComponents.getRightDoors();
         boolean leftDoors = nonVitalComponents.getLeftDoors();
+        String announcement = nonVitalComponents.getAnnouncement();
 
         trainModel.setCabinTemp(temperature);
         trainModel.setHeadlights(headlights);
@@ -101,6 +104,10 @@ public class TrainControl {
         trainModel.setOuterLights(externalLights);
         trainModel.setRightDoors(rightDoors);
         trainModel.setLeftDoors(leftDoors);
+        trainModel.setAnnouncements(announcement);
+        if (beacon != null){
+           trainModel.setNextStop(beacon.substring(0, beacon.indexOf(" ")));
+        }
     }
 
     public TrainMotor getTrainMotor(){
@@ -244,7 +251,7 @@ public class TrainControl {
     //Commanded Speed input from Train Model
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
-        if (authority > 0){
+        if (authority >= 0){
             if (eBrake){
                 velocityCmd = (velocityCmd + emergencyBrake*(sampleTime));
                 if (velocityCmd <= 0){
@@ -305,7 +312,7 @@ public class TrainControl {
     public void setAuthority(int distBlock){
         authority = distBlock;
         if (authority == 0 && !beaconSet){
-            useEmergencyBrake(true);
+            //useEmergencyBrake(true);
         }
     }
 
@@ -317,11 +324,14 @@ public class TrainControl {
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
+            int doorString = half.indexOf(" ");
+            doors = half.substring(doorString + 1);
             System.out.println(stop);
             stoppingDistance = stop;
         }else if (beacon == null && !beaconSet && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
+            doors = null;
         }else if(beacon == null && authority == 0){
             beaconSet = false;
             stoppingDistance = -1;
@@ -346,7 +356,11 @@ public class TrainControl {
     }
 
     public void openDoorAtStation(boolean door){
-        nonVitalComponents.setDoors(beacon);
+        if (door){
+            nonVitalComponents.setDoors(doors);
+        }else {
+            nonVitalComponents.setDoors(null);
+        }
         trainModel.setRightDoors(nonVitalComponents.getRightDoors());
         trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
@@ -384,7 +398,10 @@ public class TrainControl {
 
     public void getTrainData(){
         boolean passengerBrake = trainModel.getEmergencyBrake();
-        if (passengerBrake){
+        boolean signalFail = trainModel.getSignalPickupFailure();
+        boolean brakeFail = trainModel.getBrakeFailure();
+        boolean engineFail = trainModel.getEngineFailure();
+        if (passengerBrake || signalFail || brakeFail || engineFail){
             useEmergencyBrake(true);
         }
         setAuthority(trainModel.getAuthority());

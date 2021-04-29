@@ -75,8 +75,8 @@ public class NonVitalComponents {
     }
 
     //Returns whether an announcement is in progress or not
-    public boolean announcementInProgress(){
-        return announcementProgress;
+    public String getAnnouncement(){
+        return theAnnouncement;
     }
 
     public int getCurrentAdvertisement(){
@@ -106,19 +106,15 @@ public class NonVitalComponents {
     }
 
     //sets doors based on beacon, called during openDoorAtStation
-    public void setDoors(String currentBeacon){
+    public void setDoors(String side){
         leftDoors = false;
         rightDoors = false;
 
-        if (currentBeacon != null){
-            int start = currentBeacon.indexOf(" ");
-            String half = currentBeacon.substring(start+1);
-            int doorString = half.indexOf(" ");
-            String side = half.substring(doorString + 1);
-            if (side.equals("L")){
+        if (side != null){
+            if (side.equals("L\r")){
                 leftDoors = true;
                 rightDoors = false;
-            }else if (side.equals("R")){
+            }else if (side.equals("R\r")){
                 leftDoors = false;
                 rightDoors = true;
             }else{
