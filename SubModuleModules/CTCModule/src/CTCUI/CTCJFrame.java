@@ -873,7 +873,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
-                display.CloseTrack(block,lineColor);
+                display.OpenTrack(block,lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }

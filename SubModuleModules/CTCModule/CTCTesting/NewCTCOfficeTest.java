@@ -50,6 +50,8 @@ public class NewCTCOfficeTest {
         System.out.println();
         ctc.timeNow = "00:00:00";
 
+        //System.out.println(Arrays.toString(ctc.authorities.get(0)));
+
         System.out.println(Arrays.toString(ctc.Dispatch("Pioneer","Train 1","23:30")));
     }
 
