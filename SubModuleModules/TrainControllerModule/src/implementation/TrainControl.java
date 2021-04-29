@@ -341,10 +341,9 @@ public class TrainControl {
         }else if (beacon == null && !beaconSet && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
-            doors = null;
         }else if(beacon == null && authority == 0){
-//            beaconSet = false;
-//            stoppingDistance = -1;
+            beaconSet = false;
+            stoppingDistance = -1;
         }
 
         nonVitalComponents.setAnnouncement(authority, trainVelocity);
@@ -376,6 +375,26 @@ public class TrainControl {
         trainModel.setRightDoors(nonVitalComponents.getRightDoors());
         trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
+
+    /*
+    //Replicating inputs from the Train Model, used by TestingUI
+    public void newTrainInput(TrainModelInput currentInput){
+        setActualSpeed(currentInput.getActualSpeed());
+
+        if (getControlMode().equals("Automatic")){
+            setCommandedSpeed(currentInput.getCommandedVelocity());
+        }else{
+                setCommandedSpeed(manualVelocity);
+            }
+
+        setSpeedLimit(currentInput.getSpeedLimit());
+        beacon = currentInput.getBeacon();
+
+        //monitorDistance();
+        power = motor.getPower(velocityCmd, trainVelocity);
+    }
+
+     */
 
     /**
      * NEW METHODS FOR TRAIN MODEL
@@ -416,4 +435,8 @@ public class TrainControl {
         this.nextStop = next;
         trainModel.setNextStop(next);
     }
+    public void setRouteLength(double routeLength){
+        route = routeLength;
+    }
+
 }

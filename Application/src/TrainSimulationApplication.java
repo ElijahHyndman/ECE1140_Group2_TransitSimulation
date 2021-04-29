@@ -1,15 +1,23 @@
 //import CTCOffice.CTCOffice;
 //import CTCUI.CTCJFrame;
+import CTCOffice.CTCOffice;
+import CTCUI.CTCJFrame;
+import GUIInterface.AppGUIModule;
 import SimulationEnvironment.*;
+import Track.Track;
+import Track.TrackGUI;
 import TrackConstruction.TrackElement;
 import TrainControlUI.DriverUI;
+import TrainModel.Train;
+import TrainModel.trainGUI;
+import WaysideController.WaysideSystem;
 import implementation.TrainControl;
 
 public class TrainSimulationApplication extends Thread {
 
 
     SimulationEnvironment SE;
-    SimulationEnvironmentJFrame appGUI;
+    SimulationEnvironmentJFrame appGUI; // changing it to jframe
 
     volatile boolean running = false;
 
@@ -17,13 +25,16 @@ public class TrainSimulationApplication extends Thread {
         SE = new SimulationEnvironment();
         spawnSEGUI();
     }
-    public TrainSimulationApplication(String line) {
+    public TrainSimulationApplication(String line) throws Exception {
         SE = new SimulationEnvironment();
+      //  SE.importTrack(line); // adding to load
+      //  SE.setTrack(SE.getTrackSystem());
         spawnSEGUI();
+
     }
 
     public void spawnSEGUI() {
-        appGUI = new SimulationEnvironmentJFrame(SE);
+        appGUI = new SimulationEnvironmentJFrame(SE); // Think this is the one to use Now
         appGUI.latch(SE);
     }
 
@@ -46,13 +57,13 @@ public class TrainSimulationApplication extends Thread {
         return appGUI;
     }
 
-    /*
+
     public AppGUIModule spawnGUI(Object item) {
         if(item instanceof Train) {
             try {
                 AppGUIModule<Train> newWindow = new trainGUI(0);
                 newWindow.latch((Train) item);
-                newWindow.start();
+                //newWindow.start();
                 return newWindow;
             } catch (Exception e) {
                 System.out.println("GUI failed");
@@ -69,8 +80,8 @@ public class TrainSimulationApplication extends Thread {
             }
         } else if (item instanceof CTCOffice) {
             try {
-                //AppGUIModule<CTCOffice> newWindow = new CTCJFrame();
-                //newWindow.latch((CTCOffice) item);
+                AppGUIModule<CTCOffice> newWindow = new CTCJFrame((CTCOffice)item);
+                //newWindow.latch(item);
                 return null;
             } catch (Exception e) {
                 System.out.println("GUI failed");
@@ -79,9 +90,9 @@ public class TrainSimulationApplication extends Thread {
         } else if (item instanceof WaysideSystem) {
             try {
                 System.out.println("Spawning wayside system gui");
-                AppGUIModule<WaysideSystem> newWindow = new WaysideUIJFrameWindow();
-                newWindow.latch((WaysideSystem) item);
-                return newWindow;
+              //  AppGUIModule<WaysideSystem> newWindow = new WaysideUIJFrameWindow();
+              //  newWindow.latch((WaysideSystem) item);
+            //    return newWindow;
             } catch (Exception e) {
                 System.out.println("GUI failed");
                 e.printStackTrace();
@@ -97,7 +108,7 @@ public class TrainSimulationApplication extends Thread {
             }
         }
         return null;
-    }*/
+    }
 
     public DriverUI spawnControllerUI(TrainControl ctrl) {
         DriverUI newUI = new DriverUI();
@@ -107,10 +118,16 @@ public class TrainSimulationApplication extends Thread {
 
 
 
-    public static void main(String[] args) {
-        TrainSimulationApplication run = new TrainSimulationApplication("Green");
-        run.getJFrame().setGreenLine();
+    public static void main(String[] args) throws Exception {
+        TrainSimulationApplication run = new TrainSimulationApplication("SubModuleModules/TrackModelModule/src/Track/RedGreenUpdated.csv");
         run.start();
+
+    //   run.start();
+
+      //  CTCJFrame ctcui = new CTCJFrame(run.getSE().getCTC());
+       // ctcui.setVisible(true);
+
+        //run.spawnGUI(run.getSE().getCTC());
 
         //run.getSE().getCTC().Dispatch("Dormont","new","00:08:00");
 
@@ -119,7 +136,12 @@ public class TrainSimulationApplication extends Thread {
         ctcui.setVisible(true);
         System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
         */
-        TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
+
+        if (run.getSE().getTrackSystem() != null){
+            TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
+        }
+
+        //TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
         //yard.setCommandedSpeed(10.0);
         //yard.setAuthority(1);
         //System.out.println(yard);
