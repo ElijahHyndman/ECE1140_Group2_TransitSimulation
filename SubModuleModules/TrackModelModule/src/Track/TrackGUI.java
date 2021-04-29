@@ -2,7 +2,8 @@ package Track;
 
 import GUIInterface.AppGUIModule;
 import TrackConstruction.*;
-import javax.swing.Timer;
+
+import javax.swing.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -40,6 +41,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     public TrackGUI(Track trackL) {
         initComponents();
         this.trackList = trackL;
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**

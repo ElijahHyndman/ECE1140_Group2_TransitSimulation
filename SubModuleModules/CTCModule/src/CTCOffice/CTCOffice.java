@@ -33,7 +33,7 @@ public class CTCOffice //implements PhysicsUpdateListener
     private boolean occ;
     private double speed;
     private int authority;
-    public ArrayList<WaysideSystem> waysides, waysideG, waysideR;
+    public ArrayList<WaysideSystem> waysides = new ArrayList<WaysideSystem>();// waysideG, waysideR;
     private double[] speedArrG = new double[151];
     private double[] speedArrR = new double[151];
     private int[] route = new int[151];
@@ -55,41 +55,14 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public CTCOffice()
     {
-
-        waysides = GenerateWaysideSystems(trackObj);
-        SEobj = new SimulationEnvironment();
         trackObj = new Track();
     }
-
-    public CTCOffice(Track SEtrack, SimulationEnvironment SE)
-    {
-        waysides = GenerateWaysideSystems(SEtrack);
-        trackObj = SEtrack;
-        SEobj = SE;
+    public CTCOffice (SimulationEnvironment SE) {
+        this.SEobj = SE;
     }
-
-    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
-
-        // Generate wayside if not
-        ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
-        WaysideSystem greenWS = null;
-        WaysideSystem redWS = null;
-
-        try {
-            greenWS = new  WaysideSystem(trackSystem.getGreenLine(),"Green");
-        } catch (Exception failedToGetGreenLineFromTrack) {
-            failedToGetGreenLineFromTrack.printStackTrace();
-        }
-        try {
-            redWS = new WaysideSystem(trackSystem.getRedLine(),"Red");
-        } catch (Exception failedToGetRedLineFromTrack) {
-            failedToGetRedLineFromTrack.printStackTrace();
-        }
-
-        generatedWaysides.add(greenWS);
-        generatedWaysides.add(redWS);
-
-        return generatedWaysides;
+    public CTCOffice(Track SEtrack, SimulationEnvironment SE) throws Exception {
+        updateTrack(SEtrack);
+        SEobj = SE;
     }
 
 
@@ -128,10 +101,6 @@ public class CTCOffice //implements PhysicsUpdateListener
 
     public Track getTrack() {
         return trackObj;
-    }
-
-    public void setTrack(Track SEt) {
-        trackObj = SEt;
     }
 
     public Object[] Dispatch(String dest, String tNum, String timeD) throws Exception {

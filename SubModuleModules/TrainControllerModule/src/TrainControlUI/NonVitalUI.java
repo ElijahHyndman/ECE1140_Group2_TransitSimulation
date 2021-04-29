@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
  * Author: Reagan Dowling
  */
 
-public class NonVitalUI implements ActionListener {
+public class NonVitalUI extends javax.swing.JFrame implements ActionListener {
     private JFrame nonVital;
     private NonVitalComponents nonVitalComp;
 
@@ -107,7 +107,7 @@ public class NonVitalUI implements ActionListener {
 
        */
 
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public void setUpWindow(){

@@ -45,6 +45,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/Application/src/SimulationUI.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Application/src/TestingIntegration.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home/lib/src.zip!/java.desktop/java/awt/Container.java">
           <value>
             <Attribute>
@@ -182,6 +196,20 @@
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/TrainControlUI/DriverUI.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/TrainControlUI/EngineerUI.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
             </Attribute>
           </value>
         </entry>
@@ -410,6 +438,13 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideController/WaysideSystem.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/src/WaysideGUI/WaysideSystemUI.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
