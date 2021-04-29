@@ -41,13 +41,33 @@ public class TrainControlManualTest {
 
     @Test
     public void testManualServiceBrake(){
-        assertThat(control.getControlMode(), is("Automatic"));
-
+        control.setAuthority(1);
         control.setCommandedSpeed(35);
         double velocityCmd = control.getCommandedSpeed();
         assertThat(velocityCmd, is(35.0));
 
         control.useServiceBrake(true);
+
+        //test that commanded speed is decreasing until 0
+        while (velocityCmd > 0){
+            control.setCommandedSpeed(velocityCmd);
+            double velocityDec = control.getCommandedSpeed();
+            boolean decreased = (velocityDec < velocityCmd);
+            assertThat(decreased, is(true));
+            velocityCmd = velocityDec;
+        }
+
+        assertThat(velocityCmd, is(0.0));
+    }
+
+    @Test
+    public void testManualEmergencyBrake(){
+        control.setAuthority(1);
+        control.setCommandedSpeed(35);
+        double velocityCmd = control.getCommandedSpeed();
+        assertThat(velocityCmd, is(35.0));
+
+        control.useEmergencyBrake(true);
 
         //test that commanded speed is decreasing until 0
         while (velocityCmd > 0){

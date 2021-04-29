@@ -4,6 +4,8 @@ package implementation;
 
 import systemData.Advertisements;
 
+import java.time.LocalTime;
+
 /** NonVitalComponents holds and updates the
  * statuses of a Train's non-vital components.
  * These components are controlled automatically,
@@ -124,6 +126,9 @@ public class NonVitalComponents {
         }
     }
 
+    //Setting the train's announcement
+    //If have statiaon name and traian still moving, approaching staation
+    //If have station name and train not oving, approaching
     public void setAnnouncement(double authority, double trainSpeed){
 
         if (station!=null && authority>0){
@@ -136,9 +141,13 @@ public class NonVitalComponents {
     //Sets the train cabin lights based on world time
     public void setCabinLights(String time){
 
-        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
-            cabinLights = true;
-        } else {
+        if (time != null){
+            String theTime = time.substring(0, time.indexOf(":"));
+            int timeHour = Integer.parseInt(theTime);
+            if (timeHour >= 18 || timeHour < 7){
+                cabinLights = true;
+            }
+        }else{
             cabinLights = false;
         }
     }
@@ -146,9 +155,14 @@ public class NonVitalComponents {
     //Sets the train external lights based on world time
     public void setExternalLights(String time){
 
-        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
-            externalLights = true;
-        } else {
+        if (time != null){
+            String theTime = time.substring(0, time.indexOf(":"));
+            int timeHour = Integer.parseInt(theTime);
+            if (timeHour >= 18 || timeHour < 7){
+                externalLights = true;
+            }
+
+        }else {
             externalLights = false;
         }
     }

@@ -134,7 +134,7 @@ public class DriverUI extends javax.swing.JFrame implements ActionListener, AppG
     }
 
     public void update(){
-        time.setText(java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
+        time.setText(control.getSimTime());
         speedVal.setText(String.valueOf(format.format(control.getActualSpeed()*2.23694)));
         comSpeedVal.setText(String.valueOf(format.format(control.getCommandedSpeed()*2.23694)));
         limitVal.setText(String.valueOf(format.format(control.getSpeedLimit()*2.23694)));

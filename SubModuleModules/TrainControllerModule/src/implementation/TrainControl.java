@@ -43,6 +43,7 @@ public class TrainControl {
     private double route;
     private String doors;
     String simTime;
+    private String nextStop;
 
     public TrainControl(){
       this(null);
@@ -313,6 +314,11 @@ public class TrainControl {
         authority = distBlock;
         if (authority == 0 && !beaconSet){
             useEmergencyBrake(true);
+        }else if(authority != 0 && beaconSet && trainVelocity == 0){
+            beaconSet = false;
+            stoppingDistance = -1;
+            useEmergencyBrake(false);
+            useServiceBrake(false);
         }
     }
 
@@ -333,8 +339,8 @@ public class TrainControl {
             beaconSet = false;
             doors = null;
         }else if(beacon == null && authority == 0){
-            beaconSet = false;
-            stoppingDistance = -1;
+            //beaconSet = false;
+            //stoppingDistance = -1;
         }
     }
 
@@ -399,5 +405,17 @@ public class TrainControl {
     public void setTrainData(){
         trainModel.setPower(power);
         setNonVitalComponents();
+    }
+
+    public String getSimTime(){
+        if (simTime != null){
+            return simTime;
+        }
+        return null;
+    }
+
+    public void setNextStation(String next){
+        this.nextStop = next;
+        trainModel.setNextStop(next);
     }
 }

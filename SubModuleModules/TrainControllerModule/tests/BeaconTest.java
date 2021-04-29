@@ -27,7 +27,7 @@ public class BeaconTest {
     public void trainReadsBeaconAndStopsAtCorrectDistance(){
         theTrain.setSpeed(10);
         theTrain.setCommandedSpeed(10);
-        theTrain.setBeacon("Dormont: 400 :L\r");
+        theTrain.setBeacon("Dormont: 400: L\r");
         theTrain.setAuthority(888);
         updateTheTrain(.1);
         updateTheTrain(.1);
