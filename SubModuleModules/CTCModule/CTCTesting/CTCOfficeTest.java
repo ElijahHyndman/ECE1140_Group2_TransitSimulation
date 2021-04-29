@@ -161,7 +161,6 @@ class CTCOfficeTest {
         CTCOffice display = new CTCOffice();
         display.LoadSchedule(filename);
         ArrayList<DisplayLine> dispList = display.getDisps();
-
         System.out.println(dispList);
     }
 
