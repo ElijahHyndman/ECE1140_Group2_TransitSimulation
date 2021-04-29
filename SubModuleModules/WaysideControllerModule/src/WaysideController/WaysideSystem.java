@@ -1,16 +1,17 @@
 package WaysideController;
 
-import PLCInput.*;
-import PLCOutput.SwitchPLCOutput;
-import Track.Track;
+import PLCInput.HasAuthorityPLCInput;
+import PLCInput.OccupationPLCInput;
+import PLCInput.PLCInput;
 import TrackConstruction.Station;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
-import WaysideGUI.WaysideUIClass;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 
@@ -132,7 +133,7 @@ public class WaysideSystem {
                     this.trackSectionName,this.trackSectionName, trackLine.size(),lineAuthorities.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 0; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
             }
@@ -151,7 +152,7 @@ public class WaysideSystem {
                     this.trackSectionName,this.trackSectionName, trackLine.size(),lineSpeeds.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 0; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockSpeed(blockNum, lineSpeeds[arrayIndex]);
             }

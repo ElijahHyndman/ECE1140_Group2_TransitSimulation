@@ -263,6 +263,7 @@ public class CTCOffice //implements PhysicsUpdateListener
 
         authority = calcAuthority(route);
         authArr = createAuthArr(route, authority);
+        System.out.println(Arrays.toString(authArr));
 
         if (speed<5)
         {
