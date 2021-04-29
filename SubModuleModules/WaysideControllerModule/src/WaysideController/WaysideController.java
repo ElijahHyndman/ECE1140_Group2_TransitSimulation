@@ -2,17 +2,17 @@ package WaysideController;
 
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
-import PLCInput.*;
-import PLCOutput.*;
+import PLCInput.PLCInput;
+import PLCOutput.AuthorityPLCOutput;
+import PLCOutput.PLCOutput;
 import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.String.valueOf;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 /** module class that uses boolean logic to dictate Track System controls. 
  * @author Harsh
@@ -37,7 +37,6 @@ public class WaysideController extends Thread implements Serializable {
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
     private boolean running = false;
-    private boolean outputing = true;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
@@ -50,8 +49,8 @@ public class WaysideController extends Thread implements Serializable {
     private HashMap<Integer, PLCOutput> switchPLCControls = new HashMap<Integer, PLCOutput>();
     /** PLCScript Members
      */
-    volatile private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
-    volatile private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
+    private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
+    private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
     /** Test GUI Members
      */
     /***********************************************************************************************************************/
@@ -101,24 +100,22 @@ public class WaysideController extends Thread implements Serializable {
     public void run() {
         running = true;
         while (running) {
-            if (outputing) {
-                for (PLCEngine userScript : UserPLCScripts) {
-                    try {
-                        userScript.evaluateLogic();
-                    } catch (Exception failureToExecuteScript) {
-                        failureToExecuteScript.printStackTrace();
-                        //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
-                    }
+            for (PLCEngine userScript : UserPLCScripts) {
+                try {
+                    userScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
                 }
-                for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
-                    try {
-                        safetyCriticalScript.evaluateLogic();
-                    } catch (Exception failureToExecuteScript) {
-                        failureToExecuteScript.printStackTrace();
-                        //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
-                    }
+            }
+            for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
+                try {
+                    safetyCriticalScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
                 }
-            }// end if
+            }
         }
     }
 
@@ -129,20 +126,6 @@ public class WaysideController extends Thread implements Serializable {
         this.running = false;
     }
 
-    public void setOutputing(boolean generating) {
-        outputing = generating;
-    }
-
-
-
-    public void uploadPLCScript(PLCEngine script) {
-        script.setInputSources(inputPool);
-        UserPLCScripts.add(script);
-    }
-    public void uploadSafetyPLCScript(PLCEngine script) {
-        script.setInputSources(inputPool);
-        SafetyCriticalPLCScripts.add(script);
-    }
 
     /*
             Wayside System Methods
@@ -293,8 +276,24 @@ public class WaysideController extends Thread implements Serializable {
         AuthorityPLCOutput haltAuthorityOutput = new AuthorityPLCOutput(element, AuthorityPLCOutput.AuthOutRule.HaltWhenTrue);
         PLCEngine collisionAvoidance = new PLCEngine(PLCScript, haltAuthorityOutput);
         // Debug
-        System.out.printf(".");
+        //System.out.printf(".");
         return collisionAvoidance;
+    }
+
+
+    /**
+     *
+     * @param sw
+     * @return
+     * @throws Exception
+     */
+    public static PLCEngine generateSwitchConflictAvoidanceScript (Switch sw) throws Exception {
+        // TODO
+        int thisBlockIndex = sw.getBlockNum();
+        int blockAfterIndex = sw.getDirection(0);
+        int blockBeforeIndex = sw.getDirection(1);
+        int switchAfterIndex = sw.getDirection(2);
+        return null;
     }
 
 
@@ -568,6 +567,8 @@ public class WaysideController extends Thread implements Serializable {
             Get Set
      */
 
+
+
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
     public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
@@ -608,44 +609,44 @@ public class WaysideController extends Thread implements Serializable {
         /*
             Inputs Node
          */
-//        String inputCategory = "Input Signals";
-//        Vector<String> inputVector = new Vector<>();
-////        boolean[] inputValues = gpio.getAllInputValues();
-////        for(int i=0;i < inputValues.length;i++){
-////            inputVector.add("input "+i+" : "+inputValues[i]);
-////        }
-//        hash.put(inputCategory, inputVector);
-//        /*
-//            Outputs Node
-//         */
-//        String outputCategory = "Output Signals";
-//        Vector<String> outputVector = new Vector<>();
-////        Boolean[] outputValues = gpio.getOutputValues();
-////        for(int i=0;i < outputValues.length;i++){
-////            outputVector.add("output "+i+" : "+outputValues[i]);
-////        }
-//        hash.put(outputCategory, outputVector);
-//        /*
-//            Speed Node
-//         */
-//        String speedCategory = "Speed";
-//        Vector<String> speedVector = new Vector<>();
-//        double[] speed = getSpeed();
-//        for(int i=0;i < speed.length;i++){
-//            speedVector.add("block speed "+i+" : "+speed[i]);
+        String inputCategory = "Input Signals";
+        Vector<String> inputVector = new Vector<>();
+//        boolean[] inputValues = gpio.getAllInputValues();
+//        for(int i=0;i < inputValues.length;i++){
+//            inputVector.add("input "+i+" : "+inputValues[i]);
 //        }
-//        hash.put(speedCategory, speedVector);
-//        /*
-//            Authority Node
-//         */
-//        int[] authority = getAuthority();
-//        String authorityCategory = "Authority";
-//        Vector<String> authorityVector = new Vector<>();
-//        for(int i=0;i < authority.length;i++){
-//            authorityVector.add("block authority "+i+" : "+authority[i]);
+        hash.put(inputCategory, inputVector);
+        /*
+            Outputs Node
+         */
+        String outputCategory = "Output Signals";
+        Vector<String> outputVector = new Vector<>();
+//        Boolean[] outputValues = gpio.getOutputValues();
+//        for(int i=0;i < outputValues.length;i++){
+//            outputVector.add("output "+i+" : "+outputValues[i]);
 //        }
-//        hash.put(authorityCategory, authorityVector);
-//        // Return tree format
+        hash.put(outputCategory, outputVector);
+        /*
+            Speed Node
+         */
+        String speedCategory = "Speed";
+        Vector<String> speedVector = new Vector<>();
+        double[] speed = getSpeed();
+        for(int i=0;i < speed.length;i++){
+            speedVector.add("block speed "+i+" : "+speed[i]);
+        }
+        hash.put(speedCategory, speedVector);
+        /*
+            Authority Node
+         */
+        int[] authority = getAuthority();
+        String authorityCategory = "Authority";
+        Vector<String> authorityVector = new Vector<>();
+        for(int i=0;i < authority.length;i++){
+            authorityVector.add("block authority "+i+" : "+authority[i]);
+        }
+        hash.put(authorityCategory, authorityVector);
+        // Return tree format
         return hash;
     }
 
@@ -659,8 +660,8 @@ public class WaysideController extends Thread implements Serializable {
 
     public String toString(){
         String profile = controllerName;
-//        if (controllerAlias != null)
-//            profile = profile + String.format("[Alias \"%s\"]\n",controllerAlias);
+        if (controllerAlias != null)
+            profile += String.format("[Alias \"%s\"]\n",controllerAlias);
         return profile;
     }
     public String toMedString() {
