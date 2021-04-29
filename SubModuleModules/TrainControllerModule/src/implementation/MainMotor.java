@@ -1,6 +1,15 @@
 package implementation;
 
-//Train motor for project
+/**MainMotor is the primary motor to
+ * use for the Train's power calculation.
+ * MainMotor utilizes a third party PID
+ * Controller object to calculate the power
+ * output. Default Kp and Ki values are
+ * 10.5 and 1.
+ *
+ * ECE1140
+ * Reagan Dowling
+ */
 
 public class MainMotor implements TrainMotor {
 
@@ -15,8 +24,8 @@ public class MainMotor implements TrainMotor {
 
         acceleration = 0;
         power = 0;
-        Kp = 10;//3; // Default Kp
-        Ki = .001; // Default Ki
+        Kp = 10.5;//3; // Default Kp
+        Ki = 1; // Default Ki
 
         PID = new PIDController(Kp, Ki, 0);
         PID.setOutputLimits(120);
@@ -33,7 +42,6 @@ public class MainMotor implements TrainMotor {
         }
         return power;
     }
-
 
     public void setKpKi(double newKp, double newKi){
         Kp = newKp;

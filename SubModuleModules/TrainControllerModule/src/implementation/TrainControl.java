@@ -2,6 +2,16 @@ package implementation;
 
 import TrainModel.Train;
 
+/** TrainControl serves as the main control
+ * entity for a Train object. When provided a
+ * Train object in the constructor, it controls
+ * all vital and non vital components.
+ * TrainControl uses a TrainMotor for calculating
+ * the power output to the Train object.
+ *
+ * ECE1140
+ * Reagan Dowling
+ */
 
 public class TrainControl {
 
@@ -31,16 +41,18 @@ public class TrainControl {
     public double stoppingDistance;
     boolean beaconSet;
     private double route;
+    String simTime;
 
     public TrainControl(){
       this(null);
     }
 
     public TrainControl(Train model){
-
         trainModel = model;
         //state design pattern
         motor = new ActiveMotor(new MainMotor(), new BackupMotor());
+
+        simTime = null;
 
         beaconSet = false;
         controlMode = "Automatic";
@@ -72,6 +84,7 @@ public class TrainControl {
         return nonVitalComponents;
     }
 
+    //Setting the Train objects non-vital components
     public void setNonVitalComponents(){
         controlNonVital();
 
@@ -118,7 +131,7 @@ public class TrainControl {
 
         double breakingDist = getSafeBreakingDistance();
         if (breakingDist > 0) {
-            if (beaconSet){
+            if (stoppingDistance != -1){
                // TODO I could not determine how to resolve between this line and the one below it. Someone better than me, check this out and choose the correct one
                // if (stoppingDistance <= breakingDist) {
                if (stoppingDistance-(sampleTime*prevVelocity) <= breakingDist) {
@@ -131,7 +144,6 @@ public class TrainControl {
             }
         }
     }
-
 
     public String getSystemMessage(){
         return alert;
@@ -164,17 +176,17 @@ public class TrainControl {
         return power;
     }
 
-    //Returns the train's actual speed, in Km/h
+    //Returns the train's actual speed, in m/s
     public double getActualSpeed(){
         return trainVelocity;
     }
 
-    //Returns the trains commanded speed, in Km/h
+    //Returns the trains commanded speed, in m/s
     public double getCommandedSpeed(){
         return velocityCmd;
     }
 
-    //Returns the track speed limit, in Km/h
+    //Returns the track speed limit, in m/s
     public double getSpeedLimit(){
         return speedLimit;
     }
@@ -232,21 +244,23 @@ public class TrainControl {
     //Commanded Speed input from Train Model
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
-        if (eBrake){
-            velocityCmd = (velocityCmd + emergencyBrake*(sampleTime));
-            if (velocityCmd <= 0){
-                velocityCmd = 0;
-            }
-            manualVelocity = velocityCmd;
-        //Check if service brake in use
-        }else if (sBrake){
-            velocityCmd = (velocityCmd + serviceBrake*(sampleTime));
-            if (velocityCmd <= 0){
-                velocityCmd = 0;
-            }
-            manualVelocity = velocityCmd;
-        }else {
+        if (authority > 0){
+            if (eBrake){
+                velocityCmd = (velocityCmd + emergencyBrake*(sampleTime));
+                if (velocityCmd <= 0){
+                    velocityCmd = 0;
+                }
+                manualVelocity = velocityCmd;
+                //Check if service brake in use
+            }else if (sBrake){
+                velocityCmd = (velocityCmd + serviceBrake*(sampleTime));
+                if (velocityCmd <= 0){
+                    velocityCmd = 0;
+                }
+                manualVelocity = velocityCmd;
+            }else {
                 velocityCmd = comSpeed;
+            }
         }
     }
 
@@ -283,11 +297,6 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
-        //TO DO: use and compare both train motor powers
-        double primaryPower;
-        double secondaryPower;
-
-        //for now, just uses main motor power
         power = (motor.getPower(velocityCmd, trainVelocity));
     }
 
@@ -297,21 +306,22 @@ public class TrainControl {
     //Authority input from Train Model, in blocks
     public void setAuthority(int distBlock){
         authority = distBlock;
-        if (authority == 0 && beacon == null){
+        if (authority == 0 && !beaconSet){
             useEmergencyBrake(true);
         }
     }
 
     public void setBeacon(String currentBeacon){
         beacon = currentBeacon;
-        if (!(beacon==null) && !beaconSet){
+        //Check if beacon not null and authority is 888
+        if (!(beacon==null) && !beaconSet && authority==888){
             beaconSet = true;
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
             System.out.println(stop);
             stoppingDistance = stop;
-        }else if (beacon == null && beaconSet == false){
+        }else if (beacon == null && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
         }
@@ -328,39 +338,17 @@ public class TrainControl {
     //Setting the train's nonVital Components
     public void controlNonVital(){
         nonVitalComponents.setTemperature();
-        nonVitalComponents.setCabinLights();
-        nonVitalComponents.setExternalLights();
+        nonVitalComponents.setCabinLights(simTime);
+        nonVitalComponents.setExternalLights(simTime);
         nonVitalComponents.setNextStation(beacon);
-        nonVitalComponents.setAnnouncement(authority, beacon);
-
-        if (beaconSet && trainVelocity == 0){
-            nonVitalComponents.setDoors(beacon);
-        }
+        nonVitalComponents.setAnnouncement(authority, trainVelocity);
     }
 
     public void openDoorAtStation(boolean door){
-
+        nonVitalComponents.setDoors(beacon);
+        trainModel.setRightDoors(nonVitalComponents.getRightDoors());
+        trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
-
-    /*
-    //Replicating inputs from the Train Model, used by TestingUI
-    public void newTrainInput(TrainModelInput currentInput){
-        setActualSpeed(currentInput.getActualSpeed());
-
-        if (getControlMode().equals("Automatic")){
-            setCommandedSpeed(currentInput.getCommandedVelocity());
-        }else{
-                setCommandedSpeed(manualVelocity);
-            }
-
-        setSpeedLimit(currentInput.getSpeedLimit());
-        beacon = currentInput.getBeacon();
-
-        //monitorDistance();
-        power = motor.getPower(velocityCmd, trainVelocity);
-    }
-
-     */
 
     /**
      * NEW METHODS FOR TRAIN MODEL
@@ -368,12 +356,16 @@ public class TrainControl {
 
     public void updateCommandOutputs(String currentTime, double deltaTime){
         sampleTime = deltaTime;
-        //trainModel.setSampleTime(deltaTime);
+        simTime = currentTime;
         getTrainData();
         setTrainData();
     }
 
     public void getTrainData(){
+        boolean passengerBrake = trainModel.getEmergencyBrake();
+        if (passengerBrake){
+            useEmergencyBrake(true);
+        }
         setAuthority(trainModel.getAuthority());
         setBeacon(trainModel.getBeacon());
         setActualSpeed(trainModel.getActualSpeed());
@@ -384,17 +376,10 @@ public class TrainControl {
         }
         this.setSpeedLimit(60/3.6);
         this.setPower();
-        //trainModel.getEmergencyBrake();
-        //trainModel;
     }
 
     public void setTrainData(){
         trainModel.setPower(power);
         setNonVitalComponents();
     }
-
-    public void setRouteLength(double routeLength){
-        route = routeLength;
-    }
-
 }

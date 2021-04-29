@@ -4,6 +4,15 @@ package implementation;
 
 import systemData.Advertisements;
 
+/** NonVitalComponents holds and updates the
+ * statuses of a Train's non-vital components.
+ * These components are controlled automatically,
+ * and take no manual input.
+ *
+ * ECE1140
+ * Reagan Dowling
+ */
+
 public class NonVitalComponents {
 
     private boolean cabinLights;
@@ -17,16 +26,11 @@ public class NonVitalComponents {
     private boolean announcementProgress;
     private String theAnnouncement;
 
-
-
-    public NonVitalComponents(){//trackData theTrack){
-
-        //track = theTrack;
-
+    public NonVitalComponents(){
         //Initialize non-vital components
         cabinLights = false;
         externalLights = false;
-        headLights = true;
+        headLights = true; //Headlights are always true for safety
         rightDoors = false;
         leftDoors = false;
         cabinTemp = 68;
@@ -37,7 +41,6 @@ public class NonVitalComponents {
     }
 
     //=======ACCESSOR METHODS========
-
     public String getNextStation(){
         return station;
     }
@@ -59,7 +62,6 @@ public class NonVitalComponents {
 
     //Returns cabin light status, true is on, false is off
     public boolean getCabinLights(){
-
         return cabinLights;
     }
 
@@ -78,13 +80,14 @@ public class NonVitalComponents {
     }
 
     public int getCurrentAdvertisement(){
-        //return adList.playAd();
-        return 0;
+        return adList.playAd();
+        //return 0;
     }
 
 
     //========MUTATOR METHODS==========
 
+    //Sets the cabin temperature based on the month of the year
     public void setTemperature(){
         if (java.time.LocalDate.now().getMonthValue() <= 3 || java.time.LocalDate.now().getMonthValue() >= 10){
             cabinTemp = 68;
@@ -93,6 +96,7 @@ public class NonVitalComponents {
         }
     }
 
+    //if beacon set (not null), gets the station name
     public void setNextStation(String currentBeacon){
         String stationName = null;
         if (currentBeacon != null){
@@ -101,8 +105,10 @@ public class NonVitalComponents {
         station = stationName;
     }
 
+    //sets doors based on beacon, called during openDoorAtStation
     public void setDoors(String currentBeacon){
-        String doors = null;
+        leftDoors = false;
+        rightDoors = false;
 
         if (currentBeacon != null){
             int start = currentBeacon.indexOf(" ");
@@ -120,35 +126,19 @@ public class NonVitalComponents {
                 rightDoors = true;
             }
         }
-
-        leftDoors = false;
-        rightDoors = false;
     }
 
-    public void setAnnouncement(double authority, String beacon){
-        String stationName = null;
-        if (authority < 200 && authority > 0){
-            if (beacon != null){
-                String station = beacon.substring(0, beacon.indexOf(":"));
-                stationName = station;
-                theAnnouncement = "Approaching " + stationName;
-                announcementProgress = true;
-            }else{
-                theAnnouncement = null;
-                announcementProgress = false;
-            }
-        }else if (authority == 0 && beacon !=null){
-            String station = beacon.substring(0, beacon.indexOf(" "));
-            stationName = station;
-            theAnnouncement = "Arrived at " + stationName;
-            announcementProgress = true;
-        }else{
-            announcementProgress = false;
-            theAnnouncement = null;
+    public void setAnnouncement(double authority, double trainSpeed){
+
+        if (station!=null && authority>0){
+            theAnnouncement = "Approaching Station At : " + station;
+        }else if(station!=null && authority==0 && trainSpeed==0){
+            theAnnouncement = "Arrived at Station : " + station;
         }
     }
 
-    public void setCabinLights(){
+    //Sets the train cabin lights based on world time
+    public void setCabinLights(String time){
 
         if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             cabinLights = true;
@@ -157,7 +147,8 @@ public class NonVitalComponents {
         }
     }
 
-    public void setExternalLights(){
+    //Sets the train external lights based on world time
+    public void setExternalLights(String time){
 
         if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
             externalLights = true;

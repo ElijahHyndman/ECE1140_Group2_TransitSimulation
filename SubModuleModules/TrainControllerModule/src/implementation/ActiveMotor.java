@@ -1,5 +1,19 @@
 package implementation;
 
+/**Active Motor implements the TrainMotor interface
+ * It serves as the context object in the state
+ * design pattern. It either uses the MainMotor
+ * for calculating power, or BackupMotor if
+ * an issue is detected. ActiveMotor cross
+ * checks the two diverse power calculation
+ * values.
+ *
+ * Used for Safety Critical Architecture
+ *
+ * ECE1140
+ * Reagan Dowling
+ */
+
 public class ActiveMotor implements TrainMotor{
 
     private TrainMotor main;
@@ -16,7 +30,6 @@ public class ActiveMotor implements TrainMotor{
 
         Kp = 10.5;
         Ki = 1;
-
     }
 
     public double getPower(double idealVelocity, double trainVelocity){

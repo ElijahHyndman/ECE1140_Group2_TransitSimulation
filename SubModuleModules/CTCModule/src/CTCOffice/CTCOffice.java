@@ -63,6 +63,11 @@ public class CTCOffice //implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
 
+    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
+        if (trackSystem == null) {
+            return new ArrayList<WaysideSystem>();
+        }
+
 
         ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
         WaysideSystem greenWS = null;
@@ -259,6 +264,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         //if(LocalTime.now().isBefore(timeDisp) && speed<50)
         if (now.isBefore(timeDisp))
         {
+            // Dispatch occurs later in time
             speedAuthorityTime[0] = speed*0.621371;
             speedAuthorityTime[1] = authority;
             speedAuthorityTime[2] = timeDisp;
@@ -282,7 +288,6 @@ public class CTCOffice //implements PhysicsUpdateListener
             speedAuthorityTime[1] = 0;
             speedAuthorityTime[2] = 0;
         }
-
         try {
             // For now, Just get the greenline wayside system
             // TODO make this an if statement so we can call the right Wayside Controller instead of only green
@@ -482,6 +487,12 @@ public class CTCOffice //implements PhysicsUpdateListener
                 times.add(timeDisp);
                 authorities.add(authArr);
             }
+        }
+        else
+        {
+            speedAuthorityTime[0] = 0;
+            speedAuthorityTime[1] = 0;
+            speedAuthorityTime[2] = 0;
         }
         else
         {
@@ -853,6 +864,19 @@ public class CTCOffice //implements PhysicsUpdateListener
         return RouteAr;
     }
 
+    /*
+        Haleigh,
+        here's the special function for getting wayside systems by name
+        if you create a wayside system using:  new WaysideSystem(trackSystem.getRedLine(),"Red");
+        then you can use:
+     */
+    public WaysideSystem getWaysideSystem(String sectionName) throws Exception {
+        WaysideSystem proxy = new WaysideSystem(sectionName);
+        int ind =  waysides.indexOf(proxy);
+        if (ind == -1)
+            throw new Exception(String.format("CTC WaysideSystem search error: Searching for wayside named %s in waysides returned no result.\nWaysidesContains:\n%s\n",sectionName,waysides));
+        return waysides.get(ind);
+    }
 
     public int calcAutoRouteLength(int bn, String lc, int tnum)
     {

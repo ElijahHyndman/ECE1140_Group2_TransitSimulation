@@ -12,6 +12,8 @@ public class PowerTest {
 
     @Before
     public void setUp(){
+        theTrain = new Train(5,10,1);
+
 
     }
 }

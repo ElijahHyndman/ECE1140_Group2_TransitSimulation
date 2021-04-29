@@ -11,7 +11,6 @@ import java.util.Random;
  */
 public class Train {
 
-    
     public Train(int numCars, int numCrew, int id) {
         this.numberOfCars = numCars;
         this.crewCount = numCrew;
