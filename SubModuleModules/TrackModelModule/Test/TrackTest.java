@@ -391,7 +391,7 @@ class TrackTest {
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
-
+        instance.dispatchLine(0);
         instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
         TrackElement cur = instance.getGreenLine().get(0);
         TrackElement prev = instance.getGreenLine().get(0);
@@ -399,7 +399,7 @@ class TrackTest {
         int test = 0;
         for (int i = 0; i < 5; i++) {
             next = instance.getNextGreen(cur, prev);
-
+            System.out.println(next.getBlockNum());
             if (next != null) {
                 test += next.getBlockNum();
             }
