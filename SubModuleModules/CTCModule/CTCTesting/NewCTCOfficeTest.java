@@ -106,6 +106,40 @@ public class NewCTCOfficeTest {
     }
 
     @Test
+    @DisplayName("Dispatch and testing the broadcast")
+    public void DispatchTrainBroadCast2() throws Exception {
+        SimulationEnvironment se = new SimulationEnvironment();
+        CTCOffice ctc = se.getCTC();
+        Track trackSys = new Track();
+        trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
+
+        ctc.updateTrack(trackSys);
+
+        System.out.println(se.getCTC().getTrack());
+        System.out.println(se.getCTC().getWaysideSystem());
+
+        ctc.timeNow = "00:00:00";
+
+        for(int i=0;i < trackSys.getRedLine().size();i++){
+            trackSys.getBlock(i).setOccupied(false);
+        }
+
+        for(int i=0;i < trackSys.getRedLine().size();i++){
+            System.out.println("Block " + i + " : " + trackSys.getBlock(i).getAuthority());
+        }
+        System.out.println();
+
+        System.out.println(Arrays.toString(ctc.Dispatch("First Ave","New","04:30")));
+
+        ctc.timeNow = "03:51:00";
+        ctc.BroadcastingArrays();
+
+        for(int i=0;i < trackSys.getRedLine().size();i++){
+            System.out.println("Block " + i + " : " + trackSys.getBlock(i).getAuthority());
+        }
+    }
+
+    @Test
     @DisplayName("Testing Calc Tix Sales per Hour which is Throughput")
     public void CalculateThroughput() throws Exception {
         SimulationEnvironment se = new SimulationEnvironment();
