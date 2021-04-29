@@ -26,7 +26,7 @@ public class MainMotor implements TrainMotor {
         acceleration = 0;
         power = 0;
         Kp = 10;//3; // Default Kp
-        Ki = 10; // Default Ki
+        Ki = 1; // Default Ki
         setpoint = 0;
 
         PID = new PIDController(Kp, Ki, 0);
