@@ -873,6 +873,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
+                display.CloseTrack(block,lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }
@@ -1091,7 +1092,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             }
         }
         else
-            JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");*/
+            JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");
     }
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {
@@ -1268,6 +1269,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {model = (DefaultTableModel)jTable2.getModel();
         model = (DefaultTableModel)jTable2.getModel();
         model.setRowCount(0);
+        display.ClearQueues();
         mode = true;
     }
 
