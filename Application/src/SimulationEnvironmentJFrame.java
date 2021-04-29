@@ -10,9 +10,7 @@ import SimulationEnvironment.TrainUnit;
 import TrackConstruction.TrackElement;
 import TrainControlUI.DriverUI;
 import TrainModel.trainGUI;
-import WaysideController.WaysideSystem;
 import WorldClock.WorldClock;
-import CTCOffice.*;
 
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -171,7 +169,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         jButton1.setText("Import Track .csv");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                try {
+                    jButton1ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
