@@ -801,14 +801,15 @@ public class CTCOffice //implements PhysicsUpdateListener
     /*
             Elijah: PLC Scripts
      */
-
+    // Red Line
     public static PLCEngine switchRed9PLC(Switch switch9) throws Exception {
+        // TODO determine if connection to D is secondary or not
         // Connected Yard - C8 [DEFAULT] unless D10 occupied or D10 authority [SECONDARY]
         PLCEngine switchControl;
         ArrayList<String> PLCScript = new ArrayList<>() {
             {
-                add("LD OCC9");
-                add("LD HASAUTH9");
+                add("LD OCC10");
+                add("LD HASAUTH10");
                 add("OR");
                 add("SET");
             }
@@ -909,36 +910,97 @@ public class CTCOffice //implements PhysicsUpdateListener
                 add("SET");
             }
         };
-        // Set to default when H31 and H33 have authority
+        //
         SwitchPLCOutput sw52 = new SwitchPLCOutput("Switch 52 control",switch52, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
         switchControl = new PLCEngine(PLCScript, sw52);
         return switchControl;
     }
-//
-//    public static PLCEngine switchGreen12PLC(Switch switch12) throws Exception {
-//        // Connected D13 - C11 [default] unless A1 [SECONDARY]
-//        String pathToPLCFile = "../../../..//WaysideControllerModule/Resources/RedGreenUpdated.csv";
-//        SwitchPLCOutput switchControl = new SwitchPLCOutput("Switch 12",switch12, SwitchPLCOutput.SwitchRule.DefaultWhenTrue);
-//        return new PLCEngine(pathToPLCFile, switchControl);
-//    }
-//    public static PLCEngine switchGreen29PLC(Switch switch29) throws Exception {
-//        // Connected F28 - G30 [DEFAULT] always unless Z150 occupied [SECONDARY]
-//    }
-//
-//    public static PLCEngine switchGreen58PLC(Switch switch58) throws Exception {
-//        // Connected I57 - Yard [DEFAULT] always unless authority J58 [SECONDARY]
-//    }
-//
-//    public static PLCEngine switchGreen62PLC(Switch switch62) throws Exception {
-//        // Connected Yard - K63 [DEFAULT] unless J61 occupied [SECONDARY]
-//    }
-//
-//    public static PLCEngine switchGreen76PLC(Switch switch76) throws Exception {
-//        // Connected M75 - N77 [DEFAULT] unless N77 occupied [SECONDARY]
-//    }
-//
-//    public static PLCEngine switchGreen86PLC(Switch switch86) throws Exception {
-//        // Connected N85 - O87 [DEFAULT] unless Q100 occupied [SECONDARY]
-//    }
+
+    // Green Line
+    public static PLCEngine switchGreen12PLC(Switch switch12) throws Exception {
+        // Connected A1 - C11 [default] unless D13 occupied [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC13");
+                add("SET");
+            }
+        };
+        // connected A-C unless D true
+        SwitchPLCOutput sw12 = new SwitchPLCOutput("Switch 12 control",switch12, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw12);
+        return switchControl;
+    }
+    public static PLCEngine switchGreen29PLC(Switch switch29) throws Exception {
+        // Connected F28 - G30 [DEFAULT] always unless Z150 occupied [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC150");
+                add("SET");
+            }
+        };
+        // connected F-G unless Z true
+        SwitchPLCOutput sw29 = new SwitchPLCOutput("Switch 29 control",switch29, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw29);
+        return switchControl;
+    }
+    public static PLCEngine switchGreen58PLC(Switch switch58) throws Exception {
+        // TODO I CANNOT TELL WHICH ONE IS PRIMARY OR SECONDARY
+        // Connected I57 - Yard [DEFAULT] always unless authority J59 [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD HASAUTH59");
+                add("SET");
+            }
+        };
+        // go to yard unless J authority
+        SwitchPLCOutput sw58 = new SwitchPLCOutput("Switch 58 control",switch58, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw58);
+        return switchControl;
+    }
+    public static PLCEngine switchGreen62PLC(Switch switch62) throws Exception {
+        // Connected Yard - K63 [DEFAULT] unless J61 occupied [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC61");
+                add("SET");
+            }
+        };
+        // go to yard unless J authority
+        SwitchPLCOutput sw62 = new SwitchPLCOutput("Switch 62 control",switch62, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw62);
+        return switchControl;
+    }
+    public static PLCEngine switchGreen76PLC(Switch switch76) throws Exception {
+        // Connected M75 - N77 [DEFAULT] unless N77 occupied [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC77");
+                add("SET");
+            }
+        };
+        // go to yard unless J authority
+        SwitchPLCOutput sw76 = new SwitchPLCOutput("Switch 76 control",switch76, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw76);
+        return switchControl;
+    }
+    public static PLCEngine switchGreen86PLC(Switch switch86) throws Exception {
+        // Connected N85 - O87 [DEFAULT] unless Q100 occupied [SECONDARY]
+        PLCEngine switchControl;
+        ArrayList<String> PLCScript = new ArrayList<>() {
+            {
+                add("LD OCC100");
+                add("SET");
+            }
+        };
+        // go to yard unless J authority
+        SwitchPLCOutput sw86 = new SwitchPLCOutput("Switch 86 control",switch86, SwitchPLCOutput.SwitchRule.SecondaryWhenTrue);
+        switchControl = new PLCEngine(PLCScript, sw86);
+        return switchControl;
+    }
 
  }
