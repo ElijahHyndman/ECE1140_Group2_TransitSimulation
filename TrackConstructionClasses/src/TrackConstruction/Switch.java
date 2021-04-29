@@ -118,6 +118,17 @@ public class Switch extends TrackElement implements SwitchInterfaceForWayside, S
     public String getSwitchState() {
 
         int ind = (INDEX) ? 1 : 0;
+        //for green line special switch case
+        if(this.getBlockNum() ==62 && ind == 0)
+            return "FROM YARD Yard-63 OFF";
+        else if(this.getBlockNum() ==62 && ind == 1)
+            return "FROM YARD Yard-63 ON";
+        else if(this.getBlockNum() ==58 && ind == 0)
+            return "TO YARD Yard-58 OFF";
+        else if(this.getBlockNum() ==62 && ind == 0)
+            return "TO YARD Yard-58 ON";
+
+
         if(ind < switches.length)
             return this.switches[ind];
         else

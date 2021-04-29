@@ -3,6 +3,7 @@ import TrackConstruction.*;
 import Track.*;
 
 import TrainModel.Train;
+import TrainModel.trainGUI;
 import WorldClock.WorldClock;
 import implementation.TrainControl;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,192 @@ class TrainUnitTest {
 
     @org.junit.jupiter.api.AfterEach
     void tearDown() {
+    }
+
+    public int[] greenPathNY= {62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,59,60,61,62};
+    public int[] redPath = {0,9,8, 7, 6, 5, 4, 3, 2, 1, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 67, 68, 69, 70, 71, 38, 37, 36, 35, 34, 33, 32, 72, 73, 74, 75, 76, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9};
+
+    //routing for green line
+    public int[] routeGreen(int start, int end, Track inst){
+    int[] newGreenLine = greenPathNY;
+    int flag=0;
+    int flag2 =0;
+    int beacon2 =0;
+
+        for(int i = 0; i < 180; i++){
+        if(newGreenLine[i] != start && flag == 0) {
+            newGreenLine[i] = 0;
+        }
+        if(newGreenLine[i] == start) {
+            flag = 1;
+        }
+        else if(flag == 1 && newGreenLine[i] == end-1) {
+            if(flag2 != 1)
+                beacon2 = newGreenLine[i-2];
+            flag2=1;
+
+        }
+        else if(flag2 == 1) {
+            newGreenLine[i] = 0;
+        }
+    }
+        int[] RouteAr = new int[151];
+        for(int i=0; i < 176; i++) {
+            if (start == 0) {
+                RouteAr[0] = 3;
+                RouteAr[62]=1;
+            }
+            if(end == 0)
+                RouteAr[0] =1;
+            if(i == beacon2)
+                RouteAr[i] = 2;
+
+            if (newGreenLine[i] != 0)
+                RouteAr[newGreenLine[i]] = 1;
+        }
+
+        return RouteAr;
+    }
+
+    public int[] routeRed(int start, int end, Track instance){
+        int[] newRedLine = redPath;
+        int flag=0;
+        int flag2 =0;
+        int counter =0;
+        int beacon2=0;
+        for(int i = 0; i < 106; i++){
+
+            if(newRedLine[i] != start && flag == 0) {
+                newRedLine[i] = 0;
+
+            }
+            if(newRedLine[i] == start && flag2 == 0) {
+                flag = 1;
+
+            }
+            else if(flag == 1 && newRedLine[i] == end-1) {
+
+                if(flag2 != 1)
+                    beacon2 = newRedLine[i-1];
+
+                flag2=1;
+
+            }
+            else if(flag2 == 1) {
+                newRedLine[i] = 0;
+            }
+
+        }
+
+
+
+        int[] RouteAr = new int[77];
+        for(int i=0; i < 106; i++) {
+            if(start == 0) {
+                RouteAr[0] = 666;
+                RouteAr[9] = 1;
+            }
+            if(end == 0){
+                RouteAr[0]=666;
+                RouteAr[10]=1;
+                RouteAr[9] =1;
+            }
+            if(i == beacon2)
+                RouteAr[beacon2]=2;
+
+            if (newRedLine[i] != 0)
+                RouteAr[newRedLine[i]] = 1;
+        }
+        return RouteAr;
+    }
+
+    public void calc(int[] route, Track inst){
+        for (int i=0; i<inst.getGreenLine().size(); i++){
+            if(route[i] == 1){
+                inst.getGreenLine().get(i).setAuthority(1);
+                inst.getGreenLine().get(i).setCommandedSpeed(15);
+            }
+            if(route[i] == 2){
+                inst.getGreenLine().get(i).setAuthority(888);
+                inst.getGreenLine().get(i).setCommandedSpeed(15);
+            }
+        }
+    }
+
+    public void calcR(int[] route, Track inst){
+        for (int i=0; i<inst.getRedLine().size(); i++){
+            if(route[i] == 1){
+                inst.getRedLine().get(i).setAuthority(1);
+                inst.getRedLine().get(i).setCommandedSpeed(15);
+            }
+            if(route[i] == 2){
+                inst.getRedLine().get(i).setAuthority(888);
+                inst.getRedLine().get(i).setCommandedSpeed(15);
+            }
+        }
+    }
+
+
+
+    /*
+    Authority and speed
+     */
+    @Test
+    @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
+    void trainleavesGreenLineStation1() {
+        trn = new TrainUnit(true);
+        WorldClock clk = new WorldClock(10.0,2.0);
+        clk.addListener(trn);
+        clk.start();
+        //need to get path
+        Track instance = new Track();
+        instance.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        int[] route = routeGreen(0,70,instance);
+        instance.getGreenLine().get(0).setCommandedSpeed(15);
+        instance.getGreenLine().get(0).setAuthority(1);
+        calc(route,instance);
+        TrackGUI test = new TrackGUI(instance);
+        test.setVisible(true);
+        instance.dispatchLine(0);
+        instance.getSwitches().get(10).setSwitchState(true);
+        instance.updateSwitches();
+        trainGUI train = new trainGUI(0);
+        train.setVisible(true);
+        trn.setReferenceTrack(instance);
+//        trn.run();
+        trn.spawnOn(instance.getGreenLine().get(0),instance.getGreenLine().get(0));
+        while(true){}
+
+
+    }
+
+    @Test
+    @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
+    void trainleavesRedLineStation1() {
+        trn = new TrainUnit(true);
+        WorldClock clk = new WorldClock(10.0,2.0);
+        clk.addListener(trn);
+        clk.start();
+        //need to get path
+        Track instance = new Track();
+        instance.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        int[] route = routeRed(0,2,instance);
+        instance.getGreenLine().get(0).setCommandedSpeed(15);
+        instance.getGreenLine().get(0).setAuthority(1);
+        calcR(route,instance);
+        TrackGUI test = new TrackGUI(instance);
+        test.setVisible(true);
+        instance.dispatchLine(1);
+        instance.getSwitches().get(0).setSwitchState(true);
+        instance.updateSwitches();
+        trainGUI train = new trainGUI(0);
+        train.setVisible(true);
+        trn.setReferenceTrack(instance);
+//        trn.run();
+        trn.spawnOn(instance.getGreenLine().get(0),instance.getGreenLine().get(0));
+        while(true){}
+
+
     }
 
     /*
@@ -44,8 +231,6 @@ class TrainUnitTest {
         assertEquals(true, controllerExists, "Train Controller spawned with TrainUnit");
         assertEquals(true, hullExists, "Train Model spawned with TrainUnit");
     }
-
-
 
     @Test
     @DisplayName("Construction\t\t[TrainUnit can spawn running without issues]")
@@ -227,6 +412,8 @@ class TrainUnitTest {
 
 
 
+
+
     @Test
     @DisplayName("Block Transitions\t\t[Can transition from TrackElement to TrackElement, sets new one as occupied and last one as unoccupied]")
     void trainUnitCanTransitionBetweenTrackElements() {
@@ -321,6 +508,7 @@ class TrainUnitTest {
         assertSame(GreenBlockA, chaser.getLocation());
         assertEquals(false, GreenBlockA.getOccupied());
     }
+
 
 
     /*

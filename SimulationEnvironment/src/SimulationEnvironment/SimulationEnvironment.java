@@ -42,7 +42,8 @@ public class SimulationEnvironment extends Thread {
     public SimulationEnvironment() {
         clk= new WorldClock();
         ctc= new CTCOffice();
-        this.start();
+        //this.setTrack();
+       this.start();
     }
 
 
@@ -82,20 +83,20 @@ public class SimulationEnvironment extends Thread {
     */
 
 
-
-
-
     /** attempts to build trackSystem from the given TrackCSVFilePath.
      */
     public boolean importTrack(String trackCSVFilePath) throws Exception {
         Track newTrack = new Track();
         try {
             newTrack.importTrack(trackCSVFilePath);
-            ctc.updateTrack(newTrack);
+            //Create CTC HERE :
+            ctc= new CTCOffice(newTrack,this);
+            clk.addListener(ctc);
         } catch (Exception e) {
             return false;
         }
         setTrack(newTrack);
+        spawnTrackBuilderGUI(newTrack);
         return true;
     }
 
@@ -124,6 +125,9 @@ public class SimulationEnvironment extends Thread {
         // Place train onto spawn location
         newTrain.spawnOn(location,awayFrom);
         addTrain(newTrain);
+
+
+
         if(trackSystem != null)
             newTrain.setReferenceTrack(trackSystem);
 
@@ -152,11 +156,17 @@ public class SimulationEnvironment extends Thread {
     }
     public TrackGUI spawnTrackBuilderGUI(Track system) {
         TrackGUI newUI = new TrackGUI(system);
+        newUI.setVisible(true); //adding
         return newUI;
     }
-    public CTCJFrame spawnCTCGUI(DisplayLine ctc) {
+    public CTCJFrame spawnCTCGUI(CTCOffice ctc) {
         //TODO return new CTCJFrame(ctc);
-        return null;
+        CTCJFrame newUI = new CTCJFrame(ctc);
+        newUI.latch(this);
+        newUI.setVisible(true);
+        for(int i=0; i<ctc.getWaysideSystem().size();i++)
+            spawnWaysideGUI(ctc.getWaysideSystem().get(i));
+        return newUI;
     }
 
     public WaysideSystemUI spawnWaysideGUI (WaysideSystem ws) {
