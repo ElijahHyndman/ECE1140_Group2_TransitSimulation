@@ -45,5 +45,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="WorldClock" />
+    <orderEntry type="module" module-name="SubModules.RemoteWaysideController" exported="" />
   </component>
 </module>
