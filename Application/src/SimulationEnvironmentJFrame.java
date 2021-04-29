@@ -468,11 +468,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         String textToStart = "Start";
         String textToPause = "Pause";
         if (currentMode.equals(textToStart)) {
-            System.out.println("here");
-            SE.getClock().allowTick(true);
+           // System.out.print
+            SE.getClock().start();
             ClockPauseButton.setText(textToPause);
         } else if (currentMode.equals(textToPause)){
-            SE.getClock().allowTick(false);
+            SE.getClock().halt();
             ClockPauseButton.setText(textToStart);
         } else {
             ClockPauseButton.setText("error");
@@ -604,9 +604,9 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 SimulationEnvironmentJFrame se = new SimulationEnvironmentJFrame( new SimulationEnvironment());
-               while(true) {
-                    se.update();
-                }
+//                while(true) {
+//                    se.update();
+//                }
             }
         });
     }
