@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.*;
  * 03/23/2021
  */
 
-public class TrainControlTest {
+public class TrainControlManualTest {
 
     private TrainControl control;
 

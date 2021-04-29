@@ -41,6 +41,7 @@ public class TrainControl {
     public double stoppingDistance;
     boolean beaconSet;
     private double route;
+    private String doors;
     String simTime;
 
     public TrainControl(){
@@ -73,6 +74,7 @@ public class TrainControl {
         speedLimit = 0;
         beacon = null;
         alert = null;
+        doors = null;
         shouldBrake = 0;
         nonVitalComponents = new NonVitalComponents();
         sampleTime = .1;
@@ -101,6 +103,9 @@ public class TrainControl {
         trainModel.setOuterLights(externalLights);
         trainModel.setRightDoors(rightDoors);
         trainModel.setLeftDoors(leftDoors);
+        if (beacon != null){
+           trainModel.setNextStop(beacon.substring(0, beacon.indexOf(" ")));
+        }
     }
 
     public TrainMotor getTrainMotor(){
@@ -295,7 +300,12 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
-        power = (motor.getPower(sampleTime, velocityCmd, trainVelocity));
+
+        if (beaconSet && authority == 0 && trainVelocity == 0) {
+            power = 0;
+        }else{
+            power = (motor.getPower(sampleTime, velocityCmd, trainVelocity));
+        }
     }
 
     //Speed Limit input from Train Model, in km/h
@@ -317,11 +327,14 @@ public class TrainControl {
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
+            int doorString = half.indexOf(" ");
+            doors = half.substring(doorString + 1);
             System.out.println(stop);
             stoppingDistance = stop;
         }else if (beacon == null && !beaconSet && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
+            doors = null;
         }else if(beacon == null && authority == 0){
             beaconSet = false;
             stoppingDistance = -1;
@@ -346,7 +359,11 @@ public class TrainControl {
     }
 
     public void openDoorAtStation(boolean door){
-        nonVitalComponents.setDoors(beacon);
+        if (door){
+            nonVitalComponents.setDoors(doors);
+        }else {
+            nonVitalComponents.setDoors(null);
+        }
         trainModel.setRightDoors(nonVitalComponents.getRightDoors());
         trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
@@ -364,7 +381,10 @@ public class TrainControl {
 
     public void getTrainData(){
         boolean passengerBrake = trainModel.getEmergencyBrake();
-        if (passengerBrake){
+        boolean signalFail = trainModel.getSignalPickupFailure();
+        boolean brakeFail = trainModel.getBrakeFailure();
+        boolean engineFail = trainModel.getEngineFailure();
+        if (passengerBrake || signalFail || brakeFail || engineFail){
             useEmergencyBrake(true);
         }
         setAuthority(trainModel.getAuthority());

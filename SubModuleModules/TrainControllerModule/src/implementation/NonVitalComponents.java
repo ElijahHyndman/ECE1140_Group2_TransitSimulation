@@ -106,15 +106,11 @@ public class NonVitalComponents {
     }
 
     //sets doors based on beacon, called during openDoorAtStation
-    public void setDoors(String currentBeacon){
+    public void setDoors(String side){
         leftDoors = false;
         rightDoors = false;
 
-        if (currentBeacon != null){
-            int start = currentBeacon.indexOf(" ");
-            String half = currentBeacon.substring(start+1);
-            int doorString = half.indexOf(" ");
-            String side = half.substring(doorString + 1);
+        if (side != null){
             if (side.equals("L")){
                 leftDoors = true;
                 rightDoors = false;

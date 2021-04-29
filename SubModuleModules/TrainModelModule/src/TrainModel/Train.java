@@ -330,13 +330,13 @@ public class Train {
         return passengerBrake;
     }
 
-    boolean getSignalPickupFailure(){
+    public boolean getSignalPickupFailure(){
         return this.signalPickupFail;
     }
-    boolean getEngineFailure(){
+    public boolean getEngineFailure(){
         return this.engineFail;
     }
-    boolean getBrakeFailure(){
+    public boolean getBrakeFailure(){
         return this.brakeFail;
     }
 
