@@ -33,7 +33,7 @@ public class SimulationEnvironment extends Thread {
 
     /** World Object Variables
      */
-    private Track trackSystem = new Track();
+    private Track trackSystem;
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
 
@@ -170,8 +170,6 @@ public class SimulationEnvironment extends Thread {
         }
         return null;
     }
-
-
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }

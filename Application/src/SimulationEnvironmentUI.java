@@ -48,8 +48,6 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         //ClockResolutionSlider.setMinimum((int) clk.MINIMUM_RESOLUTION);
         //ClockResolutionSlider.setMaximum((int) clk.MAXIMUM_RESOLUTION);
         UpdateSpawnTables();
-        //ClockRatioSlider.setValue((int) SE.getClock().getRatio());
-        //ClockResolutionSlider.setValue((int) SE.getClock().getResolution());
         this.setVisible(true);
         initComponents();
     }
@@ -191,6 +189,11 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         jLabel2.setText("Enter Absolute Path To .csv File For Track System");
 
         ImportTrackButton.setText("Import Track");
+        ImportTrackButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ImportTrackButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ImportMenuLayout = new javax.swing.GroupLayout(ImportMenu);
         ImportMenu.setLayout(ImportMenuLayout);
@@ -531,6 +534,14 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         } else {
             ClockPauseButton.setText("error");
         }
+    }
+
+    public void ImportTrackButtonActionPerformed(java.awt.event.MouseEvent evt){
+        String pathString = getPathString();
+        if (!pathString.equals("Enter track csv path...")){
+
+        }
+
     }
 
 

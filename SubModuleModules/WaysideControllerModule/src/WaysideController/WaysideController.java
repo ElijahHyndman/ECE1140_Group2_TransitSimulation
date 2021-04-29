@@ -10,10 +10,11 @@ import TrackConstruction.TrackElement;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.valueOf;
 
-/** module class that uses boolean logic to dictate Track System controls. 
+/** module class that uses boolean logic to dictate Track System controls.
  * @author Harsh
  * @editor Elijah
  */
@@ -36,6 +37,7 @@ public class WaysideController extends Thread implements Serializable {
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
     private boolean running = false;
+    private boolean outputing = true;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
@@ -48,8 +50,8 @@ public class WaysideController extends Thread implements Serializable {
     private HashMap<Integer, PLCOutput> switchPLCControls = new HashMap<Integer, PLCOutput>();
     /** PLCScript Members
      */
-    private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
-    private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
+    volatile private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
+    volatile private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
     /** Test GUI Members
      */
     /***********************************************************************************************************************/
@@ -78,9 +80,9 @@ public class WaysideController extends Thread implements Serializable {
      * @param target    WaysideController, the WaysideController we intend to copy
      */
     public void copy(WaysideController target) {
-            this.controllerAlias = target.controllerAlias;
-            this.isSoftware = target.isSoftware;
-            this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
+        this.controllerAlias = target.controllerAlias;
+        this.isSoftware = target.isSoftware;
+        this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
     }
 
 
@@ -99,22 +101,24 @@ public class WaysideController extends Thread implements Serializable {
     public void run() {
         running = true;
         while (running) {
-            for (PLCEngine userScript : UserPLCScripts) {
-                try {
-                    userScript.evaluateLogic();
-                } catch (Exception failureToExecuteScript) {
-                    //failureToExecuteScript.printStackTrace();
-                    //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+            if (outputing) {
+                for (PLCEngine userScript : UserPLCScripts) {
+                    try {
+                        userScript.evaluateLogic();
+                    } catch (Exception failureToExecuteScript) {
+                        failureToExecuteScript.printStackTrace();
+                        //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+                    }
                 }
-            }
-            for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
-                try {
-                    safetyCriticalScript.evaluateLogic();
-                } catch (Exception failureToExecuteScript) {
-                    //failureToExecuteScript.printStackTrace();
-                    //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
+                    try {
+                        safetyCriticalScript.evaluateLogic();
+                    } catch (Exception failureToExecuteScript) {
+                        failureToExecuteScript.printStackTrace();
+                        //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                    }
                 }
-            }
+            }// end if
         }
     }
 
@@ -125,6 +129,20 @@ public class WaysideController extends Thread implements Serializable {
         this.running = false;
     }
 
+    public void setOutputing(boolean generating) {
+        outputing = generating;
+    }
+
+
+
+    public void uploadPLCScript(PLCEngine script) {
+        script.setInputSources(inputPool);
+        UserPLCScripts.add(script);
+    }
+    public void uploadSafetyPLCScript(PLCEngine script) {
+        script.setInputSources(inputPool);
+        SafetyCriticalPLCScripts.add(script);
+    }
 
     /*
             Wayside System Methods
@@ -277,22 +295,6 @@ public class WaysideController extends Thread implements Serializable {
         // Debug
         System.out.printf(".");
         return collisionAvoidance;
-    }
-
-
-    /**
-     *
-     * @param sw
-     * @return
-     * @throws Exception
-     */
-    public static PLCEngine generateSwitchConflictAvoidanceScript (Switch sw) throws Exception {
-        // TODO
-        int thisBlockIndex = sw.getBlockNum();
-        int blockAfterIndex = sw.getDirection(0);
-        int blockBeforeIndex = sw.getDirection(1);
-        int switchAfterIndex = sw.getDirection(2);
-        return null;
     }
 
 
@@ -566,8 +568,6 @@ public class WaysideController extends Thread implements Serializable {
             Get Set
      */
 
-
-
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
     public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
@@ -593,7 +593,7 @@ public class WaysideController extends Thread implements Serializable {
      *      |_Node 1: a value
      *      |_Node 2: a value
      *      |_Node 3: a value
- *      |_Title 2
+     *      |_Title 2
      *      |_Node 22: a value
      *      |_Node 23: a value
      *      |_Node 28: a value

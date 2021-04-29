@@ -271,14 +271,12 @@ public class TrainControl {
         double actualAcceleration;
         //1 s sample time
         // TODO this was commented out, should it be commented out?
+        /*
         actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
         distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
         //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
         totalDistanceTraveled += distanceTraveled;
-
-        if (beaconSet){
-            stoppingDistance = stoppingDistance - distanceTraveled;
-        }
+         */
 
         prevVelocity = trainVelocity;
         trainVelocity = speed;
@@ -321,9 +319,12 @@ public class TrainControl {
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
             System.out.println(stop);
             stoppingDistance = stop;
-        }else if (beacon == null && authority!=888){
+        }else if (beacon == null && !beaconSet && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
+        }else if(beacon == null && authority == 0){
+            beaconSet = false;
+            stoppingDistance = -1;
         }
     }
 
