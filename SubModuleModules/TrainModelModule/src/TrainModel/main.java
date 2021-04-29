@@ -15,21 +15,13 @@ public class main {
     
     
     public static void main(String[] args) {
-        int distance = 0;
-        int a = 10;
         trainGUI gui = new trainGUI(0);
         gui.setVisible(true);
         gui.newTrain();
 
-
-
-        System.out.println("begining");
-
         gui.trains.get(0).setAuthority(10);
         while(true){
-
             //recalc every sleep(1000) and update display
-            a = gui.trains.get(0).getAuthority();
             gui.trains.get(0).updatePhysicalState("00",1);
             gui.updateDisplay();
 
