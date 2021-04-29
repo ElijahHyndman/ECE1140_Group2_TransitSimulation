@@ -3,6 +3,8 @@ package WaysideController;
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.InputValueSwitch;
 
 import PLCInput.*;
+import PLCOutput.*;
+import TrackConstruction.Switch;
 import TrackConstruction.TrackElement;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ import static java.lang.String.valueOf;
  * @author Harsh
  * @editor Elijah
  */
-public class WaysideController implements Serializable {
+public class WaysideController extends Thread implements Serializable {
     /***********************************************************************************************************************/
     /** Default Members
      */
@@ -33,6 +35,7 @@ public class WaysideController implements Serializable {
     private String controllerName = String.format("Controller %d",controllerIndex);
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
+    private boolean running = false;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
@@ -42,6 +45,7 @@ public class WaysideController implements Serializable {
     private ArrayList<TrackElement> jurisdiction = new ArrayList<TrackElement>(); //jurisdiction
     private ArrayList<TrackElement> fullTrack = new ArrayList<>();
     private ArrayList<PLCInput> inputPool = new ArrayList<PLCInput>();
+    private HashMap<Integer, PLCOutput> switchPLCControls = new HashMap<Integer, PLCOutput>();
     /** PLCScript Members
      */
     private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
@@ -56,15 +60,15 @@ public class WaysideController implements Serializable {
     public WaysideController(String controllerAlias) {
         this.controllerAlias = controllerAlias;
     }
-    public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias){
+    public WaysideController(ArrayList<TrackElement> jurisdiction, String controllerAlias) throws Exception {
         this.controllerAlias = controllerAlias;
         giveJurisdiction(jurisdiction);
     }
-    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController) {
+    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController) throws Exception {
         this.fullTrack = fullTrackLine;
         giveJurisdiction(jurisdictionForController);
     }
-    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController, String controllerAlias) {
+    public WaysideController(ArrayList<TrackElement> fullTrackLine, ArrayList<TrackElement> jurisdictionForController, String controllerAlias) throws Exception {
         this.controllerAlias = controllerAlias;
         this.fullTrack = fullTrackLine;
         giveJurisdiction(jurisdictionForController);
@@ -80,6 +84,47 @@ public class WaysideController implements Serializable {
     }
 
 
+    /*
+            Process
+     */
+
+    /** function used to launch this WaysideController on a new thread and continually update defined PLC Scripts.
+     * user defined plc scripts are evaluated, then safety critical scripts are updated to overwrite user scripts
+     *
+     * PLC Scripts will fail to run until input pool has been defined using .assignInputPool()
+     * PLC Scripts will fail silently
+     *
+     */
+    @Override
+    public void run() {
+        running = true;
+        while (running) {
+            for (PLCEngine userScript : UserPLCScripts) {
+                try {
+                    userScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+                }
+            }
+            for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
+                try {
+                    safetyCriticalScript.evaluateLogic();
+                } catch (Exception failureToExecuteScript) {
+                    //failureToExecuteScript.printStackTrace();
+                    //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                }
+            }
+        }
+    }
+
+    /** (called from this thread) interrupts running loop (which exists on separate thread) so PLC stop continually updating
+     *
+     */
+    public void halt() {
+        this.running = false;
+    }
+
 
     /*
             Wayside System Methods
@@ -93,7 +138,7 @@ public class WaysideController implements Serializable {
      * @before WaysideController may or may not have jurisdiction
      * @after WaysideController has taken jurisdiction over new blocks, old jurisdiction has been overwritten
      */
-    public void giveJurisdiction(ArrayList<TrackElement> blocks) {
+    public void giveJurisdiction(ArrayList<TrackElement> blocks) throws Exception {
 
         // Clear old PLC scripts
         this.UserPLCScripts = new ArrayList<PLCEngine>();
@@ -106,27 +151,149 @@ public class WaysideController implements Serializable {
         /*
                 Generate new default PLC Scripts
          */
-        // TODO generate default safety critical scripts
     }
 
 
     /** handles jurisdiction responsibility generation for an individual block
      *
-     * @param block
+     * @param block, the track block whom this wayside controller shall take output responsibilities for
      */
-    public void overseeBlock(TrackElement block) {
+    public void overseeBlock(TrackElement block) throws Exception {
         jurisdiction.add(block);
-        System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
+        //System.out.printf("%s now overseeing block %d\n",this.controllerName , block.getBlockNum());
+        try {
+            PLCEngine collisionPLC = generateCollisionAvoidanceScript(block);
+            collisionPLC.setInputSources(inputPool);
+            SafetyCriticalPLCScripts.add(collisionPLC);
+        } catch (Exception failedToGenerateScript) {
+            failedToGenerateScript.printStackTrace();
+            System.out.println(String.format("Failure to generate default collision script for block index %d",block.getBlockNum()));
+        }
+        if (block instanceof Switch) {
+            // TODO add switch orientation output to hashmap
+            try {
+                // TODO
+                //PLCEngine switchPLC = generateSwitchConflictAvoidanceScript( (Switch) block);
+                //switchPLC.setInputSources(inputPool);
+                //SafetyCriticalPLCScripts.add(switchPLC);
+            } catch (Exception failedToGenerateScript) {
+                failedToGenerateScript.printStackTrace();
+                System.out.println(String.format("Failure to generate default collision script for switch with block index %d", block.getBlockNum()));
+            }
+        }
+
     }
 
     /** gives this controller access to a pool of PLCInput variables generated by the WaysideSystem
      *
-     * @param inputs
+     * updates the pools for all plc scripts on WaysideController
+     *
+     * @param inputs, the pool of PLC inputs which scripts in this wayside controller may reference
      */
     public void assignInputPool(ArrayList<PLCInput> inputs) {
         this.inputPool = inputs;
+        for (PLCEngine safetyScript : SafetyCriticalPLCScripts) {
+            safetyScript.setInputSources(inputs);
+        }
+        for (PLCEngine userScript : UserPLCScripts) {
+            userScript.setInputSources(inputs);
+        }
     }
 
+    public void giveInput(PLCInput input) {
+        this.inputPool.add(input);
+        for (PLCEngine safetyScript : SafetyCriticalPLCScripts) {
+            safetyScript.registerInputSource(input);
+        }
+        for (PLCEngine userScript : UserPLCScripts) {
+            userScript.registerInputSource(input);
+        }
+    }
+
+
+    /** writes the PLC for avoiding collision.
+     * blocks are connected to a variable number of other blocks
+     *      A one-directional block is only "connected" to one block
+     *      A two-directional block is connected to two blocks
+     *      A switch is connected to three blocks
+     *
+     * @param element
+     * @return
+     */
+    public static PLCEngine generateCollisionAvoidanceScript(TrackElement element) throws Exception {
+        // Switches have a third connection that need to be considered
+        int thisBlockIndex;
+        int blockAfterIndex;
+        int blockBeforeIndex;
+        int switchAfterIndex;
+        try {
+            thisBlockIndex = element.getBlockNum();
+            blockAfterIndex = element.getDirection(0);
+            blockBeforeIndex = element.getDirection(1);
+            switchAfterIndex = element.getDirection(2);
+        } catch (Exception failureToGetDirections) {
+            failureToGetDirections.printStackTrace();
+            System.out.printf("\"Failed to get directions for track element (index:%d), not going to generate collisin script\"\n",element.getBlockNum());
+            return new PLCEngine();
+        }
+        ArrayList<String> PLCScript;
+        if (blockAfterIndex!=0 && blockBeforeIndex==0 && switchAfterIndex==0) {
+            // Case: One-Directional
+            PLCScript = new ArrayList<>() {
+                {
+                    add(String.format("LD OCC%d", blockAfterIndex));
+                    add(String.format("LD OCC%d", thisBlockIndex));
+                    add(String.format("AND"));
+                    add(String.format("SET"));
+                }
+            };
+        }  else if (blockAfterIndex!=0 && blockBeforeIndex!=0 && switchAfterIndex==0){
+            // Case: Two-Directional
+            PLCScript = new ArrayList<>() {
+                {
+                    add(String.format("LD OCC%d", blockBeforeIndex));
+                    add(String.format("LD OCC%d", blockAfterIndex));
+                    add(String.format("OR"));
+                    add(String.format("LD OCC%d", thisBlockIndex));
+                    add(String.format("AND"));
+                    add(String.format("SET"));
+                }
+            };
+        } else {
+            // Case: Switch
+            PLCScript = new ArrayList<>() {
+                {
+                    add(String.format("LD OCC%d", blockBeforeIndex));
+                    add(String.format("LD OCC%d", blockAfterIndex));
+                    add(String.format("OR"));
+                    add(String.format("LD OCC%d", thisBlockIndex));
+                    add(String.format("AND"));
+                    add(String.format("SET"));
+                }
+            };
+        }
+        AuthorityPLCOutput haltAuthorityOutput = new AuthorityPLCOutput(element, AuthorityPLCOutput.AuthOutRule.HaltWhenTrue);
+        PLCEngine collisionAvoidance = new PLCEngine(PLCScript, haltAuthorityOutput);
+        // Debug
+        System.out.printf(".");
+        return collisionAvoidance;
+    }
+
+
+    /**
+     *
+     * @param sw
+     * @return
+     * @throws Exception
+     */
+    public static PLCEngine generateSwitchConflictAvoidanceScript (Switch sw) throws Exception {
+        // TODO
+        int thisBlockIndex = sw.getBlockNum();
+        int blockAfterIndex = sw.getDirection(0);
+        int blockBeforeIndex = sw.getDirection(1);
+        int switchAfterIndex = sw.getDirection(2);
+        return null;
+    }
 
 
 
@@ -254,6 +421,74 @@ public class WaysideController implements Serializable {
     }
 
 
+    /** designates a specific block within this controller's jurisdiction to closed
+     *
+     * @param blockNumber
+     * @throws Exception
+     */
+    public void setClose(int blockNumber) throws Exception {
+        int FailureStatusKey_Closed = 4;
+        try {
+            // no checks are performed on authority value
+            // only if it is found...
+            for (TrackElement block : jurisdiction) {
+                if(block.getBlockNum() == blockNumber) {
+                    block.setFailureStatus(FailureStatusKey_Closed);
+                }
+            }
+        } catch (Exception failureToApplyClosureToBlock) {
+            failureToApplyClosureToBlock.printStackTrace();
+            throw new Exception(String.format("Failure when attempting to apply \"closure\" to TrackElement object (index=%d)\n",blockNumber));
+        }
+    }
+
+
+    /** designates a specific block within this controller's jurisdiction to closed
+     *
+     * @param blockNumber
+     * @throws Exception
+     */
+    public void setOpen(int blockNumber) throws Exception {
+        int FailureStatusKey_Open = 0;
+        try {
+            // no checks are performed on authority value
+            // only if it is found...
+            for (TrackElement block : jurisdiction) {
+                if(block.getBlockNum() == blockNumber) {
+                    block.setFailureStatus(FailureStatusKey_Open);
+                }
+            }
+        } catch (Exception failureToReopenBlock) {
+            failureToReopenBlock.printStackTrace();
+            throw new Exception(String.format("Failure when attempting to apply \"reopen\" TrackElement object (index=%d)\n",blockNumber));
+        }
+    }
+
+
+    /** gets the closure status for a specified block within jurisdiction
+     *
+     * @param blockNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean getIsClosed(int blockNumber) throws Exception {
+        String IS_CLOSED_KEY = "CLOSED";
+        try {
+            // no checks are performed on authority value
+            // only if it is found...
+            for (TrackElement block : jurisdiction) {
+                if(block.getBlockNum() == blockNumber) {
+                    String status = block.getFailureStatus();
+                    return status.equals(IS_CLOSED_KEY);
+                }
+            }
+        } catch (Exception failureToReopenBlock) {
+            failureToReopenBlock.printStackTrace();
+            throw new Exception(String.format("Failure when attempting to apply \"reopen\" TrackElement object (index=%d)\n",blockNumber));
+        }
+        return true;
+    }
+
     public double[] getSpeed() {
         // TODO
         return null;
@@ -262,15 +497,66 @@ public class WaysideController implements Serializable {
         // TODO
         return null;
     }
-    public boolean getSwitchStatus(int blockNumber) throws IOException {
-        // TODO
-        return false;
+
+    /** gets the status of a switch from within this controller's jurisdiction
+     *
+     * @param blockNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean getSwitchStatus(int blockNumber) throws Exception {
+        try {
+            // no checks are performed on authority value
+            // only if it is found...
+            // only if it is a switch...
+            for (TrackElement block : jurisdiction) {
+                if(block.getBlockNum() == blockNumber) {
+                    if (block instanceof Switch) {
+                        Switch sw = (Switch) block;
+                        return sw.getIndex();
+                    } else {
+                        throw new Exception(String.format("Failure when attempting to get switch status of block (index=%d) because specified block is not a switch\n",blockNumber));
+                    }
+                }
+            }
+        } catch (Exception failureToReopenBlock) {
+            failureToReopenBlock.printStackTrace();
+            throw new Exception(String.format("Failure when attempting to get switch status of object (index=%d)\n",blockNumber));
+        }
+        return true;
     }
-    public void setSwitchStatus(int blockNumber, boolean status) throws IOException {
-        // TODO
-    }
-    public void setClose(int blockNumber) throws IOException {
-        // TODO
+
+
+    /** sets the orientation of a switch within this controller's jurisdiction (False=Default true=Secondary I believe?)
+     *
+     * @param blockNumber
+     * @param status
+     * @throws IOException
+     */
+    public void setSwitchStatus(int blockNumber, boolean status) throws Exception {
+        try {
+            // no checks are performed on authority value
+            // only if it is found...
+            // only if it is a switch...
+            for (TrackElement block : jurisdiction) {
+                if(block.getBlockNum() == blockNumber) {
+                    if (block instanceof Switch) {
+                        // Manually override switch
+                        // TODO
+                        // PLCOutput switchControl = switchPLCControl.get(blockNumber);
+                        // switchControl.setManualOverride thing
+                        // Set the orientation
+                        Switch sw = (Switch) block;
+                        sw.setSwitchState(status);
+                    } else {
+                        throw new Exception(String.format("Failure when attempting to set switch status of block (index=%d) because specified block is not a switch\n",blockNumber));
+                    }
+                }
+            }
+        } catch (Exception failureToReopenBlock) {
+            failureToReopenBlock.printStackTrace();
+            throw new Exception(String.format("Failure when attempting to set switch status of object (index=%d)\n",blockNumber));
+        }
     }
 
 
@@ -281,9 +567,8 @@ public class WaysideController implements Serializable {
 
 
 
-    public void giveInputPool(ArrayList<PLCInput> inputPool) {this.inputPool=inputPool;}
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
-    public void setControllerName(String newName){ this.controllerAlias = newName; }
+    public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
     public String getControllerName() {return controllerName; }
     public ArrayList<TrackElement> getJurisdiction() {return jurisdiction;}
@@ -380,6 +665,21 @@ public class WaysideController implements Serializable {
     public String toMedString() {
         String profile = toString();
         profile+= "Jurisdiction: TODO\n";
+        return profile;
+    }
+    public String toLongString() {
+        String profile = controllerName;
+        if (controllerAlias != null)
+            profile += String.format("[Alias \"%s\"]\n",controllerAlias);
+        profile += "\n";
+        profile+="=====Jurisdiction:\n";
+        for (TrackElement block : jurisdiction) {
+            profile+= block.toString()+"\n";
+        }
+        profile+="=====InputPool:\n";
+        for(PLCInput input : inputPool) {
+            profile+=input.toString()+"\n";
+        }
         return profile;
     }
 }

@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="SubModules.TrainModelModule" />
     <orderEntry type="module" module-name="GraphicUserInterfaces" />
     <orderEntry type="module" module-name="SubModules.CTCModule" />
+    <orderEntry type="module" module-name="SubModules.RemoteWaysideController" />
   </component>
 </module>

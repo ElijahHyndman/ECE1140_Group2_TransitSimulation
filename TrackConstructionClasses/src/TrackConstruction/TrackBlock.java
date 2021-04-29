@@ -1,6 +1,9 @@
 package TrackConstruction;
 
-public class TrackBlock extends TrackElement {
+import java.io.Serializable;
+
+/**AUTHOR Grace Henderson**/
+public class TrackBlock extends TrackElement implements Serializable {
     /*normal*/
     String beacon;
     public TrackBlock(){

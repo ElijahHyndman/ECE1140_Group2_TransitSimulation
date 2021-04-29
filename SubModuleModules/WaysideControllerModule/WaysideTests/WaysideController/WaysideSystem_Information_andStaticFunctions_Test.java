@@ -95,23 +95,23 @@ class WaysideSystem_Information_andStaticFunctions_Test {
 
         List<ArrayList<Integer>> by2 = new ArrayList<>() {
             {
-                add(new ArrayList<Integer>(Arrays.asList(10,30,50,70,90)));
-                add(new ArrayList<Integer>(Arrays.asList(20,40,60,80,100)));
+                add(new ArrayList<Integer>(Arrays.asList(10,20,30,40,50)));
+                add(new ArrayList<Integer>(Arrays.asList(60,70,80,90,100)));
             }
         };
         List<ArrayList<Integer>> by3 = new ArrayList<>() {
             {
-                add(new ArrayList<Integer>(Arrays.asList(10,40,70,100)));
-                add(new ArrayList<Integer>(Arrays.asList(20,50,80)));
-                add(new ArrayList<Integer>(Arrays.asList(30,60,90)));
+                add(new ArrayList<Integer>(Arrays.asList(10,20,30,40)));
+                add(new ArrayList<Integer>(Arrays.asList(50,60,70,80)));
+                add(new ArrayList<Integer>(Arrays.asList(90,100)));
             }
         };
         List<ArrayList<Integer>> by4 = new ArrayList<>() {
             {
-                add(new ArrayList<Integer>(Arrays.asList(10,50,90)));
-                add(new ArrayList<Integer>(Arrays.asList(20,60,100)));
-                add(new ArrayList<Integer>(Arrays.asList(30,70)));
-                add(new ArrayList<Integer>(Arrays.asList(40,80)));
+                add(new ArrayList<Integer>(Arrays.asList(10,20,30)));
+                add(new ArrayList<Integer>(Arrays.asList(40,50,60)));
+                add(new ArrayList<Integer>(Arrays.asList(70,80,90)));
+                add(new ArrayList<Integer>(Arrays.asList(100)));
             }
         };
         List<ArrayList<Integer>> by13 = new ArrayList<>() {

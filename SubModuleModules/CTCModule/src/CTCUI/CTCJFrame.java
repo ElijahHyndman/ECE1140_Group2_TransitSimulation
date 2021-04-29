@@ -3,7 +3,7 @@ package CTCUI;/*
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-//iteration 2
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -39,6 +39,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     DefaultTableModel model, model2;
     boolean mode = false;
     public Timer timer;
+    String color;
 
     /**
      * Creates new form CTCJFrame
@@ -106,6 +107,10 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jTable2 = new javax.swing.JTable();
         jTextField5 = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
@@ -129,7 +134,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jLabel18 = new javax.swing.JLabel();
-        jRadioButton1  = new javax.swing.JRadioButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -147,8 +152,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jTable1 = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
         jLabel21 = new javax.swing.JLabel();
-        jSpinner3 = new javax.swing.JSpinner();
         jLabel13 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -208,6 +213,53 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             }
         });
 
+        jPanel6.setBackground(new java.awt.Color(204, 204, 204));
+
+        jLabel4.setText("Mode:");
+
+        jRadioButton2.setText("Red");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        jRadioButton3.setText("Green");
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+                jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addContainerGap(39, Short.MAX_VALUE)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jRadioButton2)
+                                        .addComponent(jRadioButton3))
+                                .addGap(38, 38, 38))
+        );
+        jPanel6Layout.setVerticalGroup(
+                jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel6Layout.createSequentialGroup()
+                                                .addGap(19, 19, 19)
+                                                .addComponent(jLabel4)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                                .addComponent(jRadioButton2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jRadioButton3)))
+                                .addContainerGap(24, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -217,27 +269,28 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jScrollPane3)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                .addGap(0, 149, Short.MAX_VALUE)
-                                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                                                .addComponent(jLabel15)
-                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                                                .addComponent(jButton8)
-                                                                                .addGap(191, 191, 191)))
-                                                                .addGap(182, 182, 182))
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                                                .addComponent(jLabel1)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(jLabel2)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(jButton3)
-                                                                .addGap(176, 176, 176))))))
+                                                .addGap(0, 261, Short.MAX_VALUE)
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jButton3)
+                                                .addGap(176, 176, 176))))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addGap(57, 57, 57)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                                .addComponent(jLabel15)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                                .addComponent(jButton8)
+                                                .addGap(191, 191, 191)))
+                                .addGap(60, 60, 60))
         );
         jPanel4Layout.setVerticalGroup(
                 jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,18 +301,24 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                         .addComponent(jLabel1)
                                         .addComponent(jLabel2)
                                         .addComponent(jButton3))
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel15)
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton8)
-                                .addGap(41, 41, 41))
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addGap(28, 28, 28)
+                                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel15)
+                                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButton8)
+                                                .addGap(30, 30, 30))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20))))
         );
 
-        jTabbedPane3.addTab("Scheduling", jPanel4);
+        jTabbedPane3.addTab("Automatic", jPanel4);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "New", "Train 1", "Train 2", "Train 3", "Train 4", "Train 5", "Train 6", "Train 7", "Train 8", "Train 9", "Train 10" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -270,7 +329,12 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         jLabel5.setText("Train:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dormont", "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormant", "Mt Lebanon", "Castle Shannon" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yard", "Shadyside", "Herron Ave", "Swissville", "Penn Station", "Steel Plaza", "First Ave", "Station Square", "South Hills Junction", "Pioneer", "Edgebrook", "Whited", "South Bank", "Central", "Inglewood", "Overbrook", "Glenbury", "Dormont", "Mt Lebanon", "Castle Shannon", "OffShoot 1", "OffShoot 2" }));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Destination:");
 
@@ -322,9 +386,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel9)
-                                        .addComponent(jLabel7)
-                                        .addComponent(jLabel17))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel7))
+                                .addGap(38, 38, 38)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel5Layout.createSequentialGroup()
                                                 .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -333,12 +396,18 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                         .addGroup(jPanel5Layout.createSequentialGroup()
                                                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jLabel10))
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap())
+                                                .addComponent(jLabel10)))
+                                .addGap(10, 10, 10))
                         .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(jLabel19)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel5Layout.createSequentialGroup()
+                                                .addGap(21, 21, 21)
+                                                .addComponent(jLabel19))
+                                        .addGroup(jPanel5Layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jLabel17)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -351,16 +420,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                         .addComponent(jLabel7)
                                         .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel11))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel9)
                                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(22, 22, 22)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel17)
                                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(76, 76, 76))
+                                .addGap(88, 88, 88))
         );
 
         jLabel20.setText("Dispatch");
@@ -373,7 +442,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                try {
+                    jButton9ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -427,11 +500,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(83, 83, 83)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                                .addComponent(jButton9)
-                                                .addGap(59, 59, 59))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addContainerGap())))
+                                                .addContainerGap())
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addComponent(jButton9)
+                                                .addGap(49, 49, 49))))
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addContainerGap())
@@ -443,34 +516,33 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButton9)
+                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
                                                                 .addGap(0, 0, Short.MAX_VALUE)
-                                                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(jButton9)
-                                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                                .addContainerGap())
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addComponent(jRadioButton1)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jLabel20)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jLabel5))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jLabel6)
-                                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jLabel16))
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jButton2)
+                                                                .addComponent(jRadioButton1)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                .addComponent(jLabel20)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jLabel5))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jLabel6)
+                                                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jLabel16))
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(jButton2)))
                                                 .addGap(52, 52, 52))))
         );
 
@@ -495,7 +567,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         });
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                try {
+                    jButton6ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -552,11 +628,15 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jButton4.setText("Toggle");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                try {
+                    jButton4ActionPerformed(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
-        jLabel21.setText("Switch Number:");
+        jLabel21.setText("Toggle Switch on Block:");
 
         jLabel13.setIcon(new javax.swing.ImageIcon("/Users/haleighdefoor/Desktop/Screen Shot 2021-04-24 at 12.41.55 AM.png")); // NOI18N
 
@@ -566,7 +646,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(26, 26, 26)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel3Layout.createSequentialGroup()
                                                 .addGap(32, 32, 32)
                                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -578,26 +658,26 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                                                 .addComponent(jLabel3)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                                 .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jButton7)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jButton6))
                                         .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jLabel21)
+                                                .addComponent(jButton7)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jButton4))
-                                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                                                .addComponent(jButton6))
+                                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(jButton4)
+                                                        .addComponent(jLabel21))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                                 .addComponent(jLabel14)
-                                                .addGap(54, 54, 54)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(51, 51, 51))
+                                                .addGap(56, 56, 56)))
+                                .addGap(85, 85, 85)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(29, 29, 29))
                         .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
@@ -606,7 +686,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(jPanel3Layout.createSequentialGroup()
                                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(jLabel12)
@@ -621,15 +700,17 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(jButton7)
                                                         .addComponent(jButton6))
-                                                .addGap(32, 32, 32)
+                                                .addGap(18, 18, 18)
                                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jButton4)
                                                         .addComponent(jLabel21)
-                                                        .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButton4))
                                         .addGroup(jPanel3Layout.createSequentialGroup()
                                                 .addComponent(jLabel14)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
@@ -647,8 +728,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 528, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 7, Short.MAX_VALUE))
+                                .addComponent(jTabbedPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -663,9 +744,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap(12, Short.MAX_VALUE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(12, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -676,7 +757,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -695,6 +775,9 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
         }
+        else if (!lineColor.equals(color)){
+            JOptionPane.showMessageDialog(jPanel3, "Please select the line color corresponding to the current mode.");
+        }
         else
         {
             jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
@@ -706,7 +789,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-        // TODO add your handling code here:
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -720,13 +802,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         double elev = displist.get(blockNo).getElevation()*3.28084;
         boolean status = displist.get(blockNo-1).getStatus();
 
-        boolean totalocc = display.CheckSectOcc(blockNo,lineColor);
+        boolean totalocc = display.CheckSectOcc(blockNo,color);
 
         //TODO check occupancies and track statuses
 
         if (block==0 || (block>150 && lineColor.equals("Green")) || (block>76 && lineColor.equals("Red")))
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
+        }
+        else if (!lineColor.equals(color)){
+            JOptionPane.showMessageDialog(jPanel3, "Please select the line color corresponding to the current mode.");
         }
         else
         {
@@ -748,14 +833,14 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             if(!displist.get(i).getStatus())
                 model2.addRow(new Object[] {displist.get(i).getSection()});
         }
+
     }
 
     private void jButton7MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         ArrayList<DisplayLine> displist = display.getDisps();
         int block = Integer.parseInt(jSpinner1.getValue().toString());
         String lineColor = String.valueOf(jComboBox3.getSelectedItem());
@@ -770,9 +855,12 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         boolean status = displist.get(blockNo).getStatus();
 
-        if (block==0 || block>150)
+        if (block==0 || (block>150 && lineColor.equals("Green")) || (block>76 && lineColor.equals("Red")))
         {
             JOptionPane.showMessageDialog(jPanel3, "Invalid Block Number.");
+        }
+        else if (!lineColor.equals(color)){
+            JOptionPane.showMessageDialog(jPanel3, "Please select the line color corresponding to the current mode.");
         }
         else
         {
@@ -780,7 +868,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 JOptionPane.showMessageDialog(jPanel3,"Track is already open on this block.");
             else
             {
-                display.OpenTrack(blockNo, lineColor);
                 jTextPane2.setText("Line: "+lineColor+"\nBlock Number: "+block+"\nSection: "+sect+"\nOccupied: "+occ+"\nOpen/Closed: "+status+"\nBlock Length (ft): "+blockL+"\nBlock Grade(%): "+blockG+"\nSpeed Limit (mph): "+sLim+"\nElevation (ft): "+elev);
             }
         }
@@ -805,9 +892,28 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     //GIH6 - ADDED THIS REFRESH AND OCCUPANCY FUNCTIONS
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         // TODO add your handling code here:
-   //     refreshOccupancy();
+        //     refreshOccupancy();
+        boolean blockOccG=false;
+        boolean blockOccR=false;
+        model2 = (DefaultTableModel)jTable3.getModel();
+        model2.setRowCount(0);
+
+        for(int i = 0; i<150; i++)
+        {
+            blockOccG=display.CheckOcc(i, "Green");
+            blockOccR=display.CheckOcc(i, "Red");
+            if (blockOccG && blockOccR)
+                model2.addRow(new Object[] {i, i});
+            else if (blockOccG && !blockOccR)
+                model2.addRow(new Object[] {i, "None"});
+            else if (!blockOccG && blockOccR)
+                model2.addRow(new Object[] {"None", i});
+            else
+                model2.addRow(new Object[] {"None","None"});
+        }
+
     }
 
     //add refreshing for occupied blocks
@@ -855,7 +961,6 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-        // TODO add your handling code here:
         String train;
         String destination;
         String timeD;
@@ -867,19 +972,19 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         destination = String.valueOf(jComboBox2.getSelectedItem());
         timeD = String.valueOf(jComboBox4.getSelectedItem());
 
+        if (destination.equals("Yard")){
+            display.GiveColor(color);
+        }
+
         Object[] speedAuthority = new Object[3];
-        //DisplayLine dispatch = new DisplayLine(display.getTrack(), display.getSE());
+        DisplayLine dispatch = new DisplayLine();
 
         speedAuthority = display.Dispatch(destination, train, timeD);
 
-        if(destination.equals("Shadyside")||destination.equals("Herron Ave")||destination.equals("Swissville")||destination.equals("Penn Station")||destination.equals("Steel Plaza")||destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction"))
-            line="Red";
-        else
-            line="Green";
+        line = color;
 
         int blockNo = Integer.parseInt(speedAuthority[1].toString());
         char sect = displist.get(blockNo).getSection();
-        boolean occ = displist.get(blockNo).getOccupancy();
         int blockL = displist.get(blockNo).getLength();
         double blockG = displist.get(blockNo).getGrade();
         int sLim = displist.get(blockNo).getSpeedLimit();
@@ -937,10 +1042,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             t10 = timeD;
         }
 
-        //CONFUSED WHAT DOES THIS DO??
-        DisplayLine dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
-        //add dispatch to CTC office
-
+        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
 
         jTextField6.setText(String.valueOf(speedAuthority[0]));
         jTextField3.setText(String.valueOf(speedAuthority[1]));
@@ -958,10 +1060,16 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         newdt.append(h);
         newdt.append(mins);
 
-        if (mode = true){
+        if (mode){
             if (speedAuthority[0].equals(0) && speedAuthority[1].equals(0))
             {
                 JOptionPane.showMessageDialog(jPanel2, "Train cannot be dispatched with these inputs. Try new arrival time of "+newdt);
+            }
+            else if (color.equals("Green") && (destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
+                JOptionPane.showMessageDialog(jPanel2, "Please choose a Green Line destination while in Green Mode or switch to Red Mode.");
+            }
+            else if (color.equals("Red") && !(destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
+                JOptionPane.showMessageDialog(jPanel2, "Please choose a Red Line destination while in Red Mode or switch to Green Mode.");
             }
             else
             {
@@ -991,11 +1099,11 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
     /*GIH6 - refreshing throughput*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
         int tp = display.CalcThroughput();
         display.setThroughput(tp);
+
         jTextField1.setText(String.valueOf(display.getThroughput()));
-    //    refreshThroughput();
+        //    refreshThroughput();
     }
 
     //adding refresh of throughput
@@ -1025,24 +1133,28 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     }
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-        // TODO add your handling code here:
         String filename = jTextField5.getText().trim();
         if (filename.equals("BlueLine"))
         {
             filename = "/Users/haleighdefoor/blueline.csv";
         }
-        else if (filename.equals("GreenLine"))
+        else if (filename.equals("Schedule"))
         {
-            filename = "C:\\Users\\grhen\\OneDrive\\Documents\\testSchedule.csv";
-
-            //filename = "/Users/elijah/IdeaProjects/ECE1140_Group2_TransitSimulation/Application/Resources/schedule.csv";
-            //"/Users/haleighdefoor/schedule.csv";
+            filename = "/Users/haleighdefoor/schedule.csv";
+        }
+        else if (filename.equals("ViewRed"))
+        {
+            filename = "/Users/haleighdefoor/RedLineData.csv";
+        }
+        else if (filename.equals("ViewGreen"))
+        {
+            filename = "/Users/haleighdefoor/GreenLineData.csv";
         }
         else
         {
             JOptionPane.showMessageDialog(jPanel4, "Invalid File");
         }
-         CTCOffice fileLoader = new CTCOffice();
+        CTCOffice fileLoader = new CTCOffice();
         display = fileLoader;
         display.LoadSchedule(filename);
 
@@ -1061,63 +1173,73 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 1";
                 String time = displist.get(i).getT1();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT2()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 2";
                 String time = displist.get(i).getT2();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT3()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 3";
                 String time = displist.get(i).getT3();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT4()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 4";
                 String time = displist.get(i).getT4();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT5()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 5";
                 String time = displist.get(i).getT5();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT6()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 6";
                 String time = displist.get(i).getT6();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT7()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 7";
                 String time = displist.get(i).getT7();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT8()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 8";
                 String time = displist.get(i).getT8();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT9()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 9";
                 String time = displist.get(i).getT9();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
             if (displist.get(i).getT10()!=null){
                 String dest = displist.get(i).getInfrastructure();
                 String trainNum = "Train 10";
                 String time = displist.get(i).getT10();
-                display.AutoDispatch(dest, trainNum, time);
+                display.Dispatch(dest, trainNum, time);
             }
         }
+
+        color = displist.get(0).getLine();
+        if (displist.get(0).getInfrastructure().equals("Red")){
+            jRadioButton2.setSelected(true);
+            jRadioButton3.setSelected(false);}
+        else{
+            jRadioButton2.setSelected(false);
+            jRadioButton3.setSelected(true);
+        }
+
     }
 
     private void jButton8MouseClicked(java.awt.event.MouseEvent evt) {
@@ -1128,31 +1250,43 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         // TODO add your handling code here:
     }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //ArrayList<DisplayLine> displist = display.getDisps();
-        int switchNum = Integer.parseInt(jSpinner3.getValue().toString());
-        //int blockNum = Integer.parseInt(jSpinner1.getValue().toString());
-        //boolean status = displist.get(blockNum).getStatus();
-        if(switchNum != 1)
-            JOptionPane.showMessageDialog(jPanel3, "Invalid Switch Number");
-        else
-        {
-            JOptionPane.showMessageDialog(jPanel3, "Switch Toggled Successfully");
-        }
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+        int switchNum = Integer.parseInt(jTextField2.toString());
+        boolean status = display.CheckSwitch(switchNum,color);
+        //TODO add switch checker if possible
+        display.ToggleSwitch(switchNum,status,color);
     }
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //display.ClearQueues();
-        model = (DefaultTableModel)jTable2.getModel();
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {model = (DefaultTableModel)jTable2.getModel();
         model.setRowCount(0);
+        ArrayList<DisplayLine> displist = display.getDisps();
         mode = true;
     }
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        color = "Red";
+        String filename;
+        filename = "/Users/haleighdefoor/RedLineData.csv";
+        display.LoadSchedule(filename);
+    }
+
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        color = "Green";
+        String filename;
+        filename = "/Users/haleighdefoor/GreenLineData.csv";
+        display.LoadSchedule(filename);
+    }
+
 
     /**
      * @param args the command line arguments
@@ -1218,6 +1352,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1228,19 +1363,22 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner3;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;

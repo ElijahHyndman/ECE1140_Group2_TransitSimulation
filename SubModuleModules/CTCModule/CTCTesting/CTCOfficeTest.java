@@ -20,6 +20,100 @@ class CTCOfficeTest {
        }
     }
     @org.junit.jupiter.api.Test
+    void routeGreen() {
+        CTCOffice instance = new CTCOffice();
+
+        int[] stations = {65, 73, 65, 77, 65, 88, 65, 96, 65, 105, 65, 114, 65, 122, 65, 131, 65, 140};
+
+        for (int j = 0; j < 16; j=j+2) {
+            int sum = 0;
+            int start = stations[j];
+            int end = stations[j+1];
+            int[] test = instance.routeGreen(start,end);
+            int answer =0;
+            System.out.println("Start and end " + start + " " + end);
+            for (int i = start; i <= end; i++) {
+                answer += i;
+            }
+            for (int i = 0; i < 150; i++) {
+                int testi = i + 1;
+                //System.out.println("BN" + testi + " " + test[i]);
+                if (test[i] != 0)
+                    sum += testi;
+            }
+            assertEquals(sum, answer);
+        }
+    }
+    @org.junit.jupiter.api.Test
+    void routeGreen2() {
+        CTCOffice instance = new CTCOffice();
+
+        int[] stations = {65, 73, 65, 77, 65, 88, 65, 96, 65, 105, 65, 114, 65, 122, 65, 131, 65, 140};
+
+            int sum = 0;
+            int start = 73;
+            int end = 140;
+            int[] test = instance.routeGreen(start,end);
+            int answer =0;
+            System.out.println("Start and end " + start + " " + end);
+            for (int i = 0; i < 151; i++) {
+                int testi = i + 1;
+                 System.out.println("BN" + i + " " + test[i]);
+            }
+
+        }
+
+    @org.junit.jupiter.api.Test
+    void routeRed2() {
+        CTCOffice instance = new CTCOffice();
+
+        int[] stations = {7,16, 25, 35, 45, 60};
+
+        int sum = 0;
+        int start = 7;
+        int end = 35;
+        int[] test = instance.routeRed(start,end);
+        int answer =0;
+        System.out.println("Start and end " + start + " " + end);
+        for (int i = start; i <= end; i++) {
+            answer += i;
+        }
+        for (int i = 0; i < 77; i++) {
+
+            System.out.println("BN" + i + " " + test[i]);
+            if (test[i] != 0)
+                sum += i;
+        }
+        //assertEquals(sum, answer);
+    }
+
+    @org.junit.jupiter.api.Test
+    void trying2AtEnd() {
+        CTCOffice instance = new CTCOffice();
+
+        int[] stations = {7,16, 25, 35, 45, 60};
+
+        int sum = 0;
+        int start = 25;
+        int end = 35;
+        int[] test = instance.routeRed(start,end);
+        int answer =0;
+        System.out.println("Start and end " + start + " " + end);
+        for (int i = start; i <= end; i++) {
+            answer += i;
+        }
+        for (int i = 0; i < 77; i++) {
+
+            System.out.println("BN" + i + " " + test[i]);
+            if (test[i] != 0)
+                sum += i;
+        }
+
+    }
+
+
+
+    @org.junit.jupiter.api.Test
     void backToYardRed() {
         CTCOffice instance = new CTCOffice();
         int[] test = instance.backToYardRed(21);

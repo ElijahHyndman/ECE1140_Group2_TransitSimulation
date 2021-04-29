@@ -1,9 +1,13 @@
 package RemoteWaysideServer;
 
+import PLCInput.PLCInput;
+import RemoteBlock.RemoteBlockStub;
+import TrackConstruction.TrackElement;
 import WaysideController.WaysideController;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /** defines all of the behavior that is invocable on a remote waysideservice from a local context.
  *
@@ -22,8 +26,32 @@ import java.rmi.RemoteException;
  *  Assert: All data sent to RemoteWayside controller must capable of and will be serialized. This means everything is passed by copy
  */
 public interface RemoteWaysideStub extends Remote {
+
+    /** Remote specific functions
+     */
     public String handshake(String fromClient) throws RemoteException;
     public WaysideController getController() throws RemoteException;
     public void castController(WaysideController ctrl) throws RemoteException;
     public void spawnUI() throws RemoteException;
+
+    /** WaysideController actions
+     */
+    public void assignInputPool(ArrayList<PLCInput> inputs) throws RemoteException;
+    public void setBlockSpeed(int targetBlockIndex, double newCommandedSpeed) throws RemoteException;
+    public void setBlockAuthority(int targetBlockIndex, int newAuthority) throws RemoteException;
+    public boolean getOccupancy(int targetBlockIndex) throws RemoteException;
+    public void setClose(int blockNumber) throws RemoteException;
+    public void setOpen(int blockNumber) throws RemoteException;
+    public boolean getIsClosed(int blockNumber) throws RemoteException;
+    public boolean getSwitchStatus(int blockNumber) throws RemoteException;
+    public void setSwitchStatus(int blockNumber, boolean status) throws RemoteException;
+    public void setControllerAlias(String controllerAlias) throws RemoteException;
+    public String getControllerAlias() throws RemoteException;
+    public String getControllerName() throws RemoteException;
+    public void setControllerName(String name) throws RemoteException;
+    public ArrayList<TrackElement> getJurisdiction() throws RemoteException;
+    public String toMedString() throws RemoteException;
+    public void start() throws RemoteException;
+    public void overseeBlock(TrackElement remoteBlock) throws Exception;
+    public void giveInput(PLCInput input) throws RemoteException;
 }

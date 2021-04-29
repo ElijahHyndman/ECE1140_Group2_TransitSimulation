@@ -19,7 +19,6 @@ public class TrainSimulationApplication extends Thread {
     }
     public TrainSimulationApplication(String line) {
         SE = new SimulationEnvironment();
-        SE.castGreenLine();
         spawnSEGUI();
     }
 

@@ -51,14 +51,14 @@ public class WaysideSystem {
     public WaysideSystem(String trackSectionName) throws IOException {
         this.trackSectionName = trackSectionName;
     }
-    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName, int numberControllers) throws IOException, URISyntaxException {
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName, int numberControllers) throws Exception {
         this.trackSectionName = trackSectionName;
         this.trackLine = trackLine;
         this.numberControllers = numberControllers;
         // Splits track into jurisdictions
         registerNewTrack(trackLine);
     }
-    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName) throws IOException, URISyntaxException {
+    public WaysideSystem( ArrayList<TrackElement> trackLine, String trackSectionName) throws Exception {
         this.trackSectionName = trackSectionName;
         this.trackLine = trackLine;
         // Splits track into jurisdictions
@@ -70,28 +70,6 @@ public class WaysideSystem {
     /*
         CTC Methods
      */
-
-
-
-    /** retrieves the occupancy of a block from the track system.
-     * uses look-up table to call upon the correct wayside controller. Failure to update the lut when controller jurisdictions change will cause failure
-     *
-     * @param targetBlockNumber, the unique index of the intended TrackElement block whom we are acquiring the occupancy from
-     * @return boolean, the occupancy of
-     */
-    public boolean getOccupancy(int targetBlockNumber) throws Exception {
-            WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
-            // A controller must oversee every block
-            if (ctrl == null)
-                throw new Exception(String.format("Wayside System error: look up table for block index %d returned a null controller object when searching for occupancy\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
-            // Attempt to get occupancy from controller
-            try {
-                return ctrl.getOccupancy(targetBlockNumber);
-            } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
-                failureToRetrieveOccupancyFromTrackElement.printStackTrace();
-                throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)",targetBlockNumber));
-            }
-    }
 
 
     /** allows CTC to update the speed and authorities for every block within the TrackLine
@@ -156,33 +134,140 @@ public class WaysideSystem {
         }
     }
 
-    public void setClose(int targetBlockIndex) throws Exception {
-        // TODO
-    }
 
-    public void setOpen(int targetBlockIndex) throws Exception {
-        // TODO
-    }
-
-    public boolean getSwitchStatus(int targetBlockIndex) throws Exception {
-        // TODO
-        return false;
-    }
-
-    public void setSwitchStatus(int targetBlockIndex, boolean orientation) throws Exception {
-        // TODO
-    }
-
-
-    /** finds the controller object which has jurisdiction over a specific block index.
+    /** retrieves the occupancy of a block from the track system.
+     * uses look-up table to call upon the correct wayside controller. Failure to update the lut when controller jurisdictions change will cause failure
      *
-     * @param blockNumber
-     * @return
+     * @param targetBlockNumber, the unique index of the intended TrackElement block whom we are acquiring the occupancy from
+     * @return boolean, the occupancy of
      */
-    public WaysideController getControllerOfBlock(int blockNumber){
-        //System.out.printf("Controller assigned to block (%d) is ctrl (%s)\n",blockNumber,lut.get(blockNumber).getControllerName());
-        return lut.get(blockNumber);
+    public boolean getOccupancy(int targetBlockNumber) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for block index %d returned a null controller object when searching for occupancy\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+        // Attempt to get occupancy from controller
+        try {
+            return ctrl.getOccupancy(targetBlockNumber);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)",targetBlockNumber));
+        }
     }
+
+
+    /** sets a block within the track system as designated "closed"
+     *
+     * @param targetBlockNumber
+     * @throws Exception
+     */
+    public void setClose(int targetBlockNumber) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for track block (index %d) found no controllers.\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+
+        // Attempt to set block closed using controller
+        try {
+            ctrl.setClose(targetBlockNumber);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when attempting to set Block (index %d) as closed within %s",targetBlockNumber,ctrl.getControllerName()));
+        }
+    }
+
+
+    /** sets a block within the track system as designated "open"
+     *
+     * @param targetBlockNumber
+     * @throws Exception
+     */
+    public void setOpen(int targetBlockNumber) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for track block (index %d) found no controllers.\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+
+        // Attempt to set block closed using controller
+        try {
+            ctrl.setOpen(targetBlockNumber);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when attempting to set Block (index %d) as closed within %s",targetBlockNumber,ctrl.getControllerName()));
+        }
+    }
+
+
+    /** gets the closure status of a block from within the track system under this WaysideSystem's jurisdiction
+     *
+     * @param targetBlockNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean getIsClosed(int targetBlockNumber) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for track block (index %d) found no controllers.\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+
+        // Attempt to set block closed using controller
+        try {
+            return ctrl.getIsClosed(targetBlockNumber);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when attempting to set Block (index %d) as closed within %s",targetBlockNumber,ctrl.getControllerName()));
+        }
+    }
+
+
+    /** gets the current status of a switch (arbitrary choice of boolean is that false=DEFAULT true=SECONDARY orientations)
+     *
+     * @param targetBlockNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean getSwitchStatus(int targetBlockNumber) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for track block (index %d) found no controllers.\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+
+        // Attempt to set block closed using controller
+        try {
+            return ctrl.getSwitchStatus(targetBlockNumber);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when attempting to set Block (index %d) as closed within %s",targetBlockNumber,ctrl.getControllerName()));
+        }
+    }
+
+
+    /** manually sets the switch status for a switch. Switch must be "released" before the plc can take over again
+     *
+     * @param targetBlockNumber
+     * @param orientation
+     * @throws Exception
+     */
+    public void setSwitchStatus(int targetBlockNumber, boolean orientation) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetBlockNumber);
+
+        // A controller must oversee every block
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: look up table for track block (index %d) found no controllers.\nMake sure that block number specified is within this wayside system's assigned line\n",targetBlockNumber));
+
+        // Attempt to set block closed using controller
+        try {
+            ctrl.setSwitchStatus(targetBlockNumber,orientation);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when attempting to set Block (index %d) as closed within %s",targetBlockNumber,ctrl.getControllerName()));
+        }
+    }
+
 
 
     /*
@@ -199,7 +284,7 @@ public class WaysideSystem {
      * @after given trackLine has been partitioned into jurisdictions (number jurisdictions = @member numberControllers)
      * @after wayside controllers have been created for all jurisdictions
      */
-    public void registerNewTrack(ArrayList<TrackElement> trackLine) throws IOException, URISyntaxException {
+    public void registerNewTrack(ArrayList<TrackElement> trackLine) throws Exception {
         /*
                 New Track Operations
          */
@@ -219,7 +304,7 @@ public class WaysideSystem {
     /** performs any steps and filters when registering a new controller under the jurisdiction of this wayside system
      *
      */
-    public void generateController(ArrayList<TrackElement> assignedControllerJurisdiction) {
+    public void generateController(ArrayList<TrackElement> assignedControllerJurisdiction) throws Exception {
         // Create new controller and assign it jurisdiction
         WaysideController newController = new WaysideController(trackLine, assignedControllerJurisdiction);
         controllers.add(newController);
@@ -229,8 +314,9 @@ public class WaysideSystem {
         for (TrackElement block : assignedControllerJurisdiction) {
             // controller is associated by integer blocknumber key
             lut.put(block.getBlockNum(), newController);
-//            System.out.printf("%s has been associated with block %d in LUT\n",newController.getControllerName(),block.getBlockNum());
         }
+        // launches controller onto a new thread
+        newController.start();
     }
 
 
@@ -274,6 +360,7 @@ public class WaysideSystem {
         return inputs;
     }
 
+
     /** partitions an arbitrarily sized array list into a specified number of sections (as evenly as possible.)
      *
      * assert: element distribution is now sequential when mapped to partitions
@@ -305,130 +392,22 @@ public class WaysideSystem {
     }
 
 
-
-
-
-    public void generateLine() throws IOException, URISyntaxException {
-//        if(currentLine.equalsIgnoreCase("green line") && (trackSection.size() == 151)) {
-//            //NEEDS TO BE REPLACED WITH SOME METHOD THE CALLS GET THE TRACK FROM THE SIM ENVIRO OR IN PARAM
-//            System.out.println("Generating Green Line Wayside Controllers!");
-//            int[] controller1Blocks = new int[20];
-//            int[] controller2Blocks = new int[19];
-//            int[] controller10Blocks = new int[12];
-//            int[] controller11Blocks = new int[7];
-//            int[] controller3Blocks = new int[13];
-//            int[] controller4Blocks = new int[14];
-//            int[] controller5Blocks = new int[8];
-//            int[] controller6Blocks = new int[20];
-//            //int[] controller7Blocks = new int[1];
-//            int[] controller8Blocks = new int[19];
-//            int[] controller9Blocks = new int[19];
-//            int j;
-//
-//            //controller1
-//            j = 1;
-//            for(int i=0;i <= 19;i++){
-//                controller1Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller2
-//            j = 21;
-//            for(int i=0;i <= 14;i++){
-//                controller2Blocks[i] = j;
-//                j++;
-//            }
-//            j = 147;
-//            for(int i=15;i <= 18;i++){
-//                controller2Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller11
-//            j=140;
-//            for(int i=0;i <= 6;i++){
-//                controller11Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller10
-//            j = 36;
-//            for(int i=0;i <= 11;i++){
-//                controller10Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller3
-//            j=48;
-//            for(int i=0;i <= 12;i++){
-//                controller3Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller4
-//            j=61;
-//            for(int i=0;i <= 12;i++){
-//                controller4Blocks[i] = j;
-//                j++;
-//            }
-//            controller4Blocks[13] = 0;
-//
-//            //controller5
-//            j=74;
-//            for(int i=0;i <= 6;i++){
-//                controller5Blocks[i] = j;
-//                j++;
-//            }
-//            controller5Blocks[7] = 101;
-//
-//            //controller6
-//            j=81;
-//            for(int i=0;i <= 19;i++){
-//                controller6Blocks[i] = j;
-//                j++;
-//            }
-//
-////        //controller7
-////        controller7Blocks[0] = 0;
-//
-//            //controller8
-//            j=102;
-//            for(int i=0;i <= 18;i++){
-//                controller8Blocks[i] = j;
-//                j++;
-//            }
-//
-//            //controller8
-//            j=121;
-//            for(int i=0;i <= 18;i++){
-//                controller9Blocks[i] = j;
-//                j++;
-//            }
-//
-//            // Create controllers from jurisdictions
-//            addWaysideController(controller1Blocks);
-//            addWaysideController(controller2Blocks);
-//            addWaysideController(controller3Blocks);
-//            addWaysideController(controller4Blocks);
-//            addWaysideController(controller5Blocks);
-//            addWaysideController(controller6Blocks);
-//            //addWaysideController(controller7Blocks);
-//            addWaysideController(controller8Blocks);
-//            addWaysideController(controller9Blocks);
-//            addWaysideController(controller10Blocks);
-//            addWaysideController(controller11Blocks);
-//
-//            addOutputWaysideController(12, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock12PLC");
-//            addOutputWaysideController(29, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock29PLC");
-//            addOutputWaysideController(58, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock58PLC");
-//            addOutputWaysideController(62, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock62PLC");
-//            addOutputWaysideController(76, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock76PLC");
-//            addOutputWaysideController(86, "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\WaysideControllerModule\\Resources\\SwitchBlock85PLC");
-//            updateAllOutputsWaysideController();
-//        }else{
-//            throw new IOException("Generation Error: Invalid line generation");
-//        }
+    /** finds the controller object which has jurisdiction over a specific block index.
+     *
+     * @param blockNumber
+     * @return
+     */
+    public WaysideController getControllerOfBlock(int blockNumber){
+        //System.out.printf("Controller assigned to block (%d) is ctrl (%s)\n",blockNumber,lut.get(blockNumber).getControllerName());
+        return lut.get(blockNumber);
     }
+
+
+
+    /*
+            GUI Methods
+     */
+
 
 
     /** accepts string from WaysideSystemUI console to perform action
@@ -552,26 +531,4 @@ public class WaysideSystem {
         // Return false otherwise
         return false;
     }
-    /*
-            Main for running just a wayside system on its own
-     */
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        String filepath = "C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\Test.csv";
-        Track instance = new Track();
-        //instance.importTrack(filepath);
-
-        //WaysideSystem testSystem = new WaysideSystem(instance.getGreenLine(), "Green line");
-        WaysideSystem testSystem = null;
-        testSystem.generateLine();
-        WaysideUIClass guiUpdater = new WaysideUIClass(testSystem);
-
-        try {
-            System.out.println("starting GUI");
-            guiUpdater.start();
-            System.out.println("working!");
-        } catch (Exception e) {
-            System.out.println("failed when running");
-        }
-    }
-
 }
