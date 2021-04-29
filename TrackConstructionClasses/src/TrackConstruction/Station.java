@@ -38,7 +38,7 @@ public class Station extends TrackElement implements Serializable {
     /*Set Ticket Sales */
     public void setTicketSales(){
         Random rand = new Random();
-        this.ticketSales += Math.abs(rand.nextInt()) % 11;
+        this.ticketSales += (Math.abs(rand.nextInt()) % 2);
         people = this.ticketSales;
     }
 

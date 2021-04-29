@@ -44,7 +44,7 @@ class TrainUnitTest {
         }
         else if(flag == 1 && newGreenLine[i] == end-1) {
             if(flag2 != 1)
-                beacon2 = newGreenLine[i-2];
+                beacon2 = newGreenLine[i-1];
             flag2=1;
 
         }
@@ -147,6 +147,30 @@ class TrainUnitTest {
             }
         }
     }
+    public int getTotalLengthR(int[] route, Track inst){
+        int total=0;
+        for (int i=0; i<inst.getRedLine().size(); i++){
+            if(route[i] == 1){
+                total += inst.getRedLine().get(i).getLength();
+            }
+            if(route[i] == 2){
+                total += inst.getRedLine().get(i).getLength();
+            }
+        }
+        return total;
+    }
+    public int getTotalLengthG(int[] route, Track inst){
+        int total=0;
+        for (int i=0; i<inst.getGreenLine().size(); i++){
+            if(route[i] == 1){
+                total += inst.getGreenLine().get(i).getLength();
+            }
+            if(route[i] == 2){
+                total += inst.getGreenLine().get(i).getLength();
+            }
+        }
+        return total;
+    }
 
 
 
@@ -157,16 +181,17 @@ class TrainUnitTest {
     @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainleavesGreenLineStation1() {
         trn = new TrainUnit(true);
-        WorldClock clk = new WorldClock(10.0,2.0);
+        WorldClock clk = new WorldClock(10.0,3.0);
         clk.addListener(trn);
         clk.start();
         //need to get path
         Track instance = new Track();
-        instance.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
-        int[] route = routeGreen(0,70,instance);
+        instance.importTrack("C:\\Users\\Devon's Laptop\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        int[] route = routeGreen(0,73,instance);
         instance.getGreenLine().get(0).setCommandedSpeed(15);
         instance.getGreenLine().get(0).setAuthority(1);
         calc(route,instance);
+        int length = getTotalLengthG(route,instance);
         TrackGUI test = new TrackGUI(instance);
         test.setVisible(true);
         instance.dispatchLine(0);
@@ -174,10 +199,30 @@ class TrainUnitTest {
         instance.updateSwitches();
         trainGUI train = new trainGUI(0);
         train.setVisible(true);
+        train.latch(trn.getHull());
+        trainGUI.setTrainTotalAuthority(length);
         trn.setReferenceTrack(instance);
 //        trn.run();
         trn.spawnOn(instance.getGreenLine().get(0),instance.getGreenLine().get(0));
-        while(true){}
+        int lastTime = clk.getTimeInSeconds();
+        int currentTime;
+        int timeAtStation=0;
+        boolean alreadyArrived = false;
+        while(true){
+            train.update();
+            currentTime = clk.getTimeInSeconds();
+            instance.updatePhysics(clk.getTimeString(), currentTime-lastTime);
+            lastTime = currentTime;
+            if(trn.getCommandedAuthority()==888 && !alreadyArrived){
+                timeAtStation = clk.getTimeInSeconds();
+                alreadyArrived = true;
+                System.out.println("arrived");
+            }
+            if(alreadyArrived && timeAtStation-clk.getTimeInSeconds()==15){
+                break;
+            }
+        }
+
 
 
     }

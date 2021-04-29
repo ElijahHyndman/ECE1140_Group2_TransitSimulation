@@ -50,7 +50,7 @@ public class Train {
     double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
 
     //Fails
-    public boolean signalPickupFail;
+    boolean signalPickupFail;
     boolean engineFail;
     boolean brakeFail;
     boolean leftDoors; //close=0, open=1
@@ -141,14 +141,16 @@ public class Train {
     }
     public void setPower(double pow) {
         /*
-        Caps power at 120; can't go below 0; sets to 0 during engine fail
+        Caps power at 120; sets to 0 during engine fail
          */
+        if(this.serviceBrake==true || this.emergencyBrake==true || this.passengerBrake==true){
+            this.power = 0;
+        }
+
         if(this.engineFail == true){
             this.power = 0;
         }else if(pow>120){
             this.power=120;
-        }else if(pow<0){
-            this.power = 0;
         }else{
             this.power = pow;
         }
@@ -196,7 +198,7 @@ public class Train {
         else if(this.serviceBrake == true){
             newV = this.actualSpeed - (this.standardDecelLimit*deltaTime);
             newA = -1 * this.standardDecelLimit;
-            if(this.actualSpeed > 0){
+            if(this.actualSpeed >= 0){
                 setAccel(newA);
             } else {
                 setAccel(0);
@@ -219,9 +221,6 @@ public class Train {
              */
 
             F = F - (this.blockGrade/100) * this.mass * 9.81;
-            //if(F < 0){
-               // F = 0;
-           // }
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
@@ -334,10 +333,13 @@ public class Train {
     }
 
     public void setPassengerCount(int count){
-        if(count<=0){
+        if(count>120){
+            this.passengerCount = 120;
+        }else if(count<=0){
             this.passengerCount = 0;
+        }else {
+            this.passengerCount = count;
         }
-        this.passengerCount = count;
         calculateMass();
     }
     public void setPassengersBoarding(int count){
@@ -375,13 +377,13 @@ public class Train {
         return passengerBrake;
     }
 
-    boolean getSignalPickupFailure(){
+    public boolean getSignalPickupFailure(){
         return this.signalPickupFail;
     }
-    boolean getEngineFailure(){
+    public boolean getEngineFailure(){
         return this.engineFail;
     }
-    boolean getBrakeFailure(){
+    public boolean getBrakeFailure(){
         return this.brakeFail;
     }
 

@@ -68,11 +68,6 @@ public class CTCOffice //implements PhysicsUpdateListener
         SEobj = SE;
     }
 
-    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
-        // If track system doesn't exist yet
-        if (trackSystem == null) {
-            return new ArrayList<WaysideSystem>();
-        }
 
     public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
 

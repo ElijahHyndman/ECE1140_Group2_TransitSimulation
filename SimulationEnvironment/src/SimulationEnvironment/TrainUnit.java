@@ -261,6 +261,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
         if (oncePerStationFlag) {
             // Handle people disembarking and Entering
             int peopleDeparting = hull.disembark();
+            control.openDoorAtStation(true);
             ((Station) occupies).exitTrain(peopleDeparting);
             int peopleBoarding = ((Station) occupies).boardTrain();
             hull.setPassengersBoarding(peopleBoarding);

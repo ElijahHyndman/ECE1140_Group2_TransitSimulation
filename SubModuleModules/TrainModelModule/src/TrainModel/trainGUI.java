@@ -12,7 +12,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import javax.swing.border.Border;
+
 /**
  *
  * @author Devon
@@ -27,6 +29,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public int mainTrainIndex = 0;
     int namesIndex = 2;
     int trainIndex = 0;
+    static int trainTotalAuthority;
     MakeImage image = new MakeImage();
     /**
      * Creates new form trainGUI
@@ -86,39 +89,37 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         additionalTable.setValueAt(mainTrain.passengerCount, 10, 1);
         additionalTable.setValueAt(mainTrain.cabinTemp, 11, 1);
         additionalTable.setValueAt(mainTrain.numberOfCars, 12, 1);
-        
-        updateTestDisplay();
+
            
     }
     
     public void updateTestDisplay(){
-        if (trainIndex >= trains.size())
-            return;
-        testTable.setValueAt(trains.get(trainIndex).displayAcceleration, 0, 1);
-        testTable.setValueAt(trains.get(trainIndex).displayActualSpeed, 1, 1);
-        testTable.setValueAt(trains.get(trainIndex).authority, 2, 1);
-        testTable.setValueAt(trains.get(trainIndex).beacon, 3, 1);
-        testTable.setValueAt(trains.get(trainIndex).displayCommandedSpeed, 4, 1);
-        testTable.setValueAt(trains.get(trainIndex).leftDoors, 5, 1);
-        testTable.setValueAt(trains.get(trainIndex).rightDoors, 6, 1);
-        testTable.setValueAt(trains.get(trainIndex).emergencyBrake, 7, 1);
-        testTable.setValueAt(trains.get(trainIndex).headlights, 8, 1);
-        testTable.setValueAt(trains.get(trainIndex).cabinLights, 9, 1);
-        testTable.setValueAt(trains.get(trainIndex).outerLights, 10, 1);
-        testTable.setValueAt(trains.get(trainIndex).nextStop, 11, 1);
-        testTable.setValueAt(trains.get(trainIndex).serviceBrake, 12, 1);
-        testTable.setValueAt(trains.get(trainIndex).passengerCount, 13, 1);
-        testTable.setValueAt(trains.get(trainIndex).power, 14, 1);
-        testTable.setValueAt(trains.get(trainIndex).cabinTemp, 15, 1);
-        testTable.setValueAt(trains.get(trainIndex).passengerBrake, 16, 1);
-        testTable.setValueAt(trains.get(trainIndex).mass, 17, 1);
+
+        testTable.setValueAt(mainTrain.displayAcceleration, 0, 1);
+        testTable.setValueAt(mainTrain.displayActualSpeed, 1, 1);
+        testTable.setValueAt(mainTrain.authority, 2, 1);
+        testTable.setValueAt(mainTrain.beacon, 3, 1);
+        testTable.setValueAt(mainTrain.displayCommandedSpeed, 4, 1);
+        testTable.setValueAt(mainTrain.leftDoors, 5, 1);
+        testTable.setValueAt(mainTrain.rightDoors, 6, 1);
+        testTable.setValueAt(mainTrain.emergencyBrake, 7, 1);
+        testTable.setValueAt(mainTrain.headlights, 8, 1);
+        testTable.setValueAt(mainTrain.cabinLights, 9, 1);
+        testTable.setValueAt(mainTrain.outerLights, 10, 1);
+        testTable.setValueAt(mainTrain.nextStop, 11, 1);
+        testTable.setValueAt(mainTrain.serviceBrake, 12, 1);
+        testTable.setValueAt(mainTrain.passengerCount, 13, 1);
+        testTable.setValueAt(mainTrain.power, 14, 1);
+        testTable.setValueAt(mainTrain.cabinTemp, 15, 1);
+        testTable.setValueAt(mainTrain.passengerBrake, 16, 1);
+        testTable.setValueAt(mainTrain.mass, 17, 1);
         
-        testFailure.setValueAt(trains.get(trainIndex).signalPickupFail, 0, 1);
-        testFailure.setValueAt(trains.get(trainIndex).brakeFail, 1, 1);
-        testFailure.setValueAt(trains.get(trainIndex).engineFail, 2, 1);
+        testFailure.setValueAt(mainTrain.signalPickupFail, 0, 1);
+        testFailure.setValueAt(mainTrain.brakeFail, 1, 1);
+        testFailure.setValueAt(mainTrain.engineFail, 2, 1);
         
         try {
-            image.make((int)trains.get(trainIndex).getActualSpeed(),trains.get(trainIndex).getAuthority());
+            image.make((int)mainTrain.getTotalDistance(),trainTotalAuthority);
             BufferedImage bufImg=ImageIO.read(new File("image.png"));
             imageLabel.setIcon(new ImageIcon(bufImg));
         }
@@ -127,7 +128,9 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         }   
     }
     
-    
+    static public void setTrainTotalAuthority(int a){
+        trainTotalAuthority = a;
+    }
     
     
 
@@ -537,13 +540,14 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
+        jPanel5.setBorder(BorderFactory.createEmptyBorder(10,10,10,50));
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -570,7 +574,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)))
                 .addGroup(testViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(testViewLayout.createSequentialGroup()
-                        .addGap(72, 72, 72)
+
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
                         .addGap(22, 22, 22)
@@ -767,67 +771,67 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if(testTable.getValueAt(0,3) != null && testTable.getValueAt(0,3) != ""){
-            trains.get(trainIndex).setDisplayAccel(Double.parseDouble(testTable.getValueAt(0,3).toString()));
+            mainTrain.setDisplayAccel(Double.parseDouble(testTable.getValueAt(0,3).toString()));
         }
         if(testTable.getValueAt(1,3) != null && testTable.getValueAt(1,3) != ""){
-            trains.get(trainIndex).setDisplaySpeed(Double.parseDouble(testTable.getValueAt(1,3).toString()));
+            mainTrain.setDisplaySpeed(Double.parseDouble(testTable.getValueAt(1,3).toString()));
         }
         if(testTable.getValueAt(2,3) != null && testTable.getValueAt(2,3) != ""){
-            trains.get(trainIndex).setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
+            mainTrain.setAuthority(Integer.parseInt(testTable.getValueAt(2,3).toString()));
         }
         if(testTable.getValueAt(3,3) != null && testTable.getValueAt(3,3) != ""){
-            trains.get(trainIndex).setBeacon(testTable.getValueAt(3,3).toString());
+            mainTrain.setBeacon(testTable.getValueAt(3,3).toString());
         }
         if(testTable.getValueAt(4,3) != null && testTable.getValueAt(4,3) != ""){
-            trains.get(trainIndex).setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));
+            mainTrain.setDisplayCommandedSpeed(Double.parseDouble(testTable.getValueAt(4,3).toString()));
         }
         if(testTable.getValueAt(5,3) != null && testTable.getValueAt(5,3) != ""){
-            trains.get(trainIndex).setLeftDoors(Boolean.valueOf((testTable.getValueAt(5,3).toString())));
+            mainTrain.setLeftDoors(Boolean.valueOf((testTable.getValueAt(5,3).toString())));
         }
         if(testTable.getValueAt(6,3) != null && testTable.getValueAt(6,3) != ""){
-            trains.get(trainIndex).setRightDoors(Boolean.valueOf((testTable.getValueAt(6,3).toString())));
+            mainTrain.setRightDoors(Boolean.valueOf((testTable.getValueAt(6,3).toString())));
         }
         if(testTable.getValueAt(7,3) != null && testTable.getValueAt(7,3) != ""){
-            trains.get(trainIndex).setEmergencyBrake(Boolean.valueOf((testTable.getValueAt(7,3).toString())));
+            mainTrain.setEmergencyBrake(Boolean.valueOf((testTable.getValueAt(7,3).toString())));
         }
         if(testTable.getValueAt(8,3) != null && testTable.getValueAt(8,3) != ""){
-            trains.get(trainIndex).setHeadlights(Boolean.valueOf((testTable.getValueAt(8,3).toString())));
+            mainTrain.setHeadlights(Boolean.valueOf((testTable.getValueAt(8,3).toString())));
         }
         if(testTable.getValueAt(9,3) != null && testTable.getValueAt(9,3) != ""){
-            trains.get(trainIndex).setCabinLights(Boolean.valueOf((testTable.getValueAt(9,3).toString())));
+            mainTrain.setCabinLights(Boolean.valueOf((testTable.getValueAt(9,3).toString())));
         }
         if(testTable.getValueAt(10,3) != null && testTable.getValueAt(10,3) != ""){
-            trains.get(trainIndex).setOuterLights(Boolean.valueOf((testTable.getValueAt(10,3).toString())));
+            mainTrain.setOuterLights(Boolean.valueOf((testTable.getValueAt(10,3).toString())));
         }
         if(testTable.getValueAt(11,3) != null && testTable.getValueAt(11,3) != ""){
-            trains.get(trainIndex).setNextStop(((testTable.getValueAt(11,3).toString())));
+            mainTrain.setNextStop(((testTable.getValueAt(11,3).toString())));
         }
         if(testTable.getValueAt(12,3) != null && testTable.getValueAt(12,3) != ""){
-            trains.get(trainIndex).setServiceBrake(Boolean.valueOf((testTable.getValueAt(12,3).toString())));
+            mainTrain.setServiceBrake(Boolean.valueOf((testTable.getValueAt(12,3).toString())));
         }
         if(testTable.getValueAt(13,3) != null && testTable.getValueAt(13,3) != ""){
-            trains.get(trainIndex).setPassengerCount(Integer.parseInt(testTable.getValueAt(13,3).toString()));
+            mainTrain.setPassengerCount(Integer.parseInt(testTable.getValueAt(13,3).toString()));
         }
         if(testTable.getValueAt(14,3) != null && testTable.getValueAt(14,3) != ""){
-            trains.get(trainIndex).setPower(Double.parseDouble(testTable.getValueAt(14,3).toString()));
+            mainTrain.setPower(Double.parseDouble(testTable.getValueAt(14,3).toString()));
         }
         if(testTable.getValueAt(15,3) != null && testTable.getValueAt(15,3) != ""){
-            trains.get(trainIndex).setCabinTemp(Integer.parseInt(testTable.getValueAt(15,3).toString()));
+            mainTrain.setCabinTemp(Integer.parseInt(testTable.getValueAt(15,3).toString()));
         }
         if(testTable.getValueAt(16,3) != null && testTable.getValueAt(16,3) != ""){
-            trains.get(trainIndex).setPassengerBrake(Boolean.valueOf((testTable.getValueAt(16,3).toString())));
+            mainTrain.setPassengerBrake(Boolean.valueOf((testTable.getValueAt(16,3).toString())));
         }
         if(testTable.getValueAt(17,3) != null && testTable.getValueAt(17,3) != ""){
-            trains.get(trainIndex).setMass(Double.parseDouble(testTable.getValueAt(17,3).toString()));
+            mainTrain.setMass(Double.parseDouble(testTable.getValueAt(17,3).toString()));
         }
 
         //failure types
         if(testFailure.getValueAt(0,2) != null){
-            trains.get(trainIndex).setSignalFail(Boolean.valueOf((testFailure.getValueAt(0,2).toString())));
+            mainTrain.setSignalFail(Boolean.valueOf((testFailure.getValueAt(0,2).toString())));
         }if(testFailure.getValueAt(1,2) != null){
-            trains.get(trainIndex).setBrakeFail(Boolean.valueOf((testFailure.getValueAt(1,2).toString())));
+            mainTrain.setBrakeFail(Boolean.valueOf((testFailure.getValueAt(1,2).toString())));
         }if(testFailure.getValueAt(2,2) != null){
-            trains.get(trainIndex).setEngineFail(Boolean.valueOf((testFailure.getValueAt(2,2).toString())));
+            mainTrain.setEngineFail(Boolean.valueOf((testFailure.getValueAt(2,2).toString())));
         }
 
         for(int i = 0; i<18; i++){
@@ -931,6 +935,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     @Override
     public void update() {
         updateDisplay();
+        updateTestDisplay();
     }
 
     @Override
