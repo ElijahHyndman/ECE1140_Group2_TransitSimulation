@@ -48,8 +48,6 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         //ClockResolutionSlider.setMinimum((int) clk.MINIMUM_RESOLUTION);
         //ClockResolutionSlider.setMaximum((int) clk.MAXIMUM_RESOLUTION);
         UpdateSpawnTables();
-        //ClockRatioSlider.setValue((int) SE.getClock().getRatio());
-        //ClockResolutionSlider.setValue((int) SE.getClock().getResolution());
         this.setVisible(true);
         initComponents();
     }
