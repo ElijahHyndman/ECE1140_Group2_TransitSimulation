@@ -91,6 +91,7 @@ public class SimulationEnvironment extends Thread {
         Track newTrack = new Track();
         try {
             newTrack.importTrack(trackCSVFilePath);
+            ctc.updateTrack(newTrack);
         } catch (Exception e) {
             return false;
         }

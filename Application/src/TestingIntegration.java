@@ -17,5 +17,9 @@ public class TestingIntegration {
 
         CTCOffice newCTC = new CTCOffice(trackSys,SE);
         System.out.println("\nNew CTC\n"+newCTC.getTrack());
+
+        SimulationEnvironmentUI jFrame = new SimulationEnvironmentUI(SE);
+        jFrame.latch(SE);
+        GUIWindowLauncher.launchWindow(jFrame);
     }
 }
