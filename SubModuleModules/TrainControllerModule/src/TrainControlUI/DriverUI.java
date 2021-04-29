@@ -6,10 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
+import javax.swing.*;
 
 import GUIInterface.AppGUIModule;
 import implementation.*;
-import java.util.Vector;
 
 
 /** DriverUI is the central user interface allowing the DRIVER to
@@ -19,7 +19,7 @@ import java.util.Vector;
  * Author: Reagan Dowling
  * Date: 02/24/2021
  */
-public class DriverUI implements ActionListener, AppGUIModule {
+public class DriverUI extends javax.swing.JFrame implements ActionListener, AppGUIModule {
 
     private TrainControl control;
     //private TestingUI testing;

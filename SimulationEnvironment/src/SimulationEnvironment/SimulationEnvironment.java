@@ -33,25 +33,39 @@ public class SimulationEnvironment extends Thread {
 
     /** World Object Variables
      */
-    private Track trackSystem = new Track();
+    private Track trackSystem;
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
+
+    /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
+     */
     public SimulationEnvironment() {
-        /** create a new Simulation Environment which contains a world clock and a ctc office (which has its own WaysideSystem on construction.)
-         */
         clk= new WorldClock();
         ctc= new CTCOffice();
-        this.start();
+        //this.setTrack();
+       this.start();
     }
 
+
+    /*
+            World Object: Train
+     */
+
+
+
+    /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
+     *  on new thread=]*/
     public void spawnTrain(TrainUnit newTrain, TrackElement spawnLocation) {
-        /** spawns an already created, given train at a specific, already created TrackElement but doesn't set it to running
-         *  on new thread=]*/
     }
+
+
 
     /*
         World Time Methods
      */
+
+
+
     public void setWorldTime(double worldTimeInHours) {
         /** sets the current world time to a double of hours since midnight.
          *  effect is immediate, if clk is running then it will continue accumulating onto new time.
@@ -62,27 +76,36 @@ public class SimulationEnvironment extends Thread {
         clk.setWorldTime(worldTimeInHours);
     }
 
+
+
     /*
         Track Methods
     */
-    public void setTrack(Track newTrackSystem) {
-        /** sets the track system for the entire simulation environment, updates the CTC.
-         */
-        trackSystem = newTrackSystem;
-        ctc.setTrack(trackSystem);
-    }
 
-    public boolean importTrack(String trackCSVFilePath) {
-        /** attempts to build trackSystem from the given TrackCSVFilePath.
-         */
+
+    /** attempts to build trackSystem from the given TrackCSVFilePath.
+     */
+    public boolean importTrack(String trackCSVFilePath) throws Exception {
         Track newTrack = new Track();
         try {
             newTrack.importTrack(trackCSVFilePath);
+            //Create CTC HERE :
+            ctc= new CTCOffice(newTrack,this);
+            clk.addListener(ctc);
         } catch (Exception e) {
             return false;
         }
         setTrack(newTrack);
+        spawnTrackBuilderGUI(newTrack);
         return true;
+    }
+
+
+    /** sets the track system for the entire simulation environment, updates the CTC.
+     */
+    public void setTrack(Track newTrackSystem) throws Exception {
+        trackSystem = newTrackSystem;
+        ctc.updateTrack(trackSystem);
     }
 
 
@@ -102,6 +125,9 @@ public class SimulationEnvironment extends Thread {
         // Place train onto spawn location
         newTrain.spawnOn(location,awayFrom);
         addTrain(newTrain);
+
+
+
         if(trackSystem != null)
             newTrain.setReferenceTrack(trackSystem);
 
@@ -130,11 +156,17 @@ public class SimulationEnvironment extends Thread {
     }
     public TrackGUI spawnTrackBuilderGUI(Track system) {
         TrackGUI newUI = new TrackGUI(system);
+        newUI.setVisible(true); //adding
         return newUI;
     }
-    public CTCJFrame spawnCTCGUI(DisplayLine ctc) {
+    public CTCJFrame spawnCTCGUI(CTCOffice ctc) {
         //TODO return new CTCJFrame(ctc);
-        return null;
+        CTCJFrame newUI = new CTCJFrame(ctc);
+        newUI.latch(this);
+        newUI.setVisible(true);
+        for(int i=0; i<ctc.getWaysideSystem().size();i++)
+            spawnWaysideGUI(ctc.getWaysideSystem().get(i));
+        return newUI;
     }
 
     public WaysideSystemUI spawnWaysideGUI (WaysideSystem ws) {
@@ -148,8 +180,6 @@ public class SimulationEnvironment extends Thread {
         }
         return null;
     }
-
-
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }

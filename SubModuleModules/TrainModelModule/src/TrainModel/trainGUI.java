@@ -42,7 +42,6 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public trainGUI(int index) {
         initComponents();
         this.mainTrainIndex = index;
-
         try{
             image.make(0, 10);
         } catch(IOException e) {
