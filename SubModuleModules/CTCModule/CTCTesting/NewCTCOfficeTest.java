@@ -197,7 +197,7 @@ public class NewCTCOfficeTest {
     }
 
     @Test
-    @DisplayName("Testing the ability to get switching position")
+    @DisplayName("Testing the ability to close the track")
     public void checkCloseTrack() throws Exception {
         SimulationEnvironment se = new SimulationEnvironment();
         CTCOffice ctc = se.getCTC();
