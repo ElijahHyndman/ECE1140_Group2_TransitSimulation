@@ -206,8 +206,12 @@ public class WorldClock extends Thread {
             if(ticking) {
                 flag = true;
                 // update Physics
-                //System.out.println("!");
-                updateAllPhysics();
+         //   System.out.println("!");
+                try {
+                    updateAllPhysics();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 // Traverse for period once per loop
                 once();
             }
@@ -261,7 +265,7 @@ public class WorldClock extends Thread {
     }
 
 
-    public void updateAllPhysics() {
+    public void updateAllPhysics() throws Exception {
         //System.out.println(getTimeInSeconds());
         for (PhysicsUpdateListener listener : listeners) {
             listener.updatePhysics(getTimeString(), worldSecondsPerUpdate);//microseconds/1000000.0);

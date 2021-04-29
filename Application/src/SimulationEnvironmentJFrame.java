@@ -604,9 +604,9 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 SimulationEnvironmentJFrame se = new SimulationEnvironmentJFrame( new SimulationEnvironment());
-               while(true) {
-                    se.update();
-                }
+//                while(true) {
+//                    se.update();
+//                }
             }
         });
     }

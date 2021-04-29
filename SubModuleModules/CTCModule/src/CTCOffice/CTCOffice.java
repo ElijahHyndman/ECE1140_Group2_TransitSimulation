@@ -117,8 +117,9 @@ public class CTCOffice implements PhysicsUpdateListener
         //speedAuthority[2] is dispatch time
         //Vector<TrainUnit> trains = SEobj.getTrains();
 
-        if (tNum.equals("Train 1"))
+        if (tNum.equals("Train 1")) {
             trainNum = 1;
+        }
         else if (tNum.equals("Train 2"))
             trainNum = 2;
         else if (tNum.equals("Train 3"))
@@ -138,7 +139,7 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (tNum.equals("Train 10"))
             trainNum = 10;
         else {
-            System.out.println(trackObj.getGreenLine());
+            trainNum = 1;
             SEobj.spawnRunningTrain(trackObj.getBlock(0), trackObj.getBlock(0)); //why after the else
         }
 
@@ -272,7 +273,8 @@ public class CTCOffice implements PhysicsUpdateListener
         authority = calcAuthority(route);
         authArr = createAuthArr(route, authority);
 
-        if (speed<5) {
+        if (speed<5)
+        {
             speed = 5;
             double timeTravel = 1/(speed*1000/routeLength/60);
             long mins = (long)timeTravel;
@@ -751,7 +753,9 @@ public class CTCOffice implements PhysicsUpdateListener
     }
 
     public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+
         this.timeNow = currentTimeString;
+        this.BroadcastingArrays();
     }
 
     public ArrayList getDisps() {

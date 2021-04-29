@@ -132,7 +132,7 @@ public class WaysideSystem {
                     this.trackSectionName,this.trackSectionName, trackLine.size(),lineAuthorities.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 0; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockAuthority(blockNum, lineAuthorities[arrayIndex]);
             }
@@ -151,7 +151,7 @@ public class WaysideSystem {
                     this.trackSectionName,this.trackSectionName, trackLine.size(),lineSpeeds.length));
         int arrayIndex = 0;
         // For each Block in line... For each controller...
-        for (int blockNum = 1; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
+        for (int blockNum = 0; arrayIndex< trackLine.size(); blockNum++,arrayIndex++) {
             for (WaysideController ctrl : controllers) {
                 ctrl.setBlockSpeed(blockNum, lineSpeeds[arrayIndex]);
             }

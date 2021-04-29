@@ -9,5 +9,5 @@ public interface PhysicsUpdateListener {
      * @param currentTimeString String, String format of date in format of HH:mm:ss, used for displaying world time
      * @param deltaTime_inSeconds double, number of seconds which have passed since the last physics update was called
      */
-    void updatePhysics(String currentTimeString, double deltaTime_inSeconds);
+    void updatePhysics(String currentTimeString, double deltaTime_inSeconds) throws Exception;
 }
