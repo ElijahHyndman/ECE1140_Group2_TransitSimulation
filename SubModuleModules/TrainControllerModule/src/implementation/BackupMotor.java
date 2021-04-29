@@ -7,30 +7,34 @@ public class BackupMotor implements TrainMotor{
     private double power;
     private double Kp;
     private double Ki;
-    private double totalError;
-    private double prevOutput;
-    private double prevSpeed;
-    private double maxIOutput=0;
-    private double maxOutput=0;
-    private double minOutput=0;
-    private double iTerm = 0;
-    private double lastError = 0;
-    private double integral = 0;
-    private double output = 0;
-    boolean firstRun;
-    private double Kd = 0;
-    private double maxError=0;
-    private double outputRampRate=0;
+    private SimplyPID thePID;
+    private double setpoint;
+
+
 
     public BackupMotor(){
         power = 0;
-        Kp = 10.5;//3; // Default Kp
-        Ki = 1; // Default Ki
-        firstRun = true;
+        Kp = 8;//3; // Default Kp
+        Ki = 5; // Default Ki
+        setpoint = 0;
+
+
+        thePID = new SimplyPID(0, Kp, Ki, 0);
+        thePID.setOutputLimits(-120,120);
     }
 
-    public double getPower(double idealVelocity, double trainVelocity){
-        power = update(idealVelocity, trainVelocity);
+    public double getPower(double deltaTime, double idealVelocity, double trainVelocity){
+        double actual = trainVelocity;
+        if (setpoint != idealVelocity){
+            setpoint = idealVelocity;
+            thePID.setSetpoint(setpoint);
+        }
+
+        if (idealVelocity == 0 && trainVelocity == 0){
+            power = 0;
+        }else if (thePID != null){
+            power = thePID.getOutput(deltaTime, actual);
+        }
         return power;
     }
 
@@ -38,58 +42,13 @@ public class BackupMotor implements TrainMotor{
         Kp = newKp;
         Ki = newKi;
 
-        setBounds(-120, 120);
+        thePID.setkP(Kp);
+        thePID.setkI(Ki);
+        thePID.setOutputLimits(-120, 120);
     }
 
-    public Double update(double setPoint, double currValue){
-        double pTerm;
-        double output;
-
-        double dt = 1; //(double)(currTime - lastTime) / TimeUnit.SECONDS.toNanos(1);
-
-        double error = setPoint - currValue;
-        double deriv = (error - lastError) / dt;
-
-        // Calculate P term
-        pTerm=Kp*error;
-
-        if (firstRun) {
-            lastError = setPoint - currValue;
-            prevSpeed=currValue;
-            prevOutput=pTerm;
-            firstRun=false;
-        }
-
-        prevSpeed=currValue;
-
-        //Calculate I term
-        iTerm=Ki*integral;
-
-        output = pTerm + iTerm;
-
-        // Figure out what we're doing with the error.
-        if(minOutput!=maxOutput && !isWithinBounds(output, minOutput,maxOutput) ){
-            integral=error;
-        } else{
-            integral+=error*dt;
-        }
-
-        //lastTime = currTime;
-        lastError = error;
-        prevOutput = output;
-
-        return output;
-    }
-
-    public void setBounds(double minimum,double maximum){
-        if(maximum<minimum)return;
-        maxOutput=maximum;
-        minOutput=minimum;
-    }
-
-    private boolean isWithinBounds(double value, double min, double max){
-        //check if power value is within max/min bounds
-        return (min<value) && (value<max);
+    public void switchCurrent(){
+        //do nothing
     }
 
 }

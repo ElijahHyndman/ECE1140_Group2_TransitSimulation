@@ -75,7 +75,7 @@ public class TrainControl {
         alert = null;
         shouldBrake = 0;
         nonVitalComponents = new NonVitalComponents();
-        sampleTime = 1;
+        sampleTime = .1;
         controlNonVital();
     }
 
@@ -297,7 +297,7 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
-        power = (motor.getPower(velocityCmd, trainVelocity));
+        power = (motor.getPower(sampleTime, velocityCmd, trainVelocity));
     }
 
     //Speed Limit input from Train Model, in km/h

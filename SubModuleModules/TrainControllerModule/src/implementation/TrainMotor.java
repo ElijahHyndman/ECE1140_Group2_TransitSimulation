@@ -18,7 +18,7 @@ public interface TrainMotor {
      * @param trainVelocity
      * @return
      */
-    public double getPower(double idealVelocity, double trainVelocity);
+    public double getPower(double deltaTime, double idealVelocity, double trainVelocity);
 
     /**
      *
@@ -27,4 +27,6 @@ public interface TrainMotor {
      * @param newKi
      */
     public void setKpKi(double newKp, double newKi);
+
+    public void switchCurrent();
 }
