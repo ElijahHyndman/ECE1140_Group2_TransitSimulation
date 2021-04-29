@@ -204,6 +204,7 @@ public class WorldClock extends Thread {
         while (ticking) {
                 flag = true;
                 // update Physics
+            System.out.println("!");
                 updateAllPhysics();
                 // Traverse for period once per loop
                 once();

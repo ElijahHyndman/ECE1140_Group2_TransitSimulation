@@ -10,8 +10,10 @@ import java.util.*;
 
 import CTCOffice.*;
 import GUIInterface.AppGUIModule;
+import SimulationEnvironment.SimulationEnvironment;
 import Track.Track;
 //import TrackModelModule.*;
+
 
 
 import javax.swing.*;
@@ -35,6 +37,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     //display is the CTC Office
     CTCOffice display = new CTCOffice();
     Track givenSystem = new Track();
+    //SimulationEnvironment SE;
     DefaultTableModel model, model2;
     boolean mode = false;
     public Timer timer;
@@ -52,8 +55,8 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     public void latch(Object myObject){
         givenSystem = null;
         try {
-            givenSystem = (Track) myObject;
-            givenSystem = (Track) myObject;
+            SimulationEnvironment SE  = (SimulationEnvironment) myObject;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -982,7 +985,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
         speedAuthority = display.Dispatch(destination, train, timeD);
 
         line = color;
-
+        /*
         int blockNo = Integer.parseInt(speedAuthority[1].toString());
         char sect = displist.get(blockNo).getSection();
         int blockL = displist.get(blockNo).getLength();
@@ -1086,7 +1089,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
             }
         }
         else
-            JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");
+            JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");*/
     }
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {

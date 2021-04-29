@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import GUIInterface.AppGUIModule;
 import implementation.*;
-import java.util.Vector;
 
 
 /** DriverUI is the central user interface allowing the DRIVER to

@@ -107,8 +107,9 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         //TODO Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
         //TODO waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
         //TODO this is hard coded
-        ArrayList<WaysideSystem> WSystems = SE.getCTC().getWaysideSystem();
+    //    ArrayList<WaysideSystem> WSystems = SE.getCTC().getWaysideSystem();
         // If values exist
+        /*
         if(WSystems.size() != 0) {
             waysideTableModel.setRowCount(WSystems.size());
             waysideTableModel.setValueAt(WSystems.get(0),0,0);
@@ -120,7 +121,7 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
             WaysideSystem ws = WSystems.get(index);
             waysideTableModel.setValueAt(ws,index,0);
             waysideTableModel.setValueAt("Spawn GUI", index,1);
-        }
+        }*/
 
 
         /*
