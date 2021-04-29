@@ -77,6 +77,12 @@ public class CTCOffice //implements PhysicsUpdateListener
             greenLine = trackSystem.getGreenLine();
             WaysideSystem greenWS = new WaysideSystem(greenLine, "Green");
             waysides.add(greenWS);
+            greenWS.uploadSwitchPLCToController(12,switchGreen12PLC((Switch)trackSystem.getGreenLine().get(12)));
+            greenWS.uploadSwitchPLCToController(29,switchGreen29PLC((Switch)trackSystem.getGreenLine().get(29)));
+            greenWS.uploadSwitchPLCToController(58,switchGreen58PLC((Switch)trackSystem.getGreenLine().get(58)));
+            greenWS.uploadSwitchPLCToController(62,switchGreen62PLC((Switch)trackSystem.getGreenLine().get(62)));
+            greenWS.uploadSwitchPLCToController(76,switchGreen76PLC((Switch)trackSystem.getGreenLine().get(76)));
+            greenWS.uploadSwitchPLCToController(86,switchGreen86PLC((Switch)trackSystem.getGreenLine().get(86)));
         } catch (Exception greenLineGenerationError) {
             greenLineGenerationError.printStackTrace();
         }
@@ -84,6 +90,13 @@ public class CTCOffice //implements PhysicsUpdateListener
             redLine = trackSystem.getRedLine();
             WaysideSystem redWS = new WaysideSystem(redLine,"Red");
             waysides.add(redWS);
+            redWS.uploadSwitchPLCToController(9,switchRed9PLC((Switch)trackSystem.getRedLine().get(9)));
+            redWS.uploadSwitchPLCToController(15,switchRed15PLC((Switch)trackSystem.getRedLine().get(15)));
+            redWS.uploadSwitchPLCToController(27,switchRed27PLC((Switch)trackSystem.getRedLine().get(27)));
+            redWS.uploadSwitchPLCToController(32,switchRed32PLC((Switch)trackSystem.getRedLine().get(32)));
+            redWS.uploadSwitchPLCToController(38,switchRed38PLC((Switch)trackSystem.getRedLine().get(38)));
+            redWS.uploadSwitchPLCToController(43,switchRed43PLC((Switch)trackSystem.getRedLine().get(43)));
+            redWS.uploadSwitchPLCToController(52,switchRed52PLC((Switch)trackSystem.getRedLine().get(52)));
         } catch (Exception redLineGenerationError) {
             redLineGenerationError.printStackTrace();
         }
@@ -798,9 +811,15 @@ public class CTCOffice //implements PhysicsUpdateListener
         return waysides.get(ind);
     }
 
+
+
+
+
     /*
             Elijah: PLC Scripts
      */
+
+
     // Red Line
     public static PLCEngine switchRed9PLC(Switch switch9) throws Exception {
         // TODO determine if connection to D is secondary or not

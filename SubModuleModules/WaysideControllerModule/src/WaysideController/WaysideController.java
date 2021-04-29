@@ -10,6 +10,7 @@ import TrackConstruction.TrackElement;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.valueOf;
 
@@ -36,6 +37,7 @@ public class WaysideController extends Thread implements Serializable {
     private String controllerAlias = null;
     private boolean isSoftware = DEFAULT_ISSOFTWARE;
     private boolean running = false;
+    private boolean outputing = true;
     /** Block-Relevant Lists
      * @member jurisdiction, an area of TrackElements which this wayside controller shall have output responsibilities for
      *      - jurisdiction only determines which blocks this controller outputs to, the controller may use any track within the provided system as input
@@ -48,8 +50,8 @@ public class WaysideController extends Thread implements Serializable {
     private HashMap<Integer, PLCOutput> switchPLCControls = new HashMap<Integer, PLCOutput>();
     /** PLCScript Members
      */
-    private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
-    private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
+    volatile private ArrayList<PLCEngine> UserPLCScripts = new ArrayList<PLCEngine>();
+    volatile private ArrayList<PLCEngine> SafetyCriticalPLCScripts = new ArrayList<PLCEngine>();
     /** Test GUI Members
      */
     /***********************************************************************************************************************/
@@ -99,22 +101,24 @@ public class WaysideController extends Thread implements Serializable {
     public void run() {
         running = true;
         while (running) {
-            for (PLCEngine userScript : UserPLCScripts) {
-                try {
-                    userScript.evaluateLogic();
-                } catch (Exception failureToExecuteScript) {
-                    //failureToExecuteScript.printStackTrace();
-                    //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+            if (outputing) {
+                for (PLCEngine userScript : UserPLCScripts) {
+                    try {
+                        userScript.evaluateLogic();
+                    } catch (Exception failureToExecuteScript) {
+                        //failureToExecuteScript.printStackTrace();
+                        //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
+                    }
                 }
-            }
-            for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
-                try {
-                    safetyCriticalScript.evaluateLogic();
-                } catch (Exception failureToExecuteScript) {
-                    //failureToExecuteScript.printStackTrace();
-                    //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                for (PLCEngine safetyCriticalScript : SafetyCriticalPLCScripts) {
+                    try {
+                        safetyCriticalScript.evaluateLogic();
+                    } catch (Exception failureToExecuteScript) {
+                        //failureToExecuteScript.printStackTrace();
+                        //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
+                    }
                 }
-            }
+            }// end if
         }
     }
 
@@ -123,6 +127,10 @@ public class WaysideController extends Thread implements Serializable {
      */
     public void halt() {
         this.running = false;
+    }
+
+    public void setOutputing(boolean generating) {
+        outputing = generating;
     }
 
 
@@ -277,22 +285,6 @@ public class WaysideController extends Thread implements Serializable {
         // Debug
         System.out.printf(".");
         return collisionAvoidance;
-    }
-
-
-    /**
-     *
-     * @param sw
-     * @return
-     * @throws Exception
-     */
-    public static PLCEngine generateSwitchConflictAvoidanceScript (Switch sw) throws Exception {
-        // TODO
-        int thisBlockIndex = sw.getBlockNum();
-        int blockAfterIndex = sw.getDirection(0);
-        int blockBeforeIndex = sw.getDirection(1);
-        int switchAfterIndex = sw.getDirection(2);
-        return null;
     }
 
 
