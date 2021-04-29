@@ -1,0 +1,8 @@
+LD A
+NOT
+LD C
+NOT
+ANB
+LD D
+ORB
+SET

@@ -1,0 +1,8 @@
+LD A
+LD B
+ANB
+LD C
+LD D
+ANB
+ORB
+SET
