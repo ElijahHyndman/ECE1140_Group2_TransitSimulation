@@ -140,7 +140,7 @@ public class CTCOffice implements PhysicsUpdateListener
             trainNum = 10;
         else {
             trainNum = 1;
-            SEobj.spawnRunningTrain(trackObj.getBlock(0), trackObj.getBlock(0)); //why after the else
+      //      SEobj.spawnRunningTrain(trackObj.getGreenLine().get(63), trackObj.getGreenLine().get(62)); //why after the else
         }
 
         if (dest.equals("Station B")){
@@ -273,6 +273,7 @@ public class CTCOffice implements PhysicsUpdateListener
         authority = calcAuthority(route);
         authArr = createAuthArr(route, authority);
 
+
         if (speed<5)
         {
             speed = 5;
@@ -315,7 +316,12 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         BroadcastingArrays();
+        System.out.println(Arrays.toString(speedArrG));
+        System.out.println(Arrays.toString(authArr));
+       // getWaysideSystem("Green").broadcastToControllers(speedArrG,authArr);
 
+
+        //paintTrack();
         return speedAuthorityTime;
     }
 
@@ -336,10 +342,12 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void BroadcastingArrays() throws Exception {
         now = LocalTime.parse(timeNow);
+    //    System.out.println("Now - " + now);
+    //    System.out.println("Times - " + times);
         int count = 0;
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times.get(i))){
-
+                //trackObj.dispatchLine(0); // 0 is for green 1 is for red
                 double[] speedsRholder = new double[150];
                 int[] authsRholder = new int[150];
                 authsRholder = authorities.get(i);
@@ -355,6 +363,8 @@ public class CTCOffice implements PhysicsUpdateListener
                 }
 
                 if (count!=0){
+                    System.out.println(Arrays.toString(speedsRcut));
+                    System.out.println(Arrays.toString(authsCut));
                     getWaysideSystem("Red").broadcastToControllers(speedsRcut, authsCut);
                 }
                 else{
@@ -440,8 +450,10 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public boolean CheckSectOcc(int blockNum, String lineCol) throws Exception {
         char section = dispArr.get(blockNum).getSection();
+        System.out.println(section);
         char lineChar = lineCol.charAt(0);
         ArrayList<Integer> blocks = trackObj.blocksInSection(section,lineChar);
+        System.out.println(blocks);
         int length = blocks.size();
         boolean[] occs = new boolean[length];
         boolean totalocc = false;
@@ -466,6 +478,8 @@ public class CTCOffice implements PhysicsUpdateListener
                 }
             }
         }
+
+        System.out.println(Arrays.toString(occs));
         return totalocc;
     }
 
@@ -573,7 +587,7 @@ public class CTCOffice implements PhysicsUpdateListener
         int[] newGreenLine = greenPathNY;
         int flag=0;
         int flag2 =0;
-        int beacon2 =0;
+        //int beacon2 =0;
 
         for(int i = 0; i < 180; i++){
             if(newGreenLine[i] != start && flag == 0) {
@@ -583,10 +597,9 @@ public class CTCOffice implements PhysicsUpdateListener
                 flag = 1;
             }
             else if(flag == 1 && newGreenLine[i] == end) {
-                if(flag2 != 1)
-                    beacon2 = newGreenLine[i-2];
+                //if(flag2 != 1)
+                    //beacon2 = newGreenLine[i-2];
                 flag2=1;
-
             }
             else if(flag2 == 1) {
                 newGreenLine[i] = 0;
@@ -597,14 +610,13 @@ public class CTCOffice implements PhysicsUpdateListener
         int[] RouteAr = new int[151];
         for(int i=0; i < 176; i++) {
             if (start == 0) {
-                RouteAr[0] = 3;
+                RouteAr[0] = 1;
                 RouteAr[62]=1;
             }
             if(end == 0)
                 RouteAr[0] =1;
-            if(i == beacon2)
-                RouteAr[i] = 2;
-
+            //if(i == beacon2)
+                //RouteAr[i] = 2;
             if (newGreenLine[i] != 0)
                 RouteAr[newGreenLine[i]] = 1;
         }
@@ -617,8 +629,8 @@ public class CTCOffice implements PhysicsUpdateListener
         int[] newRedLine = redPath;
         int flag=0;
         int flag2 =0;
-        int counter =0;
-        int beacon2=0;
+        //int counter =0;
+        //int beacon2=0;
         for(int i = 0; i < 106; i++){
             if(newRedLine[i] != start && flag == 0) {
                 newRedLine[i] = 0;
@@ -626,11 +638,7 @@ public class CTCOffice implements PhysicsUpdateListener
             if(newRedLine[i] == start && flag2 == 0) {
                 flag = 1;
             }
-            else if(flag == 1 && newRedLine[i] == end-1) {
-
-                if(flag2 != 1)
-                beacon2 = newRedLine[i-1];
-
+            else if(flag == 1 && newRedLine[i] == end) {
                 flag2=1;
             }
             else if(flag2 == 1) {
@@ -646,17 +654,14 @@ public class CTCOffice implements PhysicsUpdateListener
 
         for(int i=0; i < 106; i++) {
             if(start == 0) {
-                RouteAr[0] = 3;
+                RouteAr[0] = 1;
                 RouteAr[9] = 1;
             }
             if(end == 0){
-                RouteAr[0]=3;
+                RouteAr[0]=1;
                 RouteAr[10]=1;
                 RouteAr[9] =1;
             }
-            if(i == beacon2)
-                RouteAr[beacon2]=2;
-
             if (newRedLine[i] != 0)
                 RouteAr[newRedLine[i]] = 1;
         }
@@ -775,11 +780,6 @@ public class CTCOffice implements PhysicsUpdateListener
         return waysides.get(ind);
     }
 
-
-
-    /*
-            Elijah: PLC Scripts
-     */
         //HERE TO JANK
         public void paintTrack(){
                System.out.println("PAINTING TRACK");
@@ -805,8 +805,5 @@ public class CTCOffice implements PhysicsUpdateListener
                         trackObj.getRedLine().get(i).setCommandedSpeed(15);
                     }
                 }
-
         }
-
-
 }
