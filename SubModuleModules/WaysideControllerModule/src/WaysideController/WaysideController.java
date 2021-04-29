@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.valueOf;
 
-/** module class that uses boolean logic to dictate Track System controls. 
+/** module class that uses boolean logic to dictate Track System controls.
  * @author Harsh
  * @editor Elijah
  */
@@ -80,9 +80,9 @@ public class WaysideController extends Thread implements Serializable {
      * @param target    WaysideController, the WaysideController we intend to copy
      */
     public void copy(WaysideController target) {
-            this.controllerAlias = target.controllerAlias;
-            this.isSoftware = target.isSoftware;
-            this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
+        this.controllerAlias = target.controllerAlias;
+        this.isSoftware = target.isSoftware;
+        this.jurisdiction = (ArrayList<TrackElement>) target.jurisdiction.clone();
     }
 
 
@@ -593,7 +593,7 @@ public class WaysideController extends Thread implements Serializable {
      *      |_Node 1: a value
      *      |_Node 2: a value
      *      |_Node 3: a value
- *      |_Title 2
+     *      |_Title 2
      *      |_Node 22: a value
      *      |_Node 23: a value
      *      |_Node 28: a value
