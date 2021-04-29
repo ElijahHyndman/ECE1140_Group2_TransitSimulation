@@ -11,7 +11,6 @@ import javax.swing.*;
  * and open the template in the editor.
  */
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -493,7 +492,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 },
                 new String [] {
-                        "Line", "Block", "Switches", "Switch Status"
+                        "Line", "Block", "Switches", "Switch Status / RailWay Crossing Lights"
                 }
         ));
         jScrollPane5.setViewportView(jTable3);
@@ -1016,6 +1015,10 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                 switches.addRow(new Object[] {switchesList.get(i).getLine(),switchesList.get(i).getBlockNum(), switchesList.get(i).getInfrastructure(),switchesList.get(i).getSwitchState()});
 
             }
+            switches.addRow(new Object[] {trackList.getRedLine().get(47).getLine(),trackList.getRedLine().get(47).getBlockNum(), trackList.getRedLine().get(47).getInfrastructure(),trackList.getRedLine().get(47).getLightRail()});
+            switches.addRow(new Object[] {trackList.getGreenLine().get(19).getLine(),trackList.getRedLine().get(19).getBlockNum(), trackList.getGreenLine().get(19).getInfrastructure(),trackList.getGreenLine().get(19).getLightRail()});
+
+
             for(int i=0; i<beaconsList.size(); i++) {
                 beacons.addRow(new Object[] {beaconsList.get(i).getLine(),beaconsList.get(i).getBlockNum(), beaconsList.get(i).getBeacon()});
 

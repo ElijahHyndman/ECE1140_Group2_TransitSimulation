@@ -32,6 +32,12 @@ class TrainUnitTest {
     @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainUnitSpawnsAModelAndController() {
         trn = new TrainUnit();
+        trn.start();
+        WorldClock clk = new WorldClock();
+        clk.addListener(trn);
+        clk.start();
+
+        //trn.spawnOn(theblockyoureon,thebloockyourenotgoingto)
         boolean controllerExists    = trn.getController() != null;
         boolean hullExists          = trn.getHull() != null;
 
