@@ -74,6 +74,8 @@ public class CTCOffice //implements PhysicsUpdateListener
             return new ArrayList<WaysideSystem>();
         }
 
+    public static ArrayList<WaysideSystem> GenerateWaysideSystems(Track trackSystem) {
+
         // Generate wayside if not
         ArrayList<WaysideSystem> generatedWaysides = new ArrayList<WaysideSystem>();
         WaysideSystem greenWS = null;
@@ -348,6 +350,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         authorities.clear();
     }
 
+
     public void GiveColor(String col){
         UIcol = col;
     }
@@ -614,6 +617,7 @@ public class CTCOffice //implements PhysicsUpdateListener
         }
         return RouteAr;
     }
+
 
     /*GIH6 adding dispatch - arbitrary block to next*/
     public int[] routeGreen(int start, int end){

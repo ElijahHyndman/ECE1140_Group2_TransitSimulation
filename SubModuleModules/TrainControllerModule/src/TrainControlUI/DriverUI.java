@@ -60,7 +60,7 @@ public class DriverUI implements ActionListener, AppGUIModule {
         main = new JFrame("Train X");
         main.setSize(1600, 900);
         main.setLayout(null);
-        main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        main.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         format = new DecimalFormat("#.##");
 
