@@ -351,6 +351,26 @@ public class TrainControl {
         trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
 
+    /*
+    //Replicating inputs from the Train Model, used by TestingUI
+    public void newTrainInput(TrainModelInput currentInput){
+        setActualSpeed(currentInput.getActualSpeed());
+
+        if (getControlMode().equals("Automatic")){
+            setCommandedSpeed(currentInput.getCommandedVelocity());
+        }else{
+                setCommandedSpeed(manualVelocity);
+            }
+
+        setSpeedLimit(currentInput.getSpeedLimit());
+        beacon = currentInput.getBeacon();
+
+        //monitorDistance();
+        power = motor.getPower(velocityCmd, trainVelocity);
+    }
+
+     */
+
     /**
      * NEW METHODS FOR TRAIN MODEL
      **/
@@ -383,4 +403,9 @@ public class TrainControl {
         trainModel.setPower(power);
         setNonVitalComponents();
     }
+
+    public void setRouteLength(double routeLength){
+        route = routeLength;
+    }
+
 }

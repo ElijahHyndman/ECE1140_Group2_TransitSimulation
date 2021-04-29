@@ -80,6 +80,7 @@ public class WorldClock extends Thread {
     private int microseconds;
 
     private boolean ticking = false;
+    public boolean allowedToTick = true;
 
     /**
      * Class Clock Members:
@@ -200,16 +201,23 @@ public class WorldClock extends Thread {
          * @after time is advancing, clock is moving, physics update-calls are broadcast
          */
         System.out.println("Clock has started ticking");
-        ticking = true;
-        while (ticking) {
+        while (true) {
+            System.out.println(ticking);
+            if(ticking) {
                 flag = true;
                 // update Physics
+                //System.out.println("!");
                 updateAllPhysics();
                 // Traverse for period once per loop
                 once();
+            }
         }
     }
 
+    public void cont() {
+        //System.out.println("Continuing clock");
+        ticking = true;
+    }
 
     public void halt() {
         /**halts the ticking of the clock.
@@ -220,7 +228,7 @@ public class WorldClock extends Thread {
          * @after clock is definitely not running
          */
         ticking = false;
-        System.out.println("Clock has halted ticking");
+        //System.out.println("Clock has halted ticking");
     }
 
 
