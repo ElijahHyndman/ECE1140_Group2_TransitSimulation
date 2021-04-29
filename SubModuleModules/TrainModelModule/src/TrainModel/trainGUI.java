@@ -12,7 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+
 /**
  *
  * @author Devon
@@ -40,6 +41,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         initComponents();
         this.mainTrainIndex = index;
         numTrains.setText(Integer.toString(namesIndex-1));
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
     }
     public void newTrain() {

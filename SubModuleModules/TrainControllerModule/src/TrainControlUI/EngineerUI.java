@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  *
  * Author: Reagan Dowling
  */
-public class EngineerUI implements ActionListener {
+public class EngineerUI extends javax.swing.JFrame implements ActionListener {
 
     private JFrame mainEng;
     private TrainMotor theMotor;
@@ -29,7 +29,7 @@ public class EngineerUI implements ActionListener {
         setUpEngWindow();
 
         mainEng.setVisible(true);
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public void setUpEngWindow(){

@@ -3,18 +3,16 @@ import GUIInterface.AppGUIModule;
 import WaysideController.WaysideController;
 import WaysideController.WaysideSystem;
 
-import java.awt.CardLayout;
+import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Vector;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import java.awt.Color;
-import javax.swing.JTree;
-
 import java.util.HashMap;
-import javax.swing.JViewport;
 
 /**
  * @author elijah
@@ -54,12 +52,14 @@ public class WaysideSystemUI extends javax.swing.JFrame implements AppGUIModule 
     public WaysideSystemUI() throws IOException {
         initComponents();
         updateControllerSelectText();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public WaysideSystemUI(Vector<WaysideController> existingListOfControllers) throws IOException {
         this.controllers = existingListOfControllers;
         initComponents();
         updateControllerSelectText();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public WaysideSystemUI(WaysideSystem existingSystem) throws IOException {
@@ -67,11 +67,17 @@ public class WaysideSystemUI extends javax.swing.JFrame implements AppGUIModule 
         system = existingSystem;
         initComponents();
         updateControllerSelectText();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
+
+
     /*
-            Inheritance functions
+            Inheritance functions for launching UI
      */
+
+
+
     @Override
     public void latch(Object myObject) {
         try {
@@ -103,9 +109,12 @@ public class WaysideSystemUI extends javax.swing.JFrame implements AppGUIModule 
     }
 
 
+
     /*
-     * Elijah: Functions useful for generating GUI data
+                UI data-field functions
      */
+
+
 
 
     public boolean updateGUI(Vector<WaysideController> controllerList) {
@@ -223,8 +232,7 @@ public class WaysideSystemUI extends javax.swing.JFrame implements AppGUIModule 
             // --- Create hierarchy of nodes to place into tree
             DefaultMutableTreeNode top = new DefaultMutableTreeNode("Controller List");
 
-            // Under the root, add each individual controller as a node.
-            // Generate node per controller.
+            // One level under root, add each individual controller as a node.
             String NodeName;
             for (WaysideController controller : controllers) {
                 DefaultMutableTreeNode controllerNode = treeNodeFromControllerObject(controller);
