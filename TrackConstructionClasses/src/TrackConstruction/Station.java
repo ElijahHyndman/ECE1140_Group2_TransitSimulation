@@ -1,8 +1,9 @@
 package TrackConstruction;
+import java.io.Serializable;
 import java.util.Random;
 /**AUTHOR:  Grace Henderson**/
 
-public class Station extends TrackElement{
+public class Station extends TrackElement implements Serializable {
     String station;
     String beacon;
     int throughput;  //passengers Leaving Train
@@ -92,12 +93,14 @@ public class Station extends TrackElement{
     /*get Beacon*/
    // public String getBeacon() { return this.beacon;}
 
-    //TODO exitTrain -- void and give an integer number of people
+    /**exitTrain -- void and give an integer number of people**/
     public void exitTrain(int N){
         this.throughput = N;
     }
 
-    //TODO boardTrain -- return between 0 and p people onTrack = 0, people board train random to people on track, people on track
+    /**boardTrain -- return between 0 and p people onTrack = 0,
+     * people board train random to people on track, people on track
+     */
     public int boardTrain(){
         Random rand = new Random();
         int leaving;

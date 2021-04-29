@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/Application/AppTests/RemoteWaysideConverterTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/Application/src/GUIThread.java">
           <value>
             <Attribute>
@@ -21,6 +28,13 @@
           <value>
             <Attribute>
               <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/Application/src/RemoteWaysideConverter.java">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
@@ -91,6 +105,13 @@
           <value>
             <Attribute>
               <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/CTCModule/CTCTesting/CTCOfficeTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
             </Attribute>
           </value>
         </entry>
@@ -178,6 +199,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModuleModules/TrainControllerModule/src/implementation/TrainControl.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModuleModules/TrainControllerModule/src/implementation/VitalCheck.java">
           <value>
             <Attribute>
@@ -249,6 +277,27 @@
           </value>
         </entry>
         <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_GreenLineTest.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_PLC_Test.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_SystemInformation_Test.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/SubModuleModules/WaysideControllerModule/WaysideTests/WaysideController/WaysideSystem_CTCInteraction_Test.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />
@@ -500,6 +549,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/SubModules.RemoteWaysideController/src/RemoteWaysideServer/RemoteWaysideServer.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/SubModules.RemoteWaysideController/src/RemoteWaysideServer/RemoteWaysideService.java">
           <value>
             <Attribute>
@@ -508,6 +564,13 @@
           </value>
         </entry>
         <entry key="/TrackConstructionClasses/src/TrackConstruction/Switch.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/WorldClock/WorldClockTesting/WorldClockTest.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

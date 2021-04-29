@@ -18,7 +18,7 @@ class TrackTest {
     make sure that the red and green
      */
     @org.junit.jupiter.api.Test
-    void testgetNextRedGreen() {
+    void testgetNextRedGreenTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -49,7 +49,7 @@ class TrackTest {
     testing the path with switch 0 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch0Red() {
+    void switch0RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -75,7 +75,7 @@ class TrackTest {
     testing the path with switch 1 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch1Red() {
+    void switch1RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -107,7 +107,7 @@ class TrackTest {
     testing the path with switch 2 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch2Red() {
+    void switch2RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -145,7 +145,7 @@ class TrackTest {
     testing the path with switch 3 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch3Red() {
+    void switch3RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -177,11 +177,15 @@ class TrackTest {
         // -- switch 6 (52-53-52-66)
     }
 
+    //T 76 (28-27) and Q 71 (38-39)
+
+
+
     /*
     testing the path with switch 4 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch4Red() {
+    void switch4RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -215,7 +219,7 @@ class TrackTest {
     testing the path with switch 5 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch5Red() {
+    void switch5RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -248,7 +252,7 @@ class TrackTest {
     testing the path with switch 6 being on or off
      */
     @org.junit.jupiter.api.Test
-    void switch6Red() {
+    void switch6RedTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -281,7 +285,7 @@ class TrackTest {
     testing the entire path of the red entire path of the redline
      */
     @org.junit.jupiter.api.Test
-    void getNextRedCircle() {
+    void getNextRedCircleTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -356,7 +360,7 @@ class TrackTest {
     testing import path
      */
     @org.junit.jupiter.api.Test
-    void importTrack() {
+    void importTrackTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -369,7 +373,7 @@ class TrackTest {
     testing the green Line
      */
     @org.junit.jupiter.api.Test
-    void getGreenLine() {
+    void getGreenLineTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -382,20 +386,20 @@ class TrackTest {
     testing the getting a train from yard to the green line
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenYardSwitch() {
+    void getNextGreenYardSwitchTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
-
-        instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
+        instance.dispatchLine(0);
+        instance.getSwitches().get(10).setSwitchState(true); // switch to yard
         TrackElement cur = instance.getGreenLine().get(0);
         TrackElement prev = instance.getGreenLine().get(0);
         TrackElement next = null;
         int test = 0;
         for (int i = 0; i < 5; i++) {
             next = instance.getNextGreen(cur, prev);
-
+            System.out.println(next.getBlockNum());
             if (next != null) {
                 test += next.getBlockNum();
             }
@@ -411,6 +415,7 @@ class TrackTest {
          test = 0;
         for (int i = 0; i < 5; i++) {
             next = instance.getNextGreen(cur, prev);
+            System.out.println(next.getBlockNum());
 
             if (next != null) {
                 test += next.getBlockNum();
@@ -420,11 +425,8 @@ class TrackTest {
             else
                 break;
 
-
         }
         assertEquals(test,0);
-
-
     }
 
     /*
@@ -489,7 +491,7 @@ class TrackTest {
     testing switches directions when updating switches
      */
     @org.junit.jupiter.api.Test
-    void testingSwitch() {
+    void testingSwitchTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -513,7 +515,7 @@ class TrackTest {
     testing green switch 11
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenSwitches11() {
+    void getNextGreenSwitches11Test() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -550,7 +552,7 @@ class TrackTest {
     testing the path with switch 8 being toggled
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenSwitches8() {
+    void getNextGreenSwitches8Test() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -584,7 +586,7 @@ class TrackTest {
     testing the path with switch 9 being toggled
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenSwitches9() {
+    void getNextGreenSwitches9Test() {
         //switch to yard
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
@@ -602,7 +604,7 @@ class TrackTest {
     testing the path with switch 7 being toggled
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenSwitches7() {
+    void getNextGreenSwitches7Test() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -636,7 +638,7 @@ class TrackTest {
     testing the path with switch 12 being toggled
      */
     @org.junit.jupiter.api.Test
-    void getNextGreenSwitches12() {
+    void getNextGreenSwitches12Test() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -672,7 +674,7 @@ class TrackTest {
 
     /*getting the path for the green line*/
     @org.junit.jupiter.api.Test
-    void getNextGreen() {
+    void getNextGreenTest() {
         System.out.println("getNextGreen");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -726,7 +728,7 @@ class TrackTest {
 
     /*testing getting red line*/
     @org.junit.jupiter.api.Test
-    void getRedLine() {
+    void getRedLineTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -736,7 +738,7 @@ class TrackTest {
 
     /*getting the block*/
     @org.junit.jupiter.api.Test
-    void getBlock() {
+    void getBlockTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -755,7 +757,7 @@ class TrackTest {
 
     /*testing getting blockLine*/
     @org.junit.jupiter.api.Test
-    void getBlockLine() {
+    void getBlockLineTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -774,7 +776,7 @@ class TrackTest {
 
     /*testing the track heater*/
     @org.junit.jupiter.api.Test
-    void getTrackHeaterStatus() {
+    void setTrackHeaterStatusTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -786,22 +788,13 @@ class TrackTest {
 
     }
 
-    /*setting environmental temperature*/
-    @org.junit.jupiter.api.Test
-    void setEnvironmentalTemperature() {
-        System.out.println("importTrack");
-        String filepath = "src/Track/RedGreenUpdated.csv";
-        Track instance = new Track();
-        instance.importTrack(filepath);
-        instance.setEnvironmentalTemperature(20);
-        assertEquals(instance.getEnvironmentalTemperature(), 20);
 
 
-    }
+
 
     /*getting beacons for the green line*/
     @org.junit.jupiter.api.Test
-    void getBeacon() {
+    void getBeaconTest() {
         //Not Really Meant to be here -- NEED TO TAKE OUT !!
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
@@ -816,7 +809,7 @@ class TrackTest {
 
     /*test getting switches*/
     @org.junit.jupiter.api.Test
-    void getSwitches() {
+    void getSwitchesTest() {
         System.out.println("get Switches");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -827,7 +820,7 @@ class TrackTest {
 
     /*setting and fixing failures */
     @org.junit.jupiter.api.Test
-    void setFailure() {
+    void setFailureTest() {
         System.out.println("importTrack");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -857,11 +850,11 @@ class TrackTest {
         instance.setFailure(1,"Green",0);
         System.out.println("This is it: " + instance.getFailures());
 
-;    }
+    }
 
 
     @org.junit.jupiter.api.Test
-    void validFile() {
+    void validFileTest() {
         String filePath = "THISISINVALID";
         Track instance = new Track();
         boolean expResult = false;
@@ -875,7 +868,7 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
-    void testDispatchYard(){
+    void testDispatchYardTest(){
         System.out.println("getNext");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -905,7 +898,7 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
-    void getNext() {
+    void getNextTest() {
         System.out.println("getNext");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -980,7 +973,7 @@ class TrackTest {
     }
 
     @org.junit.jupiter.api.Test
-    void updateTickets(){
+    void updateTicketsTest(){
         System.out.println("updateTickets");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1001,74 +994,6 @@ class TrackTest {
     }
 
 
-    @org.junit.jupiter.api.Test
-    void setSwitch() {
-        System.out.println("setSwitch");
-        String filepath = "src/Track/RedGreenUpdated.csv";
-        Track instance = new Track();
-        instance.importTrack(filepath);
-
-        TrackGUI testGUI = new TrackGUI(instance);
-        testGUI.setVisible(true);
-        testGUI.latch(instance);
-     //   while (true){}
-
-
-        /*
-
-        //Testing for Green Line Switches
-        instance.getSwitches().get(11).setSwitchState(false);
-        instance.getSwitches().get(12).setSwitchState(false); // testing 86
-        instance.getSwitches().get(7).setSwitchState(false);
-        instance.getSwitches().get(8).setSwitchState(false);
-        instance.getSwitches().get(8).setSwitchState(false);
-        instance.getSwitches().get(9).setSwitchState(false);
-        instance.getSwitches().get(10).setSwitchState(false);
-        instance.updateSwitches();
-//        assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), 77);
-        assertEquals(instance.getGreenLine().get(77).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), 86);
-        assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), 12);
-        assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), 30);
-        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), 30);
-        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), -2);
-        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
-        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
-
-
-        instance.getSwitches().get(11).setSwitchState(true);
-        instance.getSwitches().get(12).setSwitchState(true);
-        instance.getSwitches().get(7).setSwitchState(true);
-        instance.getSwitches().get(8).setSwitchState(true);
-        instance.getSwitches().get(9).setSwitchState(true);
-        instance.getSwitches().get(10).setSwitchState(true);
-        instance.updateSwitches();
-        assertEquals(instance.getGreenLine().get(76).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(77).getCurrentDirection(), 101);
-
-        //Testing Switch 86
-        assertEquals(instance.getGreenLine().get(85).getCurrentDirection(), -2);
-        assertEquals(instance.getGreenLine().get(100).getCurrentDirection(), 85);
-
-        //Testing Switch 12
-        assertEquals(instance.getGreenLine().get(1).getCurrentDirection(), 13);
-        assertEquals(instance.getGreenLine().get(13).getCurrentDirection(), -2);
-
-        //Testing Switch 29
-        assertEquals(instance.getGreenLine().get(150).getCurrentDirection(), 28);
-        assertEquals(instance.getGreenLine().get(29).getCurrentDirection(), -2);
-
-        System.out.println(instance.getGreenLine().get(58).getCurrentDirection());
-        System.out.println(instance.getGreenLine().get(62).getCurrentDirection());
-        */
-
-
-
-
-    }
 
     /*setting switch and getting direcitonality test*/
     @org.junit.jupiter.api.Test
@@ -1096,7 +1021,7 @@ class TrackTest {
 
     /*getting the list of stations*/
     @org.junit.jupiter.api.Test
-    void getStations() {
+    void getStationsTest() {
         System.out.println("getting blocks in track ");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1110,7 +1035,7 @@ class TrackTest {
     testing the beacons
      */
     @org.junit.jupiter.api.Test
-    void testBeacons(){
+    void testBeaconsTest(){
         System.out.println("getting blocks in track ");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1124,7 +1049,7 @@ class TrackTest {
     Testing opening and closing track functionality
      */
     @org.junit.jupiter.api.Test
-    void closeAndOpenTrack(){
+    void closeAndOpenTrackTest(){
         System.out.println("getting blocks in track ");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1141,23 +1066,25 @@ class TrackTest {
     Testing display switch
      */
     @org.junit.jupiter.api.Test
-    void testDisplaySwitch() {
+    void displaySwitchTest() {
         System.out.println("getting blocks in track ");
        // String filepath ="C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv";
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
-        instance.getSwitches().get(2).setSwitchState(true);
-        System.out.println(instance.getSwitches().get(2).getSwitchState());
-        instance.getSwitches().get(2).setSwitchState(false);
-        System.out.println(instance.getSwitches().get(2).getSwitchState());
+        instance.getSwitches().get(10).setSwitchState(true);
+        instance.updateSwitches();
+        System.out.println(instance.getSwitches().get(10).getSwitchState());
+        instance.getSwitches().get(10).setSwitchState(false);
+        instance.updateSwitches();
+        System.out.println(instance.getSwitches().get(10).getSwitchState());
     }
 
     /*
     function that is grabbing all blocks in a section -- implemented to support the CTC
      */
     @org.junit.jupiter.api.Test
-    void blocksInSection() {
+    void blocksInSectionTest() {
         System.out.println("getting blocks in track ");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1217,7 +1144,7 @@ class TrackTest {
 
     /*test of UI being updated*/
     @org.junit.jupiter.api.Test
-    void testingGUIUpdate() {
+    void GUIUpdateTest() {
         System.out.println("Testing UI ");
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
@@ -1255,5 +1182,7 @@ class TrackTest {
 
     */
     }
+
+
 }
 

@@ -1,6 +1,9 @@
 package TrackConstruction;
+
+import java.io.Serializable;
+
 /**Author Grace Henderson **/
-public class TrackElement {
+public class TrackElement implements Serializable {
     /**
      * Track Element: This defines an interface which every object that exists on a track will implement.
      *  All track elements will have these elements and behaviors in common.
@@ -23,6 +26,7 @@ public class TrackElement {
     double elevation;            //meters
     double cumulativeElevation;  //meters
     int currentDirection;
+    boolean lights;
 
     //for printing purposes
     String infrastructure;
@@ -214,4 +218,14 @@ public class TrackElement {
     public void setSwitchState(boolean switches) {}
 
     public int getDirectionStates(int index) { return 0;}
+
+    /*get railroad crossing*/
+    public boolean getLightRail() {return lights;}
+
+    /*public set railway crossing*/
+     public void setLightRail(boolean lit) {
+         lights = lit;
+     }
+
+
 }

@@ -17,7 +17,7 @@ public class RemoteBlockService implements RemoteBlockStub {
     }
     public RemoteBlockService(TrackElement targetBlock) {
         this.targetBlock = targetBlock;
-        System.out.printf("Made remote wrapper for block %s\n",targetBlock);
+        //System.out.printf("Made remote wrapper for block %s\n",targetBlock);
     }
 
     @Override

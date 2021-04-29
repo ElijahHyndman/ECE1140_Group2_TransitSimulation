@@ -38,8 +38,14 @@ public class runTrainRed extends Thread {
             if (next.getType().equals("STATION")){
                 next.setThroughput(num2);
             }
-            if(next != null)
+            if(next != null) {
                 next.setOccupied(true);
+                //This is for the rail road crossing lights to be switched on accordingly
+                if(next.getBlockNum() == 46)
+                    instance.getRedLine().get(47).setLightRail(true);
+                if(next.getBlockNum() == 48)
+                    instance.getRedLine().get(47).setLightRail(false);
+            }
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -48,6 +54,7 @@ public class runTrainRed extends Thread {
             if(next != null)
                 next.setOccupied(false);
 
+            //For switches here setting them to route around the track
             if(i == 30) {
                 instance.getSwitches().get(2).setSwitchState(false); // for loop around q - p - o
                 instance.updateSwitches();
