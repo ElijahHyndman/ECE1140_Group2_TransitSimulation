@@ -27,7 +27,7 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public int mainTrainIndex = 0;
     int namesIndex = 2;
     int trainIndex = 0;
-
+    MakeImage image = new MakeImage();
     /**
      * Creates new form trainGUI
      */
@@ -39,6 +39,12 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
     public trainGUI(int index) {
         initComponents();
         this.mainTrainIndex = index;
+
+        try{
+            image.make(0, 10);
+        } catch(IOException e) {
+            System.out.println("error");
+        }
         
     }
     public void newTrain() {
@@ -112,10 +118,9 @@ public class trainGUI extends javax.swing.JFrame implements AppGUIModule {
         testFailure.setValueAt(trains.get(trainIndex).engineFail, 2, 1);
         
         try {
+            image.make((int)trains.get(trainIndex).getActualSpeed(),trains.get(trainIndex).getAuthority());
             BufferedImage bufImg=ImageIO.read(new File("image.png"));
             imageLabel.setIcon(new ImageIcon(bufImg));
-            //jlabel.repaint();
-            //works even without repaint
         }
         catch (IOException ex) {
             System.out.println("Unable to read image file");
