@@ -373,8 +373,9 @@ public class WaysideController extends Thread implements Serializable {
         // no checks are performed on authority value
         for (TrackElement block : jurisdiction) {
             // only if it is found...
-            if(block.getBlockNum() == targetBlockIndex)
+            if(block.getBlockNum() == targetBlockIndex) {
                 applyAuthorityToBlock(block, newAuthority);
+            }
         }
     }
 
@@ -607,44 +608,44 @@ public class WaysideController extends Thread implements Serializable {
         /*
             Inputs Node
          */
-        String inputCategory = "Input Signals";
-        Vector<String> inputVector = new Vector<>();
-//        boolean[] inputValues = gpio.getAllInputValues();
-//        for(int i=0;i < inputValues.length;i++){
-//            inputVector.add("input "+i+" : "+inputValues[i]);
+//        String inputCategory = "Input Signals";
+//        Vector<String> inputVector = new Vector<>();
+////        boolean[] inputValues = gpio.getAllInputValues();
+////        for(int i=0;i < inputValues.length;i++){
+////            inputVector.add("input "+i+" : "+inputValues[i]);
+////        }
+//        hash.put(inputCategory, inputVector);
+//        /*
+//            Outputs Node
+//         */
+//        String outputCategory = "Output Signals";
+//        Vector<String> outputVector = new Vector<>();
+////        Boolean[] outputValues = gpio.getOutputValues();
+////        for(int i=0;i < outputValues.length;i++){
+////            outputVector.add("output "+i+" : "+outputValues[i]);
+////        }
+//        hash.put(outputCategory, outputVector);
+//        /*
+//            Speed Node
+//         */
+//        String speedCategory = "Speed";
+//        Vector<String> speedVector = new Vector<>();
+//        double[] speed = getSpeed();
+//        for(int i=0;i < speed.length;i++){
+//            speedVector.add("block speed "+i+" : "+speed[i]);
 //        }
-        hash.put(inputCategory, inputVector);
-        /*
-            Outputs Node
-         */
-        String outputCategory = "Output Signals";
-        Vector<String> outputVector = new Vector<>();
-//        Boolean[] outputValues = gpio.getOutputValues();
-//        for(int i=0;i < outputValues.length;i++){
-//            outputVector.add("output "+i+" : "+outputValues[i]);
+//        hash.put(speedCategory, speedVector);
+//        /*
+//            Authority Node
+//         */
+//        int[] authority = getAuthority();
+//        String authorityCategory = "Authority";
+//        Vector<String> authorityVector = new Vector<>();
+//        for(int i=0;i < authority.length;i++){
+//            authorityVector.add("block authority "+i+" : "+authority[i]);
 //        }
-        hash.put(outputCategory, outputVector);
-        /*
-            Speed Node
-         */
-        String speedCategory = "Speed";
-        Vector<String> speedVector = new Vector<>();
-        double[] speed = getSpeed();
-        for(int i=0;i < speed.length;i++){
-            speedVector.add("block speed "+i+" : "+speed[i]);
-        }
-        hash.put(speedCategory, speedVector);
-        /*
-            Authority Node
-         */
-        int[] authority = getAuthority();
-        String authorityCategory = "Authority";
-        Vector<String> authorityVector = new Vector<>();
-        for(int i=0;i < authority.length;i++){
-            authorityVector.add("block authority "+i+" : "+authority[i]);
-        }
-        hash.put(authorityCategory, authorityVector);
-        // Return tree format
+//        hash.put(authorityCategory, authorityVector);
+//        // Return tree format
         return hash;
     }
 
@@ -658,8 +659,8 @@ public class WaysideController extends Thread implements Serializable {
 
     public String toString(){
         String profile = controllerName;
-        if (controllerAlias != null)
-            profile += String.format("[Alias \"%s\"]\n",controllerAlias);
+//        if (controllerAlias != null)
+//            profile = profile + String.format("[Alias \"%s\"]\n",controllerAlias);
         return profile;
     }
     public String toMedString() {

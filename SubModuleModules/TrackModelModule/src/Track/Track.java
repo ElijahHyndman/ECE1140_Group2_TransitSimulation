@@ -19,12 +19,12 @@ import java.util.Scanner;
 
 
         //Track Variables
-        boolean TRACK_HEATER;
+        boolean trackHeater;
         int SIZE_LINE_A=0;
         int SIZE_LINE_B=0;
         double environmentalTemperature;
         double totalTime;
-        String DISPATCHLINE = "Red";
+        String DISPATCH_LINE = "Red";
 
         //Creating Graphs for RED LINE and GREEN LINE
         ArrayList<TrackElement> redTrack;
@@ -39,7 +39,7 @@ import java.util.Scanner;
             redTrack = new ArrayList<>();
             greenTrack = new ArrayList<>();
             environmentalTemperature = 60;
-            TRACK_HEATER= false;
+            trackHeater= false;
         }
 
         //Import Track from a File
@@ -54,7 +54,7 @@ import java.util.Scanner;
             return success;
         }
 
-
+        /*function that will import track through a CSV file*/
         public boolean importTrack(String filepath){
             boolean success = false;
             try {
@@ -96,7 +96,7 @@ import java.util.Scanner;
                         SIZE_LINE_B ++;
                     }
 
-                    //For Yard
+                    //For Yard -- for both red and green line yard block index 0
                     if(infrastructure.length()>3 && infrastructure.substring(0,3).equals("YARD")){
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
@@ -107,43 +107,30 @@ import java.util.Scanner;
 
                     //Need to check to see if stations are here and if so need to set Beacon Value and calculate tickets
                     if(infrastructure.length()>7 && infrastructure.substring(0,7).equals("STATION")){
-
-                        /*String[] name;
-                        int check =0;
-                        name = infrastructure.split(";");
-                        for(int i=0; i<stationsArrayList.size(); i++) {
-                            if(name[1].equals(stationsArrayList.get(i).getName())){
-                                check =1;
-                            }
-                        }*/
-                        //for duplicates of stations !!
-                       // if(check == 0) {
+                        //creating new station block
                         Station Test = new Station(line, section, blockNum, length, grade, speedLimit, infrastructure, elevation, cumulativeElevation, setDirection, setBiDirectional);
 
-                           /* if(name[1].length()>0)
-                                   Test.setName(name[1]);*/
-
-                            stationsArrayList.add(Test);
-                            blockArrayList.add(Test);
-
-                            if (line.equals("Red"))
-                                redTrack.add(Test);
-                            else
-                                greenTrack.add(Test);
-                      //  }
-
-                    }
-                    else if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
-                        Switch Test = new Switch(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
-                        switchesArrayList.add(Test);
+                        stationsArrayList.add(Test); // add stations to station arraylist
                         blockArrayList.add(Test);
 
-                        if(line.equals("Red"))
+                        if (line.equals("Red")) //adding to red or green arraylist
+                            redTrack.add(Test);
+                        else
+                            greenTrack.add(Test);
+                    }
+                    else if(infrastructure.length()>6 && infrastructure.substring(0,6).equals("SWITCH")){
+                        //creating a new switch
+                        Switch Test = new Switch(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
+                        switchesArrayList.add(Test); // adding to switches array list
+                        blockArrayList.add(Test); // adding to block array list
+
+                        if(line.equals("Red")) // adding to red or green arraylist
                             redTrack.add(Test);
                         else
                             greenTrack.add(Test);
                     }
                     else {
+                        //if nothing else then a normal track block
                         TrackBlock Test = new TrackBlock(line, section,blockNum,length,grade,speedLimit,infrastructure,elevation,cumulativeElevation,setDirection,setBiDirectional);
                         blockArrayList.add(Test);
                         if(beacon.length()>2)
@@ -169,9 +156,9 @@ import java.util.Scanner;
             }
 
             for(int i =0; i < switchesArrayList.size(); i++)
-                  switchesArrayList.get(i).setSwitchState(false); // 76 to 150
+                  switchesArrayList.get(i).setSwitchState(false); //making sure all switches set to default
 
-            updateSwitches();
+            updateSwitches(); // need to call to have directionality done
             setBeaconArray();
             return success;
         }
@@ -201,39 +188,37 @@ import java.util.Scanner;
         public void updateSwitches(){
 
             for(int i = 0; i <= 12; i++) {
-                Switch switchT = switchesArrayList.get(i);
-                boolean index = switchT.getIndex();
+                Switch switchT = switchesArrayList.get(i); // getting switch
+                boolean index = switchT.getIndex(); // index -- false is default, true is secondary
+                //all 4 parts of switch a-b and c-d -- getting for what is connected and direcitonality
                 int blocka = switchT.getDirectionStates(0);
                 int toA = switchT.getDirectionStates(1);
                 int blockb = switchT.getDirectionStates(2);
                 int toB = switchT.getDirectionStates(3);
-                //here need to CHANGE getCurrent Direction
-                if (index == false && i <7) {
+                //here need to CHANGE getCurrent Direction this is for directionality of track
+                if (index == false && i <7) { //for red line
                     redTrack.get(blockb).setCurrentDirection(-2);
                     redTrack.get(toB).setCurrentDirection(-2);
                     redTrack.get(blocka).setCurrentDirection(1);
                     redTrack.get(toA).setCurrentDirection(1);
-                } else if (index == true && i<7) {
+                } else if (index == true && i<7) { // for red line
                     //Second Number Block Points to last number
                     redTrack.get(blocka).setCurrentDirection(-2);
                     redTrack.get(toA).setCurrentDirection(-2);
                     redTrack.get(blockb).setCurrentDirection(1);
                     redTrack.get(toB).setCurrentDirection(1);
                 }
-                if (index == false && i >6) {
+                if (index == false && i >6) { // for green line
                     greenTrack.get(blockb).setCurrentDirection(-2);
                     greenTrack.get(toB).setCurrentDirection(-2);
                     greenTrack.get(blocka).setCurrentDirection(1);
                     greenTrack.get(toA).setCurrentDirection(1);
-                } else if (index == true && i>6) {
+                } else if (index == true && i>6) { // for green line
                     //Second Number Block Points to last number
                     greenTrack.get(blocka).setCurrentDirection(-2);
                     greenTrack.get(toA).setCurrentDirection(-2);
                     greenTrack.get(blockb).setCurrentDirection(1);
                     greenTrack.get(toB).setCurrentDirection(1);
-
-
-
                 }
             }
 
@@ -251,11 +236,10 @@ import java.util.Scanner;
             }
 
             int prev = previous.getBlockNum();
-
             TrackElement ret = null;
 
             //Test cases of switches
-            //switch to YARD
+            //switch to YARD -- special case
             if(cur == 9 && prev == 8 || cur ==9 && prev == 10) {
                 if(switchesArrayList.get(0).getIndex() == true)
                     return redTrack.get(0);
@@ -273,22 +257,24 @@ import java.util.Scanner;
             if (current.getType().equals("Switch")) {
                 int index = (current.getIndex()) ? 1 : 0;
                 if((index == 0 && current.getDirectionStates(0) == prev)) // for 1 direction
-                    return redTrack.get(current.getDirection(1));
+                    return redTrack.get(current.getDirection(1)); // go in that direction
                 else if((index == 0 && current.getDirectionStates(1) == (prev+1))) // for 0 direction
-                    return redTrack.get(current.getDirection(0));
+                    return redTrack.get(current.getDirection(0)); // go in 0 direction
                 else if (index == 1 && current.getDirectionStates(2) == prev) {
-                   if(cur == 15)
+                   if(cur == 15) // special edge case
                        return redTrack.get(16);
                     return redTrack.get(current.getDirection(index));
                 }
                 else if (index == 1 && current.getDirectionStates(3) == prev+1) // changing to the 3rd direction
-                    return redTrack.get(current.getDirection(2));
+                    return redTrack.get(current.getDirection(2)); // go direction 2
+                //yard has special cases
                 else if(cur == 9 && prev == 10)
                     return redTrack.get(current.getDirection(1));
                 else if( cur == 9 && prev == 8 )
                     return redTrack.get(current.getDirection(0));
                 else if( cur == 9 && prev == 0 )
                     return redTrack.get(current.getDirection(1));
+                //special cases as well
                 else if( cur == 43 && prev == 44 && index == 1)
                   return redTrack.get(current.getDirection(2));
                 else if(cur == 32 && prev == 33 && index == 1)
@@ -301,7 +287,7 @@ import java.util.Scanner;
             if (!current.getBiDirectional()) // one way track {
                 return redTrack.get(current.getDirection(0));
 
-            //CORNER CASE
+            //CORNER CASE to get directionality work in red line
             if((previous.getDirection(2) == cur) && cur == 76)
                 return redTrack.get(75);
             if((previous.getDirection(2) == cur) && cur == 71)
@@ -313,7 +299,6 @@ import java.util.Scanner;
                 return redTrack.get(current.getDirection(0));
             else if (previous.getDirection(1) == cur)
                 return redTrack.get(current.getDirection(1));
-
 
             return ret;
         }
@@ -334,9 +319,7 @@ import java.util.Scanner;
             if(prev == 0)
                 return greenTrack.get(63);
 
-            char sectionPrev = previous.getSection();
-            char sectionCur = current.getSection();
-            TrackElement ret = null;
+            TrackElement ret = null; // returning value
 
             //special case for switch 7
             if(current.getCurrentDirection() == -2 && prev == 12)
@@ -351,9 +334,9 @@ import java.util.Scanner;
             if (current.getType().equals("Switch")) {
                 int index = (current.getIndex()) ? 1 : 0;
                 if((index == 0 && current.getDirectionStates(0) == cur))
-                    return greenTrack.get(current.getDirection(index));
+                    return greenTrack.get(current.getDirection(index)); // go same direction don't change
                 else if (index == 1 && current.getDirectionStates(2) == prev)
-                    return greenTrack.get(current.getDirection(index));
+                    return greenTrack.get(current.getDirection(index)); // go same direction don't change
                 else if(cur == 58 || (cur == 62 && index ==0))
                     return greenTrack.get(current.getDirection(index));
                 else
@@ -379,87 +362,25 @@ import java.util.Scanner;
         /*dispatch line*/
         public void dispatchLine(int a){
             if(a == 0)
-                DISPATCHLINE = "Green";
+                DISPATCH_LINE = "Green"; // this tells sim environment which track to release train from yard
             else if(a == 1)
-                DISPATCHLINE = "Red";
+                DISPATCH_LINE = "Red";
         }
 
-        /*adding getNext */
+        /**
+        adding getNext
+         This function is called by simulation environment and from current and previous
+         get next block. Need to check if green or red track and call functions accordingly
+         **/
         public TrackElement getNext(TrackElement current, TrackElement previous) {
             TrackElement ret = null;
             if(current != null) {
-                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Green"))
+                if (current.getLine().equals("Green") || current.getBlockNum() == 0 && DISPATCH_LINE.equals("Green"))
                     ret = getNextGreen(current, previous);
-                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCHLINE.equals("Red"))
+                else if (current.getLine().equals("Red") || current.getBlockNum() == 0 && DISPATCH_LINE.equals("Red"))
                     ret = getNextRed(current, previous);
             }
 
-            /*
-            int cur = current.getBlockNum();
-
-
-           if(cur == 0){
-               if(switchesArrayList.get(10).getIndex()==true)
-                   return greenTrack.get(62);
-               else
-                   return null;
-           }
-
-
-            int prev = previous.getBlockNum();
-            char sectionPrev = previous.getSection();
-            char sectionCur = current.getSection();
-            TrackElement ret = null;
-
-            //dealing with the yard
-            /*
-             if(current.getCurrentDirection() == -1 && current.getDirectionStates(0) == -1){
-                return greenTrack.get(62); // This returns the YARD BLOCK when switch is on !!
-            }else if (current.getCurrentDirection() == -1)
-                return null;
-            */
-             //dealing with directionality
-
-            /*
-            if(current.getCurrentDirection() > 0) // switch is on
-                ret = greenTrack.get(current.getCurrentDirection());
-            else if(!current.getBiDirectional()) // one way track
-                   ret = greenTrack.get(current.getDirection(0));
-            else if(previous.getDirection(0) == cur) { // continue go in positive diretion
-                    if(current.getLine().equals("Green"))
-                        ret = greenTrack.get(current.getDirection(0));
-                    else
-                        ret = redTrack.get(current.getDirection(0));
-                }
-            else if(previous.getDirection(1) == cur){ // continue to go in negative direction
-                    if(current.getLine().equals("Green"))
-                         ret = greenTrack.get(current.getDirection(1));
-                    else
-                         ret = redTrack.get(current.getDirection(1));
-            }
-            else if(previous.getDirection(0) == 0)
-                ret = greenTrack.get(current.getDirection(0));
-
-
-            //Green Track Edge Cases -- Where Directions Change
-            if(prev == 100 && cur == 85){
-                ret = greenTrack.get(current.getDirection(1));
-                return ret;
-            }
-            if(prev == 150 && cur == 28){
-                ret = greenTrack.get(current.getDirection(1));
-            }
-            if(prev == 1 && cur == 13){
-                ret = greenTrack.get(current.getDirection(0));
-            }
-
-
-            //Checking if switch statuses are correct
-            if(current.getCurrentDirection() == -2 && current.getDirection(0) == 0) {
-                return null;
-            }
-
-        */
         return ret;
         }
 
@@ -490,11 +411,9 @@ import java.util.Scanner;
 
         //getting track heater status
         public boolean getTrackHeaterStatus(){
-            return TRACK_HEATER;
+            return trackHeater;
         }
-
-
-        //updating tickets FOR THE CTC
+        //updating tickets FOR THE CTC -- calculating total tickets sold
         public int updateTickets(){
             int ticketTotal = 0;
             for(int i=0; i<stationsArrayList.size();i++)
@@ -508,20 +427,21 @@ import java.util.Scanner;
             //updating all ticketSales
             for(int i=0; i<stationsArrayList.size();i++)
                 stationsArrayList.get(i).setTicketSales();
-
         }
 
 
-        /*Set Environmental Temperature*/
+        /**Set Environmental Temperature*
+         * this function depending on temperature will set heater accordingly
+         * chose 35 because can get close to freezing for safety precautions*/
         public void setEnvironmentalTemperature(double a){
             if( a > -20 && a < 130){
                 this.environmentalTemperature = a;
 
                 //Need to Turn Track Heater on if turn this on
                 if(this.environmentalTemperature < 35)
-                    TRACK_HEATER = true;
+                    trackHeater = true;
                 if(this.environmentalTemperature > 35)
-                    TRACK_HEATER = false;
+                    trackHeater = false;
             }
         }
 
@@ -530,6 +450,7 @@ import java.util.Scanner;
             return this.environmentalTemperature;
         }
 
+        /*get size of overall track - both red and green */
         public int getSize(){
             return this.blockArrayList.size();
         }
@@ -554,11 +475,11 @@ import java.util.Scanner;
 
 
                     if(Failure != 0 ) {
-                        if(!contains)
+                        if(!contains) // do not want to add duplicates
                             failureArrayList.add(redTrack.get(blockNum));
                     }
                     else { //0 means no failure so remove from arraylist
-                        if(contains)
+                        if(contains) // remove it if it is in the list
                             failureArrayList.remove(location);
                     }
                 }
@@ -587,7 +508,10 @@ import java.util.Scanner;
         }
 
 
-        /*getting blocks in line*/
+        /**getting blocks in line
+         * This function is needed for CTC if they want to close section
+         * have a char section to close and will return ALL blocks in the section
+         * */
         public ArrayList<Integer> blocksInSection(char section, char Line){
             ArrayList<Integer> blocks = new ArrayList<Integer>();
 
@@ -606,7 +530,7 @@ import java.util.Scanner;
             return blocks;
         }
 
-        /*getting beacons*/
+        /*getting beacons -- to load beacons */
         public void setBeaconArray(){
             for(int i =0; i< blockArrayList.size() ; i++){
                 if(blockArrayList.get(i).getBeacon() != null)
@@ -617,7 +541,7 @@ import java.util.Scanner;
         public ArrayList<TrackElement> getBeaconArray(){
             return beacons;
         }
-        /*May Need a Method for Occupy -- Here send out beacon (if station), and authority / command speed?? */
+
 
         /*To String Methods */
         @Override

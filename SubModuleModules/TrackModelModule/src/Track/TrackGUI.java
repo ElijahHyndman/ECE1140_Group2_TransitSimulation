@@ -2,7 +2,8 @@ package Track;
 
 import GUIInterface.AppGUIModule;
 import TrackConstruction.*;
-import javax.swing.Timer;
+
+import javax.swing.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -10,12 +11,11 @@ import javax.swing.Timer;
  * and open the template in the editor.
  */
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -41,6 +41,8 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
     public TrackGUI(Track trackL) {
         initComponents();
         this.trackList = trackL;
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -490,7 +492,7 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
 
                 },
                 new String [] {
-                        "Line", "Block", "Switches", "Switch Status"
+                        "Line", "Block", "Switches", "Switch Status / RailWay Crossing Lights"
                 }
         ));
         jScrollPane5.setViewportView(jTable3);
@@ -1013,6 +1015,10 @@ public class TrackGUI extends javax.swing.JFrame implements AppGUIModule {
                 switches.addRow(new Object[] {switchesList.get(i).getLine(),switchesList.get(i).getBlockNum(), switchesList.get(i).getInfrastructure(),switchesList.get(i).getSwitchState()});
 
             }
+            switches.addRow(new Object[] {trackList.getRedLine().get(47).getLine(),trackList.getRedLine().get(47).getBlockNum(), trackList.getRedLine().get(47).getInfrastructure(),trackList.getRedLine().get(47).getLightRail()});
+            switches.addRow(new Object[] {trackList.getGreenLine().get(19).getLine(),trackList.getRedLine().get(19).getBlockNum(), trackList.getGreenLine().get(19).getInfrastructure(),trackList.getGreenLine().get(19).getLightRail()});
+
+
             for(int i=0; i<beaconsList.size(); i++) {
                 beacons.addRow(new Object[] {beaconsList.get(i).getLine(),beaconsList.get(i).getBlockNum(), beaconsList.get(i).getBeacon()});
 

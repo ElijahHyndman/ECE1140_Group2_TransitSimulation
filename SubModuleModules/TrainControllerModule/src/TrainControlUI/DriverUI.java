@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
+import javax.swing.*;
 
 import GUIInterface.AppGUIModule;
 import implementation.*;
@@ -19,7 +20,7 @@ import java.util.Vector;
  * Author: Reagan Dowling
  * Date: 02/24/2021
  */
-public class DriverUI implements ActionListener, AppGUIModule {
+public class DriverUI extends javax.swing.JFrame implements ActionListener, AppGUIModule {
 
     private TrainControl control;
     //private TestingUI testing;
@@ -60,7 +61,7 @@ public class DriverUI implements ActionListener, AppGUIModule {
         main = new JFrame("Train X");
         main.setSize(1600, 900);
         main.setLayout(null);
-        main.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        main.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         format = new DecimalFormat("#.##");
 

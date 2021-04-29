@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
  * Date: 02/24/2021
  */
 
-public class TestingUI implements ActionListener{
+public class TestingUI extends javax.swing.JFrame implements ActionListener{
 
     private TrainControl currentControl;
     private String beaconTest;
@@ -53,7 +53,7 @@ public class TestingUI implements ActionListener{
 
         mainTest.setVisible(true);
 
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public void setTrainInputs(){

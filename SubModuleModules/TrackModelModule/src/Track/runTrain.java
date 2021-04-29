@@ -64,8 +64,13 @@ public class runTrain extends Thread {
             if (next.getType().equals("STATION")){
                 next.setThroughput(num2);
             }
-            if(next != null)
+            if(next != null) {
                 next.setOccupied(true);
+                if(next.getBlockNum() == 18)
+                    instance.getGreenLine().get(19).setLightRail(true);
+                if(next.getBlockNum() == 20)
+                    instance.getGreenLine().get(19).setLightRail(false);
+            }
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
