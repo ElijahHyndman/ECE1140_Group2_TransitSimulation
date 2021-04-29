@@ -17,14 +17,14 @@ public class NewCTCOfficeTest {
         SimulationEnvironment se = new SimulationEnvironment();
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
 
         System.out.println(se.getCTC().getTrack());
         System.out.println(se.getCTC().getWaysideSystem());
 
-        //ctc.LoadSchedule("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\schedule.csv");
+        ctc.LoadSchedule("/Users/haleighdefoor/schedule.csv");
         ArrayList<DisplayLine> schedule = ctc.getDisps();
 
         for(int i=0;i < schedule.size();i++){
@@ -40,7 +40,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
        // trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
 
@@ -60,7 +60,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
        // trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
 
@@ -80,7 +80,7 @@ public class NewCTCOfficeTest {
 
         //trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
         Track trackSys = new Track();
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
        // se.seTrack(trackSys);
         CTCOffice ctc = se.getCTC();
 
@@ -118,7 +118,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
        // trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
 
@@ -142,7 +142,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
        // trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
 
@@ -167,9 +167,9 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
       //  trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
-        ctc.LoadSchedule("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\schedule.csv");
+        ctc.LoadSchedule("/Users/haleighdefoor/schedule.csv");
         ctc.updateTrack(trackSys);
         ctc.timeNow = "00:00:00";
 
@@ -186,7 +186,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
        // trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
         ctc.timeNow = "00:00:00";
@@ -203,7 +203,7 @@ public class NewCTCOfficeTest {
         CTCOffice ctc = se.getCTC();
         Track trackSys = new Track();
      //   trackSys.importTrack("C:\\Users\\Harsh\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\Application\\Resources\\RedGreenUpdated.csv");
-        trackSys.importTrack("C:\\Users\\grhen\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        trackSys.importTrack("/Users/haleighdefoor/RedGreenUpdated.csv");
 
         ctc.updateTrack(trackSys);
         ctc.timeNow = "00:00:00";
