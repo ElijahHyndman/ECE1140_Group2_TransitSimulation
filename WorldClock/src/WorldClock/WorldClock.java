@@ -80,6 +80,7 @@ public class WorldClock extends Thread {
     private int microseconds;
 
     private boolean ticking = false;
+    public boolean allowedToTick = true;
 
     /**
      * Class Clock Members:
@@ -189,6 +190,9 @@ public class WorldClock extends Thread {
         return false;
     }
 
+    public void allowTick(boolean ticking) {
+        allowedToTick = ticking;
+    }
 
     @Override
     public void run() {
@@ -202,12 +206,14 @@ public class WorldClock extends Thread {
         System.out.println("Clock has started ticking");
         ticking = true;
         while (ticking) {
+            if(allowedToTick) {
                 flag = true;
                 // update Physics
             System.out.println("!");
                 updateAllPhysics();
                 // Traverse for period once per loop
                 once();
+            }
         }
     }
 

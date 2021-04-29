@@ -120,7 +120,8 @@ public class TrainSimulationApplication extends Thread {
 
     public static void main(String[] args) throws Exception {
         TrainSimulationApplication run = new TrainSimulationApplication("SubModuleModules/TrackModelModule/src/Track/RedGreenUpdated.csv");
-       // run.getJFrame().setGreenLine(); // ???
+        run.start();
+
     //   run.start();
 
       //  CTCJFrame ctcui = new CTCJFrame(run.getSE().getCTC());
