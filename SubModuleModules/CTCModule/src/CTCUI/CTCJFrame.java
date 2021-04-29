@@ -14,8 +14,7 @@ import Track.Track;
 //import TrackModelModule.*;
 
 
-import javax.swing.JOptionPane;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.time.*;
 import javax.swing.Timer;
@@ -47,6 +46,7 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
     public CTCJFrame(CTCOffice ctc) {
         display = ctc;
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     @Override
     public void latch(Object myObject){

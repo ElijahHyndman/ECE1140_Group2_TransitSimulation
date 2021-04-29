@@ -9,7 +9,7 @@ public class TrainSimulationApplication extends Thread {
 
 
     SimulationEnvironment SE;
-    SimulationEnvironmentJFrame appGUI;
+    SimulationEnvironmentUI appGUI;
 
     volatile boolean running = false;
 
@@ -23,7 +23,7 @@ public class TrainSimulationApplication extends Thread {
     }
 
     public void spawnSEGUI() {
-        appGUI = new SimulationEnvironmentJFrame(SE);
+        appGUI = new SimulationEnvironmentUI(SE);
         appGUI.latch(SE);
     }
 
@@ -42,7 +42,7 @@ public class TrainSimulationApplication extends Thread {
         return SE;
     }
 
-    public SimulationEnvironmentJFrame getJFrame() {
+    public SimulationEnvironmentUI getJFrame() {
         return appGUI;
     }
 

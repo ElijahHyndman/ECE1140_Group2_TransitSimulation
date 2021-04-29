@@ -1,6 +1,7 @@
 package WaysideController;
 
 import PLCInput.*;
+import PLCOutput.SwitchPLCOutput;
 import Track.Track;
 import TrackConstruction.Station;
 import TrackConstruction.Switch;
@@ -10,6 +11,7 @@ import WaysideGUI.WaysideUIClass;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class WaysideSystem {
@@ -96,6 +98,28 @@ public class WaysideSystem {
         setCommandedSpeeds(lineSpeeds);
     }
 
+    /**
+     *
+     * @param targetSwitchIndex
+     * @param script
+     */
+    public void uploadSwitchPLCToController(int targetSwitchIndex, PLCEngine script) throws Exception {
+        WaysideController ctrl = getControllerOfBlock(targetSwitchIndex);
+        // A controller must oversee every block
+
+        if (ctrl == null)
+            throw new Exception(String.format("Wayside System error: error uploading PLC to switch %d, controller not assigned to switch\nMake sure that block number specified is within this wayside system's assigned line\n",targetSwitchIndex));
+        // Attempt to get occupancy from controller
+        try {
+            ctrl.setOutputing(false);
+            try { TimeUnit.MILLISECONDS.sleep(10);} catch (Exception e) {}
+            ctrl.uploadSafetyPLCScript(script);
+            ctrl.setOutputing(true);
+        } catch (Exception failureToRetrieveOccupancyFromTrackElement) {
+            failureToRetrieveOccupancyFromTrackElement.printStackTrace();
+            throw new Exception(String.format("Failure occurred when retrieving occupancy status from Block (index %d)",targetSwitchIndex));
+        }
+    }
 
     /** sets the authorities for the entire track line under this WaysideSystem's jurisdiction using an array of integers
      *
