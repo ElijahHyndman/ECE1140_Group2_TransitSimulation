@@ -11,6 +11,7 @@ import WorldClock.WorldClock;
 
 import java.awt.CardLayout;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +49,8 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         //ClockResolutionSlider.setMinimum((int) clk.MINIMUM_RESOLUTION);
         //ClockResolutionSlider.setMaximum((int) clk.MAXIMUM_RESOLUTION);
         UpdateSpawnTables();
+        //ClockRatioSlider.setValue((int) SE.getClock().getRatio());
+        //ClockResolutionSlider.setValue((int) SE.getClock().getResolution());
         this.setVisible(true);
         initComponents();
     }
@@ -169,6 +172,9 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         ClockPauseButton = new javax.swing.JButton();
         TimeLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         label1.setText("label1");
 
@@ -189,8 +195,8 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         jLabel2.setText("Enter Absolute Path To .csv File For Track System");
 
         ImportTrackButton.setText("Import Track");
-        ImportTrackButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        ImportTrackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ImportTrackButtonActionPerformed(evt);
             }
         });
@@ -358,15 +364,32 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
 
         WorldClockMenu.setBackground(new java.awt.Color(102, 102, 102));
 
+        ClockRatioTextField.setBackground(new java.awt.Color(51, 51, 51));
+        ClockRatioTextField.setForeground(new java.awt.Color(255, 255, 255));
+        ClockRatioTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         ClockRatioTextField.setText("ratio");
         ClockRatioTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                ClockRatioTextFieldFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 ClockRatioTextFieldFocusLost(evt);
             }
         });
+        ClockRatioTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                ClockRatioTextFieldKeyPressed(evt);
+            }
+        });
 
+        ClockResolutionTextField.setBackground(new java.awt.Color(51, 51, 51));
+        ClockResolutionTextField.setForeground(new java.awt.Color(255, 255, 255));
+        ClockResolutionTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         ClockResolutionTextField.setText("Resolution");
         ClockResolutionTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                ClockResolutionTextFieldFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 ClockResolutionTextFieldFocusLost(evt);
             }
@@ -376,7 +399,13 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
                 ClockResolutionTextFieldActionPerformed(evt);
             }
         });
+        ClockResolutionTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                ClockResolutionTextFieldKeyPressed(evt);
+            }
+        });
 
+        ClockPauseButton.setBackground(new java.awt.Color(181, 199, 176));
         ClockPauseButton.setText("Start");
         ClockPauseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -390,26 +419,44 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("World Clock");
 
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Clock Ratio");
+
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Physics");
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Resolution");
+
         javax.swing.GroupLayout WorldClockMenuLayout = new javax.swing.GroupLayout(WorldClockMenu);
         WorldClockMenu.setLayout(WorldClockMenuLayout);
         WorldClockMenuLayout.setHorizontalGroup(
                 WorldClockMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WorldClockMenuLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel4)
+                                .addGap(36, 36, 36))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WorldClockMenuLayout.createSequentialGroup()
+                                .addComponent(ClockResolutionTextField)
+                                .addContainerGap())
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WorldClockMenuLayout.createSequentialGroup()
+                                .addComponent(ClockRatioTextField)
+                                .addContainerGap())
                         .addGroup(WorldClockMenuLayout.createSequentialGroup()
                                 .addGroup(WorldClockMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(WorldClockMenuLayout.createSequentialGroup()
-                                                .addGap(14, 14, 14)
+                                                .addGap(20, 20, 20)
                                                 .addGroup(WorldClockMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(WorldClockMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                                .addComponent(ClockPauseButton)
-                                                                .addComponent(ClockResolutionTextField)
-                                                                .addComponent(ClockRatioTextField))
-                                                        .addGroup(WorldClockMenuLayout.createSequentialGroup()
-                                                                .addGap(3, 3, 3)
-                                                                .addComponent(jLabel1))))
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(jLabel3)))
+                                        .addGroup(WorldClockMenuLayout.createSequentialGroup()
+                                                .addGap(17, 17, 17)
+                                                .addComponent(jLabel1))
                                         .addGroup(WorldClockMenuLayout.createSequentialGroup()
                                                 .addGap(27, 27, 27)
                                                 .addComponent(TimeLabel)))
-                                .addContainerGap(18, Short.MAX_VALUE))
+                                .addContainerGap(17, Short.MAX_VALUE))
+                        .addComponent(ClockPauseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         WorldClockMenuLayout.setVerticalGroup(
                 WorldClockMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -420,11 +467,17 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
                                 .addComponent(TimeLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ClockPauseButton)
-                                .addGap(200, 200, 200)
+                                .addGap(178, 178, 178)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ClockRatioTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(61, 61, 61)
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ClockResolutionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(96, Short.MAX_VALUE))
+                                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout ControlMenuLayout = new javax.swing.GroupLayout(ControlMenu);
@@ -436,7 +489,7 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
                                 .addComponent(WorldClockMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(30, 30, 30)
                                 .addComponent(UIMenus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(44, Short.MAX_VALUE))
+                                .addContainerGap(83, Short.MAX_VALUE))
         );
         ControlMenuLayout.setVerticalGroup(
                 ControlMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -501,27 +554,63 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
     }
 
     private void WaysideSystemSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
+        int spawnWaysideColumn = 1;
+
+        Point point = evt.getPoint();
+        int column = WaysideSystemSpawnTable.columnAtPoint(point);
+        int row = WaysideSystemSpawnTable.rowAtPoint(point);
+        System.out.println(String.format("Clicked on (%d,%d)",row,column));
+//        WaysideSystem thisSystem = null;
+//        try {
+//            thisSystem = SE.getCTC().getWaysideSystem().get(row);
+//        } catch(Exception e) {
+//            System.out.printf("Error when accessing selected WaysideSystem row from CTC waysides in SE UI (waysidesLength=%d selectedTrainRow=%d)\n",SE.getCTC().getWaysideSystem().size(),row);
+//            e.printStackTrace();
+//        }
+//        if (column == spawnWaysideColumn) {
+//            WaysideSystemUI ui = new WaysideSystemUI(thisSystem);
+//            ui.setVis(true);
+//            ui.latch(thisSystem);
+//            GUIWindowLauncher.launchWindowWithRate(ui,4);
+//        }
     }
 
     private void TrackSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
+        int spawnGUIColumn = 1;
+
+        Point point = evt.getPoint();
+        int column = TrackSpawnTable.columnAtPoint(point);
+        int row = TrackSpawnTable.rowAtPoint(point);
+        System.out.println(String.format("Clicked on (%d,%d)",row,column));
+        // TODO
     }
 
     private void CTCSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
+        int spawnGUIColumn = 1;
+//
+        Point point = evt.getPoint();
+        int column = CTCSpawnTable.columnAtPoint(point);
+        int row = CTCSpawnTable.rowAtPoint(point);
+        System.out.println(String.format("Clicked on (%d,%d)",row,column));
+//        if (column == spawnGUIColumn) {
+//            //System.out.println("Spawning CTC Gui");
+//            //DisplaySE.spawnCTCGUI(DisplaySE.getCTC());
+//        }
     }
 
     private void ClockRatioTextFieldFocusLost(java.awt.event.FocusEvent evt) {
-        // TODO add your handling code here:
+
+        double newRatio = Double.parseDouble(ClockRatioTextField.getText());
+        System.out.println("Entered: " + newRatio);
+        // TODO call it on clock
     }
 
     private void ClockResolutionTextFieldFocusLost(java.awt.event.FocusEvent evt) {
-        // TODO add your handling code here:
+        double newRes = Double.parseDouble(ClockResolutionTextField.getText());
+        System.out.println("Entered: " + newRes);
     }
 
     private void ClockPauseButtonActionPerformed(java.awt.event.ActionEvent evt) {
-
         String currentMode = ClockPauseButton.getText();
         String textToStart = "Start";
         String textToPause = "Pause";
@@ -536,12 +625,37 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
         }
     }
 
-    public void ImportTrackButtonActionPerformed(java.awt.event.MouseEvent evt){
-        String pathString = getPathString();
-        if (!pathString.equals("Enter track csv path...")){
+    private void ImportTrackButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        CardLayout card = (CardLayout) MainWindow.getLayout();
+        card.show(MainWindow,"ControlMenu");
+        ImportTrackButton.setVisible(false);
+        // TODO import track
+    }
 
+    private void ClockRatioTextFieldKeyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER){
+            System.out.println("Enter");
+            ClockRatioTextField.setFocusable(false);
+            ClockRatioTextField.setFocusable(true);
+            // TODO call clock update
         }
+    }
 
+    private void ClockRatioTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+        ClockRatioTextField.setText("");
+    }
+
+    private void ClockResolutionTextFieldKeyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER){
+            System.out.println("Enter");
+            ClockResolutionTextField.setFocusable(false);
+            ClockResolutionTextField.setFocusable(true);
+            // TODO call clock update
+        }
+    }
+
+    private void ClockResolutionTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+        ClockResolutionTextField.setText("");
     }
 
 
@@ -609,6 +723,9 @@ public class SimulationEnvironmentUI extends javax.swing.JFrame implements AppGU
     private javax.swing.JPanel WorldClockMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
