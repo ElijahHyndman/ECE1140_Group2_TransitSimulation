@@ -315,12 +315,7 @@ public class CTCOffice implements PhysicsUpdateListener
         }
 
         BroadcastingArrays();
-        System.out.println(Arrays.toString(speedArrG));
-        System.out.println(Arrays.toString(authArr));
-       // getWaysideSystem("Green").broadcastToControllers(speedArrG,authArr);
 
-
-        //paintTrack();
         return speedAuthorityTime;
     }
 
@@ -420,7 +415,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public int CalcThroughput() {
         trackObj = new Track();
-        int tix = trackObj.updateTickets();
+        int tix = getTickets();
         now = LocalTime.parse(timeNow);
         int hours = now.getHour();
         int mins = now.getMinute();
@@ -439,18 +434,6 @@ public class CTCOffice implements PhysicsUpdateListener
         else if (lineCol.equals("Red")){
             occ = getWaysideSystem("Red").getOccupancy(blockNum);
         }
-        /*try {
-            for (WaysideSystem ws : waysides) {
-                if(ws.getLineName() == lineCol)  {
-                    //If this is the WaysideSystem that controls the corresponding line
-                    occ = ws.getOccupancy(blockNum);
-                } else {
-                    occ = false;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         return occ;
     }
@@ -752,10 +735,10 @@ public class CTCOffice implements PhysicsUpdateListener
         return tix;
     }
 
-    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) {
+    public void updatePhysics(String currentTimeString, double deltaTime_inSeconds) throws Exception {
 
         this.timeNow = currentTimeString;
-        this.BroadcastingArrays();
+        BroadcastingArrays();
     }
 
     public ArrayList getDisps() {
