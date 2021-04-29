@@ -520,11 +520,6 @@ public class CTCOffice //implements PhysicsUpdateListener
             switchstat = getWaysideSystem("Red").getSwitchStatus(bNum);
         }
 
-        /*try {
-            switchstat = waysides.get(0).getSwitchStatus(bNum);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
         return switchstat;
     }
 
@@ -789,12 +784,6 @@ public class CTCOffice //implements PhysicsUpdateListener
         thruP = test;
     }
 
-    /*
-        Haleigh,
-        here's the special function for getting wayside systems by name
-        if you create a wayside system using:  new WaysideSystem(trackSystem.getRedLine(),"Red");
-        then you can use:
-     */
     public WaysideSystem getWaysideSystem(String sectionName) throws Exception {
         WaysideSystem proxy = new WaysideSystem(sectionName);
         int ind =  waysides.indexOf(proxy);
@@ -803,7 +792,4 @@ public class CTCOffice //implements PhysicsUpdateListener
         return waysides.get(ind);
     }
 
-//    public ArrayList<TrackElement> getRoute() {
-//
-//    }
 }
