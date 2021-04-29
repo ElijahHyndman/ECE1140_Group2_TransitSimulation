@@ -317,6 +317,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
      */
     public boolean placeOn(TrackElement location) {
         try {
+            System.out.printf("Placed on block %s:%d\n",location.getLine(),location.getBlockNum());
             // Note what track we are occupying
             // Set that track as occupied
             // Note how long this new track is
@@ -410,7 +411,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance(),
                 currentTimeString)
         );
-        System.out.println(occupies);
+        //System.out.println(occupies);
 
         // Check if stopped
         if (hull.getActualSpeed() == 0 ) {

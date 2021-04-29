@@ -118,6 +118,8 @@ public class CTCOffice implements PhysicsUpdateListener
 
         if (tNum.equals("Train 1")) {
             trainNum = 1;
+            trackObj.dispatchLine(0); // 0 is for green 1 is for red
+            SEobj.spawnRunningTrain(trackObj.getGreenLine().get(63), trackObj.getGreenLine().get(62));
         }
         else if (tNum.equals("Train 2"))
             trainNum = 2;
@@ -139,7 +141,7 @@ public class CTCOffice implements PhysicsUpdateListener
             trainNum = 10;
         else {
             trainNum = 1;
-            SEobj.spawnRunningTrain(trackObj.getBlock(0), trackObj.getBlock(0)); //why after the else
+      //      SEobj.spawnRunningTrain(trackObj.getGreenLine().get(63), trackObj.getGreenLine().get(62)); //why after the else
         }
 
         if (dest.equals("Station B")){
@@ -319,8 +321,7 @@ public class CTCOffice implements PhysicsUpdateListener
 
 
         BroadcastingArrays();
-        System.out.println(Arrays.toString(speedArrG));
-        System.out.println(Arrays.toString(authArr));
+
        // getWaysideSystem("Green").broadcastToControllers(speedArrG,authArr);
 
 
@@ -345,12 +346,12 @@ public class CTCOffice implements PhysicsUpdateListener
 
     public void BroadcastingArrays() throws Exception {
         now = LocalTime.parse(timeNow);
-        System.out.println("Now - " + now);
-        System.out.println("Times - " + times);
+    //    System.out.println("Now - " + now);
+    //    System.out.println("Times - " + times);
         int count = 0;
         for (int i = 0; i<times.size(); i++){
             if(now.equals(times.get(i))){
-
+                //trackObj.dispatchLine(0); // 0 is for green 1 is for red
                 double[] speedsRholder = new double[150];
                 int[] authsRholder = new int[150];
                 authsRholder = authorities.get(i);

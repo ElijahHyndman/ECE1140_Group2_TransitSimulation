@@ -986,112 +986,112 @@ public class CTCJFrame extends javax.swing.JFrame implements AppGUIModule {
 
         speedAuthority = display.Dispatch(destination, train, timeD);
 
-        line = color;
+        line = "Green";
         
-        int blockNo = Integer.parseInt(speedAuthority[1].toString());
-        char sect = displist.get(blockNo).getSection();
-        int blockL = displist.get(blockNo).getLength();
-        double blockG = displist.get(blockNo).getGrade();
-        int sLim = displist.get(blockNo).getSpeedLimit();
-        double elev = displist.get(blockNo).getElevation();
-        double cElev = displist.get(blockNo).getCElevation();
-        String t1 = null;
-        String t2 = null;
-        String t3 = null;
-        String t4 = null;
-        String t5 = null;
-        String t6 = null;
-        String t7 = null;
-        String t8 = null;
-        String t9 = null;
-        String t10 = null;
-        if (train.equals("New") || train.equals("Train 1"))
-        {
-            t1 = timeD;
-        }
-        else if (train.equals("Train 2"))
-        {
-            t2 = timeD;
-        }
-        else if (train.equals("Train 3"))
-        {
-            t3 = timeD;
-        }
-        else if(train.equals("Train 4"))
-        {
-            t4 = timeD;
-        }
-        else if(train.equals("Train 5"))
-        {
-            t5 = timeD;
-        }
-        else if(train.equals("Train 6"))
-        {
-            t6 = timeD;
-        }
-        else if(train.equals("Train 7"))
-        {
-            t7 = timeD;
-        }
-        else if(train.equals("Train 8"))
-        {
-            t8 = timeD;
-        }
-        else if(train.equals("Train 9"))
-        {
-            t9 = timeD;
+//        int blockNo = Integer.parseInt(speedAuthority[1].toString());
+//        char sect = displist.get(blockNo).getSection();
+//        int blockL = displist.get(blockNo).getLength();
+//        double blockG = displist.get(blockNo).getGrade();
+//        int sLim = displist.get(blockNo).getSpeedLimit();
+//        double elev = displist.get(blockNo).getElevation();
+//        double cElev = displist.get(blockNo).getCElevation();
+//        String t1 = null;
+//        String t2 = null;
+//        String t3 = null;
+//        String t4 = null;
+//        String t5 = null;
+//        String t6 = null;
+//        String t7 = null;
+//        String t8 = null;
+//        String t9 = null;
+////        String t10 = null;
+//        if (train.equals("New") || train.equals("Train 1"))
+//        {
+//            t1 = timeD;
+//        }
+//        else if (train.equals("Train 2"))
+//        {
+//            t2 = timeD;
+//        }
+//        else if (train.equals("Train 3"))
+//        {
+//            t3 = timeD;
+//        }
+//        else if(train.equals("Train 4"))
+//        {
+//            t4 = timeD;
+//        }
+//        else if(train.equals("Train 5"))
+//        {
+//            t5 = timeD;
+//        }
+//        else if(train.equals("Train 6"))
+//        {
+//            t6 = timeD;
+//        }
+//        else if(train.equals("Train 7"))
+//        {
+//            t7 = timeD;
+//        }
+//        else if(train.equals("Train 8"))
+//        {
+//            t8 = timeD;
+//        }
+//        else if(train.equals("Train 9"))
+//        {
+//            t9 = timeD;
+//
+//        }
+//        else
+//        {
+//            t10 = timeD;
+//        }
+//
+//        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+//
+//        jTextField6.setText(String.valueOf(speedAuthority[0]));
+//        jTextField3.setText(String.valueOf(speedAuthority[1]));
+//        jTextField4.setText(String.valueOf(speedAuthority[2]));
+//
+//        LocalTime newT = LocalTime.parse(timeD);
+//        LocalTime nowT = LocalTime.parse(display.timeNow);
+//        int h = nowT.getHour();
+//        h++;
+//        String mins = ":00";
+//        String z = "0";
+//        StringBuilder newdt = new StringBuilder();
+//        if (h<10){
+//            newdt.append(z);}
+//        newdt.append(h);
+//        newdt.append(mins);
 
-        }
-        else
-        {
-            t10 = timeD;
-        }
-
-        dispatch = new DisplayLine(blockNo, line, sect, blockL, sLim, blockG, elev, cElev, destination,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
-
-        jTextField6.setText(String.valueOf(speedAuthority[0]));
-        jTextField3.setText(String.valueOf(speedAuthority[1]));
-        jTextField4.setText(String.valueOf(speedAuthority[2]));
-
-        LocalTime newT = LocalTime.parse(timeD);
-        LocalTime nowT = LocalTime.parse(display.timeNow);
-        int h = nowT.getHour();
-        h++;
-        String mins = ":00";
-        String z = "0";
-        StringBuilder newdt = new StringBuilder();
-        if (h<10){
-            newdt.append(z);}
-        newdt.append(h);
-        newdt.append(mins);
-
-        if (mode){
-            if (speedAuthority[0].equals(0) && speedAuthority[1].equals(0))
-            {
-                JOptionPane.showMessageDialog(jPanel2, "Train cannot be dispatched with these inputs. Try new arrival time of "+newdt);
-            }
-            else if (color.equals("Green") && (destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
-                JOptionPane.showMessageDialog(jPanel2, "Please choose a Green Line destination while in Green Mode or switch to Red Mode.");
-            }
-            else if (color.equals("Red") && !(destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
-                JOptionPane.showMessageDialog(jPanel2, "Please choose a Red Line destination while in Red Mode or switch to Green Mode.");
-            }
-            else
-            {
-                displist.add(dispatch);
-                JOptionPane.showMessageDialog(jPanel2, "Train will be dispatched at "+speedAuthority[2]+" and arrive at "+timeD+" with a speed of "+speedAuthority[0]+" mph and authority of "+speedAuthority[1]+" blocks.");
-            }
-
-            model = (DefaultTableModel)jTable2.getModel();
-
-            model.setRowCount(0);
-            for(int i=0; i<displist.size(); i++)
-            {
-                model.addRow(new Object[] {displist.get(i).getLine(),displist.get(i).getSection(),displist.get(i).getBlockNumber(), displist.get(i).getInfrastructure(),displist.get(i).getT1(),displist.get(i).getT2(),displist.get(i).getT3(),displist.get(i).getT4(),displist.get(i).getT5(),displist.get(i).getT6(),displist.get(i).getT7(),displist.get(i).getT8(),displist.get(i).getT9(),displist.get(i).getT10()});
-            }
-        }
-        else
-            JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");*/
+//        if (mode){
+//            if (speedAuthority[0].equals(0) && speedAuthority[1].equals(0))
+//            {
+//                JOptionPane.showMessageDialog(jPanel2, "Train cannot be dispatched with these inputs. Try new arrival time of "+newdt);
+//            }
+//            else if (color.equals("Green") && (destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
+//                JOptionPane.showMessageDialog(jPanel2, "Please choose a Green Line destination while in Green Mode or switch to Red Mode.");
+//            }
+//            else if (color.equals("Red") && !(destination.equals("Shadyside") || destination.equals("Herron Ave") || destination.equals("Swissville")|| destination.equals("Penn Station")||destination.equals("Steel Plaza") || destination.equals("First Ave")||destination.equals("Station Square")||destination.equals("South Hills Junction")||destination.equals("OffShoot 1")||destination.equals("OffShoot 2"))){
+//                JOptionPane.showMessageDialog(jPanel2, "Please choose a Red Line destination while in Red Mode or switch to Green Mode.");
+//            }
+//            else
+//            {
+//                displist.add(dispatch);
+//                JOptionPane.showMessageDialog(jPanel2, "Train will be dispatched at "+speedAuthority[2]+" and arrive at "+timeD+" with a speed of "+speedAuthority[0]+" mph and authority of "+speedAuthority[1]+" blocks.");
+//            }
+//
+//            model = (DefaultTableModel)jTable2.getModel();
+//
+//            model.setRowCount(0);
+//            for(int i=0; i<displist.size(); i++)
+//            {
+//                model.addRow(new Object[] {displist.get(i).getLine(),displist.get(i).getSection(),displist.get(i).getBlockNumber(), displist.get(i).getInfrastructure(),displist.get(i).getT1(),displist.get(i).getT2(),displist.get(i).getT3(),displist.get(i).getT4(),displist.get(i).getT5(),displist.get(i).getT6(),displist.get(i).getT7(),displist.get(i).getT8(),displist.get(i).getT9(),displist.get(i).getT10()});
+//            }
+//        }
+        //else
+       //     JOptionPane.showMessageDialog(jPanel2, "Must enter Manual Mode before dispatching a train.");
     }
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {
