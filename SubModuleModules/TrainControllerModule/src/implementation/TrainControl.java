@@ -105,9 +105,6 @@ public class TrainControl {
         trainModel.setOuterLights(externalLights);
         trainModel.setRightDoors(rightDoors);
         trainModel.setLeftDoors(leftDoors);
-        if(beacon != null){
-            trainModel.setNextStop(beacon.substring(0,beacon.indexOf(" ")));
-        }
     }
 
     public TrainMotor getTrainMotor(){
@@ -333,6 +330,7 @@ public class TrainControl {
         //Check if beacon not null and authority is 888
         if (!(beacon==null) && !beaconSet && authority==888){
             beaconSet = true;
+            nonVitalComponents.setNextStation(beacon);
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
@@ -348,6 +346,8 @@ public class TrainControl {
 //            beaconSet = false;
 //            stoppingDistance = -1;
         }
+
+        nonVitalComponents.setAnnouncement(authority, trainVelocity);
     }
 
     public double getStoppingDistance(){

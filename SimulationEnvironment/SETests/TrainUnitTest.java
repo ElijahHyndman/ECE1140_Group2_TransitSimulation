@@ -181,12 +181,12 @@ class TrainUnitTest {
     @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainleavesGreenLineStation1() {
         trn = new TrainUnit(true);
-        WorldClock clk = new WorldClock(10.0,4.0);
+        WorldClock clk = new WorldClock(10.0,5.0);
         clk.addListener(trn);
         clk.start();
         //need to get path
         Track instance = new Track();
-        instance.importTrack("C:\\Users\\Devon's Laptop\\OneDrive\\Documents\\RedGreenUpdated.csv");
+        instance.importTrack("C:\\Users\\Devon's Laptop\\IdeaProjects\\ECE1140_Group2_TransitSimulation\\SubModuleModules\\TrackModelModule\\src\\Track\\RedGreenUpdated.csv");
         int[] route = routeGreen(0,73,instance);
         instance.getGreenLine().get(0).setCommandedSpeed(15);
         instance.getGreenLine().get(0).setAuthority(1);
@@ -223,7 +223,7 @@ class TrainUnitTest {
                 break;
             }
         }
-        trn.getController().setNextStation("CASTLE SHANNON");
+        trn.getController().setNextStation("CASTLE_SHANNON");
         trn.getHull().setTotalDistance(0);
         //rerouting
         int length2 = 0;
@@ -255,9 +255,9 @@ class TrainUnitTest {
                 time888 = clk.getTimeInSeconds();
                 arrive = true;
             }
-            if(arrive && clk.getTimeInSeconds()-time888==30){
-                trn.getController().openDoorAtStation(false);
-                break;
+            if(trn.getHull().getTotalDistance()==length2){
+                trn.getHull().setLeftDoors(true);
+                trn.getController().openDoorAtStation(true);
             }
         }
 
