@@ -170,8 +170,6 @@ public class SimulationEnvironment extends Thread {
         }
         return null;
     }
-
-
     private void addTrain(TrainUnit newTrain) {
         trains.add(newTrain);
     }

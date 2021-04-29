@@ -567,7 +567,12 @@ public class WaysideController extends Thread implements Serializable {
      */
 
 
-
+    public void uploadPLCScript(PLCEngine script) {
+        UserPLCScripts.add(script);
+    }
+    public void uploadSafetyPLCScript(PLCEngine script) {
+        SafetyCriticalPLCScripts.add(script);
+    }
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
     public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
