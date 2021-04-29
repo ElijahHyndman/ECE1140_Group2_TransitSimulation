@@ -14,8 +14,8 @@ public class BackupMotor implements TrainMotor{
 
     public BackupMotor(){
         power = 0;
-        Kp = 8;//3; // Default Kp
-        Ki = 5; // Default Ki
+        Kp = 7;//3; // Default Kp
+        Ki = 3; // Default Ki
         setpoint = 0;
 
 

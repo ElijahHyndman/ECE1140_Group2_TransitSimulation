@@ -33,7 +33,7 @@ public class SimulationEnvironment extends Thread {
 
     /** World Object Variables
      */
-    private Track trackSystem = new Track();
+    private Track trackSystem;
     private Vector<TrainUnit> trains = new Vector<TrainUnit>();
 
 

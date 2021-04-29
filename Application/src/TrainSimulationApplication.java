@@ -136,7 +136,12 @@ public class TrainSimulationApplication extends Thread {
         ctcui.setVisible(true);
         System.out.println("SimulationEnvironment: " + run.getSE().getCTC().hashCode());
         */
-        TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
+
+        if (run.getSE().getTrackSystem() != null){
+            TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
+        }
+
+        //TrackElement yard = run.getSE().getTrackSystem().getBlock(0);
         //yard.setCommandedSpeed(10.0);
         //yard.setAuthority(1);
         //System.out.println(yard);

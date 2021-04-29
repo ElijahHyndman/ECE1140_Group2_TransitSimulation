@@ -468,8 +468,8 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         String textToStart = "Start";
         String textToPause = "Pause";
         if (currentMode.equals(textToStart)) {
-           // System.out.print
-            SE.getClock().start();
+            System.out.println("here");
+            SE.getClock().cont();
             ClockPauseButton.setText(textToPause);
         } else if (currentMode.equals(textToPause)){
             SE.getClock().halt();
