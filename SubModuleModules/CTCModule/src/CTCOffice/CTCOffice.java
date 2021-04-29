@@ -219,7 +219,7 @@ public class CTCOffice //implements PhysicsUpdateListener
             lineCol = "Green";}
 
         CharSequence timeChar = timeD;
-        timeDis = LocalTime.parse(timeChar);
+        timeDis = LocalTime.parse(timeD);
         now = LocalTime.parse(timeNow);
 
         int h1 = timeDis.getHour();
