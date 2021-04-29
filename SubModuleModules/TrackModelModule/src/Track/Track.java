@@ -150,6 +150,7 @@ import java.util.Scanner;
                 //getting sheet object 0
                 sc.close();
                 success = true;
+                blockArrayList.get(0).setAuthority(1);
             } catch(Exception e)
             {
                 e.printStackTrace();

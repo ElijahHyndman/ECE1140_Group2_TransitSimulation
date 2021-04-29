@@ -10,10 +10,14 @@ import SimulationEnvironment.TrainUnit;
 import TrackConstruction.TrackElement;
 import TrainControlUI.DriverUI;
 import TrainModel.trainGUI;
+import WaysideController.WaysideSystem;
+import WaysideGUI.WaysideSystemUI;
 import WorldClock.WorldClock;
 
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -90,20 +94,20 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         //TODO Vector<WaysideSystem> WSystems = DisplaySE.getCTC().getWaysideSystems();
         //TODO waysideTableModel.setRowCount(WSystems.size());// Set the WaysideSystem table
         //TODO this is hard coded
-        //Vector<WaysideSystem> WSystems = SE.getCTC().getWaysideSystem();
-        /*if(WSystems.size() != 0) {
+        ArrayList<WaysideSystem> WSystems = SE.getCTC().getWaysideSystem();
+        if(WSystems.size() != 0) {
             waysideTableModel.setRowCount(WSystems.size());
             waysideTableModel.setValueAt(WSystems.get(0),0,0);
             waysideTableModel.setValueAt("Spawn GUI", 0,1);
         }
-        */
-        //waysideTableModel.setRowCount(WSystems.size());
+
+        waysideTableModel.setRowCount(WSystems.size());
         // TODO
-//        for(int index =0;index<WSystems.size(); index++) {
-//            WaysideSystem ws = WSystems.get(index);
-//            waysideTableModel.setValueAt(ws,index,0);
-//            waysideTableModel.setValueAt("Spawn GUI", index,1);
-//        }
+        for(int index =0;index<WSystems.size(); index++) {
+            WaysideSystem ws = WSystems.get(index);
+            waysideTableModel.setValueAt(ws,index,0);
+            waysideTableModel.setValueAt("Spawn GUI", index,1);
+        }
 
         // Set the TrainUnit table
         DefaultTableModel trainTableModel = (DefaultTableModel) TrainUnitSpawnTable.getModel();
@@ -315,7 +319,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         ));
         CTCSpawnTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CTCSpawnTableMouseClicked(evt);
+                try {
+                    CTCSpawnTableMouseClicked(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         jScrollPane2.setViewportView(CTCSpawnTable);
@@ -331,7 +339,11 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         ));
         WaysideSystemSpawnTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                WaysideSystemSpawnTableMouseClicked(evt);
+                try {
+                    WaysideSystemSpawnTableMouseClicked(evt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         jScrollPane3.setViewportView(WaysideSystemSpawnTable);
@@ -456,6 +468,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         String textToStart = "Start";
         String textToPause = "Pause";
         if (currentMode.equals(textToStart)) {
+           // System.out.print
             SE.getClock().start();
             ClockPauseButton.setText(textToPause);
         } else if (currentMode.equals(textToPause)){
@@ -468,7 +481,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
 
     private void SpawnTrainButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        SE.spawnRunningTrain(new TrackElement(), new TrackElement());
+       // SE.spawnRunningTrain(new TrackElement(), new TrackElement());
         UpdateSpawnTables();
     }
 
@@ -488,7 +501,7 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         SE.getClock().setResolution(ClockResolutionSlider.getValue());
     }
 
-    private void CTCSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
+    private void CTCSpawnTableMouseClicked(java.awt.event.MouseEvent evt) throws Exception {
         // TODO add your handling code here:
         int spawnGUIColumn = 1;
 
@@ -498,11 +511,12 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
         if (column == spawnGUIColumn) {
             //System.out.println("Spawning CTC Gui");
-            //DisplaySE.spawnCTCGUI(DisplaySE.getCTC());
+            SE.getCTC().updateCTC(SE.getTrackSystem(), SE);
+            SE.spawnCTCGUI(SE.getCTC());
         }
     }
 
-    private void WaysideSystemSpawnTableMouseClicked(java.awt.event.MouseEvent evt) {
+    private void WaysideSystemSpawnTableMouseClicked(java.awt.event.MouseEvent evt) throws Exception {
         // TODO add your handling code here:
         int spawnWaysideColumn = 1;
 
@@ -512,8 +526,12 @@ public class SimulationEnvironmentJFrame extends javax.swing.JFrame implements A
         System.out.println(String.format("Clicked on (%d,%d)",row,column));
         if (column == spawnWaysideColumn) {
             //System.out.println("Spawning CTC Gui");
-            // TODO Vector<WaysideSystem> WS = DisplaySE.getCTC().getWaysideSystems();
-            // TODO DisplaySE.spawnWaysideGUI(WS.get(row));
+            ArrayList<WaysideSystem> WS = SE.getCTC().getWaysideSystem();
+            SE.spawnWaysideGUI(WS.get(row));
+
+            WaysideSystemUI ui = new WaysideSystemUI();
+            ui.latch(WS);
+            GUIWindowLauncher.launchWindow(ui);
         }
     }
 

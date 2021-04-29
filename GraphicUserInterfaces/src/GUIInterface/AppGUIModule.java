@@ -1,13 +1,12 @@
 package GUIInterface;
 
-import java.util.Vector;
-
 public interface AppGUIModule<T> {
     /** Defines the behavior that all GUI's should exhibit for the TrainSimulation Application.
      *   This standardizes the behavior amongst the modules so they can be worked with in generic terms, and
      *   simplifies the storage process
      *
      *   uses the Java generic <T> to represent multiple forms of objects, since Each of your draw() methods will accept a different
+     * @param myObject
      */
 
     public void latch(T myObject);

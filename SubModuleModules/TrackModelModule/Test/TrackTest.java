@@ -391,15 +391,15 @@ class TrackTest {
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
-
-        instance.getSwitches().get(10).setSwitchState(true); // switch not to yard
+        instance.dispatchLine(0);
+        instance.getSwitches().get(10).setSwitchState(true); // switch to yard
         TrackElement cur = instance.getGreenLine().get(0);
         TrackElement prev = instance.getGreenLine().get(0);
         TrackElement next = null;
         int test = 0;
         for (int i = 0; i < 5; i++) {
             next = instance.getNextGreen(cur, prev);
-
+            System.out.println(next.getBlockNum());
             if (next != null) {
                 test += next.getBlockNum();
             }
@@ -415,6 +415,7 @@ class TrackTest {
          test = 0;
         for (int i = 0; i < 5; i++) {
             next = instance.getNextGreen(cur, prev);
+            System.out.println(next.getBlockNum());
 
             if (next != null) {
                 test += next.getBlockNum();
@@ -1071,10 +1072,12 @@ class TrackTest {
         String filepath = "src/Track/RedGreenUpdated.csv";
         Track instance = new Track();
         instance.importTrack(filepath);
-        instance.getSwitches().get(2).setSwitchState(true);
-        System.out.println(instance.getSwitches().get(2).getSwitchState());
-        instance.getSwitches().get(2).setSwitchState(false);
-        System.out.println(instance.getSwitches().get(2).getSwitchState());
+        instance.getSwitches().get(10).setSwitchState(true);
+        instance.updateSwitches();
+        System.out.println(instance.getSwitches().get(10).getSwitchState());
+        instance.getSwitches().get(10).setSwitchState(false);
+        instance.updateSwitches();
+        System.out.println(instance.getSwitches().get(10).getSwitchState());
     }
 
     /*
@@ -1179,7 +1182,6 @@ class TrackTest {
 
     */
     }
-
 
 
 }
