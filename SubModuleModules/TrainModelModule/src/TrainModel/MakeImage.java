@@ -27,6 +27,7 @@ public class MakeImage {
                 a = auth;
             }
 
+
             double covered = (distance/a)*451;
             System.out.print(dist);
             System.out.print(covered);

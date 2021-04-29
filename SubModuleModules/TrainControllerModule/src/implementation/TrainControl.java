@@ -42,6 +42,8 @@ public class TrainControl {
     boolean beaconSet;
     private double route;
     String simTime;
+    private String doors = null;
+    private String nextStop = null;
 
     public TrainControl(){
       this(null);
@@ -94,13 +96,18 @@ public class TrainControl {
         boolean externalLights = nonVitalComponents.getExternalLights();
         boolean rightDoors = nonVitalComponents.getRightDoors();
         boolean leftDoors = nonVitalComponents.getLeftDoors();
+        String announcement = nonVitalComponents.getAnnouncements();
 
+        trainModel.setAnnouncements(announcement);
         trainModel.setCabinTemp(temperature);
         trainModel.setHeadlights(headlights);
         trainModel.setCabinLights(cabinLights);
         trainModel.setOuterLights(externalLights);
         trainModel.setRightDoors(rightDoors);
         trainModel.setLeftDoors(leftDoors);
+        if(beacon != null){
+            trainModel.setNextStop(beacon.substring(0,beacon.indexOf(" ")));
+        }
     }
 
     public TrainMotor getTrainMotor(){
@@ -313,28 +320,33 @@ public class TrainControl {
         authority = distBlock;
         if (authority == 0 && !beaconSet){
             useEmergencyBrake(true);
-            System.out.println("a=0, !beaconSet");
+        }else if(authority != 0 && beaconSet && trainVelocity == 0){
+            beaconSet = false;
+            stoppingDistance = -1;
+            useEmergencyBrake(false);
+            useServiceBrake(false);
         }
     }
 
     public void setBeacon(String currentBeacon){
         beacon = currentBeacon;
         //Check if beacon not null and authority is 888
-
         if (!(beacon==null) && !beaconSet && authority==888){
             beaconSet = true;
-            System.out.println("**beaconSet==True***");
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
+            int doorString = half.indexOf(" ");
+            doors = half.substring(doorString + 1);
             System.out.println(stop);
             stoppingDistance = stop;
-        }else if (beacon == null && authority!=888){
+        }else if (beacon == null && !beaconSet && authority!=888){
             stoppingDistance = -1;
             beaconSet = false;
-        }else if(beacon == null && authority ==0){
-            beaconSet = false;
-            stoppingDistance = -1;
+            doors = null;
+        }else if(beacon == null && authority == 0){
+//            beaconSet = false;
+//            stoppingDistance = -1;
         }
     }
 
@@ -356,7 +368,11 @@ public class TrainControl {
     }
 
     public void openDoorAtStation(boolean door){
-        nonVitalComponents.setDoors(beacon);
+        if (door){
+            nonVitalComponents.setDoors(doors);
+        }else {
+            nonVitalComponents.setDoors(null);
+        }
         trainModel.setRightDoors(nonVitalComponents.getRightDoors());
         trainModel.setLeftDoors(nonVitalComponents.getLeftDoors());
     }
@@ -394,5 +410,10 @@ public class TrainControl {
     public void setTrainData(){
         trainModel.setPower(power);
         setNonVitalComponents();
+    }
+
+    public void setNextStation(String next){
+        this.nextStop = next;
+        trainModel.setNextStop(next);
     }
 }

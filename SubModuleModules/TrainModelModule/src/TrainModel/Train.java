@@ -239,6 +239,10 @@ public class Train {
     public void setBlockDistance(double distance){
         blockDistance = distance;
     }
+
+    public void setTotalDistance(double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
     //end
 
 

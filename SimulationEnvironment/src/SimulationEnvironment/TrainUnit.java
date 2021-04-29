@@ -268,6 +268,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             trainEventLogger.severe(String.format("Passengers have departed and boarded %s, Departed=%d Boarded=%d Population=%d at time (%s)",this,peopleDeparting,peopleBoarding,hull.getPassengerCount(),currentTime));
             oncePerStationFlag = false;
         }
+
     }
 
 

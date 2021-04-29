@@ -181,7 +181,7 @@ class TrainUnitTest {
     @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainleavesGreenLineStation1() {
         trn = new TrainUnit(true);
-        WorldClock clk = new WorldClock(10.0,3.0);
+        WorldClock clk = new WorldClock(10.0,4.0);
         clk.addListener(trn);
         clk.start();
         //need to get path
@@ -206,22 +206,61 @@ class TrainUnitTest {
         trn.spawnOn(instance.getGreenLine().get(0),instance.getGreenLine().get(0));
         int lastTime = clk.getTimeInSeconds();
         int currentTime;
-        int timeAtStation=0;
-        boolean alreadyArrived = false;
+        int time888 = 0;
+        boolean arrive = false;
+        trn.getController().setNextStation("DORMONT");
         while(true){
             train.update();
             currentTime = clk.getTimeInSeconds();
             instance.updatePhysics(clk.getTimeString(), currentTime-lastTime);
             lastTime = currentTime;
-            if(trn.getCommandedAuthority()==888 && !alreadyArrived){
-                timeAtStation = clk.getTimeInSeconds();
-                alreadyArrived = true;
-                System.out.println("arrived");
+            if(trn.getHull().getAuthority()==888){
+                time888 = clk.getTimeInSeconds();
+                arrive = true;
             }
-            if(alreadyArrived && timeAtStation-clk.getTimeInSeconds()==15){
+            if(arrive && clk.getTimeInSeconds()-time888==30){
+                trn.getController().openDoorAtStation(false);
                 break;
             }
         }
+        trn.getController().setNextStation("CASTLE SHANNON");
+        trn.getHull().setTotalDistance(0);
+        //rerouting
+        int length2 = 0;
+        int[] route2 = routeGreen(73,96,instance);
+        for (int i=73; i<96; i++){
+                instance.getGreenLine().get(i).setAuthority(1);
+                instance.getGreenLine().get(i).setCommandedSpeed(15);
+                length2 += instance.getGreenLine().get(i).getLength();
+            }
+        instance.getGreenLine().get(94).setAuthority(1);
+        instance.getGreenLine().get(94).setCommandedSpeed(1);
+
+        instance.dispatchLine(73);
+//        for(int i=1; i<13;i++) {
+//                instance.getSwitches().get(i).setSwitchState(true);
+//        }
+        instance.updateSwitches();
+        trn.setReferenceTrack(instance);
+        lastTime = clk.getTimeInSeconds();
+        time888 = 0;
+        arrive = false;
+        trainGUI.setTrainTotalAuthority(length2);
+        while(true){
+            train.update();
+            currentTime = clk.getTimeInSeconds();
+            instance.updatePhysics(clk.getTimeString(), currentTime-lastTime);
+            lastTime = currentTime;
+            if(trn.getHull().getAuthority()==888){
+                time888 = clk.getTimeInSeconds();
+                arrive = true;
+            }
+            if(arrive && clk.getTimeInSeconds()-time888==30){
+                trn.getController().openDoorAtStation(false);
+                break;
+            }
+        }
+
 
 
 
