@@ -190,9 +190,6 @@ public class WorldClock extends Thread {
         return false;
     }
 
-    public void allowTick(boolean ticking) {
-        allowedToTick = ticking;
-    }
 
     @Override
     public void run() {
@@ -204,12 +201,12 @@ public class WorldClock extends Thread {
          * @after time is advancing, clock is moving, physics update-calls are broadcast
          */
         System.out.println("Clock has started ticking");
-        ticking = true;
-        while (ticking) {
-            if(allowedToTick) {
+        while (true) {
+            System.out.println(ticking);
+            if(ticking) {
                 flag = true;
                 // update Physics
-            System.out.println("!");
+                //System.out.println("!");
                 updateAllPhysics();
                 // Traverse for period once per loop
                 once();
@@ -217,6 +214,10 @@ public class WorldClock extends Thread {
         }
     }
 
+    public void cont() {
+        //System.out.println("Continuing clock");
+        ticking = true;
+    }
 
     public void halt() {
         /**halts the ticking of the clock.
@@ -227,7 +228,7 @@ public class WorldClock extends Thread {
          * @after clock is definitely not running
          */
         ticking = false;
-        System.out.println("Clock has halted ticking");
+        //System.out.println("Clock has halted ticking");
     }
 
 
