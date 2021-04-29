@@ -96,6 +96,7 @@ public class TrainControl {
         boolean externalLights = nonVitalComponents.getExternalLights();
         boolean rightDoors = nonVitalComponents.getRightDoors();
         boolean leftDoors = nonVitalComponents.getLeftDoors();
+        String announcement = nonVitalComponents.getAnnouncement();
 
         trainModel.setCabinTemp(temperature);
         trainModel.setHeadlights(headlights);
@@ -103,6 +104,7 @@ public class TrainControl {
         trainModel.setOuterLights(externalLights);
         trainModel.setRightDoors(rightDoors);
         trainModel.setLeftDoors(leftDoors);
+        trainModel.setAnnouncements(announcement);
         if (beacon != null){
            trainModel.setNextStop(beacon.substring(0, beacon.indexOf(" ")));
         }
@@ -249,7 +251,7 @@ public class TrainControl {
     //Commanded Speed input from Train Model
     public void setCommandedSpeed(double comSpeed){
         //First check emergency brake
-        if (authority > 0){
+        if (authority >= 0){
             if (eBrake){
                 velocityCmd = (velocityCmd + emergencyBrake*(sampleTime));
                 if (velocityCmd <= 0){
@@ -300,12 +302,7 @@ public class TrainControl {
         return totalDistanceTraveled;
     }
     public void setPower(){
-
-        if (beaconSet && authority == 0 && trainVelocity == 0) {
-            power = 0;
-        }else{
-            power = (motor.getPower(sampleTime, velocityCmd, trainVelocity));
-        }
+        power = (motor.getPower(sampleTime, velocityCmd, trainVelocity));
     }
 
     //Speed Limit input from Train Model, in km/h

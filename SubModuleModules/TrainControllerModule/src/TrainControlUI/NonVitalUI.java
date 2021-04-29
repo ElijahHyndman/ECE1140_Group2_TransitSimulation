@@ -218,10 +218,10 @@ public class NonVitalUI extends javax.swing.JFrame implements ActionListener {
 
         String announce = null;
         announcementProgress = new JLabel();
-        if (!nonVitalComp.announcementInProgress()){
+        if (nonVitalComp.getAnnouncement() == null){
             announce = "Not in progress";
         }else{
-            announce = "In progress";
+            announce = nonVitalComp.getAnnouncement();
         }
         announcementProgress.setText(announce);
         announcementProgress.setBounds(500, 400, 200, 25);

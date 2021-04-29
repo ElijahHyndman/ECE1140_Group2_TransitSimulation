@@ -75,8 +75,8 @@ public class NonVitalComponents {
     }
 
     //Returns whether an announcement is in progress or not
-    public boolean announcementInProgress(){
-        return announcementProgress;
+    public String getAnnouncement(){
+        return theAnnouncement;
     }
 
     public int getCurrentAdvertisement(){
@@ -111,10 +111,10 @@ public class NonVitalComponents {
         rightDoors = false;
 
         if (side != null){
-            if (side.equals("L")){
+            if (side.equals("L\r")){
                 leftDoors = true;
                 rightDoors = false;
-            }else if (side.equals("R")){
+            }else if (side.equals("R\r")){
                 leftDoors = false;
                 rightDoors = true;
             }else{
