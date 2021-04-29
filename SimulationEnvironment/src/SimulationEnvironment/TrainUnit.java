@@ -247,6 +247,8 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
                 trainEventLogger.severe(String.format("%s has entered station block (%s) at time (%s)",this.toString(),occupies.getInfrastructure(),currentTime));
             }
         }
+
+        System.out.println(occupies);
     }
 
 
@@ -364,6 +366,7 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             }
             // Enter TrackElement block
             placeOn(location);
+
             // Call transition function, user may want something to happen
             onBlockTransition(occupies,lastOccupied);
             // log event
@@ -401,12 +404,13 @@ public class TrainUnit extends Thread implements PhysicsUpdateListener {
             control.updateCommandOutputs(currentTimeString,deltaTime_inSeconds);
 
         // Update physics to logger (very frequent)
-        trainEventLogger.finer(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
+        trainEventLogger.severe(String.format("Physics Update TrainUnit (%s : %s) delta_T = %.4fsec, \nTrainModel update physics [actualSpeed,totalDist,blockDist] [%.2f,%.2f,%.2f] time (%s)",
                 name,this.hashCode(),
                 deltaTime_inSeconds,
                 hull.getActualSpeed(),hull.getTotalDistance(),hull.getBlockDistance(),
                 currentTimeString)
         );
+        System.out.println(occupies);
 
         // Check if stopped
         if (hull.getActualSpeed() == 0 ) {
