@@ -276,15 +276,6 @@ public class TrainControl {
     public void setActualSpeed(double speed){
         //ACTUAL acceleration in m/s/s
         double distanceTraveled;
-        double actualAcceleration;
-        //1 s sample time
-        // TODO this was commented out, should it be commented out?
-        /*
-        actualAcceleration = ((speed) - (prevVelocity))/(sampleTime);
-        distanceTraveled = ((prevVelocity*sampleTime) + .5*(actualAcceleration*(Math.pow(sampleTime,2))));
-        //System.out.println(distanceTraveled + " from " + totalDistanceTraveled);
-        totalDistanceTraveled += distanceTraveled;
-         */
 
         prevVelocity = trainVelocity;
         trainVelocity = speed;
@@ -327,6 +318,7 @@ public class TrainControl {
         //Check if beacon not null and authority is 888
         if (!(beacon==null) && !beaconSet && authority==888){
             beaconSet = true;
+            nonVitalComponents.setNextStation(beacon);
             int start = beacon.indexOf(" ");
             String half = beacon.substring(start+1);
             double stop = Double.parseDouble(half.substring(0, half.indexOf(":")));
@@ -382,6 +374,7 @@ public class TrainControl {
         setTrainData();
     }
 
+    //Retrieving data
     public void getTrainData(){
         boolean passengerBrake = trainModel.getEmergencyBrake();
         boolean signalFail = trainModel.getSignalPickupFailure();
@@ -402,6 +395,7 @@ public class TrainControl {
         this.setPower();
     }
 
+    //Setting the trains power and non-vital components
     public void setTrainData(){
         trainModel.setPower(power);
         setNonVitalComponents();
