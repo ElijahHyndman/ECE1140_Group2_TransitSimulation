@@ -50,15 +50,15 @@ public class Train {
     double speedLimit = 19.4444; //m/s  (1 km/hr = .2778 m/s)
 
     //Fails
-    public boolean signalPickupFail;
+    boolean signalPickupFail;
     boolean engineFail;
     boolean brakeFail;
     boolean leftDoors; //close=0, open=1
     boolean rightDoors;
-    int cabinTemp;// F
-    String nextStop;
-    int advertisements;
-    String announcements;
+    int cabinTemp =70;// F
+    String nextStop = "NaN";
+    int advertisements = 1;
+    String announcements = "NaN";
     boolean cabinLights;
     boolean outerLights;
     boolean headlights;
@@ -71,8 +71,7 @@ public class Train {
     double displayAcceleration; //  ft/s^2
 
 
-    //getters
-
+    //getters for train controller
     public int  getNumberOfCars() {
         return numberOfCars;
     }
@@ -90,11 +89,15 @@ public class Train {
     }
     public double getMass(){return mass;}
     public double getAccel(){return accel;}
+    //end
 
-    //setters
 
-
+    //setters for speed, accel, power
     public void setSpeed(double speed) {
+        /*
+        Caps speed at max possible train speed 70km/h; speed can't go below 0
+        If we decide to use negative speeds, just use this as abs value and handle negative in TrainUnit
+         */
         if (speed > 19.44){
             this.actualSpeed = 19.44;
             this.displayActualSpeed = this.actualSpeed * 2.236936;
@@ -112,14 +115,17 @@ public class Train {
         this.actualSpeed = this.displayActualSpeed / 2.236936;
     }
     public void setAccel(double acceleration) {
-        this.maxAccel = 23330 / this.mass;
-        if(acceleration > maxAccel){
+        /*
+        Caps accel at max specified in train model datasheet
+         */
+        if ( acceleration > maxAccel ) {
             this.accel = this.maxAccel;
             this.displayAcceleration = this.maxAccel * 2.236936;
-        }else {
+        } else {
             this.accel = acceleration;
             this.displayAcceleration = this.accel * 2.236936;
         }
+
     }
     public void setDisplayAccel(double acceleration) {
         this.displayAcceleration = acceleration;
@@ -134,35 +140,53 @@ public class Train {
         this.commandedSpeed = this.displayCommandedSpeed / 2.236936;
     }
     public void setPower(double pow) {
-        if(this.engineFail != true){
-            this.power = pow;
-        }else{
+        /*
+        Caps power at 120; sets to 0 during engine fail
+         */
+        if(this.serviceBrake==true || this.emergencyBrake==true || this.passengerBrake==true){
             this.power = 0;
         }
+
+        if(this.engineFail == true){
+            this.power = 0;
+        }else if(pow>120){
+            this.power=120;
+        }else{
+            this.power = pow;
+        }
     }
-
-
-    //ADDED FOR TESTING
     public double getPower(){
         return power;
     }
 
+
     public void calculateSpeed(double deltaTime){
+        /*
+        ****Most Important method in Train Model****
+        -This calculates the new accel and speed for the train model after using updatePhysicalState()
+        -First checks if emergency brake is active and ignores power command if so.
+        -Second checks if service brake is active and ignores power command if so.
+        -Third calculates force from power command, last speed, and block grade
+          -calculates new accel from force and current mass
+          -calculates new speed from new accel and last speed
+
+         */
         //int sampleTime = 1; //need to determine if this is constant
         double F;
         double newV;
         double newA;
-        
-        //check for zero velocity & power command
 
+        //keeps track of train's distance traveled in total and on certain block
         totalDistance += this.actualSpeed*deltaTime;
         blockDistance += this.actualSpeed*deltaTime;
+
+        //check for zero velocity & power command
         if(this.actualSpeed == 0 && this.power > 0){
             this.actualSpeed = 1;
         }
             
         if((this.emergencyBrake == true)||this.passengerBrake == true){
-            newV = this.actualSpeed - (this.emergencyDecelLimit*sampleTime); 
+            newV = this.actualSpeed - (this.emergencyDecelLimit*deltaTime);
             newA = -1 * this.emergencyDecelLimit;
             if(this.actualSpeed > 0){
                 setAccel(newA);
@@ -172,9 +196,9 @@ public class Train {
             setSpeed(newV);
         }
         else if(this.serviceBrake == true){
-            newV = this.actualSpeed - (this.standardDecelLimit*sampleTime);
+            newV = this.actualSpeed - (this.standardDecelLimit*deltaTime);
             newA = -1 * this.standardDecelLimit;
-            if(this.actualSpeed > 0){
+            if(this.actualSpeed >= 0){
                 setAccel(newA);
             } else {
                 setAccel(0);
@@ -182,14 +206,21 @@ public class Train {
             setSpeed(newV);
         }
         else{
-            if (this.actualSpeed < 0) {
-                this.actualSpeed = 0.001;
-            }
             F = (this.power * 1000) / this.actualSpeed; //f is in Newtons = kg*m/s^2
+
+            /*
+                *Note on simplifying calculating force of gravity of incline
+                Calc:
+                 F = [sin(atan(blockGrade/100)) *mass*9.81];
+
+                But, for blockGrade<20:
+                [sin(atan(blockGrade/100))] == blockGrade/100
+
+                Simpler Calc:
+                 F = [(blockGrade/100) *mass*9.81];
+             */
+
             F = F - (this.blockGrade/100) * this.mass * 9.81;
-            //if(F < 0){
-               // F = 0;
-           // }
             newA = F/calculateMass(); //A is in m/s^2
             newV = this.actualSpeed + (newA+this.accel)*deltaTime*.5; // m/s + average of 2 accels * time
             setSpeed(newV);
@@ -197,6 +228,8 @@ public class Train {
         }
 
     }
+
+    //For simulation purposes
     public double getTotalDistance(){
         return totalDistance;
     }
@@ -206,28 +239,42 @@ public class Train {
     public void setBlockDistance(double distance){
         blockDistance = distance;
     }
+
+    public void setTotalDistance(double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+    //end
+
+
     public double calculateMass() {
+        /*
+        Uses 75 kg as standard mass for passenger.
+         -Average mass of american adult = 80kg (Journal of BMC Public Health, 2013)
+         -Average mass of american child (<18) = 40kg (Journal of BMC Public Health, 2013)
+        Assuming 90% of passengers are adults, average passenger weight is 75kg
+         */
         this.mass = this.trainMass*this.numberOfCars + 75 * (passengerCount + crewCount);
         return this.mass;
     }
 
+    //Setters for data from track
     public void setBlockGrade(double blockGrade) { //takes % value ( input 1 for 1%, 10 for 10% )
         this.blockGrade = blockGrade;
     }
-
     public void setSpeedLimit(double kmPerHour) { //takes in km/h
         this.speedLimit = kmPerHour / 3.6;        // converts & stores as m/s
     }
     public double getSpeedLimit(){
         return this.speedLimit;
     }
-
     public void setAuthority(int a) {
         this.authority = a;
     }
     public void setBeacon(String beaconVal) {
         this.beacon = beaconVal;
     }
+    //end
+
     public void setPassengerBrake(Boolean brake) {
 
         if(this.brakeFail != true){
@@ -261,6 +308,7 @@ public class Train {
     }
     public void setEngineFail(Boolean fail) {
         this.engineFail = fail;
+        this.power = 0;
     }
     public void setCabinTemp(int temp) {
         this.cabinTemp = temp;
@@ -289,10 +337,13 @@ public class Train {
     }
 
     public void setPassengerCount(int count){
-        if(count<=0){
+        if(count>120){
+            this.passengerCount = 120;
+        }else if(count<=0){
             this.passengerCount = 0;
+        }else {
+            this.passengerCount = count;
         }
-        this.passengerCount = count;
         calculateMass();
     }
     public void setPassengersBoarding(int count){
@@ -330,17 +381,51 @@ public class Train {
         return passengerBrake;
     }
 
-    boolean getSignalPickupFailure(){
+    public boolean getSignalPickupFailure(){
         return this.signalPickupFail;
     }
-    boolean getEngineFailure(){
+    public boolean getEngineFailure(){
         return this.engineFail;
     }
-    boolean getBrakeFailure(){
+    public boolean getBrakeFailure(){
         return this.brakeFail;
     }
 
     public int getPassengerCount() {
         return this.passengerCount;
+    }
+
+    /*
+    retrieve nonVitals:
+    int cabinTemp =70;// F
+    String nextStop = "NaN";
+    int advertisements = 1;
+    String announcements = "NaN";
+    boolean cabinLights;
+    boolean outerLights;
+    boolean headlights;
+     */
+
+    public String getNextStop() {
+        return nextStop;
+    }
+
+    public int getAdvertisements() {
+        return advertisements;
+    }
+    public boolean getOuterLights(){
+        return outerLights;
+    }
+    public boolean getCabinLights(){
+        return cabinLights;
+    }
+    public boolean getHeadlights(){
+        return headlights;
+    }
+    public String getAnnouncements() {
+        return announcements;
+    }
+    public int getCabinTemp() {
+        return cabinTemp;
     }
 }

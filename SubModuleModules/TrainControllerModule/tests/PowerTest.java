@@ -2,20 +2,11 @@ import TrainModel.Train;
 import implementation.TrainControl;
 import org.junit.*;
 
-import java.time.LocalTime;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-
 public class PowerTest {
 
     TrainControl control;
     Train theTrain;
 
-    public void updateTheTrain(double deltaTime){
-        theTrain.updatePhysicalState("nothing", deltaTime);
-        control.updateCommandOutputs("06:30:55", deltaTime);
-    }
 
     @Before
     public void setUp(){

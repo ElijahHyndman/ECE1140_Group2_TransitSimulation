@@ -13,20 +13,24 @@ import javax.imageio.ImageIO;
 
 public class MakeImage {
 
-    int dist = 0;
+    double dist = 0;
+    double a;
 	public static void main(String[] args) throws IOException {
-            
-    
-  
 
-  }
-        public void make(int distance) throws IOException {
+    }
+        public void make(int distance, int auth) throws IOException {
+
             int width = 500;
             int height = 250;
             int circleWidth = height;
-            dist += distance;
+            if(auth != a){
+                a = auth;
+            }
 
 
+            double covered = (distance/a)*451;
+            System.out.print(dist);
+            System.out.print(covered);
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = bufferedImage.createGraphics();
 
@@ -35,7 +39,7 @@ public class MakeImage {
             g2d.setColor(Color.blue);
             g2d.fillRect(0,125, 500, 2);
             g2d.setColor(Color.black);
-            g2d.fillRect(dist, 120, 32, 12);
+            g2d.fillRect((int)covered, 120, 32, 12);
 
 
 

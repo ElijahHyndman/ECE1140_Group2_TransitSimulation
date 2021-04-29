@@ -1,6 +1,6 @@
 package TrackConstruction;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 class SwitchTest {
 
