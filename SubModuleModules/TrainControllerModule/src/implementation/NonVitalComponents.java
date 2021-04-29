@@ -4,6 +4,8 @@ package implementation;
 
 import systemData.Advertisements;
 
+import java.time.LocalTime;
+
 /** NonVitalComponents holds and updates the
  * statuses of a Train's non-vital components.
  * These components are controlled automatically,
@@ -26,7 +28,7 @@ public class NonVitalComponents {
     private boolean announcementProgress;
     private String theAnnouncement;
 
-    public NonVitalComponents(){
+    public NonVitalComponents() {
         //Initialize non-vital components
         cabinLights = false;
         externalLights = false;
@@ -41,116 +43,131 @@ public class NonVitalComponents {
     }
 
     //=======ACCESSOR METHODS========
-    public String getNextStation(){
+    public String getNextStation() {
         return station;
     }
 
     //Returns right door status, true is open, false is closed
-    public boolean getRightDoors(){
+    public boolean getRightDoors() {
         return rightDoors;
     }
 
     //Returns left door status, true is open, false is closed
-    public boolean getLeftDoors(){
+    public boolean getLeftDoors() {
         return leftDoors;
     }
 
     //Returns cabin temperature in fahrenheit
-    public int getTemperature(){
+    public int getTemperature() {
         return cabinTemp;
     }
 
     //Returns cabin light status, true is on, false is off
-    public boolean getCabinLights(){
+    public boolean getCabinLights() {
         return cabinLights;
     }
 
     //Returns external light status, true is on, false is off
-    public boolean getExternalLights(){
+    public boolean getExternalLights() {
         return externalLights;
     }
 
-    public boolean getHeadLights(){
+    public boolean getHeadLights() {
         return headLights;
     }
 
     //Returns whether an announcement is in progress or not
-    public boolean announcementInProgress(){
+    public boolean announcementInProgress() {
         return announcementProgress;
     }
-    public String getAnnouncements(){
+
+    public String getAnnouncements() {
         return theAnnouncement;
     }
-    public int getCurrentAdvertisement(){
+
+    public int getCurrentAdvertisement() {
         return adList.playAd();
         //return 0;
     }
 
     //========MUTATOR METHODS==========
     //Sets the cabin temperature based on the month of the year
-    public void setTemperature(){
-        if (java.time.LocalDate.now().getMonthValue() <= 3 || java.time.LocalDate.now().getMonthValue() >= 10){
+    public void setTemperature() {
+        if (java.time.LocalDate.now().getMonthValue() <= 3 || java.time.LocalDate.now().getMonthValue() >= 10) {
             cabinTemp = 68;
-        }else {
+        } else {
             cabinTemp = 66;
         }
     }
 
     //if beacon set (not null), gets the station name
-    public void setNextStation(String currentBeacon){
+    public void setNextStation(String currentBeacon) {
         String stationName = null;
-        if (currentBeacon != null){
+        if (currentBeacon != null) {
             stationName = currentBeacon.substring(0, currentBeacon.indexOf(" "));
         }
         station = stationName;
     }
 
     //sets doors based on beacon, called during openDoorAtStation
-    public void setDoors(String side){
+    public void setDoors(String side) {
         leftDoors = false;
         rightDoors = false;
 
-        if (side != null){
-            if (side.equals("L\r")){
+        if (side != null) {
+            if (side.equals("L\r")) {
                 leftDoors = true;
                 rightDoors = false;
-            }else if (side.equals("R\r")){
+            } else if (side.equals("R\r")) {
                 leftDoors = false;
                 rightDoors = true;
-            }else{
+            } else {
                 leftDoors = true;
                 rightDoors = true;
             }
         }
     }
 
-    public void setAnnouncement(double authority, double trainSpeed){
+    public void setAnnouncement(double authority, double trainSpeed) {
 
-        if (station!=null && authority>0){
+        if (station != null && authority > 0) {
             theAnnouncement = "Approaching Station At : " + station;
-        }else if(station!=null && authority==0 && trainSpeed==0){
+        } else if (station != null && authority == 0 && trainSpeed == 0) {
             theAnnouncement = "Arrived at Station : " + station;
         }
     }
 
     //Sets the train cabin lights based on world time
-    public void setCabinLights(String time){
+    public void setCabinLights(String time) {
 
-        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
-            cabinLights = true;
+        if (time != null) {
+            String theTime = time.substring(0, time.indexOf(":"));
+            int timeHour = Integer.parseInt(theTime);
+            if (timeHour >= 18 || timeHour < 7) {
+                cabinLights = true;
+            }else{
+                cabinLights = false;
+            }
         } else {
             cabinLights = false;
         }
     }
 
-    //Sets the train external lights based on world time
-    public void setExternalLights(String time){
 
-        if (java.time.LocalTime.now().getHour() >= 18 || java.time.LocalTime.now().getHour() < 7){
-            externalLights = true;
+    //Sets the train external lights based on world time
+    public void setExternalLights(String time) {
+
+        if (time != null) {
+            String theTime = time.substring(0, time.indexOf(":"));
+            int timeHour = Integer.parseInt(theTime);
+            if (timeHour >= 18 || timeHour < 7) {
+                externalLights = true;
+            }else{
+                externalLights = false;
+            }
+
         } else {
             externalLights = false;
         }
     }
-
 }

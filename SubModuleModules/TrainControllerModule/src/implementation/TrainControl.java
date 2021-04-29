@@ -416,4 +416,7 @@ public class TrainControl {
         this.nextStop = next;
         trainModel.setNextStop(next);
     }
+    public String getSimTime(){
+        return this.simTime;
+    }
 }

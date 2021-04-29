@@ -2,6 +2,7 @@ import SimulationEnvironment.*;
 import TrackConstruction.*;
 import Track.*;
 
+import TrainControlUI.DriverUI;
 import TrainModel.Train;
 import TrainModel.trainGUI;
 import WorldClock.WorldClock;
@@ -181,7 +182,7 @@ class TrainUnitTest {
     @DisplayName("Construction\t\t[TrainUnit spawns with a TrainController and TrainModel without issues]")
     void trainleavesGreenLineStation1() {
         trn = new TrainUnit(true);
-        WorldClock clk = new WorldClock(10.0,5.0);
+        WorldClock clk = new WorldClock(10.0,6.0);
         clk.addListener(trn);
         clk.start();
         //need to get path
@@ -201,7 +202,10 @@ class TrainUnitTest {
         train.setVisible(true);
         train.latch(trn.getHull());
         trainGUI.setTrainTotalAuthority(length);
+        DriverUI controller = new DriverUI();
+        controller.latch(trn.getController());
         trn.setReferenceTrack(instance);
+
 //        trn.run();
         trn.spawnOn(instance.getGreenLine().get(0),instance.getGreenLine().get(0));
         int lastTime = clk.getTimeInSeconds();
@@ -211,6 +215,7 @@ class TrainUnitTest {
         trn.getController().setNextStation("DORMONT");
         while(true){
             train.update();
+            controller.update();
             currentTime = clk.getTimeInSeconds();
             instance.updatePhysics(clk.getTimeString(), currentTime-lastTime);
             lastTime = currentTime;
@@ -233,8 +238,8 @@ class TrainUnitTest {
                 instance.getGreenLine().get(i).setCommandedSpeed(15);
                 length2 += instance.getGreenLine().get(i).getLength();
             }
-        instance.getGreenLine().get(94).setAuthority(1);
-        instance.getGreenLine().get(94).setCommandedSpeed(1);
+        instance.getGreenLine().get(94).setAuthority(888);
+        instance.getGreenLine().get(94).setCommandedSpeed(15);
 
         instance.dispatchLine(73);
 //        for(int i=1; i<13;i++) {
@@ -248,6 +253,7 @@ class TrainUnitTest {
         trainGUI.setTrainTotalAuthority(length2);
         while(true){
             train.update();
+            controller.update();
             currentTime = clk.getTimeInSeconds();
             instance.updatePhysics(clk.getTimeString(), currentTime-lastTime);
             lastTime = currentTime;
@@ -260,10 +266,6 @@ class TrainUnitTest {
                 trn.getController().openDoorAtStation(true);
             }
         }
-
-
-
-
     }
 
     @Test

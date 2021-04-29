@@ -347,7 +347,7 @@ public class Train {
         calculateMass();
     }
     public void setPassengersBoarding(int count){
-        setPassengerCount(this.passengerCount + count);
+        setPassengerCount(this.passengerCount + Math.round(count/2));
     }
     public void setMass(double m){
         this.mass = m;
