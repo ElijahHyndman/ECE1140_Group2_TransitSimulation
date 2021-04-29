@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -424,6 +425,126 @@ class CTCOffice_SwitchControlTest {
     @DisplayName("CTC spawns correct plcs when instantiated")
     void SE() throws Exception {
         SimulationEnvironment SE = new SimulationEnvironment();
+        double start = System.nanoTime();
         SE.setTrack(tracksys);
+        double total = System.nanoTime() - start;
+        System.out.println();
+        System.out.printf("%fseconds to launch\n",total/1000000000);
+
+        int s = 9;
+        Switch sw;
+        TrackElement block;
+
+
+        System.out.println("Switch "+s+"\n=======================");
+        sw = (Switch) getRed(s);
+        block = getRed(10);
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s \n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex());
+
+        block.setOccupied(true);
+        block.setAuthority(1);
+        System.out.printf("Waiting for output to apply to SW %s\n",s);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+        block.setOccupied(false);
+        block.setAuthority(0);
+        System.out.printf("Waiting...\n");
+        start = System.nanoTime();
+        while(sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(true);
+        block.setAuthority(0);
+        System.out.printf("Waiting...\n");
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(false);
+        block.setAuthority(1);
+        System.out.printf("Waiting...\n");
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex());
+
+
+
+
+        s = 15;
+        System.out.println("\nSwitch "+s+"\n=======================");
+        sw = (Switch) getRed(s);
+        block = getRed(1);
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(true);
+        block.setAuthority(1);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(false);
+        block.setAuthority(0);
+        start = System.nanoTime();
+        while(sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(true);
+        block.setAuthority(0);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setOccupied(false);
+        block.setAuthority(1);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+
+
+
+        s = 27;
+        System.out.println("\nSwitch "+s+"\n=======================");
+        sw = (Switch) getRed(s);
+        block = getRed(28);
+        TrackElement block2 = getRed(26);
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getOccupied(),block.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setAuthority(0);
+        block2.setAuthority(0);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getAuthority()>0,block2.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setAuthority(1);
+        block2.setAuthority(0);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getAuthority()>0,block2.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setAuthority(0);
+        block2.setAuthority(1);
+        start = System.nanoTime();
+        while(!sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getAuthority()>0,block2.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
+
+        block.setAuthority(1);
+        block2.setAuthority(1);
+        start = System.nanoTime();
+        while(sw.getIndex()) {}
+        total = System.nanoTime() - start;
+        System.out.printf("(OCC,Auth) %b:%b -> %d:%s [%fsec]\n",block.getAuthority()>0,block2.getAuthority()>0,s,sw.getIndex(),total/1000000000.0);
     }
 }

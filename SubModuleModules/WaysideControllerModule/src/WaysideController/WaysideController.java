@@ -106,7 +106,7 @@ public class WaysideController extends Thread implements Serializable {
                     try {
                         userScript.evaluateLogic();
                     } catch (Exception failureToExecuteScript) {
-                        //failureToExecuteScript.printStackTrace();
+                        failureToExecuteScript.printStackTrace();
                         //System.out.println("Failure occured when running script:\n" + userScript.getPLCString());
                     }
                 }
@@ -114,7 +114,7 @@ public class WaysideController extends Thread implements Serializable {
                     try {
                         safetyCriticalScript.evaluateLogic();
                     } catch (Exception failureToExecuteScript) {
-                        //failureToExecuteScript.printStackTrace();
+                        failureToExecuteScript.printStackTrace();
                         //System.out.println("Failure occured when running script:\n" + safetyCriticalScript.getPLCString());
                     }
                 }
@@ -133,6 +133,16 @@ public class WaysideController extends Thread implements Serializable {
         outputing = generating;
     }
 
+
+
+    public void uploadPLCScript(PLCEngine script) {
+        script.setInputSources(inputPool);
+        UserPLCScripts.add(script);
+    }
+    public void uploadSafetyPLCScript(PLCEngine script) {
+        script.setInputSources(inputPool);
+        SafetyCriticalPLCScripts.add(script);
+    }
 
     /*
             Wayside System Methods
@@ -558,13 +568,6 @@ public class WaysideController extends Thread implements Serializable {
             Get Set
      */
 
-
-    public void uploadPLCScript(PLCEngine script) {
-        UserPLCScripts.add(script);
-    }
-    public void uploadSafetyPLCScript(PLCEngine script) {
-        SafetyCriticalPLCScripts.add(script);
-    }
     public void setControllerAlias(String controllerAlias) {this.controllerAlias = controllerAlias;}
     public void setControllerName(String newName){ this.controllerName = newName; }
     public String getControllerAlias(){ return controllerAlias; }
